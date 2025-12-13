@@ -11,18 +11,49 @@
 
 #include "../../Include/INSANE_DisassemblerAMD64.h"
 #include "../ObjectNomenclature.h"
+#include "../Defs/OpCode_t.h"
 
 
-///////////////////////////////////////////////////////////////////////////
-class Tables_t
+namespace INSANE_DASM64_NAMESPACE
 {
-public:
-    InsaneDASM64::ErrorCode_t Initialize();
 
-private:
-    InsaneDASM64::ErrorCode_t _InitializeInstTypeLUT();
-    uint16_t m_instTypeLUT[0xFFLLU + 1LLU]; // 256 entries
+    ///////////////////////////////////////////////////////////////////////////
+    enum InstTypes_t : uint16_t
+    {
+        InstTypes_LegacyPrefixGrp1 = (1 << 0),
+        InstTypes_LegacyPrefixGrp2 = (1 << 1),
+        InstTypes_LegacyPrefixGrp3 = (1 << 2),
+        InstTypes_LegacyPrefixGrp4 = (1 << 3),
 
-};
-DEFINE_GLOBAL_DISASSEMBLER_OBJECT(g_tables, Tables_t)
-///////////////////////////////////////////////////////////////////////////
+        InstTypes_REX              = (1 << 4),
+
+        InstTypes_OpCode           = (1 << 5)
+    };
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    class Tables_t
+    {
+    public:
+        Tables_t();
+
+        InsaneDASM64::ErrorCode_t Initialize();
+
+        uint16_t GetInstType(Byte iOpCode, InstTypes_t iTypes) const;
+
+
+    private:
+        InsaneDASM64::ErrorCode_t _InitializeInstTypeLUT();
+        uint16_t                  m_instTypeLUT[0xFFLLU + 1LLU]; // 256 entries...
+        bool                      m_bInstTypeLUTInit = false;
+
+
+        InsaneDASM64::ErrorCode_t _InitializeOpCodeTable();
+        OpCode_t                  m_OpCodeTable[0xFFLLU + 1LLU]; // 256 entries...
+        bool                      m_bOpCodeTableInit = false;
+    };
+    DEFINE_GLOBAL_OBJECT(g_tables, Tables_t)
+    ///////////////////////////////////////////////////////////////////////////
+
+}

@@ -1,14 +1,18 @@
 //=========================================================================
-//                      Object Nomenclature
+//                      Disassembler Rules
 //=========================================================================
 // by      : INSANE
 // created : 13/12/2025
 // 
-// purpose : For ease of creating objects in right namespace.
+// purpose : Rules defining disassembler functioning.
 //-------------------------------------------------------------------------
 #pragma once
+#include "ObjectNomenclature.h"
 
 
-#define DEFINE_GLOBAL_OBJECT(objName, objType) namespace G { inline objType objName; }
+namespace INSANE_DASM64_NAMESPACE
+{
 
-#define INSANE_DASM64_NAMESPACE InsaneDASM64
+    constexpr size_t MAX_OPERANDS = 4llu;
+
+}

@@ -9,11 +9,12 @@
 #include "../Include/INSANE_DisassemblerAMD64.h"
 
 #include <vector>
+#include <sstream>
 #include "Tables/Tables.h"
 
 
 // NOTE : Mind this.
-using namespace InsaneDASM64;
+using namespace INSANE_DASM64_NAMESPACE;
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -75,4 +76,22 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
 ErrorCode_t InsaneDASM64::Decode(const std::vector<ParsedInst_t>& vecParsedInput, std::vector<Instruction_t>& vecOutput)
 {
     return ErrorCode_t::ErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+const char* InsaneDASM64::GetErrorMessage(ErrorCode_t iErrorCode)
+{
+    switch (iErrorCode)
+    {
+    case InsaneDASM64::ErrorCode_Success:    return "[ Insane Disassembler AMD64 ] No Error";
+    case InsaneDASM64::ErrorCode_FailedInit: return "[ Insane Disassembler AMD64 ] Failed initialization!";
+    
+    default: break;
+    }
+
+    static char s_invalidCodeBuffer[128] = "";
+    sprintf(s_invalidCodeBuffer, "[ Insane Disassembler AMD64 ] Invalid Error Code { %d }", iErrorCode);
+    return s_invalidCodeBuffer;
 }

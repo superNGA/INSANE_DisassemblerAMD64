@@ -38,6 +38,7 @@ namespace InsaneDASM64
     {
         ErrorCode_Success    = 0, // All functions return ErrorCode_Success on success.
         ErrorCode_FailedInit = 1,
+        ErrorCode_Count
     };
 
     
@@ -48,4 +49,6 @@ namespace InsaneDASM64
     ErrorCode_t Parse      (const std::vector<Byte>&         vecInput,       std::vector<ParsedInst_t>&  vecOutput);
     ErrorCode_t Decode     (const std::vector<ParsedInst_t>& vecParsedInput, std::vector<Instruction_t>& vecOutput);
     // TODO : ToString function.
+
+    const char* GetErrorMessage(ErrorCode_t iErrorCode);
 }

@@ -37,5 +37,9 @@ int main(void)
     }
 
 
+    for (int i = 0; i < 10; i++)
+        printf("%s\n", InsaneDASM64::GetErrorMessage(static_cast<InsaneDASM64::ErrorCode_t>(i)));
+
+
     return 0;
 }
