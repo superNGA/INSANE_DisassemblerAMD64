@@ -11,12 +11,12 @@
 
 #include "../../Include/INSANE_DisassemblerAMD64.h"
 #include "../ObjectNomenclature.h"
-#include "../Defs/OpCode_t.h"
 
 
 namespace INSANE_DASM64_NAMESPACE
 {
 
+    ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     enum InstTypes_t : uint16_t
     {
@@ -25,13 +25,43 @@ namespace INSANE_DASM64_NAMESPACE
         InstTypes_LegacyPrefixGrp3 = (1 << 2),
         InstTypes_LegacyPrefixGrp4 = (1 << 3),
 
+        // All legacy prefixies.
+        InstTypes_LegacyPrefixGrpAll = 
+            InstTypes_LegacyPrefixGrp1 | InstTypes_LegacyPrefixGrp2 | InstTypes_LegacyPrefixGrp3 | InstTypes_LegacyPrefixGrp4,
+
         InstTypes_REX              = (1 << 4),
 
         InstTypes_OpCode           = (1 << 5)
     };
+
+
     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    struct OperatorInfo_t
+    {
+        OperatorInfo_t()
+        {
+            m_szOperatorName = nullptr;
+            m_nOperands      = 0;
+
+            m_bIsEscapeOpCode = false; m_bIsValidOpCode = false;
+        }
 
 
+        // Operator Properties...
+        const char*     m_szOperatorName  = nullptr;
+        bool            m_bIsValidOpCode  = false;
+        bool            m_bIsEscapeOpCode = false;
+        Byte            m_iByte           = 0x00;
+
+
+        // Operands...
+        OpCodeOperand_t m_operands[Rules::MAX_OPERANDS];
+        int32_t         m_nOperands       = 0;
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     class Tables_t
     {
@@ -39,8 +69,10 @@ namespace INSANE_DASM64_NAMESPACE
         Tables_t();
 
         InsaneDASM64::ErrorCode_t Initialize();
+        bool                      IsInitialized() const;
 
-        uint16_t GetInstType(Byte iOpCode, InstTypes_t iTypes) const;
+        uint16_t                  GetInstType    (Byte iOpCode) const;
+        const OperatorInfo_t*     GetOperatorInfo(Byte iOpCode, int iTableIndex) const;
 
 
     private:
@@ -50,10 +82,11 @@ namespace INSANE_DASM64_NAMESPACE
 
 
         InsaneDASM64::ErrorCode_t _InitializeOpCodeTable();
-        OpCode_t                  m_OpCodeTable[0xFFLLU + 1LLU]; // 256 entries...
+        OperatorInfo_t            m_OpCodeTable1[0xFFLLU + 1LLU]; // 256 entries...
+        OperatorInfo_t            m_OpCodeTable2[0xFFLLU + 1LLU]; // 256 entries...
+        OperatorInfo_t            m_OpCodeTable3[0xFFLLU + 1LLU]; // 256 entries...
         bool                      m_bOpCodeTableInit = false;
     };
     DEFINE_GLOBAL_OBJECT(g_tables, Tables_t)
-    ///////////////////////////////////////////////////////////////////////////
 
 }

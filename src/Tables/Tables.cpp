@@ -18,7 +18,8 @@ using namespace INSANE_DASM64_NAMESPACE;
 ///////////////////////////////////////////////////////////////////////////
 Tables_t::Tables_t()
 {
-    // SakaNigaD
+    m_bInstTypeLUTInit = false;
+    m_bOpCodeTableInit = false;
 }
 
 
@@ -36,11 +37,38 @@ ErrorCode_t Tables_t::Initialize()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint16_t Tables_t::GetInstType(Byte iOpCode, InstTypes_t iTypes) const
+bool Tables_t::IsInitialized() const
+{
+    return m_bInstTypeLUTInit == true && m_bOpCodeTableInit == true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+uint16_t Tables_t::GetInstType(Byte iOpCode) const
 {
     assert(m_bInstTypeLUTInit == true && "[Tables_t] Instruction type LUT is not initialized!");
 
-    return m_instTypeLUT[iOpCode] & iTypes;
+    return m_instTypeLUT[iOpCode];
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+const OperatorInfo_t* Tables_t::GetOperatorInfo(Byte iOpCode, int iTableIndex) const
+{
+    assert(m_bOpCodeTableInit == true && "OpCode Table is not initialized!.");
+
+    switch (iTableIndex)
+    {
+    case 1: return &m_OpCodeTable1[iOpCode];
+    case 2: return &m_OpCodeTable2[iOpCode];
+    case 3: return &m_OpCodeTable3[iOpCode];
+    
+    default: assert(iTableIndex >= 1 && iTableIndex <= 3 && "Table index is out of range!!!"); break;
+    }
+
+    return nullptr;
 }
 
 
@@ -101,5 +129,25 @@ ErrorCode_t Tables_t::_InitializeInstTypeLUT()
 ///////////////////////////////////////////////////////////////////////////
 ErrorCode_t Tables_t::_InitializeOpCodeTable()
 {
+    memset(m_OpCodeTable1, 0, sizeof(m_OpCodeTable1));
+    memset(m_OpCodeTable2, 0, sizeof(m_OpCodeTable2));
+    memset(m_OpCodeTable3, 0, sizeof(m_OpCodeTable3));
+
+    
+    // Setting Escale characters...
+    m_OpCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsEscapeOpCode    = true;
+    m_OpCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_A].m_bIsEscapeOpCode = true;
+    m_OpCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_B].m_bIsEscapeOpCode = true;
+
+
+    // TODO : Fix this, this is just for testing parsing algorithm.
+    for (int i = 0; i <= 0xFF; i++)
+    {
+        m_OpCodeTable1[i].m_bIsValidOpCode = true;
+        m_OpCodeTable2[i].m_bIsValidOpCode = true;
+        m_OpCodeTable3[i].m_bIsValidOpCode = true;
+    }
+
+
     return ErrorCode_t::ErrorCode_Success;
 }

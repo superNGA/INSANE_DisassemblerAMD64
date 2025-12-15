@@ -7,6 +7,6 @@ add_executable (INSANE_DisassemblerAMD64
 "main.cpp"
 "src/INSANE_DisassemblerAMD64.cpp" 
 "src/Tables/Tables.h" "src/Tables/Tables.cpp"  
-"src/ObjectNomenclature.h" "src/Defs/OpCode_t.h" "src/DASMRules.h")
+"src/ObjectNomenclature.h"   "src/Defs/LegacyPrefix_t.h")
 
 target_compile_features(INSANE_DisassemblerAMD64 PRIVATE cxx_std_17)
