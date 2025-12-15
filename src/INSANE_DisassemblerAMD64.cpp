@@ -106,7 +106,7 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
                 inst.m_legacyPrefix.PushPrefix(iPrefixByte);
             }
         }
-        // If this byte is an REX, skip till the last consecutive REX byte and store the last one.
+        // If this byte is a REX, skip till the last consecutive REX byte and store the last one.
         else if ((iInstType & InstTypes_t::InstTypes_REX) != false)
         {
             for (size_t iREXIndex = iByteIndex; iREXIndex < nBytes - 1LLU; iREXIndex++)
@@ -259,6 +259,7 @@ void OpCode_t::Clear()
     m_nOpBytes       = 0;
     m_nOperands      = 0;
     m_szOperatorName = nullptr;
+    m_iOpCodeFlag    = OpCodeFlag_t::OpCodeFlag_None;
 }
 
 
@@ -304,6 +305,8 @@ void OpCode_t::CopyOperandInfo(const OperatorInfo_t* pOperatorInfo)
     // Copy operands.
     for (int i = 0; i < Rules::MAX_OPERANDS; i++)
         m_operands[i] = pOperatorInfo->m_operands[i];
+
+    m_iOpCodeFlag = pOperatorInfo->m_iOpCodeFlag;
 }
 
 

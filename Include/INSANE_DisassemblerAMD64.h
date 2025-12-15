@@ -135,6 +135,15 @@ namespace InsaneDASM64
         OpCodeAddressingMethod_EBP,
         OpCodeAddressingMethod_RBP,
 
+        OpCodeAddressingMethod_R8,
+        OpCodeAddressingMethod_R9,
+        OpCodeAddressingMethod_R10,
+        OpCodeAddressingMethod_R11,
+        OpCodeAddressingMethod_R12,
+        OpCodeAddressingMethod_R13,
+        OpCodeAddressingMethod_R14,
+        OpCodeAddressingMethod_R15,
+
         OpCodeAddressingMethod_Count
     };
 
@@ -166,7 +175,60 @@ namespace InsaneDASM64
         OpCodeOperandType_y,
         OpCodeOperandType_z,
 
+        OpCodeOperandType_rel8, // expect a 8 bit data next to OpBytes, to be used in RIP + offset format.
+
         OpCodeOperantType_Count
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    enum OpCodeFlag_t : int16_t
+    {
+        OpCodeFlag_None = -1,
+
+        // Bits 5, 4, and 3 of ModR/M byte used as an opcode extension 
+        // (refer to Section A.4, “Opcode Extensions For One-Byte And Two-byte Opcodes”).
+        OpCodeFlag_1A   =  0, 
+
+        // Use the 0F0B opcode (UD2 instruction), the 0FB9H opcode (UD1 instruction), 
+        // the 0FFFH opcode (UD0 instruction), or the D6 opcode (UDB instruction) 
+        // when deliberately trying to generate an invalid opcode exception (#UD).
+        OpCodeFlag_1B,
+        
+        // Some instructions use the same two-byte opcode. 
+        // If the instruction has variations, or the opcode represents 
+        // different instructions, the ModR/M byte will be used to 
+        // differentiate the instruction. For the value of the ModR/M 
+        // byte needed to decode the instruction, see Table A-6. 
+        OpCodeFlag_1B, 
+
+        // The instruction is invalid or not encodable in 64-bit mode. 
+        // 40 through 4F (single-byte INC and DEC) are REX prefix combinations
+        // when in 64-bit mode (use FE/FF Grp 4 and 5 for INC and DEC).
+        OpCodeFlag_i64, 
+        
+        // Instruction is only available when in 64-bit mode.
+        OpCodeFlag_o64,
+
+        // When in 64-bit mode, instruction defaults to 64-bit operand size and 
+        // cannot encode 32-bit operand size.
+        OpCodeFlag_d64,
+
+        // The operand size is forced to a 64-bit operand size when in 
+        // 64-bit mode (prefixes that change operand size are 
+        // ignored for this instruction in 64-bit mode).
+        OpCodeFlag_f64,
+
+        // VEX form only exists. There is no legacy SSE form of the instruction. 
+        // For Integer GPR instructions it VEX prefix required.
+        OpCodeFlag_v,
+
+        // VEX128 & SSE forms only exist (no VEX256), when can’t be inferred from the data size.
+        OpCodeFlag_v1,
+
+        // Yes, these comments are copied form the manual :).
+        OpCodeFlag_Count
     };
 
 
@@ -207,10 +269,12 @@ namespace InsaneDASM64
 
 
         Byte            m_opBytes[Rules::MAX_OPBYTES];
-        int32_t         m_nOpBytes;
+        int32_t         m_nOpBytes       = 0;
+
+        OpCodeFlag_t    m_iOpCodeFlag    = OpCodeFlag_t::OpCodeFlag_None;
 
         OpCodeOperand_t m_operands[Rules::MAX_OPERANDS];
-        int32_t         m_nOperands = 0;
+        int32_t         m_nOperands      = 0;
 
         const char*     m_szOperatorName = nullptr;
     };

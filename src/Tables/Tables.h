@@ -41,10 +41,29 @@ namespace INSANE_DASM64_NAMESPACE
     {
         OperatorInfo_t()
         {
-            m_szOperatorName = nullptr;
-            m_nOperands      = 0;
+            m_szOperatorName  = nullptr;
+            m_nOperands       = 0;
+            m_bIsEscapeOpCode = false;
+            m_bIsValidOpCode  = false;
+            m_iOpCodeFlag     = OpCodeFlag_t::OpCodeFlag_None;
+        }
 
-            m_bIsEscapeOpCode = false; m_bIsValidOpCode = false;
+
+        inline void SetOperatorInfo(const char* szOperatorName, int nOperands, OpCodeFlag_t iOpCodeFlag = OpCodeFlag_None,
+            OpCodeOperand_t operand1 = OpCodeOperand_t(),
+            OpCodeOperand_t operand2 = OpCodeOperand_t(),
+            OpCodeOperand_t operand3 = OpCodeOperand_t(),
+            OpCodeOperand_t operand4 = OpCodeOperand_t())
+        {
+            m_szOperatorName = szOperatorName;
+
+            m_iOpCodeFlag    = iOpCodeFlag;
+
+            m_nOperands      = nOperands;
+            m_operands[0]    = operand1;
+            m_operands[1]    = operand2;
+            m_operands[2]    = operand3;
+            m_operands[3]    = operand4;
         }
 
 
@@ -58,6 +77,7 @@ namespace INSANE_DASM64_NAMESPACE
         // Operands...
         OpCodeOperand_t m_operands[Rules::MAX_OPERANDS];
         int32_t         m_nOperands       = 0;
+        OpCodeFlag_t    m_iOpCodeFlag     = OpCodeFlag_t::OpCodeFlag_None;
     };
 
 
@@ -82,9 +102,9 @@ namespace INSANE_DASM64_NAMESPACE
 
 
         InsaneDASM64::ErrorCode_t _InitializeOpCodeTable();
-        OperatorInfo_t            m_OpCodeTable1[0xFFLLU + 1LLU]; // 256 entries...
-        OperatorInfo_t            m_OpCodeTable2[0xFFLLU + 1LLU]; // 256 entries...
-        OperatorInfo_t            m_OpCodeTable3[0xFFLLU + 1LLU]; // 256 entries...
+        OperatorInfo_t            m_opCodeTable1[0xFFLLU + 1LLU]; // 256 entries...
+        OperatorInfo_t            m_opCodeTable2[0xFFLLU + 1LLU]; // 256 entries...
+        OperatorInfo_t            m_opCodeTable3[0xFFLLU + 1LLU]; // 256 entries...
         bool                      m_bOpCodeTableInit = false;
     };
     DEFINE_GLOBAL_OBJECT(g_tables, Tables_t)
