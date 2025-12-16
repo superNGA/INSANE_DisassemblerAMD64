@@ -89,24 +89,28 @@ namespace InsaneDASM64
         // Fixed register addressing methods...
         // RAX...
         OpCodeAddressingMethod_AL,
+        OpCodeAddressingMethod_AH,
         OpCodeAddressingMethod_AX,
         OpCodeAddressingMethod_EAX,
         OpCodeAddressingMethod_RAX,
 
         // RBX...
         OpCodeAddressingMethod_BL,
+        OpCodeAddressingMethod_BH,
         OpCodeAddressingMethod_BX,
         OpCodeAddressingMethod_EBX,
         OpCodeAddressingMethod_RBX,
 
         // RCX...
         OpCodeAddressingMethod_CL,
+        OpCodeAddressingMethod_CH,
         OpCodeAddressingMethod_CX,
         OpCodeAddressingMethod_ECX,
         OpCodeAddressingMethod_RCX,
 
         // RDX...
         OpCodeAddressingMethod_DL,
+        OpCodeAddressingMethod_DH,
         OpCodeAddressingMethod_DX,
         OpCodeAddressingMethod_EDX,
         OpCodeAddressingMethod_RDX,
