@@ -183,14 +183,14 @@ ErrorCode_t Tables_t::_InitializeOpCodeTable()
     
     // Row 0x40 to 0x47 is not encodable in 64 bit mode. ( REX bytes )
     
-    m_opCodeTable1[0x50].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R8,  OpCodeOperandType_Invalid));
-    m_opCodeTable1[0x51].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R9,  OpCodeOperandType_Invalid));
-    m_opCodeTable1[0x52].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R10, OpCodeOperandType_Invalid));
-    m_opCodeTable1[0x53].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R11, OpCodeOperandType_Invalid));
-    m_opCodeTable1[0x54].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R12, OpCodeOperandType_Invalid));
-    m_opCodeTable1[0x55].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R13, OpCodeOperandType_Invalid));
-    m_opCodeTable1[0x56].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R14, OpCodeOperandType_Invalid));
-    m_opCodeTable1[0x57].SetOperatorInfo("PUSH", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_R15, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x50].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x51].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x52].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x53].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x54].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x55].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x56].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x57].SetOperatorInfo("PUSH", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid));
 
 
     m_opCodeTable1[0x63].SetOperatorInfo("MOVSXD", 2, OpCodeFlag_t::OpCodeFlag_o64, OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v), OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
@@ -289,6 +289,143 @@ ErrorCode_t Tables_t::_InitializeOpCodeTable()
     
     m_opCodeTable1[0xF6].SetOperatorInfo("Unary Grp 3",  1, OpCodeFlag_t::OpCodeFlag_1A, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b));
     m_opCodeTable1[0xF7].SetOperatorInfo("Unary Grp 3",  1, OpCodeFlag_t::OpCodeFlag_1A, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
+
+
+    // Other half of table1
+    m_opCodeTable1[0x08].SetOperatorInfo("OR", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_b));
+    m_opCodeTable1[0x09].SetOperatorInfo("OR", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v));
+    m_opCodeTable1[0x0A].SetOperatorInfo("OR", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b));
+    m_opCodeTable1[0x0B].SetOperatorInfo("OR", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
+    m_opCodeTable1[0x0C].SetOperatorInfo("OR", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    m_opCodeTable1[0x0D].SetOperatorInfo("OR", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_z));
+
+    m_opCodeTable1[0x18].SetOperatorInfo("SBB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_b));
+    m_opCodeTable1[0x19].SetOperatorInfo("SBB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v));
+    m_opCodeTable1[0x1A].SetOperatorInfo("SBB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b));
+    m_opCodeTable1[0x1B].SetOperatorInfo("SBB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
+    m_opCodeTable1[0x1C].SetOperatorInfo("SBB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    m_opCodeTable1[0x1D].SetOperatorInfo("SBB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_z));
+
+    m_opCodeTable1[0x28].SetOperatorInfo("SUB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_b));
+    m_opCodeTable1[0x29].SetOperatorInfo("SUB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v));
+    m_opCodeTable1[0x2A].SetOperatorInfo("SUB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b));
+    m_opCodeTable1[0x2B].SetOperatorInfo("SUB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
+    m_opCodeTable1[0x2C].SetOperatorInfo("SUB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    m_opCodeTable1[0x2D].SetOperatorInfo("SUB", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_z));
+
+    m_opCodeTable1[0x38].SetOperatorInfo("CMP", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_b));
+    m_opCodeTable1[0x39].SetOperatorInfo("CMP", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v));
+    m_opCodeTable1[0x3A].SetOperatorInfo("CMP", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b));
+    m_opCodeTable1[0x3B].SetOperatorInfo("CMP", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
+    m_opCodeTable1[0x3C].SetOperatorInfo("CMP", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    m_opCodeTable1[0x3D].SetOperatorInfo("CMP", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_z));
+
+
+    m_opCodeTable1[0x58].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x59].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x5A].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x5B].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x5C].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x5D].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x5E].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x5F].SetOperatorInfo("POP", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid));
+
+
+    m_opCodeTable1[0x68].SetOperatorInfo("PUSH",             1, OpCodeFlag_t::OpCodeFlag_d64,  OpCodeOperand_t(OpCodeAddressingMethod_I,  OpCodeOperandType_z));
+    m_opCodeTable1[0x69].SetOperatorInfo("IMUL",             3, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,  OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_z));
+    m_opCodeTable1[0x6A].SetOperatorInfo("PUSH",             1, OpCodeFlag_t::OpCodeFlag_d64,  OpCodeOperand_t(OpCodeAddressingMethod_I,  OpCodeOperandType_b));
+    m_opCodeTable1[0x6B].SetOperatorInfo("IMUL",             3, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G,  OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_E,  OpCodeOperandType_v), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    m_opCodeTable1[0x6C].SetOperatorInfo("INS/INSB",         2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_Y,  OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x6D].SetOperatorInfo("INS/INSW/INSD",    2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_Y,  OpCodeOperandType_z),       OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x6E].SetOperatorInfo("OUTS/OUTSB",       2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_X,  OpCodeOperandType_b));
+    m_opCodeTable1[0x6F].SetOperatorInfo("OUTS/OUTSW/OUTSD", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_X,  OpCodeOperandType_z));
+
+
+    // Don't be fooled by the f64 flag on these instructions. These are short distance jump instructions...
+    m_opCodeTable1[0x78].SetOperatorInfo("S",     1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x79].SetOperatorInfo("NS",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x7A].SetOperatorInfo("P/PE",  1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x7B].SetOperatorInfo("NP/PO", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x7C].SetOperatorInfo("L/NGE", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x7D].SetOperatorInfo("NL/GE", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x7E].SetOperatorInfo("LE/NG", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x7F].SetOperatorInfo("NLE/G", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+
+
+    m_opCodeTable1[0x88].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b), OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_b));
+    m_opCodeTable1[0x89].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v), OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v));
+    m_opCodeTable1[0x8A].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_b), OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b));
+    m_opCodeTable1[0x8B].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v), OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
+    
+    m_opCodeTable1[0x8C].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v), OpCodeOperand_t(OpCodeAddressingMethod_S, OpCodeOperandType_w));
+    m_opCodeTable1[0x8D].SetOperatorInfo("LEA", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_v), OpCodeOperand_t(OpCodeAddressingMethod_M, OpCodeOperandType_Invalid));
+    
+    m_opCodeTable1[0x8E].SetOperatorInfo("LEA", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_S, OpCodeOperandType_w), OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_w));
+    m_opCodeTable1[0x8F].SetOperatorInfo("POP", 2, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_v));
+
+
+    m_opCodeTable1[0x98].SetOperatorInfo("CBW/CWDE/CDQE", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x99].SetOperatorInfo("CWD/CDQ/CQO", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x9A].SetOperatorInfo("CALL", 2, OpCodeFlag_t::OpCodeFlag_i64, OpCodeOperand_t(OpCodeAddressingMethod_A, OpCodeOperandType_p));
+    m_opCodeTable1[0x9B].SetOperatorInfo("FWAIT/WAIT", 0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0x9C].SetOperatorInfo("PUSHF/D/Q", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_F, OpCodeOperandType_v));
+    m_opCodeTable1[0x9D].SetOperatorInfo("POPF/D/Q", 1, OpCodeFlag_t::OpCodeFlag_d64, OpCodeOperand_t(OpCodeAddressingMethod_F, OpCodeOperandType_v));
+    
+    m_opCodeTable1[0x9E].SetOperatorInfo("SAHF", 1, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AH, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0x9F].SetOperatorInfo("LAHF", 1, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AH, OpCodeOperandType_Invalid));
+
+
+    m_opCodeTable1[0xA8].SetOperatorInfo("TEST", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    m_opCodeTable1[0xA9].SetOperatorInfo("TEST", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_z));
+
+    m_opCodeTable1[0xAA].SetOperatorInfo("STOS/B",     2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_Y,   OpCodeOperandType_b),       OpCodeOperand_t(OpCodeAddressingMethod_AL,  OpCodeOperandType_Invalid));
+    m_opCodeTable1[0xAB].SetOperatorInfo("STOS/W/D/Q", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_Y,   OpCodeOperandType_v),       OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0xAC].SetOperatorInfo("LODS/B",     2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_X,   OpCodeOperandType_b));
+    m_opCodeTable1[0xAD].SetOperatorInfo("LODS/W/D/Q", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_X,   OpCodeOperandType_v));
+    m_opCodeTable1[0xAE].SetOperatorInfo("SCAS/B",     2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_Y,   OpCodeOperandType_b));
+    m_opCodeTable1[0xAF].SetOperatorInfo("SCAS/W/D/Q", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_Y,   OpCodeOperandType_v));
+
+
+    m_opCodeTable1[0xB8].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RAX,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+    m_opCodeTable1[0xB9].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RCX,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+    m_opCodeTable1[0xBA].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RDX,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+    m_opCodeTable1[0xBB].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RBX,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+    m_opCodeTable1[0xBC].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RSP,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+    m_opCodeTable1[0xBD].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RBP,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+    m_opCodeTable1[0xBE].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RSI,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+    m_opCodeTable1[0xBF].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_RDI,  OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_v));
+
+
+    m_opCodeTable1[0xC8].SetOperatorInfo("ENTER",   2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_w), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    m_opCodeTable1[0xC9].SetOperatorInfo("LEAVE",   0, OpCodeFlag_t::OpCodeFlag_d64);
+    m_opCodeTable1[0xCA].SetOperatorInfo("far RET", 1, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_w));
+    m_opCodeTable1[0xCB].SetOperatorInfo("far RET", 0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0xCC].SetOperatorInfo("INT3",    0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0xCD].SetOperatorInfo("INT",     1, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
+    // 0xCE is invalid in 64 bit mode.
+    m_opCodeTable1[0xCF].SetOperatorInfo("IRET/D/Q", 0, OpCodeFlag_t::OpCodeFlag_None);
+
+
+    m_opCodeTable1[0xE8].SetOperatorInfo("near CALL", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_z));
+    m_opCodeTable1[0xE9].SetOperatorInfo("JMP near", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_z));
+    // 0xEA is invalid in 64 bit mode.
+    m_opCodeTable1[0xEB].SetOperatorInfo("JMP short", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b));
+    m_opCodeTable1[0xEC].SetOperatorInfo("IN", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0xED].SetOperatorInfo("IN", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid));
+    
+    m_opCodeTable1[0xEE].SetOperatorInfo("OUT", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid));
+    m_opCodeTable1[0xEF].SetOperatorInfo("OUT", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid), OpCodeOperand_t(OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid));
+
+
+    m_opCodeTable1[0xF8].SetOperatorInfo("CLC", 0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0xF9].SetOperatorInfo("STC", 0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0xFA].SetOperatorInfo("CLI", 0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0xFB].SetOperatorInfo("STI", 0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0xFC].SetOperatorInfo("CLD", 0, OpCodeFlag_t::OpCodeFlag_None);
+    m_opCodeTable1[0xFD].SetOperatorInfo("STD", 0, OpCodeFlag_t::OpCodeFlag_None);
+    
+    m_opCodeTable1[0xFE].SetOperatorInfo("Grp 4", 0, OpCodeFlag_t::OpCodeFlag_1A);
+    m_opCodeTable1[0xFF].SetOperatorInfo("Grp 5", 0, OpCodeFlag_t::OpCodeFlag_1A);
 
 
     return ErrorCode_t::ErrorCode_Success;

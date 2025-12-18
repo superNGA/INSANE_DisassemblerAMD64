@@ -64,6 +64,8 @@ namespace INSANE_DASM64_NAMESPACE
             m_operands[1]    = operand2;
             m_operands[2]    = operand3;
             m_operands[3]    = operand4;
+
+            m_bIsValidOpCode = true;
         }
 
 

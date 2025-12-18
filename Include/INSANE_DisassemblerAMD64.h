@@ -28,9 +28,11 @@ namespace InsaneDASM64
 ///////////////////////////////////////////////////////////////////////////
 namespace InsaneDASM64::Rules
 {
-    constexpr size_t MAX_OPERANDS      = 4llu;
-    constexpr size_t MAX_LEGACY_PREFIX = 4llu;
-    constexpr size_t MAX_OPBYTES       = 3llu;
+    constexpr size_t MAX_OPERANDS           = 4llu;
+    constexpr size_t MAX_LEGACY_PREFIX      = 4llu;
+    constexpr size_t MAX_OPBYTES            = 3llu;
+    constexpr size_t MAX_DISPLACEMENT_BYTES = 4llu;
+    constexpr size_t MAX_IMMEDIATE_BYTES    = 8llu;
 }
 
 
@@ -205,7 +207,7 @@ namespace InsaneDASM64
         // different instructions, the ModR/M byte will be used to 
         // differentiate the instruction. For the value of the ModR/M 
         // byte needed to decode the instruction, see Table A-6. 
-        OpCodeFlag_1B, 
+        OpCodeFlag_1C, 
 
         // The instruction is invalid or not encodable in 64-bit mode. 
         // 40 through 4F (single-byte INC and DEC) are REX prefix combinations
@@ -301,6 +303,36 @@ namespace InsaneDASM64
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+    struct Displacement_t
+    {
+        Displacement_t();
+        void Clear();
+
+        int  ByteCount() const;
+        bool PushByte(Byte iByte);
+
+        Byte m_iDispBytes[Rules::MAX_DISPLACEMENT_BYTES];
+        int  m_nDispBytes = 0;
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    struct Immediate_t
+    {
+        Immediate_t();
+        void Clear();
+
+        int  ByteCount() const;
+        bool PushByte(Byte iByte);
+
+        Byte m_immediateByte[Rules::MAX_IMMEDIATE_BYTES];
+        int  m_nImmediateBytes = 0;
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     struct Instruction_t
     {
 
@@ -321,6 +353,15 @@ namespace InsaneDASM64
         bool           m_bHasREX   = false;
         Byte           m_iREX      = 0x00;
         int32_t        m_iREXIndex = -1;
+
+        bool           m_bHasModRM = false;
+        Byte           m_iModRM    = 0x00;
+
+        bool           m_bHasSID   = false;
+        Byte           m_iSIB      = 0x00;
+
+        Displacement_t m_displacement;
+        Immediate_t    m_immediate;
     };
 
 
@@ -333,6 +374,10 @@ namespace InsaneDASM64
         ErrorCode_TooManyPefix,
         ErrorCode_REXNotPrecedingOpCode,
         ErrorCode_InvalidOpCode,
+        ErrorCode_NoOpByteFound,
+        ErrorCode_ModRMNotFound,
+        ErrorCode_SIDNotFound,
+        ErrorCode_NoImmediateFound,
         ErrorCode_Count
     };
 
