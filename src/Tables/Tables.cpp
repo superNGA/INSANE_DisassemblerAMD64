@@ -197,14 +197,14 @@ ErrorCode_t Tables_t::_InitializeOpCodeTable()
     
 
     // Don't be fooled by the f64 flag on these instructions. These are short distance jump instructions...
-    m_opCodeTable1[0x70].SetOperatorInfo("O",        1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x71].SetOperatorInfo("NO",       1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x72].SetOperatorInfo("B/NAE/C",  1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x73].SetOperatorInfo("NB/AE/NC", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x74].SetOperatorInfo("Z/E",      1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x75].SetOperatorInfo("NZ/NE",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x76].SetOperatorInfo("BE/NA",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x77].SetOperatorInfo("NBE/A",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x70].SetOperatorInfo("O",        1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x71].SetOperatorInfo("NO",       1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x72].SetOperatorInfo("B/NAE/C",  1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x73].SetOperatorInfo("NB/AE/NC", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x74].SetOperatorInfo("Z/E",      1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x75].SetOperatorInfo("NZ/NE",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x76].SetOperatorInfo("BE/NA",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x77].SetOperatorInfo("NBE/A",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
 
 
     m_opCodeTable1[0x80].SetOperatorInfo("Immd. Grp1", 2, OpCodeFlag_t::OpCodeFlag_1A, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b), OpCodeOperand_t(OpCodeAddressingMethod_I, OpCodeOperandType_b));
@@ -342,14 +342,14 @@ ErrorCode_t Tables_t::_InitializeOpCodeTable()
 
 
     // Don't be fooled by the f64 flag on these instructions. These are short distance jump instructions...
-    m_opCodeTable1[0x78].SetOperatorInfo("S",     1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x79].SetOperatorInfo("NS",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x7A].SetOperatorInfo("P/PE",  1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x7B].SetOperatorInfo("NP/PO", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x7C].SetOperatorInfo("L/NGE", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x7D].SetOperatorInfo("NL/GE", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x7E].SetOperatorInfo("LE/NG", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
-    m_opCodeTable1[0x7F].SetOperatorInfo("NLE/G", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_rel8));
+    m_opCodeTable1[0x78].SetOperatorInfo("S",     1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x79].SetOperatorInfo("NS",    1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x7A].SetOperatorInfo("P/PE",  1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x7B].SetOperatorInfo("NP/PO", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x7C].SetOperatorInfo("L/NGE", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x7D].SetOperatorInfo("NL/GE", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x7E].SetOperatorInfo("LE/NG", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
+    m_opCodeTable1[0x7F].SetOperatorInfo("NLE/G", 1, OpCodeFlag_t::OpCodeFlag_f64, OpCodeOperand_t(OpCodeAddressingMethod_J, OpCodeOperandType_b/*OpCodeOperandType_rel8*/));
 
 
     m_opCodeTable1[0x88].SetOperatorInfo("MOV", 2, OpCodeFlag_t::OpCodeFlag_None, OpCodeOperand_t(OpCodeAddressingMethod_E, OpCodeOperandType_b), OpCodeOperand_t(OpCodeAddressingMethod_G, OpCodeOperandType_b));

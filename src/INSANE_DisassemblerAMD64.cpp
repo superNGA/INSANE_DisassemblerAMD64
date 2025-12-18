@@ -19,6 +19,54 @@
 using namespace INSANE_DASM64_NAMESPACE;
 
 
+// Local Fn...
+static inline void PrintInstBytes(const std::vector<ParsedInst_t>& vecInput)
+{
+    for (const ParsedInst_t& inst : vecInput)
+    {
+        if(inst.m_opCode.OpByteCount() == 0)
+        {
+            printf("EMTPY INSTRUCTION!\n");
+            continue;
+        }
+
+
+        printf("[ %12s ]", inst.m_opCode.m_szOperatorName);
+
+        printf(" . ");
+        for (int i = 0; i < inst.m_legacyPrefix.m_nPrefix; i++)
+            printf("0x%02X ", inst.m_legacyPrefix.m_legacyPrefix[i]);
+
+        printf(" . ");
+        if(inst.m_bHasREX == true)
+            printf("0x%02X ", inst.m_iREX);
+
+        printf(" . ");
+        for (int i = 0; i < inst.m_opCode.OpByteCount(); i++)
+            printf("0x%02X ", inst.m_opCode.m_opBytes[i]);
+
+        printf(" . ");
+        if (inst.m_bHasModRM == true)
+            printf("0x%02X ", inst.m_iModRM);
+
+        printf(" . ");
+        if (inst.m_bHasSID == true)
+            printf("0x%02X ", inst.m_iSIB);
+
+        printf(" . ");
+        for (int i = 0; i < inst.m_displacement.ByteCount(); i++)
+            printf("0x%02X ", inst.m_displacement.m_iDispBytes[i]);
+
+        printf(" . ");
+        for (int i = 0; i < inst.m_immediate.ByteCount(); i++)
+            printf("0x%02X ", inst.m_immediate.m_immediateByte[i]);
+
+
+        printf("\n");
+    }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ErrorCode_t InsaneDASM64::Initialize()
@@ -45,7 +93,7 @@ ErrorCode_t InsaneDASM64::Disassemble(const std::vector<Byte>& vecInput, std::ve
     // Parse input...
     std::vector<ParsedInst_t> vecParsedInst; vecParsedInst.clear();
 
-    ErrorCode_t iParserErrorCode = Parse(vecInput, vecParsedInst);
+    ErrorCode_t iParserErrorCode = Parse(vecInput, vecParsedInst); /* Delete this */ PrintInstBytes(vecParsedInst);
     if (iParserErrorCode != ErrorCode_Success)
         return iParserErrorCode;
 
@@ -142,8 +190,8 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
 
                 // NOTE: +1 is cause, when 0 opbytes are stored we want to check in table1 ( one byte opcodes )
                 //        when opbytes are 1, we wanna look in table 2 ( two byte opcode ), and so on.
-                int                   iTableIndex = inst.m_opCode.OpByteCount() + 1;
-                Byte                  iOpByte = vecInput[iOpCodeByteIndex];
+                int                   iTableIndex   = inst.m_opCode.OpByteCount() + 1;
+                Byte                  iOpByte       = vecInput[iOpCodeByteIndex];
                 const OperatorInfo_t* pOperatorInfo = G::g_tables.GetOperatorInfo(iOpByte, iTableIndex); // We wanna look at the next table.
 
                 if (pOperatorInfo->m_bIsValidOpCode == false)
@@ -166,8 +214,8 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
 
 
             int iByteCaptured = inst.m_opCode.OpByteCount();
-            assert(iByteCaptured >= 0 && "Negative amount of bytes captured. This is unacceptable!!!");
-            iByteIndex += static_cast<size_t>(iByteCaptured);
+            assert(iByteCaptured > 0 && "Negative amount of bytes captured. This is unacceptable!!!");
+            iByteIndex += static_cast<size_t>(iByteCaptured) - 1LLU; // NOTE : ByteCaputured will be > 0 @ this point.
 
 
             printf("Stored OpCodes : ");
@@ -186,13 +234,13 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
                 {
 
                     // Is out of bound?
-                    if (iByteIndex >= nBytes)
+                    if (iByteIndex + 1 >= nBytes) // NOTE : iByteIndex is pointing at the last byte acknowledged / stored. + 1 to get byte we gonna store now.
                         return ErrorCode_t::ErrorCode_ModRMNotFound;
 
-                    // Store the ModRM and move the interator forward by one.
+                    // move the interator forward by one and Store the ModRM.
+                    iByteIndex++;
                     inst.m_bHasModRM = true;
                     inst.m_iModRM    = vecInput[iByteIndex];
-                    iByteIndex++;
 
                     printf("opcode [ 0x%02X ] -> modR/M [ 0x%02X ]\n", inst.m_opCode.m_opBytes[inst.m_opCode.m_nOpBytes - 1], inst.m_iModRM);
 
@@ -206,12 +254,12 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
 
             if (bSIDRequired == true)
             {
-                if (iByteIndex >= nBytes)
+                if (iByteIndex + 1 >= nBytes) // NOTE : iByteIndex is pointing at the last byte acknowledged / stored. + 1 to get byte we gonna store now.
                     return ErrorCode_t::ErrorCode_SIDNotFound;
 
-                inst.m_bHasSID = true;
-                inst.m_iSIB = vecInput[iByteIndex];
                 iByteIndex++;
+                inst.m_bHasSID = true;
+                inst.m_iSIB    = vecInput[iByteIndex];
 
                 printf("SID Byte captured : 0x%02X, for ModR/M : 0x%02X\n", inst.m_iSIB, inst.m_iModRM);
             }
@@ -238,23 +286,26 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
             }
 
 
-            for (int iDispByteIndex = 0; iDispByteIndex < iDisplacementSize && iDispByteIndex + iByteIndex < nBytes; iDispByteIndex++)
+            size_t iNextByteIndex = iByteIndex + 1LLU;
+            for (int iDispByteIndex = 0; iDispByteIndex < iDisplacementSize && iDispByteIndex + iNextByteIndex < nBytes; iDispByteIndex++)
             {
-                Byte iDispByte = vecInput[iDispByteIndex + iByteIndex];
+                Byte iDispByte = vecInput[iDispByteIndex + iNextByteIndex];
                 
                 inst.m_displacement.PushByte(iDispByte);
             }
-            iByteIndex += inst.m_displacement.ByteCount(); // Move iterator by whatever we have collected.
+            iByteIndex += inst.m_displacement.ByteCount(); // Move iterator by whatever we have collected. so we land at the last byte stored.
 
 
             // 6. Collect Immediate if required.
-            bool bRequireImmediate = false;
+            bool bRequireImmediate = false; OpCodeOperandType_t iOperandType = OpCodeOperandType_Invalid;
             for (int i = 0; i < inst.m_opCode.OperandCount(); i++)
             {
                 OpCodeOperand_t* pOperand = &inst.m_opCode.m_operands[i];
-                if (pOperand->m_iAddressingMethod == OpCodeAddressingMethod_I)
+                if (pOperand->m_iAddressingMethod == OpCodeAddressingMethod_I || pOperand->m_iAddressingMethod == OpCodeAddressingMethod_J)
                 {
-                    bRequireImmediate = true; break;
+                    iOperandType      = pOperand->m_iOperandType;
+                    bRequireImmediate = true;
+                    break;
                 }
             }
 
@@ -269,16 +320,44 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
                     if (inst.m_legacyPrefix.m_legacyPrefix[i] == 0x66)
                         iOperandSize = 2;
 
-                if (inst.m_iREX & 0b00001000)
-                    iOperandSize = 8;
+                if (inst.m_iREX & 0b00001000) // is REX.W == 1
+                    iOperandSize = 4;
 
 
-                for (int iImmediateIndex = 0; iImmediateIndex < iOperandSize && iImmediateIndex + iByteIndex < nBytes; iImmediateIndex++)
+                int iImmediateSize = 0;
+                switch (iOperandType)
                 {
-                    Byte iImmediateByte = vecInput[iImmediateIndex + iByteIndex];
+                case OpCodeOperandType_b: iImmediateSize = 1; break;
+                case OpCodeOperandType_w: iImmediateSize = 2; break;
+                case OpCodeOperandType_d: iImmediateSize = 4; break;
+                case OpCodeOperandType_q: iImmediateSize = 6; break;
+                case OpCodeOperandType_v: iImmediateSize = iOperandSize; break;
+                case OpCodeOperandType_z: iImmediateSize = iOperandSize; break;
+                default: break;
+                }
+
+                // Tha Magical Exception.
+                if ((inst.m_iREX & 0b00001000) != 0 && iOperandType == OpCodeOperandType_v && (inst.m_opCode.GetMostSignificantOpCode() >= 0xB8 || inst.m_opCode.GetMostSignificantOpCode() <= 0xBF))
+                    iImmediateSize = 8;
+
+
+                // We know there is an immediate, but the immediate size is deemed 0. We fucked up somewhere.
+                if (iImmediateSize == 0)
+                    return ErrorCode_t::ErrorCode_InvalidImmediateSize;
+
+
+                printf("///////////////// Immediate Size : %d ////////////////////\n", iImmediateSize);
+
+
+                // Consume immediate bytes...
+                size_t iNextByteIndex = iByteIndex + 1LLU;
+                for (int iImmediateIndex = 0; iImmediateIndex < iImmediateSize && iImmediateIndex + iNextByteIndex < nBytes; iImmediateIndex++)
+                {
+                    Byte iImmediateByte = vecInput[iImmediateIndex + iNextByteIndex];
                     inst.m_immediate.PushByte(iImmediateByte);
                 }
                 iByteIndex += inst.m_immediate.ByteCount();
+
 
                 // We tried to store immediate byte we were unable to store any immediate somehow.
                 if (inst.m_immediate.ByteCount() <= 0)
@@ -295,38 +374,6 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
             inst.Clear();
         }
     }
-
-
-
-    // Print stored instructions
-    for (ParsedInst_t& inst : vecOutput)
-    {
-        if (inst.m_opCode.OpByteCount() == 0)
-        {
-            printf("EMPTY!\n");
-            continue;
-        }
-
-
-        printf("%s", inst.m_opCode.m_szOperatorName);
-
-        if(inst.m_displacement.ByteCount() > 0)
-        {
-            printf(", DISP : ");
-            for (int i = 0; i < inst.m_displacement.ByteCount(); i++)
-                printf("0x%02X ", inst.m_displacement.m_iDispBytes[i]);
-        }
-
-        if (inst.m_immediate.ByteCount() > 0)
-        {
-            printf(", IMM : ");
-            for (int i = 0; i < inst.m_immediate.ByteCount(); i++)
-                printf("0x%02X ", inst.m_immediate.m_immediateByte[i]);
-        }
-
-        printf("\n");
-    }
-
 
 
     return ErrorCode_t::ErrorCode_Success;
@@ -356,6 +403,7 @@ const char* InsaneDASM64::GetErrorMessage(ErrorCode_t iErrorCode)
     case InsaneDASM64::ErrorCode_ModRMNotFound:         return "[ Insane Disassembler AMD64 ] A ModR/M byte was expected but was not found.";
     case InsaneDASM64::ErrorCode_SIDNotFound:           return "[ Insane Disassembler AMD64 ] A SID byte was expected but was not found.";
     case InsaneDASM64::ErrorCode_NoImmediateFound:      return "[ Insane Disassembler AMD64 ] An Immediate was expected, but was not found.";
+    case InsaneDASM64::ErrorCode_InvalidImmediateSize:  return "[ Insane Disassembler AMD64 ] Failed to determine immediate size for some instruction.";
     
     default: break;
     }
@@ -436,6 +484,18 @@ int OpCode_t::OpByteCount() const
 int OpCode_t::OperandCount() const
 {
     return m_nOperands;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+Byte OpCode_t::GetMostSignificantOpCode() const
+{
+    assert(m_nOpBytes > 0 && m_nOpBytes <= Rules::MAX_OPBYTES && "OpCode count is invalid!");
+    if (m_nOpBytes <= 0 || m_nOpBytes > Rules::MAX_OPBYTES)
+        return 0x00;
+
+    return m_opBytes[m_nOpBytes - 1];
 }
 
 

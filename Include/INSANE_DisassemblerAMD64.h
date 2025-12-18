@@ -266,6 +266,7 @@ namespace InsaneDASM64
         int OpByteCount () const;
         int OperandCount() const;
 
+        Byte GetMostSignificantOpCode() const;
         bool PushOpCode     (Byte iByte);
         void CopyOperandInfo(const OperatorInfo_t* pOperatorInfo);
 
@@ -378,6 +379,7 @@ namespace InsaneDASM64
         ErrorCode_ModRMNotFound,
         ErrorCode_SIDNotFound,
         ErrorCode_NoImmediateFound,
+        ErrorCode_InvalidImmediateSize,
         ErrorCode_Count
     };
 

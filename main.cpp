@@ -25,7 +25,7 @@ int main(void)
     };
 
 
-    std::vector<InsaneDASM64::Byte> vecInput =
+    std::vector<InsaneDASM64::Byte> vecInputRipOff =
     {
         0x48, 0xB8,                   // mov rax, imm64
         0x01, 0x02, 0x03, 0x04,
@@ -33,7 +33,7 @@ int main(void)
     };
 
 
-    std::vector<InsaneDASM64::Byte> vecInputAdvanced = {
+    std::vector<InsaneDASM64::Byte> vecInput = {
         // ---- simple, no ModRM ----
         0x90,                         // nop
         0xC3,                         // ret
