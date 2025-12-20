@@ -49,23 +49,23 @@ namespace INSANE_DASM64_NAMESPACE
         }
 
 
-        inline void SetOperatorInfo(const char* szOperatorName, int nOperands, OpCodeFlag_t iOpCodeFlag = OpCodeFlag_None,
-            OpCodeOperand_t operand1 = OpCodeOperand_t(),
-            OpCodeOperand_t operand2 = OpCodeOperand_t(),
-            OpCodeOperand_t operand3 = OpCodeOperand_t(),
-            OpCodeOperand_t operand4 = OpCodeOperand_t())
+        inline void SetOperatorInfo(
+            const char* szOperatorName, Byte iByte, int nOperands, bool bValidOpCode, bool bEscapeCode,
+            OpCodeOperand_t operand1,
+            OpCodeOperand_t operand2,
+            OpCodeOperand_t operand3,
+            OpCodeOperand_t operand4)
         {
-            m_szOperatorName = szOperatorName;
-
-            m_iOpCodeFlag    = iOpCodeFlag;
-
-            m_nOperands      = nOperands;
-            m_operands[0]    = operand1;
-            m_operands[1]    = operand2;
-            m_operands[2]    = operand3;
-            m_operands[3]    = operand4;
-
-            m_bIsValidOpCode = true;
+            m_szOperatorName  = szOperatorName;
+            iByte             = m_iByte;
+            m_bIsValidOpCode  = bValidOpCode;
+            m_bIsEscapeOpCode = bEscapeCode;
+            m_nOperands       = nOperands;
+            m_nOperands       = nOperands;
+            m_operands[0]     = operand1;
+            m_operands[1]     = operand2;
+            m_operands[2]     = operand3;
+            m_operands[3]     = operand4;
         }
 
 
