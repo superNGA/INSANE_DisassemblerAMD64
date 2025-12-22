@@ -195,7 +195,10 @@ ErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<P
                 const OperatorInfo_t* pOperatorInfo = G::g_tables.GetOperatorInfo(iOpByte, iTableIndex); // We wanna look at the next table.
 
                 if (pOperatorInfo->m_bIsValidOpCode == false)
+                {
+                    printf("Invalid opcode found : 0x%02X\n", iOpByte);
                     return ErrorCode_t::ErrorCode_InvalidOpCode;
+                }
 
                 inst.m_opCode.PushOpCode(iOpByte);
 

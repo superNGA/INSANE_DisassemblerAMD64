@@ -34,6 +34,29 @@ int main(void)
 
 
     std::vector<InsaneDASM64::Byte> vecInput = {
+        // ---- no ModR/M ----
+        0x0F, 0x05,             // SYSCALL
+        0x0F, 0x31,             // RDTSC
+        0x0F, 0xA2,             // CPUID
+
+        // ---- ModR/M required ----
+        0x0F, 0x01, 0xD0,       // XGETBV   (ModR/M = D0)
+        0x0F, 0xAF, 0xC1,       // IMUL r32, r/m32   (eax, ecx)
+        0x0F, 0xB6, 0xC1,       // MOVZX r32, r/m8   (eax, cl)
+        0x0F, 0xBE, 0xC1,       // MOVSX r32, r/m8   (eax, cl)
+
+        // ---- conditional moves ----
+        0x0F, 0x44, 0xC1,       // CMOVE r32, r/m32
+        0x0F, 0x45, 0xC1,       // CMOVNE r32, r/m32
+
+        // ---- setcc ----
+        0x0F, 0x94, 0xC1,       // SETE r/m8
+        0x0F, 0x95, 0xC1        // SETNE r/m8
+    };
+
+
+
+    std::vector<InsaneDASM64::Byte> vecInputOkOk = {
         // ---- simple, no ModRM ----
         0x90,                         // nop
         0xC3,                         // ret

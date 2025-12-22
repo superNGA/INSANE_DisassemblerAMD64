@@ -55,6 +55,19 @@ namespace InsaneDASM64::SpecialChars
 ///////////////////////////////////////////////////////////////////////////
 namespace InsaneDASM64
 {
+    enum Register_t : int16_t
+    {
+        Register_Invalid = -1,
+        Register_RAX     =  0,
+        Register_RCX     =  1,
+        Register_RDX     =  2,
+        Register_RBX     =  3,
+        Register_RSP     =  4,
+        Register_RBP     =  5,
+        Register_RSI     =  6,
+        Register_RDI     =  7
+    };
+
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
@@ -149,6 +162,11 @@ namespace InsaneDASM64
         OpCodeAddressingMethod_R13,
         OpCodeAddressingMethod_R14,
         OpCodeAddressingMethod_R15,
+
+
+        // GS & FS register used by some opcodes in 2 byte opcode table.
+        OpCodeAddressingMethod_GS,
+        OpCodeAddressingMethod_FS,
 
         OpCodeAddressingMethod_Count
     };
@@ -253,6 +271,120 @@ namespace InsaneDASM64
 
         OpCodeAddressingMethod_t m_iAddressingMethod;
         OpCodeOperandType_t      m_iOperandType;
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    enum OperandMode_t : int16_t
+    {
+        //      This is an enum holding all relevant operand addressing methods
+        // according to the coder's edition mazegen's .xml ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml ), 
+        // that is reference for this project.
+        // 
+        //      Geek's edition was giving me too much trouble.
+        // 
+
+
+        OperandMode_Invalid = -1,
+        OperandMode_ptr = 0,
+        OperandMode_m,
+        OperandMode_CRn,
+        OperandMode_DRn,
+        OperandMode_rm,
+        OperandMode_STim,
+        OperandMode_STi,
+        OperandMode_r,
+        OperandMode_imm,
+        OperandMode_rel,
+        OperandMode_m,
+        OperandMode_mm,
+        OperandMode_moffs,
+        OperandMode_mmm64,
+        OperandMode_Sreg,
+        OperandMode_TRn,
+        OperandMode_xmm,
+        OperandMode_xmmm,
+
+        OperandMode_Count
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    enum OperandType_t : int16_t
+    {
+        // All different relevant operand types from coder's edition of mazegen's .xml 
+        // ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml )
+        //
+
+
+        OperandType_Invalid = -1,
+
+        OperandType_8 = 0,        // [ GEEK : b          ] Byte, regardless of operand-size attribute.
+        OpearndType_16or32_twice, // [ GEEK : a          ] Two one-word operands in memory or two double-word operands in memory, depending on operand-size attribute (only BOUND).
+        OperandType_16_32,        // [ GEEK : v, vds, vs ] Word or doubleword, depending on operand-size attribute
+        OperandType_16_32_64,     // [ GEEK : vq         ] Word or doubleword, depending on operand-size attribute, or quadword, promoted by REX.W in 64-bit mode.
+        OperandType_16,           // [ GEEK : w          ] Word, regardless of operand-size attribute
+        OperandType_16int,        // [ GEEK : wi         ] Word-integer. Only x87 FPU instructions
+        OperandType_32,           // [ GEEK : d, ds      ] Doubleword, regardless of operand-size attribute.
+        OperandType_32int,        // [ GEEK : di         ] Doubleword-integer. Only x87 FPU instructions
+        OperandType_32_64,        // [ GEEK : dqp        ] Doubleword, or quadword, promoted by REX.W in 64-bit mode
+        OperandType_32real,       // [ GEEK : sr         ] Single-real. Only x87 FPU instructions
+        OperandType_64mmx,        // [ GEEK : pi         ] Quadword MMX technology data.
+        OperandType_64,           // [ GEEK : q, qp, psq ] Quadword, regardless of operand-size attribute
+        OperandType_64int,        // [ GEEK : qi         ] Qword-integer. Only x87 FPU instructions
+        OperandType_64real,       // [ GEEK : dr         ] Double-real. Only x87 FPU instructions
+        OperandType_64_16,        // [ GEEK : vq         ] Quadword (default) or word if operand-size prefix is used
+        OperandType_128pf,        // [ GEEK : ps         ] 128-bit packed single-precision floating-point data.
+        OperandType_80dec,        // [ GEEK : bcd        ] Packed-BCD. Only x87 FPU instructions
+        OperandType_128,          // [ GEEK : dq         ] Double-quadword, regardless of operand-size attribute
+        OperandType_14_28,        // [ GEEK : e          ] x87 FPU environment
+        OperandType_80real,       // [ GEEK : er         ] Extended-real. Only x87 FPU instructions
+        OperandType_p,            // [ GEEK : p          ] 32-bit or 48-bit pointer, depending on operand-size attribute ( most likely not used in 64 bit mode ?? )
+        OperandType_ptp,          // [ GEEK : ptp        ] 32-bit or 48-bit pointer, depending on operand-size attribute, or 80-bit far pointer, promoted by REX.W in 64-bit mode (for example, CALLF (FF /3)).
+        OperandType_94_108,       // [ GEEK : st         ] x87 FPU state
+        OperandType_512,          // [ GEEK : stx        ] x87 FPU and SIMD state
+
+        OperandType_Count
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    struct Operand_t
+    {
+        Operand_t();
+
+        // NOTE : Since it is observed that operands can be literals, registers and 
+        //        (Operand addressing method + operand type) combos. In order to acces the operand.
+
+        enum OperandCatagory_t : int16_t
+        {
+            OperandCatagory_Undefined = -1,
+            OperandCatagory_Literal, 
+            OperandCatagory_Register, 
+            OperandCatagory_Legacy // Legacy operands are operands with a addressing method & operand type
+        };
+
+
+        // Catagory & visibility of the operand.
+        OperandCatagory_t m_iOperandCatagory = OperandCatagory_Undefined;
+        bool              m_bHidden          = false; // Some operands are hidden.
+
+        
+        // In case of a literal operand. This will hold the literal ( int ).
+        int               m_iOperandLiteral  = 0;
+
+
+        // In case of a fixed register operand. This will hold the register as enum.
+        Register_t        m_iOperandRegister = Register_Invalid;
+
+
+        // In case of a OG / normal / legacy operand ( addressing mode + operand type ).
+        // These will hold it.
+        OperandMode_t     m_iOperandMode     = OperandMode_Invalid;
+        OperandType_t     m_iOperandType     = OperandType_Invalid;
     };
 
 

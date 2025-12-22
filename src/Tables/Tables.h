@@ -37,6 +37,56 @@ namespace INSANE_DASM64_NAMESPACE
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+    struct OpCodeDesc_t
+    {
+        OpCodeDesc_t()
+        {
+            m_iVarientKey   = VarientKey_None;
+            m_nVarients     = 0;
+            m_pVarients     = nullptr;
+            m_szName[0]     = '\0';
+            m_bIsValidCode  = false;
+            m_bIsEscapeCode = false;
+            m_iByte         = 0x00;
+            m_nOperands     = 0;
+        }
+
+
+        // NOTE :
+        //      VarientKey tells us, if this operands has others varients or not ( imagine nested opcodes ).
+        // And how to access the other varients. Pointer to all varients are stored inside the m_pVarients ( array ).
+        // 
+        //      Ex. VarientKey_ModRM_REG, means m_pVarients[modrm.REG] will gives us all different 
+        // varients of this instruction.
+        enum VarientKey_t : int
+        {
+            VarientKey_None = -1,
+            VarientKey_ModRM_REG = 0,
+            VarientKey_ModRM_RM,
+            VarientKey_ModRM_MOD,
+            VarientKey_LegacyPrefix, // Run legacy prefix through the look-up-table before using as index in m_pVarients.
+        };
+
+
+        // Braching info, to reach varients of this opcode.
+        VarientKey_t  m_iVarientKey   = VarientKey_None;
+        int           m_nVarients     = 0;
+        OpCodeDesc_t* m_pVarients     = nullptr;
+
+        // OpCode's info...
+        char          m_szName[0x10];
+        bool          m_bIsValidCode  = false;
+        bool          m_bIsEscapeCode = false;
+        Byte          m_iByte         = 0x00;
+
+        // Operands...
+        Operand_t     m_operands[Rules::MAX_OPERANDS];
+        int           m_nOperands     = 0;
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     struct OperatorInfo_t
     {
         OperatorInfo_t()
@@ -104,6 +154,8 @@ namespace INSANE_DASM64_NAMESPACE
 
 
         InsaneDASM64::ErrorCode_t _InitializeOpCodeTable();
+        void                      InitOneByteOpCodeTable();
+        void                      InitTwoByteOpCodeTable();
         OperatorInfo_t            m_opCodeTable1[0xFFLLU + 1LLU]; // 256 entries...
         OperatorInfo_t            m_opCodeTable2[0xFFLLU + 1LLU]; // 256 entries...
         OperatorInfo_t            m_opCodeTable3[0xFFLLU + 1LLU]; // 256 entries...
