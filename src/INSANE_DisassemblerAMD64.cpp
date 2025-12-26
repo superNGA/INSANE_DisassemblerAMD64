@@ -678,3 +678,12 @@ void ParsedInst_t::Clear()
     m_displacement.Clear();
     m_immediate.Clear();
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void Operand_t::Reset()
+{
+    m_iOperandCatagory = OperandCatagory_Undefined;
+    m_bHidden          = false;
+}

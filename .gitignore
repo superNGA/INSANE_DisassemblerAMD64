@@ -1,3 +1,7 @@
 out/
 .vs/
 CMakePresets.json
+tinyxml2.h
+tinyxml2.cpp
+x86reference.xml
+TableGenerator.exe

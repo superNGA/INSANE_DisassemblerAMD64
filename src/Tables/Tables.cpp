@@ -8,10 +8,115 @@
 //-------------------------------------------------------------------------
 #include "Tables.h"
 #include "assert.h"
+#include <iostream> // TODO : Don't use this shit, make something better & and debug only!.
 
 
 // NOTE : Mind this.
 using namespace INSANE_DASM64_NAMESPACE;
+
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void OpCodeDesc_t::Init(
+    const char* szName, bool bValidOpcd, bool bEscapeOpcd, bool bModrmRequired, Byte iByte, 
+    int nOperands, Operand_t operand1, Operand_t operand2, Operand_t operand3, Operand_t operand4)
+{
+    strcpy_s(m_szName, sizeof(m_szName), szName);
+    m_bIsValidCode   = bValidOpcd;
+    m_bIsEscapeCode  = bEscapeOpcd;
+    m_bModrmRequired = bModrmRequired;
+    m_iByte          = iByte;
+    m_nOperands      = nOperands;
+    m_operands[0]    = operand1;
+    m_operands[1]    = operand2;
+    m_operands[2]    = operand3;
+    m_operands[3]    = operand4;
+
+    // At init, these default to "No varients"
+    m_iVarientType    = VarientKey_None;
+    m_nVarients      = 0;
+    m_pVarients      = nullptr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+size_t OpCodeDesc_t::GetMaxVarients(VarientType_t iVarientType)
+{
+    switch (iVarientType)
+    {
+    case OpCodeDesc_t::VarientKey_ModRM_REG:    return MAX_REG_VARIENTS;
+    case OpCodeDesc_t::VarientKey_ModRM_RM:     return MAX_RM_VARIENTS;
+    case OpCodeDesc_t::VarientKey_ModRM_MOD:    return MAX_MOD_VARIENTS;
+    case OpCodeDesc_t::VarientKey_LegacyPrefix: return MAX_LEGACY_PREFIX_VARIENTS;
+    
+    default: break;
+    }
+
+    return 0llu;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
+{
+    // Must be set to "No varient", else mem leak
+    assert(m_iVarientType == VarientType_t::VarientKey_None && m_pVarients == nullptr && "Varient type is already set to some something!");
+    if (m_iVarientType != VarientType_t::VarientKey_None || m_pVarients != nullptr)
+    {
+        printf("Object is already initialized for varient type [ %d ]\n", m_iVarientType);
+        return false;
+    }
+
+
+    m_pVarients = reinterpret_cast<OpCodeDesc_t**>(malloc(GetMaxVarients(iVarientType) * sizeof(void*)));
+    
+
+    // Just in case malloc fails.
+    if(m_pVarients == nullptr)
+    {
+        assert(m_pVarients != nullptr && "Failed memory allocation to varient array!");
+        std::cout << "Failed memory allocation to varient array!\n";
+        return false;
+    }
+
+
+    return true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool OpCodeDesc_t::RegisterVarient(VarientType_t iVarientType, OpCodeDesc_t* pVarient, int iKey, bool bComplain)
+{
+    // Varient array must be initialized.
+    assert(m_pVarients != nullptr && "Varient array is not initialized, but trying to register varient!");
+    if (m_pVarients == nullptr)
+        return false;
+
+
+    // Varient type must match.
+    assert(iVarientType == m_iVarientType && "Trying to insert varient of different types.");
+    if (m_iVarientType != iVarientType)
+        return false;
+
+
+    // Make sure that key is valid.
+    if (size_t iMaxKeyValue = GetMaxVarients(iVarientType); iKey < 0 && iKey >= iMaxKeyValue)
+        return false;
+
+
+    // Complain, if space is already occupied.
+    if (m_pVarients[iKey] != nullptr && bComplain == true)
+        printf("A varient { %p } is already present @ index [ %d ]", m_pVarients[iKey], iKey);
+
+
+    m_pVarients[iKey] = pVarient;
+    return true;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -69,6 +174,31 @@ const OperatorInfo_t* Tables_t::GetOperatorInfo(Byte iOpCode, int iTableIndex) c
     }
 
     return nullptr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+int Tables_t::GetLegacyPrefixIndex(Byte iByte)
+{
+    switch (iByte)
+    {
+    case 0xF0: return 1;
+    case 0xF2: return 2;
+    case 0xF3: return 3;
+    case 0x2E: return 4;
+    case 0x36: return 5;
+    case 0x3E: return 6;
+    case 0x26: return 7;
+    case 0x64: return 8;
+    case 0x65: return 9;
+    case 0x66: return 10;
+    case 0x67: return 11;
+    
+    default: break;
+    }
+
+    return 0;
 }
 
 

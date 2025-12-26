@@ -33,6 +33,7 @@ namespace InsaneDASM64::Rules
     constexpr size_t MAX_OPBYTES            = 3llu;
     constexpr size_t MAX_DISPLACEMENT_BYTES = 4llu;
     constexpr size_t MAX_IMMEDIATE_BYTES    = 8llu;
+    constexpr size_t MAX_INST_NAME_SIZE     = 0x10llu;
 }
 
 
@@ -288,7 +289,6 @@ namespace InsaneDASM64
 
         OperandMode_Invalid = -1,
         OperandMode_ptr = 0,
-        OperandMode_m,
         OperandMode_CRn,
         OperandMode_DRn,
         OperandMode_rm,
@@ -324,7 +324,7 @@ namespace InsaneDASM64
         OperandType_8 = 0,        // [ GEEK : b          ] Byte, regardless of operand-size attribute.
         OpearndType_16or32_twice, // [ GEEK : a          ] Two one-word operands in memory or two double-word operands in memory, depending on operand-size attribute (only BOUND).
         OperandType_16_32,        // [ GEEK : v, vds, vs ] Word or doubleword, depending on operand-size attribute
-        OperandType_16_32_64,     // [ GEEK : vq         ] Word or doubleword, depending on operand-size attribute, or quadword, promoted by REX.W in 64-bit mode.
+        OperandType_16_32_64,     // [ GEEK : vqp        ] Word or doubleword, depending on operand-size attribute, or quadword, promoted by REX.W in 64-bit mode.
         OperandType_16,           // [ GEEK : w          ] Word, regardless of operand-size attribute
         OperandType_16int,        // [ GEEK : wi         ] Word-integer. Only x87 FPU instructions
         OperandType_32,           // [ GEEK : d, ds      ] Doubleword, regardless of operand-size attribute.
@@ -354,7 +354,8 @@ namespace InsaneDASM64
     ///////////////////////////////////////////////////////////////////////////
     struct Operand_t
     {
-        Operand_t();
+        Operand_t() { Reset(); }
+        void Reset();
 
         // NOTE : Since it is observed that operands can be literals, registers and 
         //        (Operand addressing method + operand type) combos. In order to acces the operand.

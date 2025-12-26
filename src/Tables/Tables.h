@@ -39,49 +39,72 @@ namespace INSANE_DASM64_NAMESPACE
     ///////////////////////////////////////////////////////////////////////////
     struct OpCodeDesc_t
     {
-        OpCodeDesc_t()
+        OpCodeDesc_t() { Reset(); }
+
+        inline void Reset()
         {
-            m_iVarientKey   = VarientKey_None;
-            m_nVarients     = 0;
-            m_pVarients     = nullptr;
-            m_szName[0]     = '\0';
-            m_bIsValidCode  = false;
-            m_bIsEscapeCode = false;
-            m_iByte         = 0x00;
-            m_nOperands     = 0;
+            m_iVarientType    = VarientKey_None;
+            m_nVarients      = 0;
+            m_pVarients      = nullptr;
+            m_szName[0]      = '\0';
+            m_bIsValidCode   = false;
+            m_bIsEscapeCode  = false;
+            m_bModrmRequired = false;
+            m_iByte          = 0x00;
+            m_nOperands      = 0;
         }
 
 
         // NOTE :
-        //      VarientKey tells us, if this operands has others varients or not ( imagine nested opcodes ).
+        //      VarientKey tells us, if this operands has others varients or not ( as in the case with 0x0f 0x00, 0x0f 0x01, etc... ).
         // And how to access the other varients. Pointer to all varients are stored inside the m_pVarients ( array ).
         // 
         //      Ex. VarientKey_ModRM_REG, means m_pVarients[modrm.REG] will gives us all different 
         // varients of this instruction.
-        enum VarientKey_t : int
+        enum VarientType_t : int
         {
             VarientKey_None = -1,
             VarientKey_ModRM_REG = 0,
             VarientKey_ModRM_RM,
             VarientKey_ModRM_MOD,
-            VarientKey_LegacyPrefix, // Run legacy prefix through the look-up-table before using as index in m_pVarients.
+            VarientKey_LegacyPrefix, // NOTE : Run legacy prefix through "the" look-up-table before using as index in m_pVarients.
         };
 
 
+        // Max varients that can be stored in each of the varient types...
+        const size_t MAX_REG_VARIENTS           = 8llu;
+        const size_t MAX_MOD_VARIENTS           = 4llu;
+        const size_t MAX_RM_VARIENTS            = 8llu;
+        const size_t MAX_LEGACY_PREFIX_VARIENTS = 12llu;
+
+        size_t GetMaxVarients(VarientType_t iVarientType);
+
+
+        void Init(
+            const char* szName, bool bValidOpcd, bool bEscapeOpcd, bool bModrmRequired, Byte iByte, 
+            int nOperands, Operand_t operand1, Operand_t operand2, Operand_t operand3, Operand_t operand4);
+
+
+        // Initialize struct for one varient type ( now it doesn't hold any instruction by itself, just varient array. )
+        bool InitVarientType(VarientType_t iVarientType);
+        bool RegisterVarient(VarientType_t iVarientType, OpCodeDesc_t* pVarient, int iKey, bool bComplain = true);
+
+
         // Braching info, to reach varients of this opcode.
-        VarientKey_t  m_iVarientKey   = VarientKey_None;
-        int           m_nVarients     = 0;
-        OpCodeDesc_t* m_pVarients     = nullptr;
+        VarientType_t  m_iVarientType   = VarientKey_None;
+        int            m_nVarients      = 0;
+        OpCodeDesc_t** m_pVarients      = nullptr;
 
         // OpCode's info...
-        char          m_szName[0x10];
-        bool          m_bIsValidCode  = false;
-        bool          m_bIsEscapeCode = false;
-        Byte          m_iByte         = 0x00;
+        char           m_szName[Rules::MAX_INST_NAME_SIZE];
+        bool           m_bIsValidCode   = false;
+        bool           m_bIsEscapeCode  = false;
+        bool           m_bModrmRequired = false;
+        Byte           m_iByte          = 0x00;
 
         // Operands...
-        Operand_t     m_operands[Rules::MAX_OPERANDS];
-        int           m_nOperands     = 0;
+        Operand_t      m_operands[Rules::MAX_OPERANDS];
+        int            m_nOperands      = 0;
     };
 
 
@@ -145,6 +168,10 @@ namespace INSANE_DASM64_NAMESPACE
 
         uint16_t                  GetInstType    (Byte iOpCode) const;
         const OperatorInfo_t*     GetOperatorInfo(Byte iOpCode, int iTableIndex) const;
+
+        // To associate all leagacy prefix with simple consecutive numbers.
+        // Returns 0 on default case.
+        int GetLegacyPrefixIndex(Byte iByte);
 
 
     private:
