@@ -1,3 +1,13 @@
+// TODO Document this bullshit.
+// BY : INSANE december of 2025
+
+
+//x TODO: Store Bytes in each entry.
+//x TODO: Don't print invalid entries.
+//x TODO 0x0f 0x01 ain't getting registerd / printed.
+// TODO level1 explicit nomem fix
+
+
 #include <unordered_map>
 #include <vector>
 #include <iostream>
@@ -79,6 +89,32 @@ std::unordered_map<std::string, std::string> g_mapOperandTypeLinker =
     {"v", "16_32"}, {"vds", "16_32"}, {"vs", "16_32"}, {"vqp", "16_32_64"},
     {"vq", "64_16"},
     {"w", "16"}, {"wi", "16int"}
+};
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+#define LEVEL1                "vecLevel1"
+#define LEVEL1_NOMEM          "vecLevel1NoMem"
+#define LEVEL1_PREFIX         "vecLevel1Prefix"
+#define LEVEL2_MEM            "vecLevel2Mem"
+#define LEVEL2_MEM_PREFIX     "vecLevel2MemPrefix"
+#define LEVEL2_NOMEM          "vecLevel2NoMem"
+#define LEVEL2_SECOPCD        "vecLevel2SecOpcd"
+#define LEVEL2_SECOPCD_PREFIX "vecLevel2SecOpcdPrefix"
+
+struct CollisionSolution_t
+{
+    int         m_iByte       = 0x00;
+    int         m_iTableID    = -1;
+    EntryID_t   m_iEntryID    = {0}; // ID of entry, to consider in the index.
+    int         m_iEntryIndex = 0;   // Index of the entry ( with same IDs ) to store.
+    const char* m_szGroupName = nullptr;
+};
+
+std::unordered_map<Byte, CollisionSolution_t> g_collisionSolutionTable =
+{
+    {0x20, {0x20, 2, 3, LEVEL1}}
 };
 
 
@@ -174,17 +210,20 @@ void        ToUpperInPlace       (std::string& szInput);
 int         HexStringToInt       (const char* szInput, int iSize);
 void        ExtractSquareBrackets(std::string& szInput);
 XMLElement* FindChildRecurse     (XMLElement* pParent, const char* szChildName);
-void        RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode, const char* szGroupName = nullptr);
+void        RemoveInvalidEntries (std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode, int iTableID, const char* szGroupName = nullptr);
 
 // Actual parsing logic...
-void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput);
+void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTableID);
 void ElementToEntry(XMLElement* pElem, Entry_t* pDest, Byte iByte, bool bPrefix, bool bSecOpcd, bool bOpcdExt);
 void CombineEntries(Byte iByte, Entry_t* pOutput,
-    const std::vector<XMLElement*>& vecLevel1,
-    const std::vector<XMLElement*>& vecLevel1Prefix, const std::vector<XMLElement*>& vecLevel2Mem,
+    const std::vector<XMLElement*>& vecLevel1, 
+    const std::vector<XMLElement*>& vecLevel1NoMem,
+    const std::vector<XMLElement*>& vecLevel1Prefix, 
+    const std::vector<XMLElement*>& vecLevel2Mem,
     const std::vector<XMLElement*>& vecLevel2MemPrefix,
     const std::vector<XMLElement*>& vecLevel2NoMem,
-    const std::vector<XMLElement*>& vecLevel2SecOpcd, const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix);
+    const std::vector<XMLElement*>& vecLevel2SecOpcd, 
+    const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix);
 void DumpEntryInfo(std::vector<Entry_t*>& vecEntries);
 
 
@@ -209,15 +248,15 @@ int main(void)
 
 
     // One-byte opcodes...
-    // std::vector<Entry_t*> vecOneByteOpCodes; 
-    // vecOneByteOpCodes.reserve(0xFF); vecOneByteOpCodes.clear(); 
-    // CollectEntires(pRootElem->FirstChildElement("one-byte"), vecOneByteOpCodes);
+    std::vector<Entry_t*> vecOneByteOpCodes; 
+    vecOneByteOpCodes.reserve(0xFF); vecOneByteOpCodes.clear(); 
+    CollectEntires(pRootElem->FirstChildElement("one-byte"), vecOneByteOpCodes, 1);
     
 
     // Two byte opcodes...
     std::vector<Entry_t*> vecTwoByteOpCodes; 
     vecTwoByteOpCodes.reserve(0xFF); vecTwoByteOpCodes.clear(); 
-    CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes);
+    CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes, 2);
 
     
     // DumpEntryInfo(vecOneByteOpCodes);
@@ -230,7 +269,7 @@ int main(void)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput)
+void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTableID)
 {
     std::vector<XMLElement*> vecTempEntries; vecTempEntries.clear();
 
@@ -258,6 +297,9 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput)
         
         // Holds all level1 entries, which don't have any prefix tag.
         std::vector<XMLElement*> vecLevel1;              vecLevel1.clear();
+
+        // Holds all level1 entries, which has attribute mode="mem" or "nomem" in the <entry> tag itself.
+        std::vector<XMLElement*> vecLevel1NoMem;         vecLevel1NoMem.clear();
 
         // Holds any level1 entries, which have prefix tags.
         std::vector<XMLElement*> vecLevel1Prefix;        vecLevel1Prefix.clear();
@@ -361,8 +403,8 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput)
             if (bOnlyMem == true || bOnlyNoMem == true)
             {
                 assert(bMem == false && bNoMem == false && "Both <syntax> tag and <entry> tag have mem/nomem property.");
-                assert(bSecOpcd     == false            && "Both <syntax> tag and <entry> tag have mem/nomem property.");
-                assert(bPrefixSplit == false            && "Both <syntax> tag and <entry> tag have mem/nomem property.");
+                assert(bSecOpcd     == false            && "SecOpcd found when <entry> has mem/nomem property");
+                assert(bPrefixSplit == false            && "Prefix  found when <entry> has mem/nomem property");
             }
 
 
@@ -373,14 +415,39 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput)
             // Sorting Entries and storing under correct catagory.
             if (bOpcdExt == false) 
             {
-                if (bPrefixSplit == true && bOnlyMem == false && bOnlyNoMem == false) 
+                if (bPrefixSplit == true)
                 {
+                    assert(bOnlyMem == false && bOnlyNoMem == false && "Prefix, Mem and NoMem can't go together.!");
                     vecLevel1Prefix.push_back(pEntry);
                 }
-                else 
+                else
                 {
-                    vecLevel1.push_back(pEntry);
+                    // Prefix : false, OnlyMem : false, OnlyNoMem : false
+                    // That means, either simple entry or has multiple syntax blocks ( one mem and one nomem )
+                    //? We are not bothering with varients within an entry, we only care about entry varients.
+                    if (bOnlyNoMem == false)
+                    {
+                        vecLevel1.push_back(pEntry);
+                    }
+                    else if (bOnlyNoMem == true && bOnlyMem == false)
+                    {
+                        vecLevel1NoMem.push_back(pEntry);
+                    }
+                    else
+                    {
+                        // we shouldn't ever reach this brach.
+                        assert(false && "Fucked up somewhere for level1. Reached unreachable branch.");
+                        printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+                    }
                 }
+                // if (bPrefixSplit == true && bOnlyMem == false && bOnlyNoMem == false) 
+                // {
+                //     vecLevel1Prefix.push_back(pEntry);
+                // }
+                // else 
+                // {
+                //     vecLevel1.push_back(pEntry);
+                // }
             }
             else 
             {
@@ -437,7 +504,7 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput)
         // Size check, just in case we fuck up somewhere.
         {
             size_t iSizeCombined = 
-                vecLevel1.size()        + vecLevel1Prefix.size() +
+                vecLevel1.size()        + vecLevel1Prefix.size() + vecLevel1NoMem.size() +
                 vecLevel2Mem.size()     + vecLevel2MemPrefix.size() + vecLevel2NoMem.size() +
                 vecLevel2SecOpcd.size() + vecLevel2SecOpcdPrefix.size();
 
@@ -451,23 +518,27 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput)
         }
 
 
-        RemoveInvalidEntries(vecLevel1,              iByte, "vecLevel1");
-        RemoveInvalidEntries(vecLevel1Prefix,        iByte, "vecLevel1Prefix");
-        RemoveInvalidEntries(vecLevel2Mem,           iByte, "vecLevel2Mem");
-        RemoveInvalidEntries(vecLevel2MemPrefix,     iByte, "vecLevel2MemPrefix");
-        RemoveInvalidEntries(vecLevel2NoMem,         iByte, "vecLevel2NoMem");
-        RemoveInvalidEntries(vecLevel2SecOpcd,       iByte, "vecLevel2SecOpcd");
-        RemoveInvalidEntries(vecLevel2SecOpcdPrefix, iByte, "vecLevel2SecOpcdPrefix");
+        RemoveInvalidEntries(vecLevel1,              iByte, iTableID, LEVEL1);
+        RemoveInvalidEntries(vecLevel1NoMem,         iByte, iTableID, LEVEL1_NOMEM);
+        RemoveInvalidEntries(vecLevel1Prefix,        iByte, iTableID, LEVEL1_PREFIX);
+        RemoveInvalidEntries(vecLevel2Mem,           iByte, iTableID, LEVEL2_MEM);
+        RemoveInvalidEntries(vecLevel2MemPrefix,     iByte, iTableID, LEVEL2_MEM_PREFIX);
+        RemoveInvalidEntries(vecLevel2NoMem,         iByte, iTableID, LEVEL2_NOMEM);
+        RemoveInvalidEntries(vecLevel2SecOpcd,       iByte, iTableID, LEVEL2_SECOPCD);
+        RemoveInvalidEntries(vecLevel2SecOpcdPrefix, iByte, iTableID, LEVEL2_SECOPCD_PREFIX);
 
-        size_t iSizeCombined = vecLevel1.size() + vecLevel1Prefix.size() + vecLevel2Mem.size() + 
-            vecLevel2MemPrefix.size() + vecLevel2NoMem.size() + vecLevel2SecOpcd.size() + vecLevel2SecOpcdPrefix.size();
+        size_t iSizeCombined = 
+            vecLevel1.size()          + vecLevel1Prefix.size() + vecLevel2Mem.size()     + vecLevel1NoMem.size() +
+            vecLevel2MemPrefix.size() + vecLevel2NoMem.size()  + vecLevel2SecOpcd.size() + vecLevel2SecOpcdPrefix.size();
         iSizeCombined -= static_cast<size_t>(iDuplicates);
 
         printf("Merging %llu Entry for \"0x%02X\"...\n", iSizeCombined, iByte);
 
-        Entry_t* pEntry = new Entry_t();
-        pEntry->m_iByte = iByte; // Gotta store it somewhere :(
-        CombineEntries(iByte, pEntry, vecLevel1, vecLevel1Prefix, vecLevel2Mem, vecLevel2MemPrefix, vecLevel2NoMem, vecLevel2SecOpcd, vecLevel2SecOpcdPrefix);
+
+        // Now combine all entries into one tree like structure.
+        Entry_t* pEntry = new Entry_t(); // This will be the head of the tree.
+        pEntry->m_iByte = iByte;
+        CombineEntries(iByte, pEntry, vecLevel1, vecLevel1NoMem, vecLevel1Prefix, vecLevel2Mem, vecLevel2MemPrefix, vecLevel2NoMem, vecLevel2SecOpcd, vecLevel2SecOpcdPrefix);
         vecOutput.push_back(pEntry);
     }
     std::cout << std::endl;
@@ -526,7 +597,7 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
                 // Ignore operands with "displayed" set to no.
                 if (const char* szDisplayed = pOperand->Attribute("displayed"); szDisplayed != nullptr && std::string(szDisplayed) == std::string("no"))
                 {
-                    printf(YELLOW "Skipping hidden operand!\n" RESET);
+                    printf(YELLOW "Skipping hidden operand...\n" RESET);
                     continue;
                 }
 
@@ -601,20 +672,17 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>& vecLevel1, const std::vector<XMLElement*>& vecLevel1Prefix, const std::vector<XMLElement*>& vecLevel2Mem, const std::vector<XMLElement*>& vecLevel2MemPrefix, const std::vector<XMLElement*>& vecLevel2NoMem, const std::vector<XMLElement*>& vecLevel2SecOpcd, const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix)
+void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>& vecLevel1, const std::vector<XMLElement*>& vecLevel1NoMem, const std::vector<XMLElement*>& vecLevel1Prefix, const std::vector<XMLElement*>& vecLevel2Mem, const std::vector<XMLElement*>& vecLevel2MemPrefix, const std::vector<XMLElement*>& vecLevel2NoMem, const std::vector<XMLElement*>& vecLevel2SecOpcd, const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix)
 {
-    //x TODO: Store Bytes in each entry.
-    //x TODO: Don't print invalid entries.
-    // TODO 0x0f 0x01 ain't getting registerd / printed.
-
-
     pOutput->Clear();
     pOutput->m_iByte = iByte; // Common in all entries.
 
 
-    size_t iLevel1Size = vecLevel1.size() + vecLevel1Prefix.size();
+    size_t iLevel1Size = vecLevel1.size() + vecLevel1Prefix.size() + vecLevel1NoMem.size();
     size_t iLevel2Size = vecLevel2Mem.size() + vecLevel2MemPrefix.size() + vecLevel2NoMem.size() + vecLevel2SecOpcd.size() + vecLevel2SecOpcdPrefix.size();
 
+    printf("%llu, NoMem : %llu\n", vecLevel1.size(), vecLevel1NoMem.size());
+    assert((vecLevel1.empty() == true && vecLevel1NoMem.empty() == false) == false && "vecLevel1 and vecLevel1NoMem have different seperate empty status.");
     assert((iLevel1Size == 0llu || iLevel2Size == 0llu) && "Both levels can't have entries at the same time.");
 
 
@@ -641,14 +709,40 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
         {
             pOutput->m_iVarientKey = Entry_t::VarientKey_LegacyPrefix;
             printf("Entry format [ Prefix Split level 1 ]\n");
+            
 
             // There shouldn't be more than 1 of these anyways. But who tf knows?
-            for (XMLElement* pElem : vecLevel1)
+            Entry_t* pNoMemLevel1 = nullptr;
+            assert(vecLevel1NoMem.size() <= 1llu && "We only have 1 entry and thats for level1 prefix. Not possible!");
+            if (vecLevel1NoMem.empty() == false)
+            {
+                pNoMemLevel1 = new Entry_t();
+                ElementToEntry(vecLevel1NoMem.front(), pNoMemLevel1, pOutput->m_iByte, false, false, false);
+            }
+
+
+            // There shouldn't be more than 1 of these anyways. But who tf knows?
+            assert(vecLevel1.size() == 1llu && "We only have 1 entry and thats for level1 prefix. Not possible!");
+            if(vecLevel1.empty() == false)
             {
                 Entry_t* pChildEntry = new Entry_t();
-                ElementToEntry(pElem, pChildEntry, pOutput->m_iByte,false, false, false);
+                ElementToEntry(vecLevel1.front(), pChildEntry, pOutput->m_iByte, false, false, false);
                 
-                pOutput->m_vecVarients.push_back(pChildEntry);
+                // Incase explicit mem and nomem exist with prefix, put them under one entry
+                // and mart that as "split @ modrm.MOD" :) kinda sketchy ik
+                if (pNoMemLevel1 != nullptr)
+                {
+                    Entry_t* pTempHead = new Entry_t();
+                    pTempHead->m_iVarientKey = Entry_t::VarientKey_ModRM_MOD;
+                    pTempHead->m_vecVarients.push_back(pChildEntry);
+                    pTempHead->m_vecVarients.push_back(pNoMemLevel1);
+                    
+                    pOutput->m_vecVarients.push_back(pTempHead);
+                }
+                else
+                {
+                    pOutput->m_vecVarients.push_back(pChildEntry);
+                }
             }
 
 
@@ -656,7 +750,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
             for (XMLElement* pElem : vecLevel1Prefix)
             {
                 Entry_t* pChildEntry = new Entry_t();
-                ElementToEntry(pElem, pChildEntry, pOutput->m_iByte,true, false, false);
+                ElementToEntry(pElem, pChildEntry, pOutput->m_iByte, true, false, false);
 
                 pOutput->m_vecVarients.push_back(pChildEntry);
             }
@@ -723,7 +817,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
                 // If the mem split doesn't have any preifx splits, then there is one less branch to worry bout.
                 if (nMemPrefixEntries == 0)
                 {
-                    assert(nMemEntries == 1 && "Mem entries is not 1 and prefix entries are 0 and sum is greather than 0??!?!");
+                    assert(nMemEntries == 1 && "Mem entries is not 1 and prefix entries are 0 and sum is greather than 0?!");
 
                     ElementToEntry(vecMem.back(), pMem, pOutput->m_iByte,false, false, true);
                 }
@@ -1041,7 +1135,7 @@ inline int OperationModeToPriority(const char* pAttr)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode, const char* szGroupName)
+void RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode, int iTableID, const char* szGroupName)
 {
     struct IDs { IDs() : m_id(), m_pEntry(nullptr) {}  EntryID_t m_id; XMLElement* m_pEntry; };
     std::vector<IDs> vecIDs; vecIDs.clear();
@@ -1096,7 +1190,7 @@ void RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode
                 if (iThisEntryPriority == iStoredEntryPriority)
                 {
                     printf(RED "Failed for group %s. OpCode { 0x%02X } opcdExt : 0x%02X, sec_opcd : 0x%02X, prefix : 0x%02X. ID : %llu\n" RESET, 
-                        szGroupName != nullptr ? szGroupName : "nullptr", 
+                        szGroupName != nullptr ? szGroupName : "nullptr",
                         iPrimOpCode, iOpcdExt, iSecOpcd, iPrefix, id.m_id.m_iID);
 
                     printf(YELLOW "Trying to resolve conflict using proc_start\n" RESET);
@@ -1110,7 +1204,7 @@ void RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode
                     }
                     else
                     {
-                        printf(RED "Failed to resolve priority conflict.\n" RESET);
+                        printf(RED "Failed to resolve ID conflict using priority.\n" RESET);
                     }
                 }
 
