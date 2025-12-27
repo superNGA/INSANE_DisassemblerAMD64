@@ -94,6 +94,44 @@ std::unordered_map<std::string, std::string> g_mapOperandTypeLinker =
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
+struct EntryID_t
+{
+    EntryID_t(uint64_t ID = 0llu) { m_iID = ID; }
+    EntryID_t(int iOpcdExt, bool bNoMem, int iSecOpcd, int iPrefix) { Set(iOpcdExt, bNoMem, iSecOpcd, iPrefix); }
+    EntryID_t(const EntryID_t& x) { m_iID = x.m_iID; }
+    
+    inline void Clear() { m_iID = 0llu; }
+
+    // Extended SecOpcd in case of 3 byte opcode table. Cause in case of 3 byte opcode talbe
+    // secOpcd is used as the 3rd opcde byte and can range from 0x00 to 0xFF
+    void Set(int iOpcdExt, bool bNoMem, int iSecOpcd, int iPrefix, bool bExtendedSecOpcd = false)
+    {
+        // 0 - 7, prefix.
+        m_iID = static_cast<uint64_t>(iPrefix);
+
+        uint64_t iStartBitIndex = 8;
+        m_iID |= (bNoMem == true ? 1llu : 0llu) << iStartBitIndex; iStartBitIndex += 1llu;
+        m_iID |= static_cast<uint64_t>(iOpcdExt & 0b111) << iStartBitIndex; iStartBitIndex += 3llu;
+        m_iID |= static_cast<uint64_t>(iSecOpcd & (/*bExtendedSecOpcd == false ? 0b111 : */0xFF)) << iStartBitIndex; iStartBitIndex += 3llu;
+    }
+
+
+    bool operator==(EntryID_t other) const
+    {
+        return m_iID == other.m_iID;
+    }
+    void operator=(const EntryID_t& other)
+    {
+        m_iID = other.m_iID;
+    }
+
+
+    uint64_t m_iID = 0;
+};
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 #define LEVEL1                "vecLevel1"
 #define LEVEL1_NOMEM          "vecLevel1NoMem"
 #define LEVEL1_PREFIX         "vecLevel1Prefix"
@@ -105,47 +143,43 @@ std::unordered_map<std::string, std::string> g_mapOperandTypeLinker =
 
 struct CollisionSolution_t
 {
+    CollisionSolution_t()
+    {
+        m_iEntryID.Clear();
+        m_iByte       = 0x00;
+        m_iTableID    = -1;
+        m_iSkipsLeft  = 0;
+        m_szGroupName = nullptr;
+    }
+
+    CollisionSolution_t(int iByte, int iTableID, EntryID_t iEntryID, int nSkips, const char* szGroupName) :
+        m_iByte(iByte), m_iTableID(iTableID), m_iEntryID(iEntryID), m_iSkipsLeft(nSkips), m_szGroupName(szGroupName)
+    {}
+
     int         m_iByte       = 0x00;
     int         m_iTableID    = -1;
-    EntryID_t   m_iEntryID    = {0}; // ID of entry, to consider in the index.
-    int         m_iEntryIndex = 0;   // Index of the entry ( with same IDs ) to store.
+    EntryID_t   m_iEntryID; // ID of entry, to consider in the index.
+    
+    // if Skips Left != 0, we keep the already stored entry and discard the new one.
+    // if skips Left == 0, we discrad the old one with the same ID and keep the lastest one.
+    // So skips left, lets use skip 'n' number of entries before storing the 'n+1'th and keep it.
+    // Or we can say, skips left, lets use stored 'm_iSkipsLeft'th index entry and discard the rest.
+    int         m_iSkipsLeft  = 0;   
     const char* m_szGroupName = nullptr;
 };
 
-std::unordered_map<Byte, CollisionSolution_t> g_collisionSolutionTable =
+CollisionSolution_t g_collisionSolutionTable[] = 
 {
-    {0x20, {0x20, 2, 3, LEVEL1}}
+    //                  Byte,   Table ID,  Entry ID,     Entry Index,  GroupName
+    CollisionSolution_t(0x20,   2,         EntryID_t(0), 3,            LEVEL1),
+    CollisionSolution_t(0x21,   2,         EntryID_t(0), 3,            LEVEL1),
+    CollisionSolution_t(0x22,   2,         EntryID_t(0), 3,            LEVEL1),
+    CollisionSolution_t(0x23,   2,         EntryID_t(0), 3,            LEVEL1),
+    CollisionSolution_t(0x90,   1,         EntryID_t(0), 1,            LEVEL1),
 };
+const size_t g_iCollisionSolTableSize = sizeof(g_collisionSolutionTable) / sizeof(CollisionSolution_t);
 
 
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-struct EntryID_t
-{
-    EntryID_t() { m_iID = 0; }
-    EntryID_t(int iOpcdExt, bool bNoMem, int iSecOpcd, int iPrefix) { Set(iOpcdExt, bNoMem, iSecOpcd, iPrefix); }
-    
-
-    void Set(int iOpcdExt, bool bNoMem, int iSecOpcd, int iPrefix)
-    {
-        // 0 - 7, prefix.
-        m_iID = static_cast<uint64_t>(iPrefix);
-
-        uint64_t iStartBitIndex = 8;
-        m_iID |= static_cast<uint64_t>(iSecOpcd & 0b111) << iStartBitIndex; iStartBitIndex += 3llu;
-        m_iID |= static_cast<uint64_t>(iOpcdExt & 0b111) << iStartBitIndex; iStartBitIndex += 3llu;
-        m_iID |= (bNoMem == true ? 1llu : 0llu) << iStartBitIndex; iStartBitIndex += 1llu;
-    }
-
-
-    bool operator==(EntryID_t other)
-    {
-        return m_iID == other.m_iID;
-    }
-
-
-    uint64_t m_iID = 0;
-};
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -226,6 +260,10 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
     const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix);
 void DumpEntryInfo(std::vector<Entry_t*>& vecEntries);
 
+// Linear searching "g_collisionSolutionTable" i.e. Collision Solution talbe, and
+// return if an entry exists for this entry, returns nullptr on fail.
+CollisionSolution_t* FindIDCollisionSol(int iOpCode, int iTableID, EntryID_t iID, const char* szGroupName);
+
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -234,7 +272,8 @@ int main(void)
 {
     // Load file.
     XMLDocument g_doc(true, tinyxml2::PRESERVE_WHITESPACE);
-    if (g_doc.LoadFile("F:\\tinyxml2-11.0.0\\TableGen\\src\\x86reference.xml") != XMLError::XML_SUCCESS) { printf("Failed to open file\n"); return 0; }
+    // if (g_doc.LoadFile("F:\\tinyxml2-11.0.0\\TableGen\\src\\x86reference.xml") != XMLError::XML_SUCCESS) { printf("Failed to open file\n"); return 0; }
+    if (g_doc.LoadFile("x86reference.xml") != XMLError::XML_SUCCESS) { printf("Failed to open file\n"); return 0; }
 
 
     // Root element.
@@ -259,7 +298,7 @@ int main(void)
     CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes, 2);
 
     
-    // DumpEntryInfo(vecOneByteOpCodes);
+    DumpEntryInfo(vecOneByteOpCodes);
     DumpEntryInfo(vecTwoByteOpCodes);
 
 
@@ -284,6 +323,9 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTa
         {
             iByte = HexStringToInt(szValue, 2);
         }
+
+        /*if ((iByte == 0x3A || iByte == 0x38) && iTableID == 2)
+            continue;*/
 
 
         // Level 1 : All entires that don't have a <opcd_ext> tag are catagorized under level 1.
@@ -672,7 +714,15 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>& vecLevel1, const std::vector<XMLElement*>& vecLevel1NoMem, const std::vector<XMLElement*>& vecLevel1Prefix, const std::vector<XMLElement*>& vecLevel2Mem, const std::vector<XMLElement*>& vecLevel2MemPrefix, const std::vector<XMLElement*>& vecLevel2NoMem, const std::vector<XMLElement*>& vecLevel2SecOpcd, const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix)
+void CombineEntries(Byte iByte, Entry_t* pOutput,
+    const std::vector<XMLElement*>& vecLevel1,
+    const std::vector<XMLElement*>& vecLevel1NoMem,
+    const std::vector<XMLElement*>& vecLevel1Prefix,
+    const std::vector<XMLElement*>& vecLevel2Mem,
+    const std::vector<XMLElement*>& vecLevel2MemPrefix,
+    const std::vector<XMLElement*>& vecLevel2NoMem,
+    const std::vector<XMLElement*>& vecLevel2SecOpcd,
+    const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix)
 {
     pOutput->Clear();
     pOutput->m_iByte = iByte; // Common in all entries.
@@ -681,7 +731,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
     size_t iLevel1Size = vecLevel1.size() + vecLevel1Prefix.size() + vecLevel1NoMem.size();
     size_t iLevel2Size = vecLevel2Mem.size() + vecLevel2MemPrefix.size() + vecLevel2NoMem.size() + vecLevel2SecOpcd.size() + vecLevel2SecOpcdPrefix.size();
 
-    printf("%llu, NoMem : %llu\n", vecLevel1.size(), vecLevel1NoMem.size());
+
     assert((vecLevel1.empty() == true && vecLevel1NoMem.empty() == false) == false && "vecLevel1 and vecLevel1NoMem have different seperate empty status.");
     assert((iLevel1Size == 0llu || iLevel2Size == 0llu) && "Both levels can't have entries at the same time.");
 
@@ -713,7 +763,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
 
             // There shouldn't be more than 1 of these anyways. But who tf knows?
             Entry_t* pNoMemLevel1 = nullptr;
-            assert(vecLevel1NoMem.size() <= 1llu && "We only have 1 entry and thats for level1 prefix. Not possible!");
+            assert(vecLevel1NoMem.size() <= 1llu && "Assumed NoMem entries <= 1 for level1 prefix split!");
             if (vecLevel1NoMem.empty() == false)
             {
                 pNoMemLevel1 = new Entry_t();
@@ -722,7 +772,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
 
 
             // There shouldn't be more than 1 of these anyways. But who tf knows?
-            assert(vecLevel1.size() == 1llu && "We only have 1 entry and thats for level1 prefix. Not possible!");
+            assert(vecLevel1.size() <= 1llu && "Assumed Mem entries <= 1 for level1 prefix split!");
             if(vecLevel1.empty() == false)
             {
                 Entry_t* pChildEntry = new Entry_t();
@@ -770,7 +820,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
             vecMem.clear(); vecNoMem.clear(); vecSecOpcd.clear();
 
 
-            auto CollectSimilarEntries = [&](const std::vector<XMLElement*>& vecElements, int iREG, std::vector<XMLElement*>& vecOutput) -> int
+            auto CollectSimilarEntries = [&](const std::vector<XMLElement*>& vecElements, std::vector<XMLElement*>& vecOutput) -> int
                 {
                     int nEntries = 0;
 
@@ -793,13 +843,13 @@ void CombineEntries(Byte iByte, Entry_t* pOutput, const std::vector<XMLElement*>
                 };
 
             // Put entries with same <opcd_ext> in "vecTemp"
-            int nMemEntries           = CollectSimilarEntries(vecLevel2Mem,           i, vecMem);
-            int nMemPrefixEntries     = CollectSimilarEntries(vecLevel2MemPrefix,     i, vecMem);
+            int nMemEntries           = CollectSimilarEntries(vecLevel2Mem,           vecMem);
+            int nMemPrefixEntries     = CollectSimilarEntries(vecLevel2MemPrefix,     vecMem);
 
-            int nNoMemEntries         = CollectSimilarEntries(vecLevel2NoMem,         i, vecNoMem);
+            int nNoMemEntries         = CollectSimilarEntries(vecLevel2NoMem,         vecNoMem);
 
-            int nSecOpcdEntries       = CollectSimilarEntries(vecLevel2SecOpcd,       i, vecSecOpcd);
-            int nSecOpcdPrefixEntries = CollectSimilarEntries(vecLevel2SecOpcdPrefix, i, vecSecOpcd);
+            int nSecOpcdEntries       = CollectSimilarEntries(vecLevel2SecOpcd,       vecSecOpcd);
+            int nSecOpcdPrefixEntries = CollectSimilarEntries(vecLevel2SecOpcdPrefix, vecSecOpcd);
 
             printf("%s[ Mem : %llu, NoMem : %llu, SecOpcd : %llu ] entries for opcd_ext %d\n" RESET, 
                 (vecNoMem.size() != 0llu && vecSecOpcd.size() != 0llu) ? RED : "", 
@@ -977,6 +1027,38 @@ void DumpEntryInfo(std::vector<Entry_t*>& vecEntries)
     printf(GREEN "Starting Entry Dump...\n" RESET);
 
     DumpEntryRecurse(vecEntries, 0);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+CollisionSolution_t* FindIDCollisionSol(int iOpCode, int iTableID, EntryID_t iID, const char* szGroupName)
+{
+    assert(iOpCode >= 0x00 && iOpCode <= 0xFF && iTableID > 0 && szGroupName != nullptr && "Invalid data received in fn FindIDCollisionSol");
+
+
+    for (size_t iSolIndex = 0; iSolIndex < g_iCollisionSolTableSize; iSolIndex++)
+    {
+        CollisionSolution_t* pSol = &g_collisionSolutionTable[iSolIndex];
+
+        bool bSolutionFound =
+            pSol->m_iByte            == iOpCode &&
+            pSol->m_iTableID         == iTableID &&
+            pSol->m_iEntryID         == iID &&
+            std::string(szGroupName) == std::string(pSol->m_szGroupName);
+
+        if (bSolutionFound == false)
+            continue;
+
+        // This entry is already "used".
+        if (pSol->m_iSkipsLeft < 0)
+            return nullptr;
+
+        return pSol;
+    }
+
+
+    return nullptr;
 }
 
 
@@ -1177,13 +1259,42 @@ void RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode
         {
             bool bIncrementIterator = true;
 
-            // Collision occured.
+            // Collision occured !.
             if (id.m_id == it->m_id)
             {
                 // Compare Priority of this entry and the entry we found to be already stored in this std::vector.
                 // respectively.
                 int iThisEntryPriority   = OperationModeToPriority(id.m_pEntry->Attribute("mode"));
                 int iStoredEntryPriority = OperationModeToPriority(it->m_pEntry->Attribute("mode"));
+
+
+                // Check if we already have solution for this ID collision.
+                CollisionSolution_t* pSol = FindIDCollisionSol(iPrimOpCode, iTableID, id.m_id, szGroupName);
+                if (pSol != nullptr)
+                {
+                    printf(CYAN "Detected predefined solution for this collision...\n" RESET);
+                    
+                    // We intentionaly do this before != 0 check. Cause the collision will occur 
+                    // after storing the first entry with "this" ID. So Skip count naturally has
+                    // +1 offset error, and this fixies it.
+                    pSol->m_iSkipsLeft--;
+
+                    // we have solution, so we right the priority variables.
+                    if (pSol->m_iSkipsLeft != 0)
+                    {
+                        iThisEntryPriority = 0; iStoredEntryPriority = 100;
+                        printf(YELLOW "Discarding new entry according to predefined collision solution.\n" RESET);
+                    }
+                    else
+                    {
+                        iThisEntryPriority = 100; iStoredEntryPriority = 0;
+                        printf(GREEN "Storing this entry according to predefined collision solution.\n" RESET);
+                    }
+
+
+                    // It shouldn't get lower than 0.
+                    assert(pSol->m_iSkipsLeft >= 0 && "Collision solution used after being exhausted.");
+                }
 
 
                 // 2 entires seem to have same IDs and same priority. Gotta resolve this conflict.
@@ -1244,7 +1355,7 @@ void RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode
                     assert(iStoredEntryPriority != iThisEntryPriority && "ID collision occured which couldn't be resolved! Fuck you bitch nigga :(");
                 }
                 
-                printf(RED "Discarded invalid entry!\n" RESET);
+                printf("ID collision solved...\n");
             }
 
 
