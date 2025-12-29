@@ -1,7 +1,8 @@
 out/
 .vs/
 CMakePresets.json
-tinyxml2.h
-tinyxml2.cpp
-x86reference.xml
-TableGenerator.exe
+
+# Ignoring Table Generators unnecessary stuff.
+Tools/TableGenerator/
+!Tools/TableGenerator/TableGenerator.cpp
+!Tools/TableGenerator/build.bat

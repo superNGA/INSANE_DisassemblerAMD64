@@ -34,9 +34,45 @@ void OpCodeDesc_t::Init(
     m_operands[3]    = operand4;
 
     // At init, these default to "No varients"
-    m_iVarientType    = VarientKey_None;
+    m_iVarientType   = VarientKey_None;
     m_nVarients      = 0;
     m_pVarients      = nullptr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool OpCodeDesc_t::InsertVarient(int iIndex)
+{
+    assert(m_pVarients != nullptr && "Varient array is not initialized");
+    if (m_pVarients == nullptr)
+        return false;
+
+
+    assert(m_iVarientType != VarientType_t::VarientKey_None && "Varient type can't be null if we are inserting varient");
+    if (m_iVarientType == VarientType_t::VarientKey_None)
+        return false;
+
+
+    // Invalid child index?
+    assert(iIndex >= 0 && iIndex < GetMaxVarients(m_iVarientType) && "Invalid index for child whos varient type is to be set.");
+    if (iIndex < 0 || iIndex >= GetMaxVarients(m_iVarientType))
+        return false;
+
+
+    // prevent mem leak.
+    assert(m_pVarients[iIndex] == nullptr && "Element already inserted @ this index!");
+
+
+    m_pVarients[iIndex] = new OpCodeDesc_t();
+
+
+    // Failed memory allocation ?
+    if (m_pVarients[iIndex] == nullptr)
+        return false;
+
+
+    return true;
 }
 
 
@@ -63,6 +99,11 @@ size_t OpCodeDesc_t::GetMaxVarients(VarientType_t iVarientType)
 ///////////////////////////////////////////////////////////////////////////
 bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
 {
+    // Already initialized as this varient type.
+    if (m_iVarientType == iVarientType)
+        return true;
+
+
     // Must be set to "No varient", else mem leak
     assert(m_iVarientType == VarientType_t::VarientKey_None && m_pVarients == nullptr && "Varient type is already set to some something!");
     if (m_iVarientType != VarientType_t::VarientKey_None || m_pVarients != nullptr)
@@ -72,7 +113,8 @@ bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
     }
 
 
-    m_pVarients = reinterpret_cast<OpCodeDesc_t**>(malloc(GetMaxVarients(iVarientType) * sizeof(void*)));
+    size_t iVarientArraySize = GetMaxVarients(iVarientType) * sizeof(void*);
+    m_pVarients = reinterpret_cast<OpCodeDesc_t**>(malloc(iVarientArraySize));
     
 
     // Just in case malloc fails.
@@ -84,37 +126,10 @@ bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
     }
 
 
-    return true;
-}
+    // Set all entries to nullptr.
+    memset(m_pVarients, 0, iVarientArraySize);
 
 
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-bool OpCodeDesc_t::RegisterVarient(VarientType_t iVarientType, OpCodeDesc_t* pVarient, int iKey, bool bComplain)
-{
-    // Varient array must be initialized.
-    assert(m_pVarients != nullptr && "Varient array is not initialized, but trying to register varient!");
-    if (m_pVarients == nullptr)
-        return false;
-
-
-    // Varient type must match.
-    assert(iVarientType == m_iVarientType && "Trying to insert varient of different types.");
-    if (m_iVarientType != iVarientType)
-        return false;
-
-
-    // Make sure that key is valid.
-    if (size_t iMaxKeyValue = GetMaxVarients(iVarientType); iKey < 0 && iKey >= iMaxKeyValue)
-        return false;
-
-
-    // Complain, if space is already occupied.
-    if (m_pVarients[iKey] != nullptr && bComplain == true)
-        printf("A varient { %p } is already present @ index [ %d ]", m_pVarients[iKey], iKey);
-
-
-    m_pVarients[iKey] = pVarient;
     return true;
 }
 

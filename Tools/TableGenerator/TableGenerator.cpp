@@ -12,6 +12,9 @@
 #include <vector>
 #include <iostream>
 #include <assert.h>
+#include <fstream>
+#include <format>
+#include <string>
 #include "tinyxml2.h"
 
 
@@ -193,12 +196,16 @@ struct Entry_t
 
         m_operand[0].Clear(); m_operand[1].Clear(); m_operand[2].Clear(); m_operand[3].Clear(); 
         m_nOperands = 0;
+
+        m_iVarientKey = VarientKey_None;
     }
 
     std::string m_szName    = "xx_INVALID_xx";
     bool        m_bIsValid  = false;
     bool        m_bIsEscape = false;
     Byte        m_iByte     = 0x00;
+    bool        m_bModRm    = false;
+    bool        m_bEntryGenNeeded = false;
     std::string m_szBrief   = "Invalid Instruction in 64-Bit Mode";
     EntryID_t   m_iID;
 
@@ -216,6 +223,17 @@ struct Entry_t
 
         std::string m_szOperandMode = "NIGGA";
         std::string m_szOperandType = "NIGGA";
+
+        Operand_t& operator=(const Operand_t& other)
+        {
+            m_iOperandType  = other.m_iOperandType;
+            m_iLiteral      = other.m_iLiteral;
+            m_szRegister    = other.m_szRegister;
+            m_szOperandMode = other.m_szOperandMode;
+            m_szOperandType = other.m_szOperandType;
+
+            return *this;
+        }
     };
     Operand_t m_operand[4];
     int       m_nOperands = 0;
@@ -223,8 +241,8 @@ struct Entry_t
 
     enum VarientKey_t : int16_t
     {
-        VarientKey_None = -1,
-        VarientKey_ModRM_REG = 0,
+        VarientKey_None = 0,
+        VarientKey_ModRM_REG,
         VarientKey_ModRM_MOD,
         VarientKey_ModRM_RM,
         VarientKey_LegacyPrefix,
@@ -235,6 +253,30 @@ struct Entry_t
     int m_iSecOpcd = -1;
     int m_iPrefix  = -1;
     int m_iOpcdExt = -1;
+
+    Entry_t& operator=(const Entry_t& other)
+    {
+        m_szName          = other.m_szName;
+        m_bIsValid        = other.m_bIsValid;
+        m_bIsEscape       = other.m_bIsEscape;
+        m_iByte           = other.m_iByte;
+        m_bModRm          = other.m_bModRm;
+        m_bEntryGenNeeded = other.m_bEntryGenNeeded;
+        m_szBrief         = other.m_szBrief;
+        m_iID             = other.m_iID;
+        m_nOperands       = other.m_nOperands;
+
+        for (int i = 0; i < 4; i++)
+            m_operand[i] = other.m_operand[i];
+
+        m_iVarientKey = other.m_iVarientKey;
+        // Don't copy varients. cause thats irelevant.
+        m_iSecOpcd    = other.m_iSecOpcd;
+        m_iPrefix     = other.m_iPrefix;
+        m_iOpcdExt    = other.m_iOpcdExt;
+
+        return *this;
+    }
 };
 
 
@@ -247,6 +289,7 @@ XMLElement* FindChildRecurse     (XMLElement* pParent, const char* szChildName);
 void        RemoveInvalidEntries (std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode, int iTableID, const char* szGroupName = nullptr);
 
 // Actual parsing logic...
+void CollectThreeByteOpCodeEntries(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, Byte iParentIndex);
 void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTableID);
 void ElementToEntry(XMLElement* pElem, Entry_t* pDest, Byte iByte, bool bPrefix, bool bSecOpcd, bool bOpcdExt);
 void CombineEntries(Byte iByte, Entry_t* pOutput,
@@ -259,11 +302,11 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
     const std::vector<XMLElement*>& vecLevel2SecOpcd, 
     const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix);
 void DumpEntryInfo(std::vector<Entry_t*>& vecEntries);
+void DumpTable(std::vector<Entry_t*>& vecEntries, const char* szTableName, std::ofstream& hFile);
 
 // Linear searching "g_collisionSolutionTable" i.e. Collision Solution talbe, and
 // return if an entry exists for this entry, returns nullptr on fail.
 CollisionSolution_t* FindIDCollisionSol(int iOpCode, int iTableID, EntryID_t iID, const char* szGroupName);
-
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -287,19 +330,49 @@ int main(void)
 
 
     // One-byte opcodes...
-    std::vector<Entry_t*> vecOneByteOpCodes; 
-    vecOneByteOpCodes.reserve(0xFF); vecOneByteOpCodes.clear(); 
-    CollectEntires(pRootElem->FirstChildElement("one-byte"), vecOneByteOpCodes, 1);
+    std::vector<Entry_t*> vecOneByteOpCodes;
+    if(false)
+    {
+        vecOneByteOpCodes.reserve(0xFF); vecOneByteOpCodes.clear();
+        CollectEntires(pRootElem->FirstChildElement("one-byte"), vecOneByteOpCodes, 1);
+    }
     
 
     // Two byte opcodes...
-    std::vector<Entry_t*> vecTwoByteOpCodes; 
-    vecTwoByteOpCodes.reserve(0xFF); vecTwoByteOpCodes.clear(); 
-    CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes, 2);
+    std::vector<Entry_t*> vecTwoByteOpCodes;
+    if(true)
+    {
+        vecTwoByteOpCodes.reserve(0xFF); vecTwoByteOpCodes.clear();
+        CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes, 2);
+    }
+
+
+    // Three Byte OpCodes...
+    std::vector<Entry_t*> vecThreeByteOpCodes38, vecThreeByteOpCodes3A;
+    if (false)
+    {
+        vecThreeByteOpCodes38.reserve(65); vecThreeByteOpCodes3A.reserve(40);
+        CollectThreeByteOpCodeEntries(pRootElem->FirstChildElement("two-byte"), vecThreeByteOpCodes38, 0x38);
+        CollectThreeByteOpCodeEntries(pRootElem->FirstChildElement("two-byte"), vecThreeByteOpCodes3A, 0x3A);
+    }
+
+
+    std::ofstream hFile("Tables.cpp");
+    if (hFile.is_open() == false)
+    {
+        printf(RED "Failed to open dump file!\n");
+        return 0;
+    }
 
     
-    DumpEntryInfo(vecOneByteOpCodes);
     DumpEntryInfo(vecTwoByteOpCodes);
+    //DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); // DumpEntryInfo(vecOneByteOpCodes);
+    DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); // DumpEntryInfo(vecTwoByteOpCodes);
+    // DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes38);
+    // DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes3A);
+
+
+    hFile.close();
 
 
     return 0;
@@ -324,8 +397,14 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTa
             iByte = HexStringToInt(szValue, 2);
         }
 
-        /*if ((iByte == 0x3A || iByte == 0x38) && iTableID == 2)
-            continue;*/
+
+        // We handle the 3rd byte opcodes seperately.
+        if ((iByte == 0x3A || iByte == 0x38) && iTableID == 2)
+            continue;
+
+        // Mazegen doesn't remove mark these are invalid for 64 bit mode. But we don't want them.
+        if ((iByte >= 0x40 && iByte <= 0x4F) && iTableID == 1)
+            continue;
 
 
         // Level 1 : All entires that don't have a <opcd_ext> tag are catagorized under level 1.
@@ -367,23 +446,6 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTa
         // and the other holds mod="nomem" and this forces use to store that same entry twice
         // under different catagories. Hence we need this counter to we can accuratly do the count check at the end.
         int iDuplicates = 0; 
-        
-
-        // Checking if any entries for this opcode has 64-bit mode mentioned explicity.
-        // In which case we will only record "explicit 64-bit mode" entries...
-        bool bExplicitLongModeOnly = false;
-        for (XMLElement* pEntry = pPriOpcd->FirstChildElement("entry"); pEntry != nullptr; pEntry = pEntry->NextSiblingElement("entry"))
-        {
-            if (const char* szEntryMode = pEntry->Attribute("mode"); szEntryMode != nullptr)
-            {
-                if (std::string(szEntryMode) == std::string("e"))
-                {
-                    printf(RED "<!-- Explicit long mode for opcode [ 0x%02X ] -->\n" RESET, iByte);
-                    bExplicitLongModeOnly = true; 
-                    break;
-                }
-            }
-        }
 
 
         // Iterate all entries..
@@ -482,14 +544,6 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTa
                         printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
                     }
                 }
-                // if (bPrefixSplit == true && bOnlyMem == false && bOnlyNoMem == false) 
-                // {
-                //     vecLevel1Prefix.push_back(pEntry);
-                // }
-                // else 
-                // {
-                //     vecLevel1.push_back(pEntry);
-                // }
             }
             else 
             {
@@ -579,9 +633,34 @@ void CollectEntires(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, int iTa
 
         // Now combine all entries into one tree like structure.
         Entry_t* pEntry = new Entry_t(); // This will be the head of the tree.
-        pEntry->m_iByte = iByte;
         CombineEntries(iByte, pEntry, vecLevel1, vecLevel1NoMem, vecLevel1Prefix, vecLevel2Mem, vecLevel2MemPrefix, vecLevel2NoMem, vecLevel2SecOpcd, vecLevel2SecOpcdPrefix);
         vecOutput.push_back(pEntry);
+
+
+        // In case any of the operands have the addressing mode "Z", we need to create
+        // 7 more entries with same specs but the byte, cause mazegen simply marks
+        // one operand with Z where opcode's lower 3 bits determine register index for
+        // that operand.
+        {
+            if (pEntry != nullptr)
+            {
+                // Single entry. ( madatory for entry generation. )
+                if (pEntry->m_iVarientKey == Entry_t::VarientKey_None && pEntry->m_bEntryGenNeeded == true)
+                {
+                    printf(GREEN "@@@@  Generating entries for { 0x%02X }...  @@@@\n" RESET, iByte);
+                    
+                    for (int i = 0; i < 7; i++)
+                    {
+                        Entry_t* pGeneratedEntry = new Entry_t();
+
+                        *pGeneratedEntry         = *pEntry;
+                        pGeneratedEntry->m_iByte = pEntry->m_iByte + i + 1;
+                        
+                        vecOutput.push_back(pGeneratedEntry);
+                    }
+                }
+            }
+        }
     }
     std::cout << std::endl;
 }
@@ -605,7 +684,10 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
     }
 
     pEntry->m_szName  = FindChildRecurse(pSyntax, "mnem")->GetText();
-    pEntry->m_szBrief = FindChildRecurse(pElem, "brief")->GetText();
+    pEntry->m_szBrief = FindChildRecurse(pElem,   "brief")->GetText();
+    printf("Brief : %s\n", pEntry->m_szBrief.c_str());
+
+    pEntry->m_bModRm  = pElem->Attribute("r", "yes") != nullptr || FindChildRecurse(pElem, "opcd_ext") != nullptr;
 
 
     // Storing tags.. ( Prefix, secOpcd, OpcdExt )
@@ -647,6 +729,9 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
                 // If operand < dst > or < src > has tag <a> then its legacy prefix.
                 if (XMLElement* pOperandMode = pOperand->FirstChildElement("a"); pOperandMode != nullptr)
                 {
+                    if (pOperandMode->GetText()[0] == 'Z')
+                        pEntry->m_bEntryGenNeeded = true;
+
                     auto it = g_mapAddressingModeLinker.find(std::string(pOperandMode->GetText()));
                     
                     // In case this operand addressing mode is not present in our "geek edition to coder's edition linker map"
@@ -869,6 +954,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
                 {
                     assert(nMemEntries == 1 && "Mem entries is not 1 and prefix entries are 0 and sum is greather than 0?!");
 
+                    pMem->m_iVarientKey = Entry_t::VarientKey_None; // This should be been None by default, but just to make sure.
                     ElementToEntry(vecMem.back(), pMem, pOutput->m_iByte,false, false, true);
                 }
                 else
@@ -966,14 +1052,26 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
 
             // now pMem and pNoMem should have their entries placed in them nicely.
             // So now we can just place them in the output's ass.
-            Entry_t* pRegEntry       = new Entry_t();
-            pRegEntry->m_iVarientKey = Entry_t::VarientKey_ModRM_MOD;
-            pRegEntry->m_iOpcdExt    = i;
+            if (pNoMem->m_iVarientKey == Entry_t::VarientKey_None && pNoMem->m_szName == "xx_INVALID_xx")
+            {
+                pOutput->m_iOpcdExt = i;
+                pOutput->m_vecVarients.push_back(pMem);
 
-            pRegEntry->m_vecVarients.push_back(pMem);
-            pRegEntry->m_vecVarients.push_back(pNoMem);
+                printf(CYAN "Storing mem operator directly\n" RESET);
+            }
+            else
+            {
+                Entry_t* pRegEntry = new Entry_t();
+                pRegEntry->m_iOpcdExt = i;
 
-            pOutput->m_vecVarients.push_back(pRegEntry);
+                pRegEntry->m_iVarientKey = Entry_t::VarientKey_ModRM_MOD;
+                pRegEntry->m_vecVarients.push_back(pMem);
+                pRegEntry->m_vecVarients.push_back(pNoMem);
+
+                pOutput->m_vecVarients.push_back(pRegEntry);
+
+                printf("Storing both mem and nomem\n");
+            }
         }
     }
 }
@@ -1373,5 +1471,409 @@ void RemoveInvalidEntries(std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode
         // Don't increment in case we erase something from entry std::vector.
         if (bIncrementEntryIterator == true)
             iEntryIterator++;
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void CollectThreeByteOpCodeEntries(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, Byte iParentIndex)
+{
+    assert((iParentIndex == 0x38 || iParentIndex == 0x3A) && "Invalid parent opcode index for three byte entry collection.");
+
+    // Acquire the actual parent.
+    XMLElement* pParent = nullptr;
+    for (pParent = pRoot->FirstChildElement("pri_opcd"); pParent != nullptr; pParent = pParent->NextSiblingElement("pri_opcd"))
+    {
+        Byte iByte = 0x00;
+        if(const char* szValue = pParent->Attribute("value"); szValue != nullptr)
+        {
+            iByte = HexStringToInt(szValue, 2);
+        }
+
+        if (iByte == iParentIndex)
+            break;
+    }
+
+    assert(pParent != nullptr && "Failed to find parent opcode from two byte opcode table.");
+
+    
+    //? Delete this.
+    static Byte s_iCounter[0xFF] = {0};
+
+
+    // Holds elements with same <sec_opcd> ( i.e. same third opcode byte. )
+    std::vector<XMLElement*> vecElements;
+
+    for (XMLElement* pEntry = pParent->FirstChildElement("entry"); pEntry != nullptr; pEntry = pEntry->NextSiblingElement("entry"))
+    {
+        // Get the byte that actually represents this three byte opcode's last byte.
+        static Byte s_iLastByte = 0xFF;
+        Byte iByte = 0xFF;
+        {
+            XMLElement* pSecOpcd = pEntry->FirstChildElement("sec_opcd");
+            assert(pSecOpcd != nullptr && "Three byte opcode can't exist without <sec_opcd> tag");
+
+            const char* szSecOpcd = pSecOpcd->GetText();
+            assert(szSecOpcd != nullptr && "Three byte opcode can't have an empty <sec_opcd> tag");
+
+            iByte = HexStringToInt(szSecOpcd, 2);
+        }
+
+
+        // Entry properties.... Prefix, opcd_ext, mem, nomem.
+        bool bPrefix    = FindChildRecurse(pEntry, "pref")     != nullptr;
+        bool bOpcdExt   = FindChildRecurse(pEntry, "opcd_ext") != nullptr;
+        bool bOnlyMem   = pEntry->Attribute("mod", "mem")      != nullptr;
+        bool bOnlyNoMem = pEntry->Attribute("mod", "nomem")    != nullptr;
+        bool bMem = false, bNoMem = false;
+        for (XMLElement* pSyntax = FindChildRecurse(pEntry, "syntax"); pSyntax != nullptr; pSyntax = pSyntax->NextSiblingElement("syntax"))
+        {
+            if (pSyntax->Attribute("mod", "mem")   != nullptr) bMem   = true;
+            if (pSyntax->Attribute("mod", "nomem") != nullptr) bNoMem = true;
+        }
+
+
+        // According to my observations, No <entry> tag has mem or nomem tag. 
+        // So we are assuming that there will never be one. And break if one appears.
+        assert(bOnlyMem == false && bOnlyNoMem == false && "Only Mem and Only NoMem can't exist in three byte opcode table");
+        assert(bOpcdExt == false && "Three byte opcodes can't have <opcd_ext> tags");
+
+
+        s_iCounter[iByte]++;
+
+
+        // All entries of a third byte opcode has been stored?
+        if (s_iLastByte != iByte || pEntry->NextSiblingElement("entry") == nullptr) // NOTE this also handles flushing of vecElements. So we don't leave anything ramining in it.
+        {
+            if (vecElements.empty() == false)
+            {
+                printf("%s" "%llu entries found for opcode 0x%02X 0x%02X 0x%02x\n" RESET, 
+                    vecElements.size() > 1llu ? YELLOW : "",
+                    vecElements.size(), 0x0F, iParentIndex, s_iLastByte);
+                
+
+                // Single element? store as it is. No branching.
+                if (vecElements.size() == 1llu)
+                {
+                    XMLElement* pElement = vecElements.front();
+                    Entry_t* pOpCode = new Entry_t();
+                    pOpCode->m_iVarientKey = Entry_t::VarientKey_None;
+
+                    ElementToEntry(pElement, pOpCode, iByte, false, false, false);
+
+                    vecOutput.push_back(pOpCode);
+                }
+                else
+                {
+                    Entry_t* pHead = new Entry_t();
+
+                    for (XMLElement* pElem : vecElements)
+                    {
+                        XMLElement* pElement   = vecElements.front();
+                        Entry_t* pOpCode       = new Entry_t();
+                        pOpCode->m_iVarientKey = Entry_t::VarientKey_None;
+
+                        ElementToEntry(pElement, pOpCode, iByte, true, false, false);
+
+                        pHead->m_iVarientKey = Entry_t::VarientKey_LegacyPrefix;
+                        pHead->m_vecVarients.push_back(pOpCode);
+                    }
+
+                    vecOutput.push_back(pHead);
+                }
+
+                
+                vecElements.clear();
+            }
+
+
+            // New third byte.
+            s_iLastByte = iByte;
+        }
+
+
+        vecElements.push_back(pEntry);
+    }
+
+
+
+    // Just so the next batch is spaced out.
+    std::cout << std::endl << std::endl;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void Indent(int iIndentation, std::ofstream& hFile) { for (int i = 0; i < iIndentation; i++) hFile << "    "; }
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void PrintInvalidEntry(Byte iByte, const char* szGroupName, std::ofstream& hFile, int iIndentation)
+{
+    // Byte we are printing.
+    Indent(iIndentation, hFile); 
+    hFile << "// 0x" << std::hex << std::uppercase << static_cast<int>(iByte) << std::nouppercase << std::dec << std::endl;
+
+    // Note about instruction.
+    Indent(iIndentation, hFile); 
+    hFile << "//? Brief : Invalid instruction in 64-bit mode.\n";
+
+    // Fn call
+    Indent(iIndentation, hFile);     
+    hFile << szGroupName << "[0x" << std::hex << std::uppercase << static_cast<int>(iByte) << std::nouppercase << std::dec << "].Init(\n";
+
+    // Inst. name
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*szName         = */" << "\"xx_INVALID_xx\"" << ",\n";
+
+    // Inst. valid ?
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*bValidOpcd     = */" << "false" << ",\n";
+
+    // Inst. escape?
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*bEscapeOpcd    = */" << "false" << ",\n";
+
+    // Inst. requires modrm?
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*bModrmRequired = */" << "false" << ",\n";
+
+    // Inst. Byte
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*iByte          = */0x" << std::hex << std::uppercase << static_cast<int>(iByte) << std::dec << std::nouppercase << ",\n";
+
+    // Inst. operand count.
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*nOperands      = */" << 0 << ",\n";
+   
+    // Operand 1.
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*operand1       = */" << "Operand_t()" << ",\n";
+
+    // Opearnd 2. 
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*operand2       = */" << "Operand_t()" << ",\n";
+
+    // Operand 3. 
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*operand3       = */" << "Operand_t()" << ",\n";
+
+    // Operand 4. 
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*operand4       = */" << "Operand_t()" << ");\n";
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static void PrintValidEntry(Entry_t* pEntry, std::string szGroupName, std::ofstream& hFile, int iIndentation)
+{
+    // Byte we are printing.
+    Indent(iIndentation, hFile); 
+    hFile << "// 0x" << std::hex << std::uppercase << static_cast<int>(pEntry->m_iByte) << std::nouppercase << std::dec << std::endl;
+
+    // Note about instruction.
+    Indent(iIndentation, hFile); 
+    hFile << "// Brief : " << pEntry->m_szBrief << std::endl;
+
+    // Fn call
+    Indent(iIndentation, hFile);     
+    hFile << szGroupName << ".Init(\n";
+
+    // Inst. name
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*szName         = */\"" << pEntry->m_szName << "\",\n";
+
+    // Inst. valid ?
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*bValidOpcd     = */" << "true" << ",\n";
+
+    // Inst. escape?
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*bEscapeOpcd    = */" << "false" << ",\n";
+
+    // Inst. requires modrm?
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*bModrmRequired = */" << (pEntry->m_bModRm == true ? "true" : "false") << ",\n";
+
+    // Inst. Byte
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*iByte          = */0x" << std::hex << std::uppercase << static_cast<int>(pEntry->m_iByte) << std::dec << std::nouppercase << ",\n";
+
+    // Inst. operand count.
+    Indent(iIndentation + 1, hFile); 
+    hFile << "/*nOperands      = */" << pEntry->m_nOperands << ",\n";
+
+    // Operands.
+    for(int i = 0; i < 4; i++)
+    {
+        Indent(iIndentation + 1, hFile);
+
+        if(i < pEntry->m_nOperands)
+        {
+            hFile << "/*operand" << i << "       = */" << "Operand_t( ";
+
+            switch (pEntry->m_operand[i].m_iOperandType)
+            {
+            case Entry_t::Operand_t::OperandCatagory_Literal:  hFile << pEntry->m_operand[i].m_iLiteral; break;
+            case Entry_t::Operand_t::OperandCatagory_Register: hFile << "Register_" << pEntry->m_operand[i].m_szRegister; break;
+            case Entry_t::Operand_t::OperandCatagory_Legacy:   hFile << "OperandMode_" << pEntry->m_operand[i].m_szOperandMode << ", " << "OperandType_" << pEntry->m_operand[i].m_szOperandType; break;
+            default: break;
+            }
+
+            hFile << " )";
+        }
+        else
+        {
+            hFile << "/*operand" << i << "       = */" << "Operand_t()";
+        }
+
+        if (i == 3)
+        {
+            hFile << ");\n";
+        }
+        else
+        {
+            hFile << ",\n";
+        }
+    }
+
+    hFile << std::endl;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static int GetLegacyPrefixIndex(int iByte)
+{
+    //! NOTE : This fn is one to one copy of what is present in the disassembler.
+    switch (iByte)
+    {
+    case 0xF0: return 1;
+    case 0xF2: return 2;
+    case 0xF3: return 3;
+    case 0x2E: return 4;
+    case 0x36: return 5;
+    case 0x3E: return 6;
+    case 0x26: return 7;
+    case 0x64: return 8;
+    case 0x65: return 9;
+    case 0x66: return 10;
+    case 0x67: return 11;
+
+    default: break;
+    }
+
+    return 0;
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void PrintEntry(Entry_t* pEntry, std::string szGroupName, std::ofstream& hFile, int iIndentation)
+{
+    // This is just a tiny map, to help us link our types to the disassemblers types.
+    struct TypeToString_t { int m_iType; const char* m_szString; };
+    static TypeToString_t s_typeToString[5] = {
+        {Entry_t::VarientKey_None,         "VarientType_t::VarientKey_None"},
+        {Entry_t::VarientKey_ModRM_REG,    "VarientType_t::VarientKey_ModRM_REG"},
+        {Entry_t::VarientKey_ModRM_MOD,    "VarientType_t::VarientKey_ModRM_MOD"},
+        {Entry_t::VarientKey_ModRM_RM,     "VarientType_t::VarientKey_ModRM_RM"},
+        {Entry_t::VarientKey_LegacyPrefix, "VarientType_t::VarientKey_LegacyPrefix"},
+    };
+
+
+    static int s_iRecurseCounter = 0;
+    s_iRecurseCounter++;
+
+
+    if (pEntry->m_iVarientKey == Entry_t::VarientKey_None)
+    {
+        // Don't dump invalid / filler entry.
+        if(pEntry->m_szName != "xx_INVALID_xx")
+            PrintValidEntry(pEntry, szGroupName, hFile, iIndentation);
+    }
+    else
+    {
+        Indent(iIndentation, hFile);
+
+        std::string szFnName = s_iRecurseCounter == 1 ? 
+            std::format("{}.InitVarientType(",  szGroupName) : 
+            std::format("{}->InitVarientType(", szGroupName);
+
+        //? Delete this
+        for (int i = 0; i < iIndentation; i++) printf("    ");
+        printf("VarientKey : %d { %s }\n", pEntry->m_iVarientKey, s_typeToString[pEntry->m_iVarientKey].m_szString);
+
+        hFile << szFnName << s_typeToString[pEntry->m_iVarientKey].m_szString << ");\n\n";
+
+
+        for (size_t iChildIndex = 0llu; iChildIndex < pEntry->m_vecVarients.size(); iChildIndex++)
+        {
+            Entry_t* pChildEntry = pEntry->m_vecVarients[iChildIndex];
+            assert(pChildEntry != nullptr && "nullptr child entry");
+
+
+            // Incase this child is a filler, don't dump it.
+            if (pChildEntry->m_iVarientKey == Entry_t::VarientKey_None && pChildEntry->m_szName == "xx_INVALID_xx")
+                continue;
+
+
+            // Child's key
+            int iChildKey = -1;
+            switch (pEntry->m_iVarientKey)
+            {
+            case Entry_t::VarientKey_LegacyPrefix: iChildKey = GetLegacyPrefixIndex(pChildEntry->m_iPrefix); break;
+            case Entry_t::VarientKey_ModRM_REG:    iChildKey = pChildEntry->m_iOpcdExt; break;
+            case Entry_t::VarientKey_ModRM_MOD:    iChildKey = iChildIndex;             break; // TODO Gotta handle this seperatly.
+            case Entry_t::VarientKey_ModRM_RM:     iChildKey = pChildEntry->m_iSecOpcd; break;
+            default: break;
+            }
+
+
+            // InsertVarient(int iIndex);
+            Indent(iIndentation, hFile);
+            std::string szFnName = s_iRecurseCounter == 1 ? 
+                std::format("{}.InsertVarient(",  szGroupName) : 
+                std::format("{}->InsertVarient(", szGroupName);
+            hFile << szFnName << iChildKey << ");\n\n";
+
+            
+            std::string szObjName = s_iRecurseCounter == 1 ? 
+                std::format("{}.m_pVarients[0x{:02X}]",  szGroupName, iChildKey) : 
+                std::format("{}->m_pVarients[0x{:02X}]", szGroupName, iChildKey);
+
+            PrintEntry(pChildEntry, szObjName, hFile, iIndentation + 1);
+        }
+    }
+
+
+    s_iRecurseCounter--;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void DumpTable(std::vector<Entry_t*>& vecEntries, const char* szTableName, std::ofstream& hFile)
+{
+    Byte iByte = 0x00;
+
+
+    for (Entry_t* pEntry : vecEntries)
+    {
+        while (pEntry->m_iByte > iByte)
+        {
+            PrintInvalidEntry(iByte, szTableName, hFile, 1);
+            hFile << std::endl;
+            iByte++;
+        }
+
+        std::string szObjName = std::format("{}[0x{:02X}]", szTableName, pEntry->m_iByte);
+        PrintEntry(pEntry, szObjName, hFile, 1);
+        hFile << std::endl;
+        iByte++;
     }
 }

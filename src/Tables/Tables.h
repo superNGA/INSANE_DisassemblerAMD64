@@ -43,10 +43,11 @@ namespace INSANE_DASM64_NAMESPACE
 
         inline void Reset()
         {
-            m_iVarientType    = VarientKey_None;
+
+            m_iVarientType   = VarientKey_None;
             m_nVarients      = 0;
             m_pVarients      = nullptr;
-            m_szName[0]      = '\0';
+            strcpy_s(m_szName, sizeof(m_szName), Rules::OPCODE_NAME_SENTINAL);
             m_bIsValidCode   = false;
             m_bIsEscapeCode  = false;
             m_bModrmRequired = false;
@@ -84,10 +85,10 @@ namespace INSANE_DASM64_NAMESPACE
             const char* szName, bool bValidOpcd, bool bEscapeOpcd, bool bModrmRequired, Byte iByte, 
             int nOperands, Operand_t operand1, Operand_t operand2, Operand_t operand3, Operand_t operand4);
 
+        bool InsertVarient(int iIndex);
 
-        // Initialize struct for one varient type ( now it doesn't hold any instruction by itself, just varient array. )
+        // Initialize struct for one varient type ( now it doesn't hold any instruction info by itself, just varient array. )
         bool InitVarientType(VarientType_t iVarientType);
-        bool RegisterVarient(VarientType_t iVarientType, OpCodeDesc_t* pVarient, int iKey, bool bComplain = true);
 
 
         // Braching info, to reach varients of this opcode.

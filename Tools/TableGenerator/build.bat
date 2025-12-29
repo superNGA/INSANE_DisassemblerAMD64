@@ -1,1 +1,1 @@
-clang -std=c++17 ./TableGenerator.cpp ./tinyxml2.cpp -o TableGenerator.exe
+clang -std=c++20 ./TableGenerator.cpp ./tinyxml2.cpp -o TableGenerator.exe

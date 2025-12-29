@@ -34,6 +34,8 @@ namespace InsaneDASM64::Rules
     constexpr size_t MAX_DISPLACEMENT_BYTES = 4llu;
     constexpr size_t MAX_IMMEDIATE_BYTES    = 8llu;
     constexpr size_t MAX_INST_NAME_SIZE     = 0x10llu;
+
+    const char*      OPCODE_NAME_SENTINAL   = "xx_INVALID_xx";
 }
 
 
@@ -355,6 +357,10 @@ namespace InsaneDASM64
     struct Operand_t
     {
         Operand_t() { Reset(); }
+        Operand_t(int iLiteral);
+        Operand_t(Register_t iRegister);
+        Operand_t(OperandMode_t iOperandMode, OperandType_t iOperandType);
+
         void Reset();
 
         // NOTE : Since it is observed that operands can be literals, registers and 
@@ -371,7 +377,7 @@ namespace InsaneDASM64
 
         // Catagory & visibility of the operand.
         OperandCatagory_t m_iOperandCatagory = OperandCatagory_Undefined;
-        bool              m_bHidden          = false; // Some operands are hidden.
+        // bool              m_bHidden          = false; // Some operands are hidden.
 
         
         // In case of a literal operand. This will hold the literal ( int ).
