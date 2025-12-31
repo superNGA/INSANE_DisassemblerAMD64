@@ -19,7 +19,7 @@ namespace InsaneDASM64
     typedef unsigned char Byte;
 
     // Foward Decls...
-    struct OperatorInfo_t;
+    struct OpCodeDesc_t;
 }
 
 
@@ -35,7 +35,7 @@ namespace InsaneDASM64::Rules
     constexpr size_t MAX_IMMEDIATE_BYTES    = 8llu;
     constexpr size_t MAX_INST_NAME_SIZE     = 0x10llu;
 
-    const char*      OPCODE_NAME_SENTINAL   = "xx_INVALID_xx";
+    inline const char* OPCODE_NAME_SENTINAL = "xx_INVALID_xx";
 }
 
 
@@ -97,142 +97,6 @@ namespace InsaneDASM64
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    enum OpCodeAddressingMethod_t : int16_t
-    {
-        OpCodeAddressingMethod_Invalid = -1,
-
-        OpCodeAddressingMethod_A = 0,
-        OpCodeAddressingMethod_B,
-        OpCodeAddressingMethod_C,
-        OpCodeAddressingMethod_D,
-        OpCodeAddressingMethod_E,
-        OpCodeAddressingMethod_F,
-        OpCodeAddressingMethod_G,
-        OpCodeAddressingMethod_H,
-        OpCodeAddressingMethod_I,
-        OpCodeAddressingMethod_J,
-        // OpCodeAddressingMethod_K,
-        OpCodeAddressingMethod_L,
-        OpCodeAddressingMethod_M,
-        OpCodeAddressingMethod_N,
-        OpCodeAddressingMethod_O,
-        OpCodeAddressingMethod_P,
-        OpCodeAddressingMethod_Q,
-        OpCodeAddressingMethod_R,
-        OpCodeAddressingMethod_S,
-        // OpCodeAddressingMethod_T,
-        OpCodeAddressingMethod_U,
-        OpCodeAddressingMethod_V,
-        OpCodeAddressingMethod_W,
-        OpCodeAddressingMethod_X,
-        OpCodeAddressingMethod_Y,
-
-        // Fixed register addressing methods...
-        // RAX...
-        OpCodeAddressingMethod_AL,
-        OpCodeAddressingMethod_AH,
-        OpCodeAddressingMethod_AX,
-        OpCodeAddressingMethod_EAX,
-        OpCodeAddressingMethod_RAX,
-
-        // RBX...
-        OpCodeAddressingMethod_BL,
-        OpCodeAddressingMethod_BH,
-        OpCodeAddressingMethod_BX,
-        OpCodeAddressingMethod_EBX,
-        OpCodeAddressingMethod_RBX,
-
-        // RCX...
-        OpCodeAddressingMethod_CL,
-        OpCodeAddressingMethod_CH,
-        OpCodeAddressingMethod_CX,
-        OpCodeAddressingMethod_ECX,
-        OpCodeAddressingMethod_RCX,
-
-        // RDX...
-        OpCodeAddressingMethod_DL,
-        OpCodeAddressingMethod_DH,
-        OpCodeAddressingMethod_DX,
-        OpCodeAddressingMethod_EDX,
-        OpCodeAddressingMethod_RDX,
-
-        // RSP
-        OpCodeAddressingMethod_SPL,
-        OpCodeAddressingMethod_SP,
-        OpCodeAddressingMethod_ESP,
-        OpCodeAddressingMethod_RSP,
-
-        // RDI...
-        OpCodeAddressingMethod_DIL,
-        OpCodeAddressingMethod_DI,
-        OpCodeAddressingMethod_EDI,
-        OpCodeAddressingMethod_RDI,
-
-        // RSI...
-        OpCodeAddressingMethod_SIL,
-        OpCodeAddressingMethod_SI,
-        OpCodeAddressingMethod_ESI,
-        OpCodeAddressingMethod_RSI,
-
-        // RBP
-        OpCodeAddressingMethod_BPL,
-        OpCodeAddressingMethod_BP,
-        OpCodeAddressingMethod_EBP,
-        OpCodeAddressingMethod_RBP,
-
-        OpCodeAddressingMethod_R8,
-        OpCodeAddressingMethod_R9,
-        OpCodeAddressingMethod_R10,
-        OpCodeAddressingMethod_R11,
-        OpCodeAddressingMethod_R12,
-        OpCodeAddressingMethod_R13,
-        OpCodeAddressingMethod_R14,
-        OpCodeAddressingMethod_R15,
-
-
-        // GS & FS register used by some opcodes in 2 byte opcode table.
-        OpCodeAddressingMethod_GS,
-        OpCodeAddressingMethod_FS,
-
-        OpCodeAddressingMethod_Count
-    };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
-    enum OpCodeOperandType_t : int16_t
-    {
-        OpCodeOperandType_Invalid = -1,
-
-        OpCodeOperandType_a = 0,
-        OpCodeOperandType_b,
-        OpCodeOperandType_c,
-        OpCodeOperandType_d,
-        OpCodeOperandType_dq,
-        OpCodeOperandType_p,
-        OpCodeOperandType_pd,
-        OpCodeOperandType_pi,
-        OpCodeOperandType_ps,
-        OpCodeOperandType_q,
-        OpCodeOperandType_qq,
-        OpCodeOperandType_s,
-        OpCodeOperandType_sd,
-        OpCodeOperandType_ss,
-        OpCodeOperandType_si,
-        OpCodeOperandType_v,
-        OpCodeOperandType_w,
-        OpCodeOperandType_x,
-        OpCodeOperandType_y,
-        OpCodeOperandType_z,
-
-        OpCodeOperandType_rel8, // expect a 8 bit data next to OpBytes, to be used in RIP + offset format.
-
-        OpCodeOperantType_Count
-    };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
     enum OpCodeFlag_t : int16_t
     {
         OpCodeFlag_None = -1,
@@ -279,24 +143,6 @@ namespace InsaneDASM64
 
         // Yes, these comments are copied form the manual :).
         OpCodeFlag_Count
-    };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
-    struct OpCodeOperand_t
-    {
-        OpCodeOperand_t();
-        OpCodeOperand_t(OpCodeAddressingMethod_t iAddressingMethod, OpCodeOperandType_t iOperandType);
-
-        void operator=(const OpCodeOperand_t& other);
-
-        // Valid operand check...
-        bool IsValid() const;
-
-
-        OpCodeAddressingMethod_t m_iAddressingMethod;
-        OpCodeOperandType_t      m_iOperandType;
     };
 
 
@@ -408,7 +254,7 @@ namespace InsaneDASM64
 
 
         // In case of a fixed register operand. This will hold the register as enum.
-        Register_t        m_iOperandRegister = Register_Invalid;
+        Register_t        m_iOperandRegister;
 
 
         // In case of a OG / normal / legacy operand ( addressing mode + operand type ).
@@ -430,7 +276,7 @@ namespace InsaneDASM64
 
         Byte GetMostSignificantOpCode() const;
         bool PushOpCode     (Byte iByte);
-        void CopyOperandInfo(const OperatorInfo_t* pOperatorInfo);
+        void CopyOperandInfo(const OpCodeDesc_t* pOperatorInfo);
 
         // NOTE : One OpCode_t will hold all the OpCodes that are present in one
         //        instruction. That means, if multibyte opcode is present in one instruction,
@@ -440,9 +286,9 @@ namespace InsaneDASM64
         Byte            m_opBytes[Rules::MAX_OPBYTES];
         int32_t         m_nOpBytes       = 0;
 
-        OpCodeFlag_t    m_iOpCodeFlag    = OpCodeFlag_t::OpCodeFlag_None;
+        // OpCodeFlag_t    m_iOpCodeFlag    = OpCodeFlag_t::OpCodeFlag_None;
 
-        OpCodeOperand_t m_operands[Rules::MAX_OPERANDS];
+        Operand_t       m_operands[Rules::MAX_OPERANDS];
         int32_t         m_nOperands      = 0;
 
         const char*     m_szOperatorName = nullptr;
@@ -530,29 +376,29 @@ namespace InsaneDASM64
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    enum ErrorCode_t : int
+    enum IDASMErrorCode_t : int
     {
-        ErrorCode_Success    = 0, // All functions return ErrorCode_Success on success.
-        ErrorCode_FailedInit = 1,
-        ErrorCode_TooManyPefix,
-        ErrorCode_REXNotPrecedingOpCode,
-        ErrorCode_InvalidOpCode,
-        ErrorCode_NoOpByteFound,
-        ErrorCode_ModRMNotFound,
-        ErrorCode_SIDNotFound,
-        ErrorCode_NoImmediateFound,
-        ErrorCode_InvalidImmediateSize,
-        ErrorCode_Count
+        IDASMErrorCode_Success    = 0, // All functions return ErrorCode_Success on success.
+        IDASMErrorCode_FailedInit = 1,
+        IDASMErrorCode_TooManyPefix,
+        IDASMErrorCode_REXNotPrecedingOpCode,
+        IDASMErrorCode_InvalidOpCode,
+        IDASMErrorCode_NoOpByteFound,
+        IDASMErrorCode_ModRMNotFound,
+        IDASMErrorCode_SIDNotFound,
+        IDASMErrorCode_NoImmediateFound,
+        IDASMErrorCode_InvalidImmediateSize,
+        IDASMErrorCode_Count
     };
 
     
     // Functions...
-    // NOTE : Each function will return 0 ( ErrorCode_Success ) on success, and a non-zero ErrorCode_t on fail.
-    ErrorCode_t Initialize ();
-    ErrorCode_t Disassemble(const std::vector<Byte>&         vecInput,       std::vector<Instruction_t>& vecOutput);
-    ErrorCode_t Parse      (const std::vector<Byte>&         vecInput,       std::vector<ParsedInst_t>&  vecOutput);
-    ErrorCode_t Decode     (const std::vector<ParsedInst_t>& vecParsedInput, std::vector<Instruction_t>& vecOutput);
-    // TODO : ToString function.
+    // NOTE : Each function will return 0 ( ErrorCode_Success ) on success, and a non-zero IDASMErrorCode_t on fail.
+    IDASMErrorCode_t Initialize ();
+    IDASMErrorCode_t Disassemble(const std::vector<Byte>&         vecInput,       std::vector<Instruction_t>& vecOutput);
+    IDASMErrorCode_t Parse      (const std::vector<Byte>&         vecInput,       std::vector<ParsedInst_t>&  vecOutput);
+    IDASMErrorCode_t Decode     (const std::vector<ParsedInst_t>& vecParsedInput, std::vector<Instruction_t>& vecOutput);
+    // TODO ToString function.
 
-    const char* GetErrorMessage(ErrorCode_t iErrorCode);
+    const char* GetErrorMessage(IDASMErrorCode_t iErrorCode);
 }

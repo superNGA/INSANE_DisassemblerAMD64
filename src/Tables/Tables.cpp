@@ -15,6 +15,13 @@
 using namespace INSANE_DASM64_NAMESPACE;
 
 
+//? Delete this
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[93m"
+#define RESET   "\033[0m"
+#define CYAN    "\033[96m"
+
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -37,6 +44,10 @@ void OpCodeDesc_t::Init(
     m_iVarientType   = VarientKey_None;
     m_nVarients      = 0;
     m_pVarients      = nullptr;
+
+
+    //? Delete this
+    printf("Initialized 0x%02X { %s }\n", m_iByte, m_szName);
 }
 
 
@@ -44,6 +55,9 @@ void OpCodeDesc_t::Init(
 ///////////////////////////////////////////////////////////////////////////
 bool OpCodeDesc_t::InsertVarient(int iIndex)
 {
+    //? Delete this
+    printf("Inserting varient @ [ %d ] index for byte [ 0x%02X ]\n", iIndex, m_iByte);
+
     assert(m_pVarients != nullptr && "Varient array is not initialized");
     if (m_pVarients == nullptr)
         return false;
@@ -55,13 +69,20 @@ bool OpCodeDesc_t::InsertVarient(int iIndex)
 
 
     // Invalid child index?
-    assert(iIndex >= 0 && iIndex < GetMaxVarients(m_iVarientType) && "Invalid index for child whos varient type is to be set.");
+    printf("Varient : %d, iIndex = %d, Min : %d, Max : %zu\n", m_iVarientType, iIndex, 0, GetMaxVarients(m_iVarientType));
+
+    assert(iIndex >= 0 && iIndex < GetMaxVarients(m_iVarientType) && "Invalid index while inserting varient.");
     if (iIndex < 0 || iIndex >= GetMaxVarients(m_iVarientType))
         return false;
 
 
     // prevent mem leak.
-    assert(m_pVarients[iIndex] == nullptr && "Element already inserted @ this index!");
+    // assert(m_pVarients[iIndex] == nullptr && "Element already inserted @ this index!");
+    if(m_pVarients[iIndex] != nullptr)
+    {
+        printf(RED "Trying to insert varient @ index [ %d ], varinent { %s } already inserted @ this index." RESET, iIndex, m_pVarients[iIndex]->m_szName);
+        return true;
+    }
 
 
     m_pVarients[iIndex] = new OpCodeDesc_t();
@@ -114,7 +135,8 @@ bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
 
 
     size_t iVarientArraySize = GetMaxVarients(iVarientType) * sizeof(void*);
-    m_pVarients = reinterpret_cast<OpCodeDesc_t**>(malloc(iVarientArraySize));
+    m_pVarients              = reinterpret_cast<OpCodeDesc_t**>(malloc(iVarientArraySize));
+    m_iVarientType           = iVarientType;
     
 
     // Just in case malloc fails.
@@ -129,6 +151,8 @@ bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
     // Set all entries to nullptr.
     memset(m_pVarients, 0, iVarientArraySize);
 
+    //? Delete this
+    printf("Inititalized varient type : %d, Varient Array : %p\n", m_iVarientType, m_pVarients);
 
     return true;
 }
@@ -145,13 +169,13 @@ Tables_t::Tables_t()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-ErrorCode_t Tables_t::Initialize()
+IDASMErrorCode_t Tables_t::Initialize()
 {
     _InitializeInstTypeLUT(); m_bInstTypeLUTInit = true; // can't fail, so no checks required here.
     _InitializeOpCodeTable(); m_bOpCodeTableInit = true; // can't fail, so no checks required here.
 
 
-    return ErrorCode_t::ErrorCode_Success;
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
 
 
@@ -200,7 +224,7 @@ int Tables_t::GetLegacyPrefixIndex(Byte iByte)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-ErrorCode_t Tables_t::_InitializeInstTypeLUT()
+IDASMErrorCode_t Tables_t::_InitializeInstTypeLUT()
 {
     memset(m_instTypeLUT, 0, sizeof(m_instTypeLUT));
 
@@ -247,13 +271,13 @@ ErrorCode_t Tables_t::_InitializeInstTypeLUT()
     }
 
 
-    return InsaneDASM64::ErrorCode_Success;
+    return InsaneDASM64::IDASMErrorCode_Success;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-ErrorCode_t Tables_t::_InitializeOpCodeTable()
+IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
 {
     memset(m_opCodeTable1,    0, sizeof(m_opCodeTable1));
     memset(m_opCodeTable2,    0, sizeof(m_opCodeTable2));
@@ -263,10 +287,10 @@ ErrorCode_t Tables_t::_InitializeOpCodeTable()
 
     for (int i = 0; i <= 0xFF; i++)
     {
-        m_opCodeTable1[i].m_bIsValidCode    = false; // we will set all the valid ones manually.
-        m_opCodeTable2[i].m_bIsValidCode    = false;
-        m_opCodeTable3_38[i].m_bIsValidCode = false;
-        m_opCodeTable3_3A[i].m_bIsValidCode = false;
+        m_opCodeTable1[i].Reset();
+        m_opCodeTable2[i].Reset();
+        m_opCodeTable3_38[i].Reset();
+        m_opCodeTable3_3A[i].Reset();
     }
 
 
@@ -282,7 +306,7 @@ ErrorCode_t Tables_t::_InitializeOpCodeTable()
     m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_B].m_bIsEscapeCode = true;
 
 
-    return ErrorCode_t::ErrorCode_Success;
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
 
 
@@ -4398,7 +4422,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xD7,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( Register_t(Register_t::RegisterClass_t::RegisterClass_GPR, 3, 64) ),
+        /*operand1       = */Operand_t( Register_t(Register_t::RegisterClass_GPR, 3, 64) ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -6574,11 +6598,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
             {
                 // 0xDD
                 // Brief : Unordered Compare Floating Point Values
-                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
                     /*szName         = */"FUCOM",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6590,11 +6614,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(2);
             {
                 // 0xDD
                 // Brief : Unordered Compare Floating Point Values
-                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
                     /*szName         = */"FUCOM",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6606,11 +6630,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(3);
             {
                 // 0xDD
                 // Brief : Unordered Compare Floating Point Values
-                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
                     /*szName         = */"FUCOM",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6622,11 +6646,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(4);
             {
                 // 0xDD
                 // Brief : Unordered Compare Floating Point Values
-                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
                     /*szName         = */"FUCOM",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6638,11 +6662,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(5);
             {
                 // 0xDD
                 // Brief : Unordered Compare Floating Point Values
-                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
                     /*szName         = */"FUCOM",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6654,11 +6678,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(6);
             {
                 // 0xDD
                 // Brief : Unordered Compare Floating Point Values
-                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
                     /*szName         = */"FUCOM",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6811,11 +6835,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(0);
             {
                 // 0xDE
                 // Brief : Add and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
                     /*szName         = */"FADDP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6827,11 +6851,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(2);
             {
                 // 0xDE
                 // Brief : Add and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
                     /*szName         = */"FADDP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6843,11 +6867,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(3);
             {
                 // 0xDE
                 // Brief : Add and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
                     /*szName         = */"FADDP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6859,11 +6883,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(4);
             {
                 // 0xDE
                 // Brief : Add and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
                     /*szName         = */"FADDP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6875,11 +6899,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(5);
             {
                 // 0xDE
                 // Brief : Add and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
                     /*szName         = */"FADDP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6891,11 +6915,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(6);
             {
                 // 0xDE
                 // Brief : Add and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
                     /*szName         = */"FADDP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6968,11 +6992,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(0);
             {
                 // 0xDE
                 // Brief : Multiply and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
                     /*szName         = */"FMULP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -6984,11 +7008,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(2);
             {
                 // 0xDE
                 // Brief : Multiply and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
                     /*szName         = */"FMULP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7000,11 +7024,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(3);
             {
                 // 0xDE
                 // Brief : Multiply and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
                     /*szName         = */"FMULP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7016,11 +7040,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(4);
             {
                 // 0xDE
                 // Brief : Multiply and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
                     /*szName         = */"FMULP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7032,11 +7056,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(5);
             {
                 // 0xDE
                 // Brief : Multiply and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
                     /*szName         = */"FMULP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7048,11 +7072,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(6);
             {
                 // 0xDE
                 // Brief : Multiply and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
                     /*szName         = */"FMULP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7210,11 +7234,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
             {
                 // 0xDE
                 // Brief : Reverse Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
                     /*szName         = */"FSUBRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7226,11 +7250,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(2);
             {
                 // 0xDE
                 // Brief : Reverse Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
                     /*szName         = */"FSUBRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7242,11 +7266,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(3);
             {
                 // 0xDE
                 // Brief : Reverse Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
                     /*szName         = */"FSUBRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7258,11 +7282,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(4);
             {
                 // 0xDE
                 // Brief : Reverse Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
                     /*szName         = */"FSUBRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7274,11 +7298,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(5);
             {
                 // 0xDE
                 // Brief : Reverse Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
                     /*szName         = */"FSUBRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7290,11 +7314,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(6);
             {
                 // 0xDE
                 // Brief : Reverse Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
                     /*szName         = */"FSUBRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7367,11 +7391,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(0);
             {
                 // 0xDE
                 // Brief : Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
                     /*szName         = */"FSUBP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7383,11 +7407,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(2);
             {
                 // 0xDE
                 // Brief : Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
                     /*szName         = */"FSUBP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7399,11 +7423,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(3);
             {
                 // 0xDE
                 // Brief : Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
                     /*szName         = */"FSUBP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7415,11 +7439,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(4);
             {
                 // 0xDE
                 // Brief : Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
                     /*szName         = */"FSUBP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7431,11 +7455,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(5);
             {
                 // 0xDE
                 // Brief : Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
                     /*szName         = */"FSUBP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7447,11 +7471,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(6);
             {
                 // 0xDE
                 // Brief : Subtract and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
                     /*szName         = */"FSUBP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7524,11 +7548,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(0);
             {
                 // 0xDE
                 // Brief : Reverse Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
                     /*szName         = */"FDIVRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7540,11 +7564,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(2);
             {
                 // 0xDE
                 // Brief : Reverse Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
                     /*szName         = */"FDIVRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7556,11 +7580,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(3);
             {
                 // 0xDE
                 // Brief : Reverse Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
                     /*szName         = */"FDIVRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7572,11 +7596,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(4);
             {
                 // 0xDE
                 // Brief : Reverse Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
                     /*szName         = */"FDIVRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7588,11 +7612,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(5);
             {
                 // 0xDE
                 // Brief : Reverse Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
                     /*szName         = */"FDIVRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7604,11 +7628,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(6);
             {
                 // 0xDE
                 // Brief : Reverse Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
                     /*szName         = */"FDIVRP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7681,11 +7705,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(0);
             {
                 // 0xDE
                 // Brief : Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
                     /*szName         = */"FDIVP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7697,11 +7721,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(2);
             {
                 // 0xDE
                 // Brief : Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
                     /*szName         = */"FDIVP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7713,11 +7737,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(3);
             {
                 // 0xDE
                 // Brief : Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
                     /*szName         = */"FDIVP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7729,11 +7753,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(4);
             {
                 // 0xDE
                 // Brief : Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
                     /*szName         = */"FDIVP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7745,11 +7769,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(5);
             {
                 // 0xDE
                 // Brief : Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
                     /*szName         = */"FDIVP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,
@@ -7761,11 +7785,11 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
-            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(6);
             {
                 // 0xDE
                 // Brief : Divide and Pop
-                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
                     /*szName         = */"FDIVP",
                     /*bValidOpcd     = */true,
                     /*bEscapeOpcd    = */false,

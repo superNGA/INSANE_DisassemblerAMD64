@@ -62,7 +62,7 @@ namespace INSANE_DASM64_NAMESPACE
         // 
         //      Ex. VarientKey_ModRM_REG, means m_pVarients[modrm.REG] will gives us all different 
         // varients of this instruction.
-        enum VarientType_t : int
+        enum VarientType_t
         {
             VarientKey_None = -1,
             VarientKey_ModRM_REG = 0,
@@ -73,10 +73,10 @@ namespace INSANE_DASM64_NAMESPACE
 
 
         // Max varients that can be stored in each of the varient types...
-        const size_t MAX_REG_VARIENTS           = 8llu;
-        const size_t MAX_MOD_VARIENTS           = 4llu;
-        const size_t MAX_RM_VARIENTS            = 8llu;
-        const size_t MAX_LEGACY_PREFIX_VARIENTS = 12llu;
+        static const size_t MAX_REG_VARIENTS           = 8llu;
+        static const size_t MAX_MOD_VARIENTS           = 4llu;
+        static const size_t MAX_RM_VARIENTS            = 8llu;
+        static const size_t MAX_LEGACY_PREFIX_VARIENTS = 12llu;
 
         size_t GetMaxVarients(VarientType_t iVarientType);
 
@@ -111,60 +111,12 @@ namespace INSANE_DASM64_NAMESPACE
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    struct OperatorInfo_t
-    {
-        OperatorInfo_t()
-        {
-            m_szOperatorName  = nullptr;
-            m_nOperands       = 0;
-            m_bIsEscapeOpCode = false;
-            m_bIsValidOpCode  = false;
-            m_iOpCodeFlag     = OpCodeFlag_t::OpCodeFlag_None;
-        }
-
-
-        inline void SetOperatorInfo(
-            const char* szOperatorName, Byte iByte, int nOperands, bool bValidOpCode, bool bEscapeCode,
-            OpCodeOperand_t operand1,
-            OpCodeOperand_t operand2,
-            OpCodeOperand_t operand3,
-            OpCodeOperand_t operand4)
-        {
-            m_szOperatorName  = szOperatorName;
-            iByte             = m_iByte;
-            m_bIsValidOpCode  = bValidOpCode;
-            m_bIsEscapeOpCode = bEscapeCode;
-            m_nOperands       = nOperands;
-            m_nOperands       = nOperands;
-            m_operands[0]     = operand1;
-            m_operands[1]     = operand2;
-            m_operands[2]     = operand3;
-            m_operands[3]     = operand4;
-        }
-
-
-        // Operator Properties...
-        const char*     m_szOperatorName  = nullptr;
-        bool            m_bIsValidOpCode  = false;
-        bool            m_bIsEscapeOpCode = false;
-        Byte            m_iByte           = 0x00;
-
-
-        // Operands...
-        OpCodeOperand_t m_operands[Rules::MAX_OPERANDS];
-        int32_t         m_nOperands       = 0;
-        OpCodeFlag_t    m_iOpCodeFlag     = OpCodeFlag_t::OpCodeFlag_None;
-    };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
     class Tables_t
     {
     public:
         Tables_t();
 
-        InsaneDASM64::ErrorCode_t Initialize();
+        InsaneDASM64::IDASMErrorCode_t Initialize();
         bool                      IsInitialized() const;
 
         uint16_t                  GetInstType(Byte iOpCode) const;
@@ -176,21 +128,24 @@ namespace INSANE_DASM64_NAMESPACE
 
 
     private:
-        InsaneDASM64::ErrorCode_t _InitializeInstTypeLUT();
-        uint16_t                  m_instTypeLUT[0xFFLLU + 1LLU]; // 256 entries...
-        bool                      m_bInstTypeLUTInit = false;
+        InsaneDASM64::IDASMErrorCode_t _InitializeInstTypeLUT();
+        uint16_t                       m_instTypeLUT[0xFFLLU + 1LLU]; // 256 entries...
+        bool                           m_bInstTypeLUTInit = false;
 
 
-        InsaneDASM64::ErrorCode_t _InitializeOpCodeTable();
-        void                      InitOneByteOpCodeTable();
-        void                      InitTwoByteOpCodeTable();
-        void                      InitThreeByteOpCodeTable_38();
-        void                      InitThreeByteOpCodeTable_3A();
+        InsaneDASM64::IDASMErrorCode_t _InitializeOpCodeTable();
+        void                           InitOneByteOpCodeTable();
+        void                           InitTwoByteOpCodeTable();
+        void                           InitThreeByteOpCodeTable_38();
+        void                           InitThreeByteOpCodeTable_3A();
 
-        OpCodeDesc_t              m_opCodeTable1[0x100];
-        OpCodeDesc_t              m_opCodeTable2[0x100];
+
+        // Tables...
+        OpCodeDesc_t              m_opCodeTable1   [0x100];
+        OpCodeDesc_t              m_opCodeTable2   [0x100];
         OpCodeDesc_t              m_opCodeTable3_38[0x100];
         OpCodeDesc_t              m_opCodeTable3_3A[0x100];
+
 
         bool                      m_bOpCodeTableInit = false;
     };

@@ -341,7 +341,7 @@ int main(void)
 
     // Two byte opcodes...
     std::vector<Entry_t*> vecTwoByteOpCodes;
-    if (true)
+    if (false)
     {
         vecTwoByteOpCodes.reserve(0xFF); vecTwoByteOpCodes.clear();
         CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes, 2);
@@ -350,7 +350,7 @@ int main(void)
 
     // Three Byte OpCodes...
     std::vector<Entry_t*> vecThreeByteOpCodes38, vecThreeByteOpCodes3A;
-    if (true)
+    if (false)
     {
         vecThreeByteOpCodes38.reserve(65); vecThreeByteOpCodes3A.reserve(40);
         CollectThreeByteOpCodeEntries(pRootElem->FirstChildElement("two-byte"), vecThreeByteOpCodes38, 0x38);
@@ -366,8 +366,8 @@ int main(void)
     }
 
     
-    // DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); // DumpEntryInfo(vecOneByteOpCodes);
-    DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); // DumpEntryInfo(vecTwoByteOpCodes);
+    DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); DumpEntryInfo(vecOneByteOpCodes);
+    // DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); // DumpEntryInfo(vecTwoByteOpCodes);
     // DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes38);
     // DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes3A);
 
@@ -1008,7 +1008,8 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
                     assert(vecNoMem.size() == 1 && "Multipe NoMem entries, with sec_opcd / NoMem collision");
 
                     printf(RED "<!-- Handling Multiple \"NoMem\" and \"sec_opcd\" collision. Setting default to NoMem -->\n" RESET);
-                    Byte iRegisteredRMVarients[8] = { 0 };
+                    //Byte iRegisteredRMVarients[8] = { 0 };
+                    Byte iRegisteredRMVarients[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
 
                     pNoMem->m_iVarientKey = Entry_t::VarientKey_ModRM_RM;
@@ -1044,13 +1045,20 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
                     int nDefaultEntries = 0;
                     for (int iRMSlotIndex = 0; iRMSlotIndex < sizeof(iRegisteredRMVarients); iRMSlotIndex++)
                     {
-                        int iRM = iRegisteredRMVarients[iRMSlotIndex];
+                        //int iRM = iRegisteredRMVarients[iRMSlotIndex];
+                        Byte iRM = iRegisteredRMVarients[iRMSlotIndex];
                         
-                        if (iRM == 0)
+                        if (iRM == 0xFF)
                         {
-                            pNoMem->m_vecVarients.push_back(pDefaultEntry);
+                            Entry_t* pNew       = new Entry_t();
+                            *pNew                = *pDefaultEntry;
+                            pNew->m_iSecOpcd    = iRMSlotIndex;
+                            // pNew->m_iPrefix     = iRMSlotIndex;
+                            // pNew->m_iOpcdExt    = iRMSlotIndex;
+
+                            pNoMem->m_vecVarients.push_back(pNew);
                             nDefaultEntries++;
-                            printf("%d, ", iRMSlotIndex);
+                            printf("%d { %s }, ", pNew->m_iSecOpcd, pNew->m_szName.c_str());
                         }
                     }
                     printf("\n");
@@ -1088,14 +1096,54 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void DumpEntryRecurse(std::vector<Entry_t*> vecEntries, int iIndentation)
+void DumpEntryRecurse(std::vector<Entry_t*>& vecEntries, int iIndentation, Entry_t::VarientKey_t iSplitMethod = Entry_t::VarientKey_None)
 {
+    if (iSplitMethod != Entry_t::VarientKey_None)
+    {
+        for (int i = 0; i < iIndentation - 1; i++)
+            printf("    ");
+
+        const char* szSplitMethod = nullptr;
+        switch (iSplitMethod)
+        {
+        case Entry_t::VarientKey_ModRM_REG: szSplitMethod = "REG Split ( opcd_ext )"; break;
+        case Entry_t::VarientKey_ModRM_MOD: szSplitMethod = "MOD Split"; break;
+        case Entry_t::VarientKey_ModRM_RM: szSplitMethod = "RM Split"; break;
+        case Entry_t::VarientKey_LegacyPrefix: szSplitMethod = "LegacyPrefix"; break;
+
+        case Entry_t::VarientKey_None:
+        default: break;
+        }
+
+        if (szSplitMethod != nullptr)
+            printf(CYAN "%s\n" RESET, szSplitMethod);
+    }
+
+
     for (Entry_t* pEntry : vecEntries)
     {
         if (pEntry->m_szName != "xx_INVALID_xx")
         {
             for (int i = 0; i < iIndentation; i++)
                 printf(".   ");
+
+
+            // Index according to split method.
+            int iIndex = -1; int* pIndex = nullptr;
+            switch (iSplitMethod)
+            {
+            case Entry_t::VarientKey_ModRM_REG:    pIndex = &pEntry->m_iOpcdExt; iIndex = *pIndex;         break;
+            case Entry_t::VarientKey_ModRM_RM:     pIndex = &pEntry->m_iSecOpcd; iIndex = *pIndex & 0b111; break;
+            case Entry_t::VarientKey_LegacyPrefix: pIndex = &pEntry->m_iPrefix;  iIndex = *pIndex;         break;
+            
+            case Entry_t::VarientKey_ModRM_MOD:
+            case Entry_t::VarientKey_None:
+            default: 
+                break;
+            }
+
+            if(iIndex >= 0 && pIndex != nullptr)
+                printf("# %d [ %d ]", iIndex, *pIndex);
 
 
             // OpCode's original name, will be valid only if there are varients.
@@ -1119,7 +1167,7 @@ void DumpEntryRecurse(std::vector<Entry_t*> vecEntries, int iIndentation)
             printf("\n");
         }
 
-        DumpEntryRecurse(pEntry->m_vecVarients, iIndentation + 1);
+        DumpEntryRecurse(pEntry->m_vecVarients, iIndentation + 1, pEntry->m_iVarientKey);
 
         if (iIndentation == 0)
             printf("\n");
@@ -1132,6 +1180,7 @@ void DumpEntryRecurse(std::vector<Entry_t*> vecEntries, int iIndentation)
 void DumpEntryInfo(std::vector<Entry_t*>& vecEntries)
 {
     printf(GREEN "Starting Entry Dump...\n" RESET);
+
 
     DumpEntryRecurse(vecEntries, 0);
 }

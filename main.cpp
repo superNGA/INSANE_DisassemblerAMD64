@@ -133,8 +133,8 @@ int main(void)
 
     // Initialize disassembler.
     {
-        InsaneDASM64::ErrorCode_t iErrorCode = InsaneDASM64::Initialize();
-        if (iErrorCode == InsaneDASM64::ErrorCode_FailedInit)
+        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::Initialize();
+        if (iErrorCode == InsaneDASM64::IDASMErrorCode_FailedInit)
         {
             printf("%s\n", InsaneDASM64::GetErrorMessage(iErrorCode));
             return 1;
@@ -144,9 +144,9 @@ int main(void)
 
     // Disassemble...
     {
-        InsaneDASM64::ErrorCode_t iErrorCode = InsaneDASM64::Disassemble(vecInput, vecOutput);
+        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::Disassemble(vecInput, vecOutput);
 
-        if (iErrorCode != InsaneDASM64::ErrorCode_t::ErrorCode_Success)
+        if (iErrorCode != InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success)
         {
             printf("%s\n", InsaneDASM64::GetErrorMessage(iErrorCode));
             return 1;
@@ -155,7 +155,7 @@ int main(void)
 
 
     /*for (int i = 0; i < 10; i++)
-        printf("%s\n", InsaneDASM64::GetErrorMessage(static_cast<InsaneDASM64::ErrorCode_t>(i)));*/
+        printf("%s\n", InsaneDASM64::GetErrorMessage(static_cast<InsaneDASM64::IDASMErrorCode_t>(i)));*/
 
 
     return 0;
