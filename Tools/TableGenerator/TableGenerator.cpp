@@ -219,10 +219,10 @@ struct Entry_t
         
         int         m_iLiteral      = 0;
 
-        std::string m_szRegister    = "NIGGA";
+        std::string m_szRegister    = "Invalid";
 
-        std::string m_szOperandMode = "NIGGA";
-        std::string m_szOperandType = "NIGGA";
+        std::string m_szOperandMode = "Invalid";
+        std::string m_szOperandType = "Invalid";
 
         Operand_t& operator=(const Operand_t& other)
         {
@@ -287,6 +287,7 @@ int         HexStringToInt       (const char* szInput, int iSize);
 void        ExtractSquareBrackets(std::string& szInput);
 XMLElement* FindChildRecurse     (XMLElement* pParent, const char* szChildName);
 void        RemoveInvalidEntries (std::vector<XMLElement*>& vecEntries, Byte iPrimOpCode, int iTableID, const char* szGroupName = nullptr);
+static void RemoveNonAsciiChars  (std::string& sz);
 
 // Actual parsing logic...
 void CollectThreeByteOpCodeEntries(XMLElement* pRoot, std::vector<Entry_t*>& vecOutput, Byte iParentIndex);
@@ -331,7 +332,7 @@ int main(void)
 
     // One-byte opcodes...
     std::vector<Entry_t*> vecOneByteOpCodes;
-    if(false)
+    if (true)
     {
         vecOneByteOpCodes.reserve(0xFF); vecOneByteOpCodes.clear();
         CollectEntires(pRootElem->FirstChildElement("one-byte"), vecOneByteOpCodes, 1);
@@ -340,7 +341,7 @@ int main(void)
 
     // Two byte opcodes...
     std::vector<Entry_t*> vecTwoByteOpCodes;
-    if(true)
+    if (true)
     {
         vecTwoByteOpCodes.reserve(0xFF); vecTwoByteOpCodes.clear();
         CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes, 2);
@@ -349,7 +350,7 @@ int main(void)
 
     // Three Byte OpCodes...
     std::vector<Entry_t*> vecThreeByteOpCodes38, vecThreeByteOpCodes3A;
-    if (false)
+    if (true)
     {
         vecThreeByteOpCodes38.reserve(65); vecThreeByteOpCodes3A.reserve(40);
         CollectThreeByteOpCodeEntries(pRootElem->FirstChildElement("two-byte"), vecThreeByteOpCodes38, 0x38);
@@ -365,8 +366,7 @@ int main(void)
     }
 
     
-    DumpEntryInfo(vecTwoByteOpCodes);
-    //DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); // DumpEntryInfo(vecOneByteOpCodes);
+    // DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); // DumpEntryInfo(vecOneByteOpCodes);
     DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); // DumpEntryInfo(vecTwoByteOpCodes);
     // DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes38);
     // DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes3A);
@@ -685,6 +685,9 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
 
     pEntry->m_szName  = FindChildRecurse(pSyntax, "mnem")->GetText();
     pEntry->m_szBrief = FindChildRecurse(pElem,   "brief")->GetText();
+
+    RemoveNonAsciiChars(pEntry->m_szBrief); // causes bullshit
+
     printf("Brief : %s\n", pEntry->m_szBrief.c_str());
 
     pEntry->m_bModRm  = pElem->Attribute("r", "yes") != nullptr || FindChildRecurse(pElem, "opcd_ext") != nullptr;
@@ -708,6 +711,12 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
     if (bPrefix  == true) StoreTag(pEntry->m_iPrefix,  "pref",     false);
     if (bOpcdExt == true) StoreTag(pEntry->m_iOpcdExt, "opcd_ext", true);
     if (bSecOpcd == true) StoreTag(pEntry->m_iSecOpcd, "sec_opcd", false);
+
+
+    // Little sanity check for out of bound sec_opcd in non - "escape to 3 byte opcod table" case.
+    if (XMLElement* pSecOpcd = FindChildRecurse(pElem, "sec_opcd"); pSecOpcd != nullptr)
+        if (pSecOpcd->Attribute("escape", "yes") == nullptr)
+            assert((pEntry->m_iSecOpcd & 0b11000000) == 0b11000000 && "Out of bound sec_opcd in non-escape case");
 
     
     int iOperandIndex = 0;
@@ -1666,21 +1675,138 @@ static inline void PrintInvalidEntry(Byte iByte, const char* szGroupName, std::o
 }
 
 
+std::unordered_map<std::string, std::string> g_mapRegisterToType =
+{
+    { "ST", "Register_t( Register_t::RegisterClass_FPU, -1, 64 )" },
+
+    // ======================
+    // 64-bit
+    // ======================
+    { "rAX", "Register_t( Register_t::RegisterClass_GPR, 0, 64 )" },
+    { "rCX", "Register_t( Register_t::RegisterClass_GPR, 1, 64 )" },
+    { "rDX", "Register_t( Register_t::RegisterClass_GPR, 2, 64 )" },
+    { "rBX", "Register_t( Register_t::RegisterClass_GPR, 3, 64 )" },
+    { "rSP", "Register_t( Register_t::RegisterClass_GPR, 4, 64 )" },
+    { "rBP", "Register_t( Register_t::RegisterClass_GPR, 5, 64 )" },
+    { "rSI", "Register_t( Register_t::RegisterClass_GPR, 6, 64 )" },
+    { "rDI", "Register_t( Register_t::RegisterClass_GPR, 7, 64 )" },
+    { "r8",  "Register_t( Register_t::RegisterClass_GPR, 8, 64 )" },
+    { "r9",  "Register_t( Register_t::RegisterClass_GPR, 9, 64 )" },
+    { "r10", "Register_t( Register_t::RegisterClass_GPR, 10, 64 )" },
+    { "r11", "Register_t( Register_t::RegisterClass_GPR, 11, 64 )" },
+    { "r12", "Register_t( Register_t::RegisterClass_GPR, 12, 64 )" },
+    { "r13", "Register_t( Register_t::RegisterClass_GPR, 13, 64 )" },
+    { "r14", "Register_t( Register_t::RegisterClass_GPR, 14, 64 )" },
+    { "r15", "Register_t( Register_t::RegisterClass_GPR, 15, 64 )" },
+
+    // ======================
+    // 32-bit
+    // ======================
+    { "eAX", "Register_t( Register_t::RegisterClass_GPR, 0, 32 )" },
+    { "eCX", "Register_t( Register_t::RegisterClass_GPR, 1, 32 )" },
+    { "eDX", "Register_t( Register_t::RegisterClass_GPR, 2, 32 )" },
+    { "eBX", "Register_t( Register_t::RegisterClass_GPR, 3, 32 )" },
+    { "eSP", "Register_t( Register_t::RegisterClass_GPR, 4, 32 )" },
+    { "eBP", "Register_t( Register_t::RegisterClass_GPR, 5, 32 )" },
+    { "eSI", "Register_t( Register_t::RegisterClass_GPR, 6, 32 )" },
+    { "eDI", "Register_t( Register_t::RegisterClass_GPR, 7, 32 )" },
+    { "r8d", "Register_t( Register_t::RegisterClass_GPR, 8, 32 )" },
+    { "r9d", "Register_t( Register_t::RegisterClass_GPR, 9, 32 )" },
+    { "r10d","Register_t( Register_t::RegisterClass_GPR, 10, 32 )" },
+    { "r11d","Register_t( Register_t::RegisterClass_GPR, 11, 32 )" },
+    { "r12d","Register_t( Register_t::RegisterClass_GPR, 12, 32 )" },
+    { "r13d","Register_t( Register_t::RegisterClass_GPR, 13, 32 )" },
+    { "r14d","Register_t( Register_t::RegisterClass_GPR, 14, 32 )" },
+    { "r15d","Register_t( Register_t::RegisterClass_GPR, 15, 32 )" },
+
+    // ======================
+    // 16-bit
+    // ======================
+    { "AX",  "Register_t( Register_t::RegisterClass_GPR, 0, 16 )" },
+    { "CX",  "Register_t( Register_t::RegisterClass_GPR, 1, 16 )" },
+    { "DX",  "Register_t( Register_t::RegisterClass_GPR, 2, 16 )" },
+    { "BX",  "Register_t( Register_t::RegisterClass_GPR, 3, 16 )" },
+    { "SP",  "Register_t( Register_t::RegisterClass_GPR, 4, 16 )" },
+    { "BP",  "Register_t( Register_t::RegisterClass_GPR, 5, 16 )" },
+    { "SI",  "Register_t( Register_t::RegisterClass_GPR, 6, 16 )" },
+    { "DI",  "Register_t( Register_t::RegisterClass_GPR, 7, 16 )" },
+    { "r8w", "Register_t( Register_t::RegisterClass_GPR, 8, 16 )" },
+    { "r9w", "Register_t( Register_t::RegisterClass_GPR, 9, 16 )" },
+    { "r10w","Register_t( Register_t::RegisterClass_GPR, 10, 16 )" },
+    { "r11w","Register_t( Register_t::RegisterClass_GPR, 11, 16 )" },
+    { "r12w","Register_t( Register_t::RegisterClass_GPR, 12, 16 )" },
+    { "r13w","Register_t( Register_t::RegisterClass_GPR, 13, 16 )" },
+    { "r14w","Register_t( Register_t::RegisterClass_GPR, 14, 16 )" },
+    { "r15w","Register_t( Register_t::RegisterClass_GPR, 15, 16 )" },
+
+    // ======================
+    // 8-bit LOW
+    // ======================
+    { "AL",  "Register_t( Register_t::RegisterClass_GPR, 0, 8 )" },
+    { "CL",  "Register_t( Register_t::RegisterClass_GPR, 1, 8 )" },
+    { "DL",  "Register_t( Register_t::RegisterClass_GPR, 2, 8 )" },
+    { "BL",  "Register_t( Register_t::RegisterClass_GPR, 3, 8 )" },
+    { "spl", "Register_t( Register_t::RegisterClass_GPR, 4, 8 )" },
+    { "bpl", "Register_t( Register_t::RegisterClass_GPR, 5, 8 )" },
+    { "sil", "Register_t( Register_t::RegisterClass_GPR, 6, 8 )" },
+    { "dil", "Register_t( Register_t::RegisterClass_GPR, 7, 8 )" },
+    { "r8b", "Register_t( Register_t::RegisterClass_GPR, 8, 8 )" },
+    { "r9b", "Register_t( Register_t::RegisterClass_GPR, 9, 8 )" },
+    { "r10b","Register_t( Register_t::RegisterClass_GPR, 10, 8 )" },
+    { "r11b","Register_t( Register_t::RegisterClass_GPR, 11, 8 )" },
+    { "r12b","Register_t( Register_t::RegisterClass_GPR, 12, 8 )" },
+    { "r13b","Register_t( Register_t::RegisterClass_GPR, 13, 8 )" },
+    { "r14b","Register_t( Register_t::RegisterClass_GPR, 14, 8 )" },
+    { "r15b","Register_t( Register_t::RegisterClass_GPR, 15, 8 )" },
+};
+
+
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static void PrintValidEntry(Entry_t* pEntry, std::string szGroupName, std::ofstream& hFile, int iIndentation)
+static inline std::string FixRegisterName(std::string szRegister)
+{
+    auto it = g_mapRegisterToType.find(szRegister);
+    if (it == g_mapRegisterToType.end())
+    {
+        printf(RED "@@@@@@@@    Failed to find register { %s } in g_mapRegisterToType map\n" RESET, szRegister.c_str());
+        return szRegister;
+    }
+
+    return it->second;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static void RemoveNonAsciiChars(std::string& sz)
+{
+    for (auto it = sz.begin(); it != sz.end();)
+    {
+        char c = *it;
+        
+        if ((c > 0x7E || c < 0x20) && c != '\n')
+            it = sz.erase(it);
+        else
+            it++;
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static void PrintValidEntry(Entry_t* pEntry, std::string szGroupName, std::ofstream& hFile, int iIndentation, bool bUseArrow)
 {
     // Byte we are printing.
     Indent(iIndentation, hFile); 
     hFile << "// 0x" << std::hex << std::uppercase << static_cast<int>(pEntry->m_iByte) << std::nouppercase << std::dec << std::endl;
 
     // Note about instruction.
-    Indent(iIndentation, hFile); 
+    Indent(iIndentation, hFile);
     hFile << "// Brief : " << pEntry->m_szBrief << std::endl;
 
     // Fn call
     Indent(iIndentation, hFile);     
-    hFile << szGroupName << ".Init(\n";
+    hFile << szGroupName << (bUseArrow == true ? "->" : ".") << "Init(\n";
 
     // Inst. name
     Indent(iIndentation + 1, hFile); 
@@ -1713,12 +1839,12 @@ static void PrintValidEntry(Entry_t* pEntry, std::string szGroupName, std::ofstr
 
         if(i < pEntry->m_nOperands)
         {
-            hFile << "/*operand" << i << "       = */" << "Operand_t( ";
+            hFile << "/*operand" << i + 1<< "       = */" << "Operand_t( ";
 
             switch (pEntry->m_operand[i].m_iOperandType)
             {
             case Entry_t::Operand_t::OperandCatagory_Literal:  hFile << pEntry->m_operand[i].m_iLiteral; break;
-            case Entry_t::Operand_t::OperandCatagory_Register: hFile << "Register_" << pEntry->m_operand[i].m_szRegister; break;
+            case Entry_t::Operand_t::OperandCatagory_Register: hFile << FixRegisterName(pEntry->m_operand[i].m_szRegister); break;
             case Entry_t::Operand_t::OperandCatagory_Legacy:   hFile << "OperandMode_" << pEntry->m_operand[i].m_szOperandMode << ", " << "OperandType_" << pEntry->m_operand[i].m_szOperandType; break;
             default: break;
             }
@@ -1727,7 +1853,7 @@ static void PrintValidEntry(Entry_t* pEntry, std::string szGroupName, std::ofstr
         }
         else
         {
-            hFile << "/*operand" << i << "       = */" << "Operand_t()";
+            hFile << "/*operand" << i + 1 << "       = */" << "Operand_t()";
         }
 
         if (i == 3)
@@ -1740,7 +1866,7 @@ static void PrintValidEntry(Entry_t* pEntry, std::string szGroupName, std::ofstr
         }
     }
 
-    hFile << std::endl;
+    // hFile << std::endl;
 }
 
 
@@ -1778,11 +1904,11 @@ static inline void PrintEntry(Entry_t* pEntry, std::string szGroupName, std::ofs
     // This is just a tiny map, to help us link our types to the disassemblers types.
     struct TypeToString_t { int m_iType; const char* m_szString; };
     static TypeToString_t s_typeToString[5] = {
-        {Entry_t::VarientKey_None,         "VarientType_t::VarientKey_None"},
-        {Entry_t::VarientKey_ModRM_REG,    "VarientType_t::VarientKey_ModRM_REG"},
-        {Entry_t::VarientKey_ModRM_MOD,    "VarientType_t::VarientKey_ModRM_MOD"},
-        {Entry_t::VarientKey_ModRM_RM,     "VarientType_t::VarientKey_ModRM_RM"},
-        {Entry_t::VarientKey_LegacyPrefix, "VarientType_t::VarientKey_LegacyPrefix"},
+        {Entry_t::VarientKey_None,         "OpCodeDesc_t::VarientType_t::VarientKey_None"},
+        {Entry_t::VarientKey_ModRM_REG,    "OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG"},
+        {Entry_t::VarientKey_ModRM_MOD,    "OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD"},
+        {Entry_t::VarientKey_ModRM_RM,     "OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM"},
+        {Entry_t::VarientKey_LegacyPrefix, "OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix"},
     };
 
 
@@ -1794,7 +1920,7 @@ static inline void PrintEntry(Entry_t* pEntry, std::string szGroupName, std::ofs
     {
         // Don't dump invalid / filler entry.
         if(pEntry->m_szName != "xx_INVALID_xx")
-            PrintValidEntry(pEntry, szGroupName, hFile, iIndentation);
+            PrintValidEntry(pEntry, szGroupName, hFile, iIndentation, s_iRecurseCounter > 1);
     }
     else
     {
@@ -1827,26 +1953,78 @@ static inline void PrintEntry(Entry_t* pEntry, std::string szGroupName, std::ofs
             switch (pEntry->m_iVarientKey)
             {
             case Entry_t::VarientKey_LegacyPrefix: iChildKey = GetLegacyPrefixIndex(pChildEntry->m_iPrefix); break;
-            case Entry_t::VarientKey_ModRM_REG:    iChildKey = pChildEntry->m_iOpcdExt; break;
-            case Entry_t::VarientKey_ModRM_MOD:    iChildKey = iChildIndex;             break; // TODO Gotta handle this seperatly.
-            case Entry_t::VarientKey_ModRM_RM:     iChildKey = pChildEntry->m_iSecOpcd; break;
+            case Entry_t::VarientKey_ModRM_REG:    iChildKey = pChildEntry->m_iOpcdExt;                      break;
+            case Entry_t::VarientKey_ModRM_MOD:    iChildKey = iChildIndex;                                  break; // TODO Gotta handle this seperatly.
+            case Entry_t::VarientKey_ModRM_RM:     iChildKey = (pChildEntry->m_iSecOpcd & 0b111);            break;
             default: break;
             }
 
 
-            // InsertVarient(int iIndex);
-            Indent(iIndentation, hFile);
-            std::string szFnName = s_iRecurseCounter == 1 ? 
-                std::format("{}.InsertVarient(",  szGroupName) : 
-                std::format("{}->InsertVarient(", szGroupName);
-            hFile << szFnName << iChildKey << ");\n\n";
+            // Incase of mod split, we will copy the pointer at index 0 to index 1 and 2.
+            if(pEntry->m_iVarientKey == Entry_t::VarientKey_ModRM_MOD)
+            {
+                if (iChildKey == 0)
+                {
+                    Indent(iIndentation, hFile);
+                    hFile << "// Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents \"mem\" catagory.\n";
+
+
+                    // Dump InsertVarient(int iIndex); fn call.
+                    Indent(iIndentation, hFile);
+                    std::string szFnName = s_iRecurseCounter == 1 ? 
+                        std::format("{}.InsertVarient(",  szGroupName) : 
+                        std::format("{}->InsertVarient(", szGroupName);
+
+                    hFile << szFnName << iChildKey << ");\n";
+
+
+                    for(int i = 1; i <= 2; i++)
+                    {
+                        Indent(iIndentation, hFile);
+
+                        std::string szFnCall = s_iRecurseCounter == 1 ?
+                            std::format("{}.m_pVarients[0x{:02X}] = {}.m_pVarients[0x00];",   szGroupName, i, szGroupName) :
+                            std::format("{}->m_pVarients[0x{:02X}] = {}->m_pVarients[0x00];", szGroupName, i, szGroupName);
+
+                        hFile << szFnCall << std::endl;
+                    }
+
+                    // hFile << std::endl;
+                }
+                else if (iChildKey == 1) // One is actually for index 3
+                {
+                    iChildKey = 3;
+
+
+                    // Dump InsertVarient(int iIndex); fn call.
+                    Indent(iIndentation, hFile);
+                    std::string szFnName = s_iRecurseCounter == 1 ? 
+                        std::format("{}.InsertVarient(",  szGroupName) : 
+                        std::format("{}->InsertVarient(", szGroupName);
+
+                    hFile << szFnName << iChildKey << ");\n";
+
+                }
+            }
+            else
+            {
+                // Dump InsertVarient(int iIndex); fn call.
+                Indent(iIndentation, hFile);
+                std::string szFnName = s_iRecurseCounter == 1 ? 
+                    std::format("{}.InsertVarient(",  szGroupName) : 
+                    std::format("{}->InsertVarient(", szGroupName);
+
+                hFile << szFnName << iChildKey << ");\n";
+            }
 
             
             std::string szObjName = s_iRecurseCounter == 1 ? 
                 std::format("{}.m_pVarients[0x{:02X}]",  szGroupName, iChildKey) : 
                 std::format("{}->m_pVarients[0x{:02X}]", szGroupName, iChildKey);
 
+            Indent(iIndentation, hFile); hFile << "{\n";
             PrintEntry(pChildEntry, szObjName, hFile, iIndentation + 1);
+            Indent(iIndentation, hFile); hFile << "}\n";
         }
     }
 
@@ -1871,7 +2049,7 @@ void DumpTable(std::vector<Entry_t*>& vecEntries, const char* szTableName, std::
             iByte++;
         }
 
-        std::string szObjName = std::format("{}[0x{:02X}]", szTableName, pEntry->m_iByte);
+        std::string szObjName = std::format("{}[0x{:02X}]", szTableName, static_cast<int>(pEntry->m_iByte));
         PrintEntry(pEntry, szObjName, hFile, 1);
         hFile << std::endl;
         iByte++;

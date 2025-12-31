@@ -167,8 +167,8 @@ namespace INSANE_DASM64_NAMESPACE
         InsaneDASM64::ErrorCode_t Initialize();
         bool                      IsInitialized() const;
 
-        uint16_t                  GetInstType    (Byte iOpCode) const;
-        const OperatorInfo_t*     GetOperatorInfo(Byte iOpCode, int iTableIndex) const;
+        uint16_t                  GetInstType(Byte iOpCode) const;
+
 
         // To associate all leagacy prefix with simple consecutive numbers.
         // Returns 0 on default case.
@@ -184,9 +184,14 @@ namespace INSANE_DASM64_NAMESPACE
         InsaneDASM64::ErrorCode_t _InitializeOpCodeTable();
         void                      InitOneByteOpCodeTable();
         void                      InitTwoByteOpCodeTable();
-        OperatorInfo_t            m_opCodeTable1[0xFFLLU + 1LLU]; // 256 entries...
-        OperatorInfo_t            m_opCodeTable2[0xFFLLU + 1LLU]; // 256 entries...
-        OperatorInfo_t            m_opCodeTable3[0xFFLLU + 1LLU]; // 256 entries...
+        void                      InitThreeByteOpCodeTable_38();
+        void                      InitThreeByteOpCodeTable_3A();
+
+        OpCodeDesc_t              m_opCodeTable1[0x100];
+        OpCodeDesc_t              m_opCodeTable2[0x100];
+        OpCodeDesc_t              m_opCodeTable3_38[0x100];
+        OpCodeDesc_t              m_opCodeTable3_3A[0x100];
+
         bool                      m_bOpCodeTableInit = false;
     };
     DEFINE_GLOBAL_OBJECT(g_tables, Tables_t)

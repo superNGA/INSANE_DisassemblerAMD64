@@ -58,17 +58,40 @@ namespace InsaneDASM64::SpecialChars
 ///////////////////////////////////////////////////////////////////////////
 namespace InsaneDASM64
 {
-    enum Register_t : int16_t
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    struct Register_t
     {
-        Register_Invalid = -1,
-        Register_RAX     =  0,
-        Register_RCX     =  1,
-        Register_RDX     =  2,
-        Register_RBX     =  3,
-        Register_RSP     =  4,
-        Register_RBP     =  5,
-        Register_RSI     =  6,
-        Register_RDI     =  7
+        enum RegisterClass_t : int16_t
+        {
+            RegisterClass_Invalid = -1,
+            RegisterClass_GPR,
+            RegisterClass_FPU,
+            RegisterClass_SSE,
+            RegisterClass_AVX,
+            RegisterClass_AVX512,
+            RegisterClass_Segment,
+            RegisterClass_Control,
+            RegisterClass_Debug,
+        };
+
+        Register_t()
+        {
+            m_iRegisterClass = RegisterClass_Invalid;
+            m_iRegisterIndex = -1;
+            m_iRegisterSize  = -1;
+        }
+
+        Register_t(RegisterClass_t iRegisterClass, int16_t iRegisterIndex, int16_t iRegisterSize)
+        {
+            m_iRegisterClass = iRegisterClass;
+            m_iRegisterIndex = iRegisterIndex;
+            m_iRegisterSize  = iRegisterSize;
+        }
+
+        RegisterClass_t m_iRegisterClass = RegisterClass_Invalid;
+        int16_t         m_iRegisterIndex = -1;
+        int16_t         m_iRegisterSize  = -1;
     };
 
 

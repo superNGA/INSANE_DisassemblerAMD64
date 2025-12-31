@@ -175,25 +175,6 @@ uint16_t Tables_t::GetInstType(Byte iOpCode) const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-const OperatorInfo_t* Tables_t::GetOperatorInfo(Byte iOpCode, int iTableIndex) const
-{
-    assert(m_bOpCodeTableInit == true && "OpCode Table is not initialized!.");
-
-    switch (iTableIndex)
-    {
-    case 1: return &m_opCodeTable1[iOpCode];
-    case 2: return &m_opCodeTable2[iOpCode];
-    case 3: return &m_opCodeTable3[iOpCode];
-    
-    default: assert(iTableIndex >= 1 && iTableIndex <= 3 && "Table index is out of range!!!"); break;
-    }
-
-    return nullptr;
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 int Tables_t::GetLegacyPrefixIndex(Byte iByte)
 {
     switch (iByte)
@@ -274,29 +255,31 @@ ErrorCode_t Tables_t::_InitializeInstTypeLUT()
 ///////////////////////////////////////////////////////////////////////////
 ErrorCode_t Tables_t::_InitializeOpCodeTable()
 {
-    memset(m_opCodeTable1, 0, sizeof(m_opCodeTable1));
-    memset(m_opCodeTable2, 0, sizeof(m_opCodeTable2));
-    memset(m_opCodeTable3, 0, sizeof(m_opCodeTable3));
+    memset(m_opCodeTable1,    0, sizeof(m_opCodeTable1));
+    memset(m_opCodeTable2,    0, sizeof(m_opCodeTable2));
+    memset(m_opCodeTable3_38, 0, sizeof(m_opCodeTable3_38));
+    memset(m_opCodeTable3_3A, 0, sizeof(m_opCodeTable3_3A));
 
 
-    // TODO : Fix this, this is just for testing parsing algorithm.
     for (int i = 0; i <= 0xFF; i++)
     {
-        m_opCodeTable1[i].m_bIsValidOpCode = false; // we will set all the valid ones manually.
-        m_opCodeTable2[i].m_bIsValidOpCode = false;
-        m_opCodeTable3[i].m_bIsValidOpCode = false;
+        m_opCodeTable1[i].m_bIsValidCode    = false; // we will set all the valid ones manually.
+        m_opCodeTable2[i].m_bIsValidCode    = false;
+        m_opCodeTable3_38[i].m_bIsValidCode = false;
+        m_opCodeTable3_3A[i].m_bIsValidCode = false;
     }
 
 
     InitOneByteOpCodeTable();
     InitTwoByteOpCodeTable();
+    InitThreeByteOpCodeTable_38();
+    InitThreeByteOpCodeTable_3A();
 
         
     // Setting Escape characters...
-    m_opCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsEscapeOpCode    = true;
-    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_A].m_bIsEscapeOpCode = true;
-    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_B].m_bIsEscapeOpCode = true;
-
+    m_opCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsEscapeCode    = true;
+    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_A].m_bIsEscapeCode = true;
+    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_B].m_bIsEscapeCode = true;
 
 
     return ErrorCode_t::ErrorCode_Success;
@@ -307,3333 +290,8637 @@ ErrorCode_t Tables_t::_InitializeOpCodeTable()
 ///////////////////////////////////////////////////////////////////////////
 void Tables_t::InitOneByteOpCodeTable()
 {
+    // 0x0
     // Brief : Add
-    m_opCodeTable1[0].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x00].Init(
+        /*szName         = */"ADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x0,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x1
     // Brief : Add
-    m_opCodeTable1[0X1].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x01].Init(
+        /*szName         = */"ADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x2
     // Brief : Add
-    m_opCodeTable1[0X2].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x02].Init(
+        /*szName         = */"ADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x3
     // Brief : Add
-    m_opCodeTable1[0X3].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x03].Init(
+        /*szName         = */"ADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x4
     // Brief : Add
-    m_opCodeTable1[0X4].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X4, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x04].Init(
+        /*szName         = */"ADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x5
     // Brief : Add
-    m_opCodeTable1[0X5].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X5, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x05].Init(
+        /*szName         = */"ADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X6].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X7].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x8
     // Brief : Logical Inclusive OR
-    m_opCodeTable1[0X8].SetOperatorInfo(
-        /* Operator Name = */"OR", 
-        /* Byte          = */0X8, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x08].Init(
+        /*szName         = */"OR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x9
     // Brief : Logical Inclusive OR
-    m_opCodeTable1[0X9].SetOperatorInfo(
-        /* Operator Name = */"OR", 
-        /* Byte          = */0X9, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x09].Init(
+        /*szName         = */"OR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA
     // Brief : Logical Inclusive OR
-    m_opCodeTable1[0XA].SetOperatorInfo(
-        /* Operator Name = */"OR", 
-        /* Byte          = */0XA, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x0A].Init(
+        /*szName         = */"OR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xB
     // Brief : Logical Inclusive OR
-    m_opCodeTable1[0XB].SetOperatorInfo(
-        /* Operator Name = */"OR", 
-        /* Byte          = */0XB, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x0B].Init(
+        /*szName         = */"OR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xC
     // Brief : Logical Inclusive OR
-    m_opCodeTable1[0XC].SetOperatorInfo(
-        /* Operator Name = */"OR", 
-        /* Byte          = */0XC, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x0C].Init(
+        /*szName         = */"OR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xD
     // Brief : Logical Inclusive OR
-    m_opCodeTable1[0XD].SetOperatorInfo(
-        /* Operator Name = */"OR", 
-        /* Byte          = */0XD, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x0D].Init(
+        /*szName         = */"OR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XE].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XF].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */true, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x10
     // Brief : Add with Carry
-    m_opCodeTable1[0X10].SetOperatorInfo(
-        /* Operator Name = */"ADC", 
-        /* Byte          = */0X10, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x10].Init(
+        /*szName         = */"ADC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x10,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x11
     // Brief : Add with Carry
-    m_opCodeTable1[0X11].SetOperatorInfo(
-        /* Operator Name = */"ADC", 
-        /* Byte          = */0X11, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x11].Init(
+        /*szName         = */"ADC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x11,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x12
     // Brief : Add with Carry
-    m_opCodeTable1[0X12].SetOperatorInfo(
-        /* Operator Name = */"ADC", 
-        /* Byte          = */0X12, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x12].Init(
+        /*szName         = */"ADC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x12,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x13
     // Brief : Add with Carry
-    m_opCodeTable1[0X13].SetOperatorInfo(
-        /* Operator Name = */"ADC", 
-        /* Byte          = */0X13, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x13].Init(
+        /*szName         = */"ADC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x13,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x14
     // Brief : Add with Carry
-    m_opCodeTable1[0X14].SetOperatorInfo(
-        /* Operator Name = */"ADC", 
-        /* Byte          = */0X14, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x14].Init(
+        /*szName         = */"ADC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x14,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x15
     // Brief : Add with Carry
-    m_opCodeTable1[0X15].SetOperatorInfo(
-        /* Operator Name = */"ADC", 
-        /* Byte          = */0X15, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x15].Init(
+        /*szName         = */"ADC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x15,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X16].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x16
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x16].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x16,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X17].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x17
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x17].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x17,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x18
     // Brief : Integer Subtraction with Borrow
-    m_opCodeTable1[0X18].SetOperatorInfo(
-        /* Operator Name = */"SBB", 
-        /* Byte          = */0X18, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x18].Init(
+        /*szName         = */"SBB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x18,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x19
     // Brief : Integer Subtraction with Borrow
-    m_opCodeTable1[0X19].SetOperatorInfo(
-        /* Operator Name = */"SBB", 
-        /* Byte          = */0X19, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x19].Init(
+        /*szName         = */"SBB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x19,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x1A
     // Brief : Integer Subtraction with Borrow
-    m_opCodeTable1[0X1A].SetOperatorInfo(
-        /* Operator Name = */"SBB", 
-        /* Byte          = */0X1A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x1A].Init(
+        /*szName         = */"SBB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1A,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x1B
     // Brief : Integer Subtraction with Borrow
-    m_opCodeTable1[0X1B].SetOperatorInfo(
-        /* Operator Name = */"SBB", 
-        /* Byte          = */0X1B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x1B].Init(
+        /*szName         = */"SBB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1B,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x1C
     // Brief : Integer Subtraction with Borrow
-    m_opCodeTable1[0X1C].SetOperatorInfo(
-        /* Operator Name = */"SBB", 
-        /* Byte          = */0X1C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x1C].Init(
+        /*szName         = */"SBB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1C,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x1D
     // Brief : Integer Subtraction with Borrow
-    m_opCodeTable1[0X1D].SetOperatorInfo(
-        /* Operator Name = */"SBB", 
-        /* Byte          = */0X1D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x1D].Init(
+        /*szName         = */"SBB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1D,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X1E].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x1E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x1E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X1F].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x1F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x1F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x20
     // Brief : Logical AND
-    m_opCodeTable1[0X20].SetOperatorInfo(
-        /* Operator Name = */"AND", 
-        /* Byte          = */0X20, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x20].Init(
+        /*szName         = */"AND",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x20,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x21
     // Brief : Logical AND
-    m_opCodeTable1[0X21].SetOperatorInfo(
-        /* Operator Name = */"AND", 
-        /* Byte          = */0X21, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x21].Init(
+        /*szName         = */"AND",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x21,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x22
     // Brief : Logical AND
-    m_opCodeTable1[0X22].SetOperatorInfo(
-        /* Operator Name = */"AND", 
-        /* Byte          = */0X22, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x22].Init(
+        /*szName         = */"AND",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x22,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x23
     // Brief : Logical AND
-    m_opCodeTable1[0X23].SetOperatorInfo(
-        /* Operator Name = */"AND", 
-        /* Byte          = */0X23, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x23].Init(
+        /*szName         = */"AND",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x23,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x24
     // Brief : Logical AND
-    m_opCodeTable1[0X24].SetOperatorInfo(
-        /* Operator Name = */"AND", 
-        /* Byte          = */0X24, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x24].Init(
+        /*szName         = */"AND",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x24,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x25
     // Brief : Logical AND
-    m_opCodeTable1[0X25].SetOperatorInfo(
-        /* Operator Name = */"AND", 
-        /* Byte          = */0X25, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x25].Init(
+        /*szName         = */"AND",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x25,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : ES segment override prefix
-    m_opCodeTable1[0X26].SetOperatorInfo(
-        /* Operator Name = */"ES", 
-        /* Byte          = */0X26, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x26
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x26].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x26,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X27].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x27
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x27].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x27,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x28
     // Brief : Subtract
-    m_opCodeTable1[0X28].SetOperatorInfo(
-        /* Operator Name = */"SUB", 
-        /* Byte          = */0X28, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x28].Init(
+        /*szName         = */"SUB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x28,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x29
     // Brief : Subtract
-    m_opCodeTable1[0X29].SetOperatorInfo(
-        /* Operator Name = */"SUB", 
-        /* Byte          = */0X29, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x29].Init(
+        /*szName         = */"SUB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x29,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x2A
     // Brief : Subtract
-    m_opCodeTable1[0X2A].SetOperatorInfo(
-        /* Operator Name = */"SUB", 
-        /* Byte          = */0X2A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x2A].Init(
+        /*szName         = */"SUB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2A,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x2B
     // Brief : Subtract
-    m_opCodeTable1[0X2B].SetOperatorInfo(
-        /* Operator Name = */"SUB", 
-        /* Byte          = */0X2B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x2B].Init(
+        /*szName         = */"SUB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2B,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x2C
     // Brief : Subtract
-    m_opCodeTable1[0X2C].SetOperatorInfo(
-        /* Operator Name = */"SUB", 
-        /* Byte          = */0X2C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x2C].Init(
+        /*szName         = */"SUB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2C,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x2D
     // Brief : Subtract
-    m_opCodeTable1[0X2D].SetOperatorInfo(
-        /* Operator Name = */"SUB", 
-        /* Byte          = */0X2D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x2D].Init(
+        /*szName         = */"SUB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2D,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : CS segment override prefix
-    m_opCodeTable1[0X2E].SetOperatorInfo(
-        /* Operator Name = */"CS", 
-        /* Byte          = */0X2E, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x2E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x2E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X2F].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x2F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x2F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x30
     // Brief : Logical Exclusive OR
-    m_opCodeTable1[0X30].SetOperatorInfo(
-        /* Operator Name = */"XOR", 
-        /* Byte          = */0X30, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x30].Init(
+        /*szName         = */"XOR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x30,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x31
     // Brief : Logical Exclusive OR
-    m_opCodeTable1[0X31].SetOperatorInfo(
-        /* Operator Name = */"XOR", 
-        /* Byte          = */0X31, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x31].Init(
+        /*szName         = */"XOR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x31,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x32
     // Brief : Logical Exclusive OR
-    m_opCodeTable1[0X32].SetOperatorInfo(
-        /* Operator Name = */"XOR", 
-        /* Byte          = */0X32, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x32].Init(
+        /*szName         = */"XOR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x32,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x33
     // Brief : Logical Exclusive OR
-    m_opCodeTable1[0X33].SetOperatorInfo(
-        /* Operator Name = */"XOR", 
-        /* Byte          = */0X33, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x33].Init(
+        /*szName         = */"XOR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x33,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x34
     // Brief : Logical Exclusive OR
-    m_opCodeTable1[0X34].SetOperatorInfo(
-        /* Operator Name = */"XOR", 
-        /* Byte          = */0X34, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x34].Init(
+        /*szName         = */"XOR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x34,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x35
     // Brief : Logical Exclusive OR
-    m_opCodeTable1[0X35].SetOperatorInfo(
-        /* Operator Name = */"XOR", 
-        /* Byte          = */0X35, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x35].Init(
+        /*szName         = */"XOR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x35,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : SS segment override prefix
-    m_opCodeTable1[0X36].SetOperatorInfo(
-        /* Operator Name = */"SS", 
-        /* Byte          = */0X36, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x36
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x36].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x36,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X37].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x37
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x37].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x37,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x38
     // Brief : Compare Two Operands
-    m_opCodeTable1[0X38].SetOperatorInfo(
-        /* Operator Name = */"CMP", 
-        /* Byte          = */0X38, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x38].Init(
+        /*szName         = */"CMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x38,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x39
     // Brief : Compare Two Operands
-    m_opCodeTable1[0X39].SetOperatorInfo(
-        /* Operator Name = */"CMP", 
-        /* Byte          = */0X39, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x39].Init(
+        /*szName         = */"CMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x39,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x3A
     // Brief : Compare Two Operands
-    m_opCodeTable1[0X3A].SetOperatorInfo(
-        /* Operator Name = */"CMP", 
-        /* Byte          = */0X3A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x3A].Init(
+        /*szName         = */"CMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3A,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x3B
     // Brief : Compare Two Operands
-    m_opCodeTable1[0X3B].SetOperatorInfo(
-        /* Operator Name = */"CMP", 
-        /* Byte          = */0X3B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x3B].Init(
+        /*szName         = */"CMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3B,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x3C
     // Brief : Compare Two Operands
-    m_opCodeTable1[0X3C].SetOperatorInfo(
-        /* Operator Name = */"CMP", 
-        /* Byte          = */0X3C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x3C].Init(
+        /*szName         = */"CMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3C,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x3D
     // Brief : Compare Two Operands
-    m_opCodeTable1[0X3D].SetOperatorInfo(
-        /* Operator Name = */"CMP", 
-        /* Byte          = */0X3D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x3D].Init(
+        /*szName         = */"CMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3D,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : DS segment override prefix
-    m_opCodeTable1[0X3E].SetOperatorInfo(
-        /* Operator Name = */"DS", 
-        /* Byte          = */0X3E, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x3E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x3E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X3F].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x3F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x3F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X40].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x40
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x40].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x40,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X41].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x41
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x41].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x41,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X42].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x42
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x42].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x42,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X43].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x43
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x43].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x43,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X44].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x44
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x44].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x44,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X45].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x45
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x45].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x45,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X46].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x46
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x46].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x46,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X47].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x47
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x47].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x47,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X48].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x48
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x48].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x48,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X49].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x49
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x49].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x49,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X4A].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x4A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x4A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X4B].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x4B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x4B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X4C].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x4C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x4C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X4D].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x4D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x4D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X4E].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x4E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x4E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X4F].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x4F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x4F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x50
     // Brief : Push Word, Doubleword or Quadword Onto the Stack
-    m_opCodeTable1[0X50].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0X50, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x50].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x50,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X51].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x51
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable1[0x51].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x51,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X52].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x52
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable1[0x52].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x52,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X53].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x53
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable1[0x53].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x53,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X54].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x54
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable1[0x54].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x54,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X55].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x55
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable1[0x55].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x55,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X56].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x56
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable1[0x56].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x56,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X57].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x57
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable1[0x57].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x57,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x58
     // Brief : Pop a Value from the Stack
-    m_opCodeTable1[0X58].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0X58, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x58].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x58,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X59].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x59
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable1[0x59].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x59,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X5A].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x5A
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable1[0x5A].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5A,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X5B].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x5B
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable1[0x5B].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5B,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X5C].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x5C
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable1[0x5C].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5C,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X5D].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x5D
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable1[0x5D].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5D,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X5E].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x5E
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable1[0x5E].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5E,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X5F].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x5F
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable1[0x5F].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5F,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X60].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x60
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x60].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x60,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X61].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x61
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x61].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x61,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X62].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x62
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x62].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x62,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Adjust RPL Field of Segment Selector
-    m_opCodeTable1[0X63].SetOperatorInfo(
-        /* Operator Name = */"ARPL", 
-        /* Byte          = */0X63, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_w ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_w ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x63
+    // Brief : Move with Sign-Extension
+    m_opCodeTable1[0x63].Init(
+        /*szName         = */"MOVSXD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x63,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : FS segment override prefix
-    m_opCodeTable1[0X64].SetOperatorInfo(
-        /* Operator Name = */"FS", 
-        /* Byte          = */0X64, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x64
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x64].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x64,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : GS segment override prefix
-    m_opCodeTable1[0X65].SetOperatorInfo(
-        /* Operator Name = */"GS", 
-        /* Byte          = */0X65, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x65
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x65].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x65,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X66].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x66
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x66].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x66,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X67].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x67
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x67].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x67,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x68
     // Brief : Push Word, Doubleword or Quadword Onto the Stack
-    m_opCodeTable1[0X68].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0X68, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x68].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x68,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x69
     // Brief : Signed Multiply
-    m_opCodeTable1[0X69].SetOperatorInfo(
-        /* Operator Name = */"IMUL", 
-        /* Byte          = */0X69, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x69].Init(
+        /*szName         = */"IMUL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x69,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand4       = */Operand_t());
 
+    // 0x6A
     // Brief : Push Word, Doubleword or Quadword Onto the Stack
-    m_opCodeTable1[0X6A].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0X6A, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x6A].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6A,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x6B
     // Brief : Signed Multiply
-    m_opCodeTable1[0X6B].SetOperatorInfo(
-        /* Operator Name = */"IMUL", 
-        /* Byte          = */0X6B, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x6B].Init(
+        /*szName         = */"IMUL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6B,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
 
+    // 0x6C
     // Brief : Input from Port to String
-    m_opCodeTable1[0X6C].SetOperatorInfo(
-        /* Operator Name = */"INS", 
-        /* Byte          = */0X6C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x6C].Init(
+        /*szName         = */"INS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6C,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x6D
     // Brief : Input from Port to String
-    m_opCodeTable1[0X6D].SetOperatorInfo(
-        /* Operator Name = */"INS", 
-        /* Byte          = */0X6D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x6D].Init(
+        /*szName         = */"INS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6D,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x6E
     // Brief : Output String to Port
-    m_opCodeTable1[0X6E].SetOperatorInfo(
-        /* Operator Name = */"OUTS", 
-        /* Byte          = */0X6E, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x6E].Init(
+        /*szName         = */"OUTS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6E,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x6F
     // Brief : Output String to Port
-    m_opCodeTable1[0X6F].SetOperatorInfo(
-        /* Operator Name = */"OUTS", 
-        /* Byte          = */0X6F, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_SI, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x6F].Init(
+        /*szName         = */"OUTS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6F,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x70
     // Brief : Jump short if overflow (OF=1)
-    m_opCodeTable1[0X70].SetOperatorInfo(
-        /* Operator Name = */"JO", 
-        /* Byte          = */0X70, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x70].Init(
+        /*szName         = */"JO",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x70,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x71
     // Brief : Jump short if not overflow (OF=0)
-    m_opCodeTable1[0X71].SetOperatorInfo(
-        /* Operator Name = */"JNO", 
-        /* Byte          = */0X71, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x71].Init(
+        /*szName         = */"JNO",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x71,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x72
     // Brief : Jump short if below/not above or equal/carry (CF=1)
-    m_opCodeTable1[0X72].SetOperatorInfo(
-        /* Operator Name = */"JB", 
-        /* Byte          = */0X72, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x72].Init(
+        /*szName         = */"JB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x72,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x73
     // Brief : Jump short if not below/above or equal/not carry (CF=0)
-    m_opCodeTable1[0X73].SetOperatorInfo(
-        /* Operator Name = */"JNB", 
-        /* Byte          = */0X73, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x73].Init(
+        /*szName         = */"JNB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x73,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x74
     // Brief : Jump short if zero/equal (ZF=1)
-    m_opCodeTable1[0X74].SetOperatorInfo(
-        /* Operator Name = */"JZ", 
-        /* Byte          = */0X74, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x74].Init(
+        /*szName         = */"JZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x74,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x75
     // Brief : Jump short if not zero/not equal (ZF=0)
-    m_opCodeTable1[0X75].SetOperatorInfo(
-        /* Operator Name = */"JNZ", 
-        /* Byte          = */0X75, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x75].Init(
+        /*szName         = */"JNZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x75,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x76
     // Brief : Jump short if below or equal/not above (CF=1 OR ZF=1)
-    m_opCodeTable1[0X76].SetOperatorInfo(
-        /* Operator Name = */"JBE", 
-        /* Byte          = */0X76, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x76].Init(
+        /*szName         = */"JBE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x76,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x77
     // Brief : Jump short if not below or equal/above (CF=0 AND ZF=0)
-    m_opCodeTable1[0X77].SetOperatorInfo(
-        /* Operator Name = */"JNBE", 
-        /* Byte          = */0X77, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x77].Init(
+        /*szName         = */"JNBE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x77,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x78
     // Brief : Jump short if sign (SF=1)
-    m_opCodeTable1[0X78].SetOperatorInfo(
-        /* Operator Name = */"JS", 
-        /* Byte          = */0X78, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x78].Init(
+        /*szName         = */"JS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x78,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x79
     // Brief : Jump short if not sign (SF=0)
-    m_opCodeTable1[0X79].SetOperatorInfo(
-        /* Operator Name = */"JNS", 
-        /* Byte          = */0X79, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x79].Init(
+        /*szName         = */"JNS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x79,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x7A
     // Brief : Jump short if parity/parity even (PF=1)
-    m_opCodeTable1[0X7A].SetOperatorInfo(
-        /* Operator Name = */"JP", 
-        /* Byte          = */0X7A, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x7A].Init(
+        /*szName         = */"JP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7A,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x7B
     // Brief : Jump short if not parity/parity odd (PF=0)
-    m_opCodeTable1[0X7B].SetOperatorInfo(
-        /* Operator Name = */"JNP", 
-        /* Byte          = */0X7B, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x7B].Init(
+        /*szName         = */"JNP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7B,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x7C
     // Brief : Jump short if less/not greater (SF!=OF)
-    m_opCodeTable1[0X7C].SetOperatorInfo(
-        /* Operator Name = */"JL", 
-        /* Byte          = */0X7C, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x7C].Init(
+        /*szName         = */"JL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7C,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x7D
     // Brief : Jump short if not less/greater or equal (SF=OF)
-    m_opCodeTable1[0X7D].SetOperatorInfo(
-        /* Operator Name = */"JNL", 
-        /* Byte          = */0X7D, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x7D].Init(
+        /*szName         = */"JNL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7D,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x7E
     // Brief : Jump short if less or equal/not greater ((ZF=1) OR (SF!=OF))
-    m_opCodeTable1[0X7E].SetOperatorInfo(
-        /* Operator Name = */"JLE", 
-        /* Byte          = */0X7E, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x7E].Init(
+        /*szName         = */"JLE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7E,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x7F
     // Brief : Jump short if not less nor equal/greater ((ZF=0) AND (SF=OF))
-    m_opCodeTable1[0X7F].SetOperatorInfo(
-        /* Operator Name = */"JNLE", 
-        /* Byte          = */0X7F, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x7F].Init(
+        /*szName         = */"JNLE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7F,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Add
-    m_opCodeTable1[0X80].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X80, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x80].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Add
-    m_opCodeTable1[0X81].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X81, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x80].InsertVarient(0);
+    {
+        // 0x80
+        // Brief : Add
+        m_opCodeTable1[0x80].m_pVarients[0x00]->Init(
+            /*szName         = */"ADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x80].InsertVarient(1);
+    {
+        // 0x80
+        // Brief : Logical Inclusive OR
+        m_opCodeTable1[0x80].m_pVarients[0x01]->Init(
+            /*szName         = */"OR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x80].InsertVarient(2);
+    {
+        // 0x80
+        // Brief : Add with Carry
+        m_opCodeTable1[0x80].m_pVarients[0x02]->Init(
+            /*szName         = */"ADC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x80].InsertVarient(3);
+    {
+        // 0x80
+        // Brief : Integer Subtraction with Borrow
+        m_opCodeTable1[0x80].m_pVarients[0x03]->Init(
+            /*szName         = */"SBB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x80].InsertVarient(4);
+    {
+        // 0x80
+        // Brief : Logical AND
+        m_opCodeTable1[0x80].m_pVarients[0x04]->Init(
+            /*szName         = */"AND",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x80].InsertVarient(5);
+    {
+        // 0x80
+        // Brief : Subtract
+        m_opCodeTable1[0x80].m_pVarients[0x05]->Init(
+            /*szName         = */"SUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x80].InsertVarient(6);
+    {
+        // 0x80
+        // Brief : Logical Exclusive OR
+        m_opCodeTable1[0x80].m_pVarients[0x06]->Init(
+            /*szName         = */"XOR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x80].InsertVarient(7);
+    {
+        // 0x80
+        // Brief : Compare Two Operands
+        m_opCodeTable1[0x80].m_pVarients[0x07]->Init(
+            /*szName         = */"CMP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X82].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x81].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Add
-    m_opCodeTable1[0X83].SetOperatorInfo(
-        /* Operator Name = */"ADD", 
-        /* Byte          = */0X83, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x81].InsertVarient(0);
+    {
+        // 0x81
+        // Brief : Add
+        m_opCodeTable1[0x81].m_pVarients[0x00]->Init(
+            /*szName         = */"ADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x81].InsertVarient(1);
+    {
+        // 0x81
+        // Brief : Logical Inclusive OR
+        m_opCodeTable1[0x81].m_pVarients[0x01]->Init(
+            /*szName         = */"OR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x81].InsertVarient(2);
+    {
+        // 0x81
+        // Brief : Add with Carry
+        m_opCodeTable1[0x81].m_pVarients[0x02]->Init(
+            /*szName         = */"ADC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x81].InsertVarient(3);
+    {
+        // 0x81
+        // Brief : Integer Subtraction with Borrow
+        m_opCodeTable1[0x81].m_pVarients[0x03]->Init(
+            /*szName         = */"SBB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x81].InsertVarient(4);
+    {
+        // 0x81
+        // Brief : Logical AND
+        m_opCodeTable1[0x81].m_pVarients[0x04]->Init(
+            /*szName         = */"AND",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x81].InsertVarient(5);
+    {
+        // 0x81
+        // Brief : Subtract
+        m_opCodeTable1[0x81].m_pVarients[0x05]->Init(
+            /*szName         = */"SUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x81].InsertVarient(6);
+    {
+        // 0x81
+        // Brief : Logical Exclusive OR
+        m_opCodeTable1[0x81].m_pVarients[0x06]->Init(
+            /*szName         = */"XOR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x81].InsertVarient(7);
+    {
+        // 0x81
+        // Brief : Compare Two Operands
+        m_opCodeTable1[0x81].m_pVarients[0x07]->Init(
+            /*szName         = */"CMP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
+    // 0x82
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x82].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x82,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable1[0x83].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0x83].InsertVarient(0);
+    {
+        // 0x83
+        // Brief : Add
+        m_opCodeTable1[0x83].m_pVarients[0x00]->Init(
+            /*szName         = */"ADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x83].InsertVarient(1);
+    {
+        // 0x83
+        // Brief : Logical Inclusive OR
+        m_opCodeTable1[0x83].m_pVarients[0x01]->Init(
+            /*szName         = */"OR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x83].InsertVarient(2);
+    {
+        // 0x83
+        // Brief : Add with Carry
+        m_opCodeTable1[0x83].m_pVarients[0x02]->Init(
+            /*szName         = */"ADC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x83].InsertVarient(3);
+    {
+        // 0x83
+        // Brief : Integer Subtraction with Borrow
+        m_opCodeTable1[0x83].m_pVarients[0x03]->Init(
+            /*szName         = */"SBB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x83].InsertVarient(4);
+    {
+        // 0x83
+        // Brief : Logical AND
+        m_opCodeTable1[0x83].m_pVarients[0x04]->Init(
+            /*szName         = */"AND",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x83].InsertVarient(5);
+    {
+        // 0x83
+        // Brief : Subtract
+        m_opCodeTable1[0x83].m_pVarients[0x05]->Init(
+            /*szName         = */"SUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x83].InsertVarient(6);
+    {
+        // 0x83
+        // Brief : Logical Exclusive OR
+        m_opCodeTable1[0x83].m_pVarients[0x06]->Init(
+            /*szName         = */"XOR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x83].InsertVarient(7);
+    {
+        // 0x83
+        // Brief : Compare Two Operands
+        m_opCodeTable1[0x83].m_pVarients[0x07]->Init(
+            /*szName         = */"CMP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x83,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x84
     // Brief : Logical Compare
-    m_opCodeTable1[0X84].SetOperatorInfo(
-        /* Operator Name = */"TEST", 
-        /* Byte          = */0X84, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x84].Init(
+        /*szName         = */"TEST",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x84,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x85
     // Brief : Logical Compare
-    m_opCodeTable1[0X85].SetOperatorInfo(
-        /* Operator Name = */"TEST", 
-        /* Byte          = */0X85, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x85].Init(
+        /*szName         = */"TEST",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x85,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x86
     // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X86].SetOperatorInfo(
-        /* Operator Name = */"XCHG", 
-        /* Byte          = */0X86, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x86].Init(
+        /*szName         = */"XCHG",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x86,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x87
     // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X87].SetOperatorInfo(
-        /* Operator Name = */"XCHG", 
-        /* Byte          = */0X87, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x87].Init(
+        /*szName         = */"XCHG",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x87,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x88
     // Brief : Move
-    m_opCodeTable1[0X88].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X88, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x88].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x88,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x89
     // Brief : Move
-    m_opCodeTable1[0X89].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X89, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x89].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x89,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x8A
     // Brief : Move
-    m_opCodeTable1[0X8A].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X8A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x8A].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8A,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x8B
     // Brief : Move
-    m_opCodeTable1[0X8B].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X8B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x8B].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8B,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x8C
     // Brief : Move
-    m_opCodeTable1[0X8C].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X8C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_w ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_S, OpCodeOperandType_w ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x8C].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8C,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand2       = */Operand_t( OperandMode_Sreg, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x8D
     // Brief : Load Effective Address
-    m_opCodeTable1[0X8D].SetOperatorInfo(
-        /* Operator Name = */"LEA", 
-        /* Byte          = */0X8D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x8D].Init(
+        /*szName         = */"LEA",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8D,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x8E
     // Brief : Move
-    m_opCodeTable1[0X8E].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X8E, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_S, OpCodeOperandType_w ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_w ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x8E].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8E,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_Sreg, OperandType_16 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Pop a Value from the Stack
-    m_opCodeTable1[0X8F].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0X8F, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x8F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X90].SetOperatorInfo(
-        /* Operator Name = */"XCHG", 
-        /* Byte          = */0X90, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_R8, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x8F].InsertVarient(0);
+    {
+        // 0x8F
+        // Brief : Pop a Value from the Stack
+        m_opCodeTable1[0x8F].m_pVarients[0x00]->Init(
+            /*szName         = */"POP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x8F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X91].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x90].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X92].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x90].InsertVarient(0);
+    {
+        // 0x90
+        // Brief : No Operation
+        m_opCodeTable1[0x90].m_pVarients[0x00]->Init(
+            /*szName         = */"NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x90,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0x90].InsertVarient(3);
+    {
+        // 0x90
+        // Brief : Spin Loop Hint
+        m_opCodeTable1[0x90].m_pVarients[0x03]->Init(
+            /*szName         = */"PAUSE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x90,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X93].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x91
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x91].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x91,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X94].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x92
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x92].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x92,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X95].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x93
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x93].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x93,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X96].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x94
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x94].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x94,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Exchange Register/Memory with Register
-    m_opCodeTable1[0X97].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x95
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x95].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x95,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Convert Byte to Word
-    m_opCodeTable1[0X98].SetOperatorInfo(
-        /* Operator Name = */"CBW", 
-        /* Byte          = */0X98, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x96
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x96].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x96,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Convert Word to Doubleword
-    m_opCodeTable1[0X99].SetOperatorInfo(
-        /* Operator Name = */"CWD", 
-        /* Byte          = */0X99, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x97
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x97].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x97,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0X9A].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x98
+    // Brief : Convert
+    m_opCodeTable1[0x98].Init(
+        /*szName         = */"CBW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x98,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Check pending unmasked floating-point exceptions
-    m_opCodeTable1[0X9B].SetOperatorInfo(
-        /* Operator Name = */"FWAIT", 
-        /* Byte          = */0X9B, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x99
+    // Brief : Convert
+    m_opCodeTable1[0x99].Init(
+        /*szName         = */"CWD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x99,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Push FLAGS Register onto the Stack
-    m_opCodeTable1[0X9C].SetOperatorInfo(
-        /* Operator Name = */"PUSHF", 
-        /* Byte          = */0X9C, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x9A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x9A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Pop Stack into FLAGS Register
-    m_opCodeTable1[0X9D].SetOperatorInfo(
-        /* Operator Name = */"POPF", 
-        /* Byte          = */0X9D, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0x9B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0x9B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x9C
+    // Brief : Push rFLAGS Register onto the Stack
+    m_opCodeTable1[0x9C].Init(
+        /*szName         = */"PUSHF",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9D
+    // Brief : Pop Stack into rFLAGS Register
+    m_opCodeTable1[0x9D].Init(
+        /*szName         = */"POPF",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9E
     // Brief : Store AH into Flags
-    m_opCodeTable1[0X9E].SetOperatorInfo(
-        /* Operator Name = */"SAHF", 
-        /* Byte          = */0X9E, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x9E].Init(
+        /*szName         = */"SAHF",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0x9F
     // Brief : Load Status Flags into AH Register
-    m_opCodeTable1[0X9F].SetOperatorInfo(
-        /* Operator Name = */"LAHF", 
-        /* Byte          = */0X9F, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0x9F].Init(
+        /*szName         = */"LAHF",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA0
     // Brief : Move
-    m_opCodeTable1[0XA0].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XA0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_O, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA0].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA0,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_moffs, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA1
     // Brief : Move
-    m_opCodeTable1[0XA1].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XA1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_O, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA1].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA1,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_moffs, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA2
     // Brief : Move
-    m_opCodeTable1[0XA2].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XA2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_O, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA2].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA2,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_moffs, OperandType_8 ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA3
     // Brief : Move
-    m_opCodeTable1[0XA3].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XA3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_O, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA3].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA3,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_moffs, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA4
     // Brief : Move Data from String to String
-    m_opCodeTable1[0XA4].SetOperatorInfo(
-        /* Operator Name = */"MOVS", 
-        /* Byte          = */0XA4, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA4].Init(
+        /*szName         = */"MOVS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA4,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA5
     // Brief : Move Data from String to String
-    m_opCodeTable1[0XA5].SetOperatorInfo(
-        /* Operator Name = */"MOVS", 
-        /* Byte          = */0XA5, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_SI, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA5].Init(
+        /*szName         = */"MOVS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA5,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA6
     // Brief : Compare String Operands
-    m_opCodeTable1[0XA6].SetOperatorInfo(
-        /* Operator Name = */"CMPS", 
-        /* Byte          = */0XA6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA6].Init(
+        /*szName         = */"CMPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA6,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA7
     // Brief : Compare String Operands
-    m_opCodeTable1[0XA7].SetOperatorInfo(
-        /* Operator Name = */"CMPS", 
-        /* Byte          = */0XA7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_SI, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA7].Init(
+        /*szName         = */"CMPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA7,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA8
     // Brief : Logical Compare
-    m_opCodeTable1[0XA8].SetOperatorInfo(
-        /* Operator Name = */"TEST", 
-        /* Byte          = */0XA8, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA8].Init(
+        /*szName         = */"TEST",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA8,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xA9
     // Brief : Logical Compare
-    m_opCodeTable1[0XA9].SetOperatorInfo(
-        /* Operator Name = */"TEST", 
-        /* Byte          = */0XA9, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xA9].Init(
+        /*szName         = */"TEST",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA9,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xAA
     // Brief : Store String
-    m_opCodeTable1[0XAA].SetOperatorInfo(
-        /* Operator Name = */"STOS", 
-        /* Byte          = */0XAA, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xAA].Init(
+        /*szName         = */"STOS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAA,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xAB
     // Brief : Store String
-    m_opCodeTable1[0XAB].SetOperatorInfo(
-        /* Operator Name = */"STOS", 
-        /* Byte          = */0XAB, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xAB].Init(
+        /*szName         = */"STOS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAB,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xAC
     // Brief : Load String
-    m_opCodeTable1[0XAC].SetOperatorInfo(
-        /* Operator Name = */"LODS", 
-        /* Byte          = */0XAC, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xAC].Init(
+        /*szName         = */"LODS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAC,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xAD
     // Brief : Load String
-    m_opCodeTable1[0XAD].SetOperatorInfo(
-        /* Operator Name = */"LODS", 
-        /* Byte          = */0XAD, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_SI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xAD].Init(
+        /*szName         = */"LODS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAD,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 6, 64 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xAE
     // Brief : Scan String
-    m_opCodeTable1[0XAE].SetOperatorInfo(
-        /* Operator Name = */"SCAS", 
-        /* Byte          = */0XAE, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xAE].Init(
+        /*szName         = */"SCAS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAE,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xAF
     // Brief : Scan String
-    m_opCodeTable1[0XAF].SetOperatorInfo(
-        /* Operator Name = */"SCAS", 
-        /* Byte          = */0XAF, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xAF].Init(
+        /*szName         = */"SCAS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAF,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 7, 64 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xB0
     // Brief : Move
-    m_opCodeTable1[0XB0].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XB0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xB0].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB0,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB1].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_CL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB2].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB3].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_BL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB4].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AH, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB5].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_CH, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB6].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DH, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB7].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_BH, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
+    // 0xB1
     // Brief : Move
-    m_opCodeTable1[0XB8].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XB8, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xB1].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB1,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XB9].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB2
+    // Brief : Move
+    m_opCodeTable1[0xB2].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB2,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XBA].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB3
+    // Brief : Move
+    m_opCodeTable1[0xB3].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB3,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XBB].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB4
+    // Brief : Move
+    m_opCodeTable1[0xB4].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB4,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XBC].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB5
+    // Brief : Move
+    m_opCodeTable1[0xB5].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB5,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XBD].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB6
+    // Brief : Move
+    m_opCodeTable1[0xB6].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB6,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XBE].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB7
+    // Brief : Move
+    m_opCodeTable1[0xB7].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB7,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XBF].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB8
+    // Brief : Move
+    m_opCodeTable1[0xB8].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB8,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Rotate
-    m_opCodeTable1[0XC0].SetOperatorInfo(
-        /* Operator Name = */"ROL", 
-        /* Byte          = */0XC0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xB9
+    // Brief : Move
+    m_opCodeTable1[0xB9].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB9,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Rotate
-    m_opCodeTable1[0XC1].SetOperatorInfo(
-        /* Operator Name = */"ROL", 
-        /* Byte          = */0XC1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xBA
+    // Brief : Move
+    m_opCodeTable1[0xBA].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBA,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xBB
+    // Brief : Move
+    m_opCodeTable1[0xBB].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBB,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBC
+    // Brief : Move
+    m_opCodeTable1[0xBC].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBC,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBD
+    // Brief : Move
+    m_opCodeTable1[0xBD].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBD,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBE
+    // Brief : Move
+    m_opCodeTable1[0xBE].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBE,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBF
+    // Brief : Move
+    m_opCodeTable1[0xBF].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBF,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable1[0xC0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xC0].InsertVarient(0);
+    {
+        // 0xC0
+        // Brief : Rotate
+        m_opCodeTable1[0xC0].m_pVarients[0x00]->Init(
+            /*szName         = */"ROL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC0].InsertVarient(1);
+    {
+        // 0xC0
+        // Brief : Rotate
+        m_opCodeTable1[0xC0].m_pVarients[0x01]->Init(
+            /*szName         = */"ROR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC0].InsertVarient(2);
+    {
+        // 0xC0
+        // Brief : Rotate
+        m_opCodeTable1[0xC0].m_pVarients[0x02]->Init(
+            /*szName         = */"RCL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC0].InsertVarient(3);
+    {
+        // 0xC0
+        // Brief : Rotate
+        m_opCodeTable1[0xC0].m_pVarients[0x03]->Init(
+            /*szName         = */"RCR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC0].InsertVarient(4);
+    {
+        // 0xC0
+        // Brief : Shift
+        m_opCodeTable1[0xC0].m_pVarients[0x04]->Init(
+            /*szName         = */"SHL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC0].InsertVarient(5);
+    {
+        // 0xC0
+        // Brief : Shift
+        m_opCodeTable1[0xC0].m_pVarients[0x05]->Init(
+            /*szName         = */"SHR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC0].InsertVarient(6);
+    {
+        // 0xC0
+        // Brief : Shift
+        m_opCodeTable1[0xC0].m_pVarients[0x06]->Init(
+            /*szName         = */"SAL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC0].InsertVarient(7);
+    {
+        // 0xC0
+        // Brief : Shift
+        m_opCodeTable1[0xC0].m_pVarients[0x07]->Init(
+            /*szName         = */"SAR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    m_opCodeTable1[0xC1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xC1].InsertVarient(0);
+    {
+        // 0xC1
+        // Brief : Rotate
+        m_opCodeTable1[0xC1].m_pVarients[0x00]->Init(
+            /*szName         = */"ROL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC1].InsertVarient(1);
+    {
+        // 0xC1
+        // Brief : Rotate
+        m_opCodeTable1[0xC1].m_pVarients[0x01]->Init(
+            /*szName         = */"ROR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC1].InsertVarient(2);
+    {
+        // 0xC1
+        // Brief : Rotate
+        m_opCodeTable1[0xC1].m_pVarients[0x02]->Init(
+            /*szName         = */"RCL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC1].InsertVarient(3);
+    {
+        // 0xC1
+        // Brief : Rotate
+        m_opCodeTable1[0xC1].m_pVarients[0x03]->Init(
+            /*szName         = */"RCR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC1].InsertVarient(4);
+    {
+        // 0xC1
+        // Brief : Shift
+        m_opCodeTable1[0xC1].m_pVarients[0x04]->Init(
+            /*szName         = */"SHL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC1].InsertVarient(5);
+    {
+        // 0xC1
+        // Brief : Shift
+        m_opCodeTable1[0xC1].m_pVarients[0x05]->Init(
+            /*szName         = */"SHR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC1].InsertVarient(6);
+    {
+        // 0xC1
+        // Brief : Shift
+        m_opCodeTable1[0xC1].m_pVarients[0x06]->Init(
+            /*szName         = */"SAL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xC1].InsertVarient(7);
+    {
+        // 0xC1
+        // Brief : Shift
+        m_opCodeTable1[0xC1].m_pVarients[0x07]->Init(
+            /*szName         = */"SAR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC2
     // Brief : Return from procedure
-    m_opCodeTable1[0XC2].SetOperatorInfo(
-        /* Operator Name = */"RETN", 
-        /* Byte          = */0XC2, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_w ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xC2].Init(
+        /*szName         = */"RETN",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC2,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xC3
     // Brief : Return from procedure
-    m_opCodeTable1[0XC3].SetOperatorInfo(
-        /* Operator Name = */"RETN", 
-        /* Byte          = */0XC3, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xC3].Init(
+        /*szName         = */"RETN",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XC4].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xC4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xC4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XC5].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xC5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xC5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Move
-    m_opCodeTable1[0XC6].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XC6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xC6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Move
-    m_opCodeTable1[0XC7].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0XC7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_z ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xC6].InsertVarient(0);
+    {
+        // 0xC6
+        // Brief : Move
+        m_opCodeTable1[0xC6].m_pVarients[0x00]->Init(
+            /*szName         = */"MOV",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
+    m_opCodeTable1[0xC7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xC7].InsertVarient(0);
+    {
+        // 0xC7
+        // Brief : Move
+        m_opCodeTable1[0xC7].m_pVarients[0x00]->Init(
+            /*szName         = */"MOV",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC8
     // Brief : Make Stack Frame for Procedure Parameters
-    m_opCodeTable1[0XC8].SetOperatorInfo(
-        /* Operator Name = */"ENTER", 
-        /* Byte          = */0XC8, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_w ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xC8].Init(
+        /*szName         = */"ENTER",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC8,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16 ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xC9
     // Brief : High Level Procedure Exit
-    m_opCodeTable1[0XC9].SetOperatorInfo(
-        /* Operator Name = */"LEAVE", 
-        /* Byte          = */0XC9, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xC9].Init(
+        /*szName         = */"LEAVE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xCA
     // Brief : Return from procedure
-    m_opCodeTable1[0XCA].SetOperatorInfo(
-        /* Operator Name = */"RETF", 
-        /* Byte          = */0XCA, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_w ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xCA].Init(
+        /*szName         = */"RETF",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCA,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xCB
     // Brief : Return from procedure
-    m_opCodeTable1[0XCB].SetOperatorInfo(
-        /* Operator Name = */"RETF", 
-        /* Byte          = */0XCB, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xCB].Init(
+        /*szName         = */"RETF",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xCC
     // Brief : Call to Interrupt Procedure
-    m_opCodeTable1[0XCC].SetOperatorInfo(
-        /* Operator Name = */"INT", 
-        /* Byte          = */0XCC, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xCC].Init(
+        /*szName         = */"INT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCC,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( 3 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xCD
     // Brief : Call to Interrupt Procedure
-    m_opCodeTable1[0XCD].SetOperatorInfo(
-        /* Operator Name = */"INT", 
-        /* Byte          = */0XCD, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xCD].Init(
+        /*szName         = */"INT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCD,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XCE].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xCE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xCE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xCF
     // Brief : Interrupt Return
-    m_opCodeTable1[0XCF].SetOperatorInfo(
-        /* Operator Name = */"IRET", 
-        /* Byte          = */0XCF, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xCF].Init(
+        /*szName         = */"IRET",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Rotate
-    m_opCodeTable1[0XD0].SetOperatorInfo(
-        /* Operator Name = */"ROL", 
-        /* Byte          = */0XD0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Rotate
-    m_opCodeTable1[0XD1].SetOperatorInfo(
-        /* Operator Name = */"ROL", 
-        /* Byte          = */0XD1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD0].InsertVarient(0);
+    {
+        // 0xD0
+        // Brief : Rotate
+        m_opCodeTable1[0xD0].m_pVarients[0x00]->Init(
+            /*szName         = */"ROL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD0].InsertVarient(1);
+    {
+        // 0xD0
+        // Brief : Rotate
+        m_opCodeTable1[0xD0].m_pVarients[0x01]->Init(
+            /*szName         = */"ROR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD0].InsertVarient(2);
+    {
+        // 0xD0
+        // Brief : Rotate
+        m_opCodeTable1[0xD0].m_pVarients[0x02]->Init(
+            /*szName         = */"RCL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD0].InsertVarient(3);
+    {
+        // 0xD0
+        // Brief : Rotate
+        m_opCodeTable1[0xD0].m_pVarients[0x03]->Init(
+            /*szName         = */"RCR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD0].InsertVarient(4);
+    {
+        // 0xD0
+        // Brief : Shift
+        m_opCodeTable1[0xD0].m_pVarients[0x04]->Init(
+            /*szName         = */"SHL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD0].InsertVarient(5);
+    {
+        // 0xD0
+        // Brief : Shift
+        m_opCodeTable1[0xD0].m_pVarients[0x05]->Init(
+            /*szName         = */"SHR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD0].InsertVarient(6);
+    {
+        // 0xD0
+        // Brief : Shift
+        m_opCodeTable1[0xD0].m_pVarients[0x06]->Init(
+            /*szName         = */"SAL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD0].InsertVarient(7);
+    {
+        // 0xD0
+        // Brief : Shift
+        m_opCodeTable1[0xD0].m_pVarients[0x07]->Init(
+            /*szName         = */"SAR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
-    // Brief : Rotate
-    m_opCodeTable1[0XD2].SetOperatorInfo(
-        /* Operator Name = */"ROL", 
-        /* Byte          = */0XD2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_CL, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Rotate
-    m_opCodeTable1[0XD3].SetOperatorInfo(
-        /* Operator Name = */"ROL", 
-        /* Byte          = */0XD3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_CL, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD1].InsertVarient(0);
+    {
+        // 0xD1
+        // Brief : Rotate
+        m_opCodeTable1[0xD1].m_pVarients[0x00]->Init(
+            /*szName         = */"ROL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD1].InsertVarient(1);
+    {
+        // 0xD1
+        // Brief : Rotate
+        m_opCodeTable1[0xD1].m_pVarients[0x01]->Init(
+            /*szName         = */"ROR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD1].InsertVarient(2);
+    {
+        // 0xD1
+        // Brief : Rotate
+        m_opCodeTable1[0xD1].m_pVarients[0x02]->Init(
+            /*szName         = */"RCL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD1].InsertVarient(3);
+    {
+        // 0xD1
+        // Brief : Rotate
+        m_opCodeTable1[0xD1].m_pVarients[0x03]->Init(
+            /*szName         = */"RCR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD1].InsertVarient(4);
+    {
+        // 0xD1
+        // Brief : Shift
+        m_opCodeTable1[0xD1].m_pVarients[0x04]->Init(
+            /*szName         = */"SHL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD1].InsertVarient(5);
+    {
+        // 0xD1
+        // Brief : Shift
+        m_opCodeTable1[0xD1].m_pVarients[0x05]->Init(
+            /*szName         = */"SHR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD1].InsertVarient(6);
+    {
+        // 0xD1
+        // Brief : Shift
+        m_opCodeTable1[0xD1].m_pVarients[0x06]->Init(
+            /*szName         = */"SAL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD1].InsertVarient(7);
+    {
+        // 0xD1
+        // Brief : Shift
+        m_opCodeTable1[0xD1].m_pVarients[0x07]->Init(
+            /*szName         = */"SAR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( 1 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XD4].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XD5].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD2].InsertVarient(0);
+    {
+        // 0xD2
+        // Brief : Rotate
+        m_opCodeTable1[0xD2].m_pVarients[0x00]->Init(
+            /*szName         = */"ROL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD2].InsertVarient(1);
+    {
+        // 0xD2
+        // Brief : Rotate
+        m_opCodeTable1[0xD2].m_pVarients[0x01]->Init(
+            /*szName         = */"ROR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD2].InsertVarient(2);
+    {
+        // 0xD2
+        // Brief : Rotate
+        m_opCodeTable1[0xD2].m_pVarients[0x02]->Init(
+            /*szName         = */"RCL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD2].InsertVarient(3);
+    {
+        // 0xD2
+        // Brief : Rotate
+        m_opCodeTable1[0xD2].m_pVarients[0x03]->Init(
+            /*szName         = */"RCR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD2].InsertVarient(4);
+    {
+        // 0xD2
+        // Brief : Shift
+        m_opCodeTable1[0xD2].m_pVarients[0x04]->Init(
+            /*szName         = */"SHL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD2].InsertVarient(5);
+    {
+        // 0xD2
+        // Brief : Shift
+        m_opCodeTable1[0xD2].m_pVarients[0x05]->Init(
+            /*szName         = */"SHR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD2].InsertVarient(6);
+    {
+        // 0xD2
+        // Brief : Shift
+        m_opCodeTable1[0xD2].m_pVarients[0x06]->Init(
+            /*szName         = */"SAL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD2].InsertVarient(7);
+    {
+        // 0xD2
+        // Brief : Shift
+        m_opCodeTable1[0xD2].m_pVarients[0x07]->Init(
+            /*szName         = */"SAR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
-    // Brief : Intentional UDB
-    m_opCodeTable1[0XD6].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
+    m_opCodeTable1[0xD3].InsertVarient(0);
+    {
+        // 0xD3
+        // Brief : Rotate
+        m_opCodeTable1[0xD3].m_pVarients[0x00]->Init(
+            /*szName         = */"ROL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD3].InsertVarient(1);
+    {
+        // 0xD3
+        // Brief : Rotate
+        m_opCodeTable1[0xD3].m_pVarients[0x01]->Init(
+            /*szName         = */"ROR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD3].InsertVarient(2);
+    {
+        // 0xD3
+        // Brief : Rotate
+        m_opCodeTable1[0xD3].m_pVarients[0x02]->Init(
+            /*szName         = */"RCL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD3].InsertVarient(3);
+    {
+        // 0xD3
+        // Brief : Rotate
+        m_opCodeTable1[0xD3].m_pVarients[0x03]->Init(
+            /*szName         = */"RCR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD3].InsertVarient(4);
+    {
+        // 0xD3
+        // Brief : Shift
+        m_opCodeTable1[0xD3].m_pVarients[0x04]->Init(
+            /*szName         = */"SHL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD3].InsertVarient(5);
+    {
+        // 0xD3
+        // Brief : Shift
+        m_opCodeTable1[0xD3].m_pVarients[0x05]->Init(
+            /*szName         = */"SHR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD3].InsertVarient(6);
+    {
+        // 0xD3
+        // Brief : Shift
+        m_opCodeTable1[0xD3].m_pVarients[0x06]->Init(
+            /*szName         = */"SAL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD3].InsertVarient(7);
+    {
+        // 0xD3
+        // Brief : Shift
+        m_opCodeTable1[0xD3].m_pVarients[0x07]->Init(
+            /*szName         = */"SAR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xD4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xD5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xD6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD7
     // Brief : Table Look-up Translation
-    m_opCodeTable1[0XD7].SetOperatorInfo(
-        /* Operator Name = */"XLAT", 
-        /* Byte          = */0XD7, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD7].Init(
+        /*szName         = */"XLAT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD7,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t(Register_t::RegisterClass_t::RegisterClass_GPR, 3, 64) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XD8].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XD9].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xD8].InsertVarient(0);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XDA].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Add
+            m_opCodeTable1[0xD8].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"FADD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0xD8
+            // Brief : Add
+            m_opCodeTable1[0xD8].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"FADD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xD8].InsertVarient(1);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XDB].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Multiply
+            m_opCodeTable1[0xD8].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FMUL",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0xD8
+            // Brief : Multiply
+            m_opCodeTable1[0xD8].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"FMUL",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xD8].InsertVarient(2);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XDC].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Compare Real
+            m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FCOM",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STim, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x02]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XDD].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+            m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xD8
+                // Brief : Compare Real
+                m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD8,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xD8].InsertVarient(3);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XDE].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Compare Real and Pop
+            m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FCOMP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STim, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x03]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
-    // Brief : Escape to coprocessor instruction set
-    m_opCodeTable1[0XDF].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+            m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xD8
+                // Brief : Compare Real and Pop
+                m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FCOMP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD8,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xD8].InsertVarient(4);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x04]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x04]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x04]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x04]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x04]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Subtract
+            m_opCodeTable1[0xD8].m_pVarients[0x04]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSUB",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x04]->InsertVarient(3);
+        {
+            // 0xD8
+            // Brief : Subtract
+            m_opCodeTable1[0xD8].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSUB",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xD8].InsertVarient(5);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Reverse Subtract
+            m_opCodeTable1[0xD8].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSUBR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x05]->InsertVarient(3);
+        {
+            // 0xD8
+            // Brief : Reverse Subtract
+            m_opCodeTable1[0xD8].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSUBR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xD8].InsertVarient(6);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x06]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x06]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x06]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x06]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x06]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Divide
+            m_opCodeTable1[0xD8].m_pVarients[0x06]->m_pVarients[0x00]->Init(
+                /*szName         = */"FDIV",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x06]->InsertVarient(3);
+        {
+            // 0xD8
+            // Brief : Divide
+            m_opCodeTable1[0xD8].m_pVarients[0x06]->m_pVarients[0x03]->Init(
+                /*szName         = */"FDIV",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xD8].InsertVarient(7);
+    {
+        m_opCodeTable1[0xD8].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD8].m_pVarients[0x07]->InsertVarient(0);
+        m_opCodeTable1[0xD8].m_pVarients[0x07]->m_pVarients[0x01] = m_opCodeTable1[0xD8].m_pVarients[0x07]->m_pVarients[0x00];
+        m_opCodeTable1[0xD8].m_pVarients[0x07]->m_pVarients[0x02] = m_opCodeTable1[0xD8].m_pVarients[0x07]->m_pVarients[0x00];
+        {
+            // 0xD8
+            // Brief : Reverse Divide
+            m_opCodeTable1[0xD8].m_pVarients[0x07]->m_pVarients[0x00]->Init(
+                /*szName         = */"FDIVR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD8].m_pVarients[0x07]->InsertVarient(3);
+        {
+            // 0xD8
+            // Brief : Reverse Divide
+            m_opCodeTable1[0xD8].m_pVarients[0x07]->m_pVarients[0x03]->Init(
+                /*szName         = */"FDIVR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD8,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+
+    m_opCodeTable1[0xD9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xD9].InsertVarient(0);
+    {
+        // 0xD9
+        // Brief : Load Floating Point Value
+        m_opCodeTable1[0xD9].m_pVarients[0x00]->Init(
+            /*szName         = */"FLD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD9,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_STim, OperandType_32real ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xD9].InsertVarient(1);
+    {
+        m_opCodeTable1[0xD9].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD9].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xD9
+            // Brief : Exchange Register Contents
+            m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FXCH",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD9].m_pVarients[0x01]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xD9
+                // Brief : Exchange Register Contents
+                m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FXCH",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xD9].InsertVarient(2);
+    {
+        m_opCodeTable1[0xD9].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD9].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xD9
+            // Brief : Store Floating Point Value
+            m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FST",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD9].m_pVarients[0x02]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xD9
+                // Brief : No Operation
+                m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"FNOP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xD9].InsertVarient(3);
+    {
+        m_opCodeTable1[0xD9].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD9].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xD9].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xD9].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xD9].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xD9].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xD9
+            // Brief : Store Floating Point Value and Pop
+            m_opCodeTable1[0xD9].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD9].m_pVarients[0x03]->InsertVarient(3);
+        {
+            // 0xD9
+            // Brief : Store Floating Point Value and Pop
+            m_opCodeTable1[0xD9].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSTP1",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xD9].InsertVarient(4);
+    {
+        m_opCodeTable1[0xD9].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD9].m_pVarients[0x04]->InsertVarient(0);
+        m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x01] = m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x00];
+        m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x02] = m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x00];
+        {
+            // 0xD9
+            // Brief : Load x87 FPU Environment
+            m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x00]->Init(
+                /*szName         = */"FLDENV",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_14_28 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD9].m_pVarients[0x04]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xD9
+                // Brief : Change Sign
+                m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"FCHS",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xD9
+                // Brief : Absolute Value
+                m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FABS",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(4);
+            {
+                // 0xD9
+                // Brief : Test
+                m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
+                    /*szName         = */"FTST",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(5);
+            {
+                // 0xD9
+                // Brief : Examine
+                m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
+                    /*szName         = */"FXAM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xD9].InsertVarient(5);
+    {
+        m_opCodeTable1[0xD9].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD9].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xD9
+            // Brief : Load x87 FPU Control Word
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FLDCW",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD9].m_pVarients[0x05]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xD9
+                // Brief : Load Constant +1.0
+                m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"FLD1",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xD9
+                // Brief : Load Constant log
+                m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FLDL2T",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(2);
+            {
+                // 0xD9
+                // Brief : Load Constant log
+                m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
+                    /*szName         = */"FLDL2E",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(3);
+            {
+                // 0xD9
+                // Brief : Load Constant 
+                m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                    /*szName         = */"FLDPI",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(4);
+            {
+                // 0xD9
+                // Brief : Load Constant log
+                m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
+                    /*szName         = */"FLDLG2",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(5);
+            {
+                // 0xD9
+                // Brief : Load Constant log
+                m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
+                    /*szName         = */"FLDLN2",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(6);
+            {
+                // 0xD9
+                // Brief : Load Constant +0.0
+                m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
+                    /*szName         = */"FLDZ",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xD9].InsertVarient(6);
+    {
+        m_opCodeTable1[0xD9].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD9].m_pVarients[0x06]->InsertVarient(0);
+        m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x01] = m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x00];
+        m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x02] = m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x00];
+        {
+            // 0xD9
+            // Brief : Store x87 FPU Environment
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSTENV",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_14_28 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD9].m_pVarients[0x06]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xD9
+                // Brief : Compute 2
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"F2XM1",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xD9
+                // Brief : Compute y  log
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FYL2X",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(2);
+            {
+                // 0xD9
+                // Brief : Partial Tangent
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
+                    /*szName         = */"FPTAN",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(3);
+            {
+                // 0xD9
+                // Brief : Partial Arctangent and Pop
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                    /*szName         = */"FPATAN",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(4);
+            {
+                // 0xD9
+                // Brief : Extract Exponent and Significand
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
+                    /*szName         = */"FXTRACT",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(5);
+            {
+                // 0xD9
+                // Brief : IEEE Partial Remainder
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
+                    /*szName         = */"FPREM1",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(6);
+            {
+                // 0xD9
+                // Brief : Decrement Stack-Top Pointer
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
+                    /*szName         = */"FDECSTP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xD9
+                // Brief : Increment Stack-Top Pointer
+                m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FINCSTP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xD9].InsertVarient(7);
+    {
+        m_opCodeTable1[0xD9].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xD9].m_pVarients[0x07]->InsertVarient(0);
+        m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x01] = m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x00];
+        m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x02] = m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x00];
+        {
+            // 0xD9
+            // Brief : Store x87 FPU Control Word
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSTCW",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xD9,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xD9].m_pVarients[0x07]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xD9
+                // Brief : Partial Remainder (for compatibility with i8087 and i287)
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"FPREM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xD9
+                // Brief : Compute y  log
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FYL2XP1",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(2);
+            {
+                // 0xD9
+                // Brief : Square Root
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
+                    /*szName         = */"FSQRT",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(3);
+            {
+                // 0xD9
+                // Brief : Sine and Cosine
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                    /*szName         = */"FSINCOS",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(4);
+            {
+                // 0xD9
+                // Brief : Round to Integer
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
+                    /*szName         = */"FRNDINT",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(5);
+            {
+                // 0xD9
+                // Brief : Scale
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x05]->Init(
+                    /*szName         = */"FSCALE",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(6);
+            {
+                // 0xD9
+                // Brief : Sine
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x06]->Init(
+                    /*szName         = */"FSIN",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xD9
+                // Brief : Cosine
+                m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FCOS",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xD9,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+
+    m_opCodeTable1[0xDA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xDA].InsertVarient(0);
+    {
+        m_opCodeTable1[0xDA].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDA].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable1[0xDA].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable1[0xDA].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable1[0xDA].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable1[0xDA].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0xDA
+            // Brief : Add
+            m_opCodeTable1[0xDA].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIADD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDA].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0xDA
+            // Brief : FP Conditional Move - below (CF=1)
+            m_opCodeTable1[0xDA].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVB",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDA].InsertVarient(1);
+    {
+        m_opCodeTable1[0xDA].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDA].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xDA].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xDA].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xDA].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xDA].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xDA
+            // Brief : Multiply
+            m_opCodeTable1[0xDA].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIMUL",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDA].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0xDA
+            // Brief : FP Conditional Move - equal (ZF=1)
+            m_opCodeTable1[0xDA].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVE",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDA].InsertVarient(2);
+    {
+        m_opCodeTable1[0xDA].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDA].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xDA].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xDA].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xDA].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xDA].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xDA
+            // Brief : Compare Integer
+            m_opCodeTable1[0xDA].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FICOM",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDA].m_pVarients[0x02]->InsertVarient(3);
+        {
+            // 0xDA
+            // Brief : FP Conditional Move - below or equal (CF=1 or ZF=1)
+            m_opCodeTable1[0xDA].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVBE",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDA].InsertVarient(3);
+    {
+        m_opCodeTable1[0xDA].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDA].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xDA].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xDA].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xDA].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xDA].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xDA
+            // Brief : Compare Integer and Pop
+            m_opCodeTable1[0xDA].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FICOMP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDA].m_pVarients[0x03]->InsertVarient(3);
+        {
+            // 0xDA
+            // Brief : FP Conditional Move - unordered (PF=1)
+            m_opCodeTable1[0xDA].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVU",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDA].InsertVarient(4);
+    {
+        // 0xDA
+        // Brief : Subtract
+        m_opCodeTable1[0xDA].m_pVarients[0x04]->Init(
+            /*szName         = */"FISUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xDA].InsertVarient(5);
+    {
+        m_opCodeTable1[0xDA].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDA].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xDA
+            // Brief : Reverse Subtract
+            m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISUBR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDA,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDA].m_pVarients[0x05]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDA
+                // Brief : Unordered Compare Floating Point Values and Pop Twice
+                m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FUCOMPP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDA,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDA].InsertVarient(6);
+    {
+        // 0xDA
+        // Brief : Divide
+        m_opCodeTable1[0xDA].m_pVarients[0x06]->Init(
+            /*szName         = */"FIDIV",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xDA].InsertVarient(7);
+    {
+        // 0xDA
+        // Brief : Reverse Divide
+        m_opCodeTable1[0xDA].m_pVarients[0x07]->Init(
+            /*szName         = */"FIDIVR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    m_opCodeTable1[0xDB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xDB].InsertVarient(0);
+    {
+        m_opCodeTable1[0xDB].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDB].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable1[0xDB].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable1[0xDB].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable1[0xDB].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable1[0xDB].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0xDB
+            // Brief : Load Integer
+            m_opCodeTable1[0xDB].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"FILD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDB].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0xDB
+            // Brief : FP Conditional Move - not below (CF=0)
+            m_opCodeTable1[0xDB].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVNB",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDB].InsertVarient(1);
+    {
+        m_opCodeTable1[0xDB].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDB].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xDB].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xDB].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xDB].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xDB].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xDB
+            // Brief : Store Integer with Truncation and Pop
+            m_opCodeTable1[0xDB].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISTTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDB].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0xDB
+            // Brief : FP Conditional Move - not equal (ZF=0)
+            m_opCodeTable1[0xDB].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVNE",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDB].InsertVarient(2);
+    {
+        m_opCodeTable1[0xDB].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDB].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xDB].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xDB].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xDB].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xDB].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xDB
+            // Brief : Store Integer
+            m_opCodeTable1[0xDB].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIST",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDB].m_pVarients[0x02]->InsertVarient(3);
+        {
+            // 0xDB
+            // Brief : FP Conditional Move - below or equal (CF=0 and ZF=0)
+            m_opCodeTable1[0xDB].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVNBE",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDB].InsertVarient(3);
+    {
+        m_opCodeTable1[0xDB].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDB].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xDB].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xDB].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xDB].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xDB].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xDB
+            // Brief : Store Integer and Pop
+            m_opCodeTable1[0xDB].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDB].m_pVarients[0x03]->InsertVarient(3);
+        {
+            // 0xDB
+            // Brief : FP Conditional Move - not unordered (PF=0)
+            m_opCodeTable1[0xDB].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCMOVNU",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDB].InsertVarient(4);
+    {
+        m_opCodeTable1[0xDB].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        m_opCodeTable1[0xDB].m_pVarients[0x04]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xDB
+                // Brief : Treated as Integer NOP
+                m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"FNENI",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDB,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDB
+                // Brief : Treated as Integer NOP
+                m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FNDISI",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDB,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(2);
+            {
+                // 0xDB
+                // Brief : Clear Exceptions
+                m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
+                    /*szName         = */"FNCLEX",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDB,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(3);
+            {
+                // 0xDB
+                // Brief : Initialize Floating-Point Unit
+                m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                    /*szName         = */"FNINIT",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDB,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(4);
+            {
+                // 0xDB
+                // Brief : Treated as Integer NOP
+                m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
+                    /*szName         = */"FNSETPM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDB,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(2);
+            {
+                // 0xDB
+                // Brief : Clear Exceptions
+                m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
+                    /*szName         = */"FCLEX",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDB,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(3);
+            {
+                // 0xDB
+                // Brief : Initialize Floating-Point Unit
+                m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                    /*szName         = */"FINIT",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDB,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDB].InsertVarient(5);
+    {
+        m_opCodeTable1[0xDB].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDB].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xDB].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xDB].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xDB].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xDB].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xDB
+            // Brief : Load Floating Point Value
+            m_opCodeTable1[0xDB].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FLD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_80real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDB].m_pVarients[0x05]->InsertVarient(3);
+        {
+            // 0xDB
+            // Brief : Unordered Compare Floating Point Values and Set EFLAGS
+            m_opCodeTable1[0xDB].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"FUCOMI",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDB,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDB].InsertVarient(6);
+    {
+        // 0xDB
+        // Brief : Compare Floating Point Values and Set EFLAGS
+        m_opCodeTable1[0xDB].m_pVarients[0x06]->Init(
+            /*szName         = */"FCOMI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+            /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xDB].InsertVarient(7);
+    {
+        // 0xDB
+        // Brief : Store Floating Point Value and Pop
+        m_opCodeTable1[0xDB].m_pVarients[0x07]->Init(
+            /*szName         = */"FSTP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDB,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_80real ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    m_opCodeTable1[0xDC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xDC].InsertVarient(0);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Add
+            m_opCodeTable1[0xDC].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"FADD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Add
+            m_opCodeTable1[0xDC].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"FADD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDC].InsertVarient(1);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Multiply
+            m_opCodeTable1[0xDC].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FMUL",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Multiply
+            m_opCodeTable1[0xDC].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"FMUL",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDC].InsertVarient(2);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Compare Real
+            m_opCodeTable1[0xDC].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FCOM",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x02]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Compare Real
+            m_opCodeTable1[0xDC].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCOM2",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDC].InsertVarient(3);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Compare Real and Pop
+            m_opCodeTable1[0xDC].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FCOMP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x03]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Compare Real and Pop
+            m_opCodeTable1[0xDC].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCOMP3",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDC].InsertVarient(4);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x04]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x04]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x04]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x04]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x04]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Subtract
+            m_opCodeTable1[0xDC].m_pVarients[0x04]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSUB",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x04]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Reverse Subtract
+            m_opCodeTable1[0xDC].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSUBR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDC].InsertVarient(5);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Reverse Subtract
+            m_opCodeTable1[0xDC].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSUBR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x05]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Subtract
+            m_opCodeTable1[0xDC].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSUB",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDC].InsertVarient(6);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x06]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x06]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x06]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x06]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x06]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Divide
+            m_opCodeTable1[0xDC].m_pVarients[0x06]->m_pVarients[0x00]->Init(
+                /*szName         = */"FDIV",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x06]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Reverse Divide
+            m_opCodeTable1[0xDC].m_pVarients[0x06]->m_pVarients[0x03]->Init(
+                /*szName         = */"FDIVR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDC].InsertVarient(7);
+    {
+        m_opCodeTable1[0xDC].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDC].m_pVarients[0x07]->InsertVarient(0);
+        m_opCodeTable1[0xDC].m_pVarients[0x07]->m_pVarients[0x01] = m_opCodeTable1[0xDC].m_pVarients[0x07]->m_pVarients[0x00];
+        m_opCodeTable1[0xDC].m_pVarients[0x07]->m_pVarients[0x02] = m_opCodeTable1[0xDC].m_pVarients[0x07]->m_pVarients[0x00];
+        {
+            // 0xDC
+            // Brief : Reverse Divide
+            m_opCodeTable1[0xDC].m_pVarients[0x07]->m_pVarients[0x00]->Init(
+                /*szName         = */"FDIVR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDC].m_pVarients[0x07]->InsertVarient(3);
+        {
+            // 0xDC
+            // Brief : Divide and Pop
+            m_opCodeTable1[0xDC].m_pVarients[0x07]->m_pVarients[0x03]->Init(
+                /*szName         = */"FDIV",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDC,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+
+    m_opCodeTable1[0xDD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xDD].InsertVarient(0);
+    {
+        m_opCodeTable1[0xDD].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDD].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable1[0xDD].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable1[0xDD].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable1[0xDD].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable1[0xDD].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0xDD
+            // Brief : Load Floating Point Value
+            m_opCodeTable1[0xDD].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"FLD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDD].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0xDD
+            // Brief : Free Floating-Point Register
+            m_opCodeTable1[0xDD].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"FFREE",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDD].InsertVarient(1);
+    {
+        m_opCodeTable1[0xDD].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDD].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xDD].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xDD].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xDD].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xDD].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xDD
+            // Brief : Store Integer with Truncation and Pop
+            m_opCodeTable1[0xDD].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISTTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDD].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0xDD
+            // Brief : Exchange Register Contents
+            m_opCodeTable1[0xDD].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"FXCH4",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDD].InsertVarient(2);
+    {
+        m_opCodeTable1[0xDD].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDD].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xDD].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xDD].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xDD].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xDD].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xDD
+            // Brief : Store Floating Point Value
+            m_opCodeTable1[0xDD].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FST",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDD].m_pVarients[0x02]->InsertVarient(3);
+        {
+            // 0xDD
+            // Brief : Store Floating Point Value
+            m_opCodeTable1[0xDD].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"FST",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDD].InsertVarient(3);
+    {
+        m_opCodeTable1[0xDD].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDD].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xDD].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xDD].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xDD].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xDD].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xDD
+            // Brief : Store Floating Point Value and Pop
+            m_opCodeTable1[0xDD].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FSTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDD].m_pVarients[0x03]->InsertVarient(3);
+        {
+            // 0xDD
+            // Brief : Store Floating Point Value and Pop
+            m_opCodeTable1[0xDD].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDD].InsertVarient(4);
+    {
+        m_opCodeTable1[0xDD].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDD].m_pVarients[0x04]->InsertVarient(0);
+        m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x01] = m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x00];
+        m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x02] = m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x00];
+        {
+            // 0xDD
+            // Brief : Restore x87 FPU State
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x00]->Init(
+                /*szName         = */"FRSTOR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_94_108 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDD].m_pVarients[0x04]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values
+                m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FUCOM",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDD].InsertVarient(5);
+    {
+        m_opCodeTable1[0xDD].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDD].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xDD
+            // Brief : Unordered Compare Floating Point Values and Pop
+            m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FUCOMP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDD,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDD].m_pVarients[0x05]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDD
+                // Brief : Unordered Compare Floating Point Values and Pop
+                m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FUCOMP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDD,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDD].InsertVarient(6);
+    {
+        // 0xDD
+        // Brief : Store x87 FPU State
+        m_opCodeTable1[0xDD].m_pVarients[0x06]->Init(
+            /*szName         = */"FSAVE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDD,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_94_108 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xDD].InsertVarient(7);
+    {
+        // 0xDD
+        // Brief : Store x87 FPU Status Word
+        m_opCodeTable1[0xDD].m_pVarients[0x07]->Init(
+            /*szName         = */"FSTSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDD,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    m_opCodeTable1[0xDE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xDE].InsertVarient(0);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Add
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIADD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x00]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Add and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FADDP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDE].InsertVarient(1);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Multiply
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIMUL",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x01]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Multiply and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FMULP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDE].InsertVarient(2);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Compare Integer
+            m_opCodeTable1[0xDE].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FICOM",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x02]->InsertVarient(3);
+        {
+            // 0xDE
+            // Brief : Compare Real and Pop
+            m_opCodeTable1[0xDE].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCOMP5",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDE].InsertVarient(3);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Compare Integer and Pop
+            m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FICOMP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x03]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDE
+                // Brief : Compare Real and Pop Twice
+                m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FCOMPP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDE].InsertVarient(4);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x04]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Subtract
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISUB",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x04]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDE].InsertVarient(5);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Reverse Subtract
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISUBR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x05]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Subtract and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FSUBP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDE].InsertVarient(6);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x06]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Divide
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIDIV",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x06]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Reverse Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVRP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDE].InsertVarient(7);
+    {
+        m_opCodeTable1[0xDE].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDE].m_pVarients[0x07]->InsertVarient(0);
+        m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x01] = m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x00];
+        m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x02] = m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x00];
+        {
+            // 0xDE
+            // Brief : Reverse Divide
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIDIVR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDE].m_pVarients[0x07]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(7);
+            {
+                // 0xDE
+                // Brief : Divide and Pop
+                m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x07]->Init(
+                    /*szName         = */"FDIVP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDE,
+                    /*nOperands      = */2,
+                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+
+    m_opCodeTable1[0xDF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xDF].InsertVarient(0);
+    {
+        m_opCodeTable1[0xDF].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDF].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable1[0xDF].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable1[0xDF].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable1[0xDF].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable1[0xDF].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0xDF
+            // Brief : Load Integer
+            m_opCodeTable1[0xDF].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"FILD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDF].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0xDF
+            // Brief : Free Floating-Point Register and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"FFREEP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDF].InsertVarient(1);
+    {
+        m_opCodeTable1[0xDF].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDF].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable1[0xDF].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable1[0xDF].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable1[0xDF].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable1[0xDF].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0xDF
+            // Brief : Store Integer with Truncation and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISTTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDF].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0xDF
+            // Brief : Exchange Register Contents
+            m_opCodeTable1[0xDF].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"FXCH7",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDF].InsertVarient(2);
+    {
+        m_opCodeTable1[0xDF].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDF].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable1[0xDF].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable1[0xDF].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable1[0xDF].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable1[0xDF].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0xDF
+            // Brief : Store Integer
+            m_opCodeTable1[0xDF].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"FIST",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDF].m_pVarients[0x02]->InsertVarient(3);
+        {
+            // 0xDF
+            // Brief : Store Floating Point Value and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSTP8",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDF].InsertVarient(3);
+    {
+        m_opCodeTable1[0xDF].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDF].m_pVarients[0x03]->InsertVarient(0);
+        m_opCodeTable1[0xDF].m_pVarients[0x03]->m_pVarients[0x01] = m_opCodeTable1[0xDF].m_pVarients[0x03]->m_pVarients[0x00];
+        m_opCodeTable1[0xDF].m_pVarients[0x03]->m_pVarients[0x02] = m_opCodeTable1[0xDF].m_pVarients[0x03]->m_pVarients[0x00];
+        {
+            // 0xDF
+            // Brief : Store Integer and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                /*szName         = */"FISTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDF].m_pVarients[0x03]->InsertVarient(3);
+        {
+            // 0xDF
+            // Brief : Store Floating Point Value and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"FSTP9",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDF].InsertVarient(4);
+    {
+        m_opCodeTable1[0xDF].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDF].m_pVarients[0x04]->InsertVarient(0);
+        m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x01] = m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x00];
+        m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x02] = m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x00];
+        {
+            // 0xDF
+            // Brief : Load Binary Coded Decimal
+            m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x00]->Init(
+                /*szName         = */"FBLD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_80dec ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDF].m_pVarients[0x04]->InsertVarient(3);
+        {
+            m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xDF
+                // Brief : Store x87 FPU Status Word
+                m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"FNSTSW",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDF,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 16 ) ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0xDF
+                // Brief : Store x87 FPU Status Word
+                m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"FSTSW",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0xDF,
+                    /*nOperands      = */1,
+                    /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 16 ) ),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable1[0xDF].InsertVarient(5);
+    {
+        m_opCodeTable1[0xDF].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDF].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable1[0xDF].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable1[0xDF].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable1[0xDF].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable1[0xDF].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xDF
+            // Brief : Load Integer
+            m_opCodeTable1[0xDF].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"FILD",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_64int ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDF].m_pVarients[0x05]->InsertVarient(3);
+        {
+            // 0xDF
+            // Brief : Unordered Compare Floating Point Values and Set EFLAGS and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"FUCOMIP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDF].InsertVarient(6);
+    {
+        m_opCodeTable1[0xDF].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable1[0xDF].m_pVarients[0x06]->InsertVarient(0);
+        m_opCodeTable1[0xDF].m_pVarients[0x06]->m_pVarients[0x01] = m_opCodeTable1[0xDF].m_pVarients[0x06]->m_pVarients[0x00];
+        m_opCodeTable1[0xDF].m_pVarients[0x06]->m_pVarients[0x02] = m_opCodeTable1[0xDF].m_pVarients[0x06]->m_pVarients[0x00];
+        {
+            // 0xDF
+            // Brief : Store BCD Integer and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x06]->m_pVarients[0x00]->Init(
+                /*szName         = */"FBSTP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_80dec ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable1[0xDF].m_pVarients[0x06]->InsertVarient(3);
+        {
+            // 0xDF
+            // Brief : Compare Floating Point Values and Set EFLAGS and Pop
+            m_opCodeTable1[0xDF].m_pVarients[0x06]->m_pVarients[0x03]->Init(
+                /*szName         = */"FCOMIP",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xDF,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable1[0xDF].InsertVarient(7);
+    {
+        // 0xDF
+        // Brief : Store Integer and Pop
+        m_opCodeTable1[0xDF].m_pVarients[0x07]->Init(
+            /*szName         = */"FISTP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64int ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE0
     // Brief : Decrement count; Jump short if count!=0 and ZF=0
-    m_opCodeTable1[0XE0].SetOperatorInfo(
-        /* Operator Name = */"LOOPNZ", 
-        /* Byte          = */0XE0, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE0].Init(
+        /*szName         = */"LOOPNZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE0,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE1
     // Brief : Decrement count; Jump short if count!=0 and ZF=1
-    m_opCodeTable1[0XE1].SetOperatorInfo(
-        /* Operator Name = */"LOOPZ", 
-        /* Byte          = */0XE1, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE1].Init(
+        /*szName         = */"LOOPZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE1,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE2
     // Brief : Decrement count; Jump short if count!=0
-    m_opCodeTable1[0XE2].SetOperatorInfo(
-        /* Operator Name = */"LOOP", 
-        /* Byte          = */0XE2, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE2].Init(
+        /*szName         = */"LOOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE2,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Jump short if eCX register is 0
-    m_opCodeTable1[0XE3].SetOperatorInfo(
-        /* Operator Name = */"JCXZ", 
-        /* Byte          = */0XE3, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xE3
+    // Brief : Jump short if rCX register is 0
+    m_opCodeTable1[0xE3].Init(
+        /*szName         = */"JECXZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE3,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE4
     // Brief : Input from Port
-    m_opCodeTable1[0XE4].SetOperatorInfo(
-        /* Operator Name = */"IN", 
-        /* Byte          = */0XE4, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE4].Init(
+        /*szName         = */"IN",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE4,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE5
     // Brief : Input from Port
-    m_opCodeTable1[0XE5].SetOperatorInfo(
-        /* Operator Name = */"IN", 
-        /* Byte          = */0XE5, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE5].Init(
+        /*szName         = */"IN",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE5,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 32 ) ),
+        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE6
     // Brief : Output to Port
-    m_opCodeTable1[0XE6].SetOperatorInfo(
-        /* Operator Name = */"OUT", 
-        /* Byte          = */0XE6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE6].Init(
+        /*szName         = */"OUT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE6,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE7
     // Brief : Output to Port
-    m_opCodeTable1[0XE7].SetOperatorInfo(
-        /* Operator Name = */"OUT", 
-        /* Byte          = */0XE7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE7].Init(
+        /*szName         = */"OUT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE7,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 32 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE8
     // Brief : Call Procedure
-    m_opCodeTable1[0XE8].SetOperatorInfo(
-        /* Operator Name = */"CALL", 
-        /* Byte          = */0XE8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_z ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE8].Init(
+        /*szName         = */"CALL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE8,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xE9
     // Brief : Jump
-    m_opCodeTable1[0XE9].SetOperatorInfo(
-        /* Operator Name = */"JMP", 
-        /* Byte          = */0XE9, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_z ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xE9].Init(
+        /*szName         = */"JMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE9,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XEA].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xEA
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xEA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xEB
     // Brief : Jump
-    m_opCodeTable1[0XEB].SetOperatorInfo(
-        /* Operator Name = */"JMP", 
-        /* Byte          = */0XEB, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xEB].Init(
+        /*szName         = */"JMP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEB,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xEC
     // Brief : Input from Port
-    m_opCodeTable1[0XEC].SetOperatorInfo(
-        /* Operator Name = */"IN", 
-        /* Byte          = */0XEC, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xEC].Init(
+        /*szName         = */"IN",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEC,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xED
     // Brief : Input from Port
-    m_opCodeTable1[0XED].SetOperatorInfo(
-        /* Operator Name = */"IN", 
-        /* Byte          = */0XED, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xED].Init(
+        /*szName         = */"IN",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xED,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 32 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xEE
     // Brief : Output to Port
-    m_opCodeTable1[0XEE].SetOperatorInfo(
-        /* Operator Name = */"OUT", 
-        /* Byte          = */0XEE, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_AL, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xEE].Init(
+        /*szName         = */"OUT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEE,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xEF
     // Brief : Output to Port
-    m_opCodeTable1[0XEF].SetOperatorInfo(
-        /* Operator Name = */"OUT", 
-        /* Byte          = */0XEF, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_DX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_EAX, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xEF].Init(
+        /*szName         = */"OUT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEF,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 2, 16 ) ),
+        /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 32 ) ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xF0
     // Brief : Assert LOCK# Signal Prefix
-    m_opCodeTable1[0XF0].SetOperatorInfo(
-        /* Operator Name = */"LOCK", 
-        /* Byte          = */0XF0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xF0].Init(
+        /*szName         = */"LOCK",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable1[0XF1].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xF1
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xF1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Repeat String Operation Prefix
-    m_opCodeTable1[0XF2].SetOperatorInfo(
-        /* Operator Name = */"REPNZ", 
-        /* Byte          = */0XF2, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xF2
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xF2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Repeat String Operation Prefix
-    m_opCodeTable1[0XF3].SetOperatorInfo(
-        /* Operator Name = */"REPZ", 
-        /* Byte          = */0XF3, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    // 0xF3
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable1[0xF3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xF4
     // Brief : Halt
-    m_opCodeTable1[0XF4].SetOperatorInfo(
-        /* Operator Name = */"HLT", 
-        /* Byte          = */0XF4, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xF4].Init(
+        /*szName         = */"HLT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xF5
     // Brief : Complement Carry Flag
-    m_opCodeTable1[0XF5].SetOperatorInfo(
-        /* Operator Name = */"CMC", 
-        /* Byte          = */0XF5, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xF5].Init(
+        /*szName         = */"CMC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Logical Compare
-    m_opCodeTable1[0XF6].SetOperatorInfo(
-        /* Operator Name = */"TEST", 
-        /* Byte          = */0XF6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xF6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Logical Compare
-    m_opCodeTable1[0XF7].SetOperatorInfo(
-        /* Operator Name = */"TEST", 
-        /* Byte          = */0XF7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xF6].InsertVarient(0);
+    {
+        // 0xF6
+        // Brief : Logical Compare
+        m_opCodeTable1[0xF6].m_pVarients[0x00]->Init(
+            /*szName         = */"TEST",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF6].InsertVarient(1);
+    {
+        // 0xF6
+        // Brief : Logical Compare
+        m_opCodeTable1[0xF6].m_pVarients[0x01]->Init(
+            /*szName         = */"TEST",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF6].InsertVarient(2);
+    {
+        // 0xF6
+        // Brief : One's Complement Negation
+        m_opCodeTable1[0xF6].m_pVarients[0x02]->Init(
+            /*szName         = */"NOT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF6].InsertVarient(3);
+    {
+        // 0xF6
+        // Brief : Two's Complement Negation
+        m_opCodeTable1[0xF6].m_pVarients[0x03]->Init(
+            /*szName         = */"NEG",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF6].InsertVarient(4);
+    {
+        // 0xF6
+        // Brief : Unsigned Multiply
+        m_opCodeTable1[0xF6].m_pVarients[0x04]->Init(
+            /*szName         = */"MUL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF6].InsertVarient(5);
+    {
+        // 0xF6
+        // Brief : Signed Multiply
+        m_opCodeTable1[0xF6].m_pVarients[0x05]->Init(
+            /*szName         = */"IMUL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF6].InsertVarient(6);
+    {
+        // 0xF6
+        // Brief : Unsigned Divide
+        m_opCodeTable1[0xF6].m_pVarients[0x06]->Init(
+            /*szName         = */"DIV",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF6].InsertVarient(7);
+    {
+        // 0xF6
+        // Brief : Signed Divide
+        m_opCodeTable1[0xF6].m_pVarients[0x07]->Init(
+            /*szName         = */"IDIV",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
 
+    m_opCodeTable1[0xF7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xF7].InsertVarient(0);
+    {
+        // 0xF7
+        // Brief : Logical Compare
+        m_opCodeTable1[0xF7].m_pVarients[0x00]->Init(
+            /*szName         = */"TEST",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF7].InsertVarient(1);
+    {
+        // 0xF7
+        // Brief : Logical Compare
+        m_opCodeTable1[0xF7].m_pVarients[0x01]->Init(
+            /*szName         = */"TEST",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF7].InsertVarient(2);
+    {
+        // 0xF7
+        // Brief : One's Complement Negation
+        m_opCodeTable1[0xF7].m_pVarients[0x02]->Init(
+            /*szName         = */"NOT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF7].InsertVarient(3);
+    {
+        // 0xF7
+        // Brief : Two's Complement Negation
+        m_opCodeTable1[0xF7].m_pVarients[0x03]->Init(
+            /*szName         = */"NEG",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF7].InsertVarient(4);
+    {
+        // 0xF7
+        // Brief : Unsigned Multiply
+        m_opCodeTable1[0xF7].m_pVarients[0x04]->Init(
+            /*szName         = */"MUL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF7].InsertVarient(5);
+    {
+        // 0xF7
+        // Brief : Signed Multiply
+        m_opCodeTable1[0xF7].m_pVarients[0x05]->Init(
+            /*szName         = */"IMUL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF7].InsertVarient(6);
+    {
+        // 0xF7
+        // Brief : Unsigned Divide
+        m_opCodeTable1[0xF7].m_pVarients[0x06]->Init(
+            /*szName         = */"DIV",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xF7].InsertVarient(7);
+    {
+        // 0xF7
+        // Brief : Signed Divide
+        m_opCodeTable1[0xF7].m_pVarients[0x07]->Init(
+            /*szName         = */"IDIV",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF8
     // Brief : Clear Carry Flag
-    m_opCodeTable1[0XF8].SetOperatorInfo(
-        /* Operator Name = */"CLC", 
-        /* Byte          = */0XF8, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xF8].Init(
+        /*szName         = */"CLC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xF9
     // Brief : Set Carry Flag
-    m_opCodeTable1[0XF9].SetOperatorInfo(
-        /* Operator Name = */"STC", 
-        /* Byte          = */0XF9, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xF9].Init(
+        /*szName         = */"STC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xFA
     // Brief : Clear Interrupt Flag
-    m_opCodeTable1[0XFA].SetOperatorInfo(
-        /* Operator Name = */"CLI", 
-        /* Byte          = */0XFA, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xFA].Init(
+        /*szName         = */"CLI",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xFB
     // Brief : Set Interrupt Flag
-    m_opCodeTable1[0XFB].SetOperatorInfo(
-        /* Operator Name = */"STI", 
-        /* Byte          = */0XFB, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xFB].Init(
+        /*szName         = */"STI",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xFC
     // Brief : Clear Direction Flag
-    m_opCodeTable1[0XFC].SetOperatorInfo(
-        /* Operator Name = */"CLD", 
-        /* Byte          = */0XFC, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xFC].Init(
+        /*szName         = */"CLD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
+    // 0xFD
     // Brief : Set Direction Flag
-    m_opCodeTable1[0XFD].SetOperatorInfo(
-        /* Operator Name = */"STD", 
-        /* Byte          = */0XFD, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xFD].Init(
+        /*szName         = */"STD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
-    // Brief : Increment by 1
-    m_opCodeTable1[0XFE].SetOperatorInfo(
-        /* Operator Name = */"INC", 
-        /* Byte          = */0XFE, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xFE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
-    // Brief : Increment by 1
-    m_opCodeTable1[0XFF].SetOperatorInfo(
-        /* Operator Name = */"INC", 
-        /* Byte          = */0XFF, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+    m_opCodeTable1[0xFE].InsertVarient(0);
+    {
+        // 0xFE
+        // Brief : Increment by 1
+        m_opCodeTable1[0xFE].m_pVarients[0x00]->Init(
+            /*szName         = */"INC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFE,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xFE].InsertVarient(1);
+    {
+        // 0xFE
+        // Brief : Decrement by 1
+        m_opCodeTable1[0xFE].m_pVarients[0x01]->Init(
+            /*szName         = */"DEC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFE,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    m_opCodeTable1[0xFF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable1[0xFF].InsertVarient(0);
+    {
+        // 0xFF
+        // Brief : Increment by 1
+        m_opCodeTable1[0xFF].m_pVarients[0x00]->Init(
+            /*szName         = */"INC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xFF].InsertVarient(1);
+    {
+        // 0xFF
+        // Brief : Decrement by 1
+        m_opCodeTable1[0xFF].m_pVarients[0x01]->Init(
+            /*szName         = */"DEC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xFF].InsertVarient(2);
+    {
+        // 0xFF
+        // Brief : Call Procedure
+        m_opCodeTable1[0xFF].m_pVarients[0x02]->Init(
+            /*szName         = */"CALL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xFF].InsertVarient(3);
+    {
+        // 0xFF
+        // Brief : Call Procedure
+        m_opCodeTable1[0xFF].m_pVarients[0x03]->Init(
+            /*szName         = */"CALLF",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_ptp ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xFF].InsertVarient(4);
+    {
+        // 0xFF
+        // Brief : Jump
+        m_opCodeTable1[0xFF].m_pVarients[0x04]->Init(
+            /*szName         = */"JMP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xFF].InsertVarient(5);
+    {
+        // 0xFF
+        // Brief : Jump
+        m_opCodeTable1[0xFF].m_pVarients[0x05]->Init(
+            /*szName         = */"JMPF",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_ptp ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable1[0xFF].InsertVarient(6);
+    {
+        // 0xFF
+        // Brief : Push Word, Doubleword or Quadword Onto the Stack
+        m_opCodeTable1[0xFF].m_pVarients[0x06]->Init(
+            /*szName         = */"PUSH",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFF,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+
 }
 
 
@@ -3641,3331 +8928,19 @@ void Tables_t::InitOneByteOpCodeTable()
 ///////////////////////////////////////////////////////////////////////////
 void Tables_t::InitTwoByteOpCodeTable()
 {
-    // Brief : Store Local Descriptor Table Register
-    m_opCodeTable2[0].SetOperatorInfo(
-        /* Operator Name = */"SLDT", 
-        /* Byte          = */0, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_w ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
 
-    // Brief : Store Global Descriptor Table Register
-    m_opCodeTable2[0X1].SetOperatorInfo(
-        /* Operator Name = */"SGDT", 
-        /* Byte          = */0X1, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_s ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+}
 
-    // Brief : Load Access Rights Byte
-    m_opCodeTable2[0X2].SetOperatorInfo(
-        /* Operator Name = */"LAR", 
-        /* Byte          = */0X2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_w ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
 
-    // Brief : Load Segment Limit
-    m_opCodeTable2[0X3].SetOperatorInfo(
-        /* Operator Name = */"LSL", 
-        /* Byte          = */0X3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_w ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void Tables_t::InitThreeByteOpCodeTable_38()
+{
+}
 
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X4].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
 
-    // Brief : Load All of the CPU Registers
-    m_opCodeTable2[0X5].SetOperatorInfo(
-        /* Operator Name = */"LOADALL", 
-        /* Byte          = */0X5, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Clear Task-Switched Flag in CR0
-    m_opCodeTable2[0X6].SetOperatorInfo(
-        /* Operator Name = */"CLTS", 
-        /* Byte          = */0X6, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Load All of the CPU Registers
-    m_opCodeTable2[0X7].SetOperatorInfo(
-        /* Operator Name = */"LOADALL", 
-        /* Byte          = */0X7, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Invalidate Internal Caches
-    m_opCodeTable2[0X8].SetOperatorInfo(
-        /* Operator Name = */"INVD", 
-        /* Byte          = */0X8, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Write Back and Invalidate Cache
-    m_opCodeTable2[0X9].SetOperatorInfo(
-        /* Operator Name = */"WBINVD", 
-        /* Byte          = */0X9, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XA].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Undefined Instruction
-    m_opCodeTable2[0XB].SetOperatorInfo(
-        /* Operator Name = */"UD2", 
-        /* Byte          = */0XB, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XC].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : No Operation
-    m_opCodeTable2[0XD].SetOperatorInfo(
-        /* Operator Name = */"NOP", 
-        /* Byte          = */0XD, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XE].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XF].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Unaligned Packed Single-FP Values
-    m_opCodeTable2[0X10].SetOperatorInfo(
-        /* Operator Name = */"MOVUPS", 
-        /* Byte          = */0X10, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Unaligned Packed Single-FP Values
-    m_opCodeTable2[0X11].SetOperatorInfo(
-        /* Operator Name = */"MOVUPS", 
-        /* Byte          = */0X11, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Packed Single-FP Values High to Low
-    m_opCodeTable2[0X12].SetOperatorInfo(
-        /* Operator Name = */"MOVHLPS", 
-        /* Byte          = */0X12, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_U, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Low Packed Single-FP Values
-    m_opCodeTable2[0X13].SetOperatorInfo(
-        /* Operator Name = */"MOVLPS", 
-        /* Byte          = */0X13, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack and Interleave Low Packed Single-FP Values
-    m_opCodeTable2[0X14].SetOperatorInfo(
-        /* Operator Name = */"UNPCKLPS", 
-        /* Byte          = */0X14, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack and Interleave High Packed Single-FP Values
-    m_opCodeTable2[0X15].SetOperatorInfo(
-        /* Operator Name = */"UNPCKHPS", 
-        /* Byte          = */0X15, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Packed Single-FP Values Low to High
-    m_opCodeTable2[0X16].SetOperatorInfo(
-        /* Operator Name = */"MOVLHPS", 
-        /* Byte          = */0X16, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_U, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move High Packed Single-FP Values
-    m_opCodeTable2[0X17].SetOperatorInfo(
-        /* Operator Name = */"MOVHPS", 
-        /* Byte          = */0X17, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X18].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X18, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X19].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X19, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X1A].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X1A, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X1B].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X1B, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X1C].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X1C, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X1D].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X1D, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X1E].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X1E, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Hintable NOP
-    m_opCodeTable2[0X1F].SetOperatorInfo(
-        /* Operator Name = */"HINT_NOP", 
-        /* Byte          = */0X1F, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move to/from Control Registers
-    m_opCodeTable2[0X20].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X20, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_R, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_C, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move to/from Debug Registers
-    m_opCodeTable2[0X21].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X21, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_R, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_D, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move to/from Control Registers
-    m_opCodeTable2[0X22].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X22, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_C, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_R, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move to/from Debug Registers
-    m_opCodeTable2[0X23].SetOperatorInfo(
-        /* Operator Name = */"MOV", 
-        /* Byte          = */0X23, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_D, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_R, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X24].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0X24, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X25].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X26].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0X24, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X27].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Aligned Packed Single-FP Values
-    m_opCodeTable2[0X28].SetOperatorInfo(
-        /* Operator Name = */"MOVAPS", 
-        /* Byte          = */0X28, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Aligned Packed Single-FP Values
-    m_opCodeTable2[0X29].SetOperatorInfo(
-        /* Operator Name = */"MOVAPS", 
-        /* Byte          = */0X29, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Convert Packed DW Integers to Single-FP Values
-    m_opCodeTable2[0X2A].SetOperatorInfo(
-        /* Operator Name = */"CVTPI2PS", 
-        /* Byte          = */0X2A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_pi ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Store Packed Single-FP Values Using Non-Temporal Hint
-    m_opCodeTable2[0X2B].SetOperatorInfo(
-        /* Operator Name = */"MOVNTPS", 
-        /* Byte          = */0X2B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Convert with Trunc. Packed Single-FP Values to DW Integers
-    m_opCodeTable2[0X2C].SetOperatorInfo(
-        /* Operator Name = */"CVTTPS2PI", 
-        /* Byte          = */0X2C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_pi ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ss ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Convert Packed Single-FP Values to DW Integers
-    m_opCodeTable2[0X2D].SetOperatorInfo(
-        /* Operator Name = */"CVTPS2PI", 
-        /* Byte          = */0X2D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_pi ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ss ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unordered Compare Scalar Single-FP Values and Set EFLAGS
-    m_opCodeTable2[0X2E].SetOperatorInfo(
-        /* Operator Name = */"UCOMISS", 
-        /* Byte          = */0X2E, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ss ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ss ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Scalar Ordered Single-FP Values and Set EFLAGS
-    m_opCodeTable2[0X2F].SetOperatorInfo(
-        /* Operator Name = */"COMISS", 
-        /* Byte          = */0X2F, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ss ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ss ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Write to Model Specific Register
-    m_opCodeTable2[0X30].SetOperatorInfo(
-        /* Operator Name = */"WRMSR", 
-        /* Byte          = */0X30, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Read Time-Stamp Counter
-    m_opCodeTable2[0X31].SetOperatorInfo(
-        /* Operator Name = */"RDTSC", 
-        /* Byte          = */0X31, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Read from Model Specific Register
-    m_opCodeTable2[0X32].SetOperatorInfo(
-        /* Operator Name = */"RDMSR", 
-        /* Byte          = */0X32, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Read Performance-Monitoring Counters
-    m_opCodeTable2[0X33].SetOperatorInfo(
-        /* Operator Name = */"RDPMC", 
-        /* Byte          = */0X33, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Fast System Call
-    m_opCodeTable2[0X34].SetOperatorInfo(
-        /* Operator Name = */"SYSENTER", 
-        /* Byte          = */0X34, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Fast Return from Fast System Call
-    m_opCodeTable2[0X35].SetOperatorInfo(
-        /* Operator Name = */"SYSEXIT", 
-        /* Byte          = */0X35, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X36].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : GETSEC Leaf Functions
-    m_opCodeTable2[0X37].SetOperatorInfo(
-        /* Operator Name = */"GETSEC", 
-        /* Byte          = */0X37, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Packed Shuffle Bytes
-    m_opCodeTable2[0X38].SetOperatorInfo(
-        /* Operator Name = */"PSHUFB", 
-        /* Byte          = */0X38, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X39].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Round Packed Single-FP Values
-    m_opCodeTable2[0X3A].SetOperatorInfo(
-        /* Operator Name = */"ROUNDPS", 
-        /* Byte          = */0X3A, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X3B].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X3C].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X3D].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X3E].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X3F].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - overflow (OF=1)
-    m_opCodeTable2[0X40].SetOperatorInfo(
-        /* Operator Name = */"CMOVO", 
-        /* Byte          = */0X40, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not overflow (OF=0)
-    m_opCodeTable2[0X41].SetOperatorInfo(
-        /* Operator Name = */"CMOVNO", 
-        /* Byte          = */0X41, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - below/not above or equal/carry (CF=1)
-    m_opCodeTable2[0X42].SetOperatorInfo(
-        /* Operator Name = */"CMOVB", 
-        /* Byte          = */0X42, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not below/above or equal/not carry (CF=0)
-    m_opCodeTable2[0X43].SetOperatorInfo(
-        /* Operator Name = */"CMOVNB", 
-        /* Byte          = */0X43, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - zero/equal (ZF=1)
-    m_opCodeTable2[0X44].SetOperatorInfo(
-        /* Operator Name = */"CMOVZ", 
-        /* Byte          = */0X44, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not zero/not equal (ZF=0)
-    m_opCodeTable2[0X45].SetOperatorInfo(
-        /* Operator Name = */"CMOVNZ", 
-        /* Byte          = */0X45, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - below or equal/not above (CF=1 OR ZF=1)
-    m_opCodeTable2[0X46].SetOperatorInfo(
-        /* Operator Name = */"CMOVBE", 
-        /* Byte          = */0X46, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not below or equal/above (CF=0 AND ZF=0)
-    m_opCodeTable2[0X47].SetOperatorInfo(
-        /* Operator Name = */"CMOVNBE", 
-        /* Byte          = */0X47, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - sign (SF=1)
-    m_opCodeTable2[0X48].SetOperatorInfo(
-        /* Operator Name = */"CMOVS", 
-        /* Byte          = */0X48, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not sign (SF=0)
-    m_opCodeTable2[0X49].SetOperatorInfo(
-        /* Operator Name = */"CMOVNS", 
-        /* Byte          = */0X49, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - parity/parity even (PF=1)
-    m_opCodeTable2[0X4A].SetOperatorInfo(
-        /* Operator Name = */"CMOVP", 
-        /* Byte          = */0X4A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not parity/parity odd (PF=0)
-    m_opCodeTable2[0X4B].SetOperatorInfo(
-        /* Operator Name = */"CMOVNP", 
-        /* Byte          = */0X4B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - less/not greater (SF!=OF)
-    m_opCodeTable2[0X4C].SetOperatorInfo(
-        /* Operator Name = */"CMOVL", 
-        /* Byte          = */0X4C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not less/greater or equal (SF=OF)
-    m_opCodeTable2[0X4D].SetOperatorInfo(
-        /* Operator Name = */"CMOVNL", 
-        /* Byte          = */0X4D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - less or equal/not greater ((ZF=1) OR (SF!=OF))
-    m_opCodeTable2[0X4E].SetOperatorInfo(
-        /* Operator Name = */"CMOVLE", 
-        /* Byte          = */0X4E, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Conditional Move - not less nor equal/greater ((ZF=0) AND (SF=OF))
-    m_opCodeTable2[0X4F].SetOperatorInfo(
-        /* Operator Name = */"CMOVNLE", 
-        /* Byte          = */0X4F, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Extract Packed Single-FP Sign Mask
-    m_opCodeTable2[0X50].SetOperatorInfo(
-        /* Operator Name = */"MOVMSKPS", 
-        /* Byte          = */0X50, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_U, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compute Square Roots of Packed Single-FP Values
-    m_opCodeTable2[0X51].SetOperatorInfo(
-        /* Operator Name = */"SQRTPS", 
-        /* Byte          = */0X51, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compute Recipr. of Square Roots of Packed Single-FP Values
-    m_opCodeTable2[0X52].SetOperatorInfo(
-        /* Operator Name = */"RSQRTPS", 
-        /* Byte          = */0X52, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compute Reciprocals of Packed Single-FP Values
-    m_opCodeTable2[0X53].SetOperatorInfo(
-        /* Operator Name = */"RCPPS", 
-        /* Byte          = */0X53, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bitwise Logical AND of Packed Single-FP Values
-    m_opCodeTable2[0X54].SetOperatorInfo(
-        /* Operator Name = */"ANDPS", 
-        /* Byte          = */0X54, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bitwise Logical AND NOT of Packed Single-FP Values
-    m_opCodeTable2[0X55].SetOperatorInfo(
-        /* Operator Name = */"ANDNPS", 
-        /* Byte          = */0X55, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bitwise Logical OR of Single-FP Values
-    m_opCodeTable2[0X56].SetOperatorInfo(
-        /* Operator Name = */"ORPS", 
-        /* Byte          = */0X56, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bitwise Logical XOR for Single-FP Values
-    m_opCodeTable2[0X57].SetOperatorInfo(
-        /* Operator Name = */"XORPS", 
-        /* Byte          = */0X57, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Single-FP Values
-    m_opCodeTable2[0X58].SetOperatorInfo(
-        /* Operator Name = */"ADDPS", 
-        /* Byte          = */0X58, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Multiply Packed Single-FP Values
-    m_opCodeTable2[0X59].SetOperatorInfo(
-        /* Operator Name = */"MULPS", 
-        /* Byte          = */0X59, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Convert Packed Single-FP Values to Double-FP Values
-    m_opCodeTable2[0X5A].SetOperatorInfo(
-        /* Operator Name = */"CVTPS2PD", 
-        /* Byte          = */0X5A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_pd ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Convert Packed DW Integers to Single-FP Values
-    m_opCodeTable2[0X5B].SetOperatorInfo(
-        /* Operator Name = */"CVTDQ2PS", 
-        /* Byte          = */0X5B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_dq ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Single-FP Values
-    m_opCodeTable2[0X5C].SetOperatorInfo(
-        /* Operator Name = */"SUBPS", 
-        /* Byte          = */0X5C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Return Minimum Packed Single-FP Values
-    m_opCodeTable2[0X5D].SetOperatorInfo(
-        /* Operator Name = */"MINPS", 
-        /* Byte          = */0X5D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Divide Packed Single-FP Values
-    m_opCodeTable2[0X5E].SetOperatorInfo(
-        /* Operator Name = */"DIVPS", 
-        /* Byte          = */0X5E, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Return Maximum Packed Single-FP Values
-    m_opCodeTable2[0X5F].SetOperatorInfo(
-        /* Operator Name = */"MAXPS", 
-        /* Byte          = */0X5F, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack Low Data
-    m_opCodeTable2[0X60].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKLBW", 
-        /* Byte          = */0X60, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack Low Data
-    m_opCodeTable2[0X61].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKLWD", 
-        /* Byte          = */0X61, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack Low Data
-    m_opCodeTable2[0X62].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKLDQ", 
-        /* Byte          = */0X62, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Pack with Signed Saturation
-    m_opCodeTable2[0X63].SetOperatorInfo(
-        /* Operator Name = */"PACKSSWB", 
-        /* Byte          = */0X63, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Packed Signed Integers for Greater Than
-    m_opCodeTable2[0X64].SetOperatorInfo(
-        /* Operator Name = */"PCMPGTB", 
-        /* Byte          = */0X64, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Packed Signed Integers for Greater Than
-    m_opCodeTable2[0X65].SetOperatorInfo(
-        /* Operator Name = */"PCMPGTW", 
-        /* Byte          = */0X65, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Packed Signed Integers for Greater Than
-    m_opCodeTable2[0X66].SetOperatorInfo(
-        /* Operator Name = */"PCMPGTD", 
-        /* Byte          = */0X66, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Pack with Unsigned Saturation
-    m_opCodeTable2[0X67].SetOperatorInfo(
-        /* Operator Name = */"PACKUSWB", 
-        /* Byte          = */0X67, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack High Data
-    m_opCodeTable2[0X68].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKHBW", 
-        /* Byte          = */0X68, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack High Data
-    m_opCodeTable2[0X69].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKHWD", 
-        /* Byte          = */0X69, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack High Data
-    m_opCodeTable2[0X6A].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKHDQ", 
-        /* Byte          = */0X6A, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Pack with Signed Saturation
-    m_opCodeTable2[0X6B].SetOperatorInfo(
-        /* Operator Name = */"PACKSSDW", 
-        /* Byte          = */0X6B, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack Low Data
-    m_opCodeTable2[0X6C].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKLQDQ", 
-        /* Byte          = */0X6C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_dq ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_dq ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Unpack High Data
-    m_opCodeTable2[0X6D].SetOperatorInfo(
-        /* Operator Name = */"PUNPCKHQDQ", 
-        /* Byte          = */0X6D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_dq ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_dq ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Doubleword
-    m_opCodeTable2[0X6E].SetOperatorInfo(
-        /* Operator Name = */"MOVD", 
-        /* Byte          = */0X6E, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Quadword
-    m_opCodeTable2[0X6F].SetOperatorInfo(
-        /* Operator Name = */"MOVQ", 
-        /* Byte          = */0X6F, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shuffle Packed Words
-    m_opCodeTable2[0X70].SetOperatorInfo(
-        /* Operator Name = */"PSHUFW", 
-        /* Byte          = */0X70, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Right Logical
-    m_opCodeTable2[0X71].SetOperatorInfo(
-        /* Operator Name = */"PSRLW", 
-        /* Byte          = */0X71, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_N, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Double Quadword Right Logical
-    m_opCodeTable2[0X72].SetOperatorInfo(
-        /* Operator Name = */"PSRLD", 
-        /* Byte          = */0X72, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_N, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Right Logical
-    m_opCodeTable2[0X73].SetOperatorInfo(
-        /* Operator Name = */"PSRLQ", 
-        /* Byte          = */0X73, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_N, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Packed Data for Equal
-    m_opCodeTable2[0X74].SetOperatorInfo(
-        /* Operator Name = */"PCMPEQB", 
-        /* Byte          = */0X74, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Packed Data for Equal
-    m_opCodeTable2[0X75].SetOperatorInfo(
-        /* Operator Name = */"PCMPEQW", 
-        /* Byte          = */0X75, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Packed Data for Equal
-    m_opCodeTable2[0X76].SetOperatorInfo(
-        /* Operator Name = */"PCMPEQD", 
-        /* Byte          = */0X76, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Empty MMX Technology State
-    m_opCodeTable2[0X77].SetOperatorInfo(
-        /* Operator Name = */"EMMS", 
-        /* Byte          = */0X77, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Read Field from Virtual-Machine Control Structure
-    m_opCodeTable2[0X78].SetOperatorInfo(
-        /* Operator Name = */"VMREAD", 
-        /* Byte          = */0X78, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Write Field to Virtual-Machine Control Structure
-    m_opCodeTable2[0X79].SetOperatorInfo(
-        /* Operator Name = */"VMWRITE", 
-        /* Byte          = */0X79, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X7A].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0X7B].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Packed Double-FP Horizontal Add
-    m_opCodeTable2[0X7C].SetOperatorInfo(
-        /* Operator Name = */"HADDPD", 
-        /* Byte          = */0X7C, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_pd ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_pd ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Packed Double-FP Horizontal Subtract
-    m_opCodeTable2[0X7D].SetOperatorInfo(
-        /* Operator Name = */"HSUBPD", 
-        /* Byte          = */0X7D, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_pd ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_pd ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Doubleword
-    m_opCodeTable2[0X7E].SetOperatorInfo(
-        /* Operator Name = */"MOVD", 
-        /* Byte          = */0X7E, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Quadword
-    m_opCodeTable2[0X7F].SetOperatorInfo(
-        /* Operator Name = */"MOVQ", 
-        /* Byte          = */0X7F, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if overflow (OF=1)
-    m_opCodeTable2[0X80].SetOperatorInfo(
-        /* Operator Name = */"JO", 
-        /* Byte          = */0X80, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not overflow (OF=0)
-    m_opCodeTable2[0X81].SetOperatorInfo(
-        /* Operator Name = */"JNO", 
-        /* Byte          = */0X81, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if below/not above or equal/carry (CF=1)
-    m_opCodeTable2[0X82].SetOperatorInfo(
-        /* Operator Name = */"JB", 
-        /* Byte          = */0X82, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not below/above or equal/not carry (CF=0)
-    m_opCodeTable2[0X83].SetOperatorInfo(
-        /* Operator Name = */"JNB", 
-        /* Byte          = */0X83, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if zero/equal (ZF=1)
-    m_opCodeTable2[0X84].SetOperatorInfo(
-        /* Operator Name = */"JZ", 
-        /* Byte          = */0X84, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not zero/not equal (ZF=0)
-    m_opCodeTable2[0X85].SetOperatorInfo(
-        /* Operator Name = */"JNZ", 
-        /* Byte          = */0X85, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if below or equal/not above (CF=1 OR ZF=1)
-    m_opCodeTable2[0X86].SetOperatorInfo(
-        /* Operator Name = */"JBE", 
-        /* Byte          = */0X86, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not below or equal/above (CF=0 AND ZF=0)
-    m_opCodeTable2[0X87].SetOperatorInfo(
-        /* Operator Name = */"JNBE", 
-        /* Byte          = */0X87, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if sign (SF=1)
-    m_opCodeTable2[0X88].SetOperatorInfo(
-        /* Operator Name = */"JS", 
-        /* Byte          = */0X88, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not sign (SF=0)
-    m_opCodeTable2[0X89].SetOperatorInfo(
-        /* Operator Name = */"JNS", 
-        /* Byte          = */0X89, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if parity/parity even (PF=1)
-    m_opCodeTable2[0X8A].SetOperatorInfo(
-        /* Operator Name = */"JP", 
-        /* Byte          = */0X8A, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not parity/parity odd (PF=0)
-    m_opCodeTable2[0X8B].SetOperatorInfo(
-        /* Operator Name = */"JNP", 
-        /* Byte          = */0X8B, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if less/not greater (SF!=OF)
-    m_opCodeTable2[0X8C].SetOperatorInfo(
-        /* Operator Name = */"JL", 
-        /* Byte          = */0X8C, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not less/greater or equal (SF=OF)
-    m_opCodeTable2[0X8D].SetOperatorInfo(
-        /* Operator Name = */"JNL", 
-        /* Byte          = */0X8D, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if less or equal/not greater ((ZF=1) OR (SF!=OF))
-    m_opCodeTable2[0X8E].SetOperatorInfo(
-        /* Operator Name = */"JLE", 
-        /* Byte          = */0X8E, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump near if not less nor equal/greater ((ZF=0) AND (SF=OF))
-    m_opCodeTable2[0X8F].SetOperatorInfo(
-        /* Operator Name = */"JNLE", 
-        /* Byte          = */0X8F, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_J, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - overflow (OF=1)
-    m_opCodeTable2[0X90].SetOperatorInfo(
-        /* Operator Name = */"SETO", 
-        /* Byte          = */0X90, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not overflow (OF=0)
-    m_opCodeTable2[0X91].SetOperatorInfo(
-        /* Operator Name = */"SETNO", 
-        /* Byte          = */0X91, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - below/not above or equal/carry (CF=1)
-    m_opCodeTable2[0X92].SetOperatorInfo(
-        /* Operator Name = */"SETB", 
-        /* Byte          = */0X92, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not below/above or equal/not carry (CF=0)
-    m_opCodeTable2[0X93].SetOperatorInfo(
-        /* Operator Name = */"SETNB", 
-        /* Byte          = */0X93, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - zero/equal (ZF=1)
-    m_opCodeTable2[0X94].SetOperatorInfo(
-        /* Operator Name = */"SETZ", 
-        /* Byte          = */0X94, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not zero/not equal (ZF=0)
-    m_opCodeTable2[0X95].SetOperatorInfo(
-        /* Operator Name = */"SETNZ", 
-        /* Byte          = */0X95, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - below or equal/not above (CF=1 OR ZF=1)
-    m_opCodeTable2[0X96].SetOperatorInfo(
-        /* Operator Name = */"SETBE", 
-        /* Byte          = */0X96, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not below or equal/above (CF=0 AND ZF=0)
-    m_opCodeTable2[0X97].SetOperatorInfo(
-        /* Operator Name = */"SETNBE", 
-        /* Byte          = */0X97, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - sign (SF=1)
-    m_opCodeTable2[0X98].SetOperatorInfo(
-        /* Operator Name = */"SETS", 
-        /* Byte          = */0X98, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not sign (SF=0)
-    m_opCodeTable2[0X99].SetOperatorInfo(
-        /* Operator Name = */"SETNS", 
-        /* Byte          = */0X99, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - parity/parity even (PF=1)
-    m_opCodeTable2[0X9A].SetOperatorInfo(
-        /* Operator Name = */"SETP", 
-        /* Byte          = */0X9A, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not parity/parity odd (PF=0)
-    m_opCodeTable2[0X9B].SetOperatorInfo(
-        /* Operator Name = */"SETNP", 
-        /* Byte          = */0X9B, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - less/not greater (SF!=OF)
-    m_opCodeTable2[0X9C].SetOperatorInfo(
-        /* Operator Name = */"SETL", 
-        /* Byte          = */0X9C, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not less/greater or equal (SF=OF)
-    m_opCodeTable2[0X9D].SetOperatorInfo(
-        /* Operator Name = */"SETNL", 
-        /* Byte          = */0X9D, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - less or equal/not greater ((ZF=1) OR (SF!=OF))
-    m_opCodeTable2[0X9E].SetOperatorInfo(
-        /* Operator Name = */"SETLE", 
-        /* Byte          = */0X9E, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Set Byte on Condition - not less nor equal/greater ((ZF=0) AND (SF=OF))
-    m_opCodeTable2[0X9F].SetOperatorInfo(
-        /* Operator Name = */"SETNLE", 
-        /* Byte          = */0X9F, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Push Word, Doubleword or Quadword Onto the Stack
-    m_opCodeTable2[0XA0].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0XA0, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_FS, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Pop a Value from the Stack
-    m_opCodeTable2[0XA1].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0XA1, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_FS, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : CPU Identification
-    m_opCodeTable2[0XA2].SetOperatorInfo(
-        /* Operator Name = */"CPUID", 
-        /* Byte          = */0XA2, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bit Test
-    m_opCodeTable2[0XA3].SetOperatorInfo(
-        /* Operator Name = */"BT", 
-        /* Byte          = */0XA3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Double Precision Shift Left
-    m_opCodeTable2[0XA4].SetOperatorInfo(
-        /* Operator Name = */"SHLD", 
-        /* Byte          = */0XA4, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Double Precision Shift Left
-    m_opCodeTable2[0XA5].SetOperatorInfo(
-        /* Operator Name = */"SHLD", 
-        /* Byte          = */0XA5, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_CL, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XA6].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XA7].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Push Word, Doubleword or Quadword Onto the Stack
-    m_opCodeTable2[0XA8].SetOperatorInfo(
-        /* Operator Name = */"PUSH", 
-        /* Byte          = */0XA8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_GS, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Pop a Value from the Stack
-    m_opCodeTable2[0XA9].SetOperatorInfo(
-        /* Operator Name = */"POP", 
-        /* Byte          = */0XA9, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_GS, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Resume from System Management Mode
-    m_opCodeTable2[0XAA].SetOperatorInfo(
-        /* Operator Name = */"RSM", 
-        /* Byte          = */0XAA, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bit Test and Set
-    m_opCodeTable2[0XAB].SetOperatorInfo(
-        /* Operator Name = */"BTS", 
-        /* Byte          = */0XAB, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Double Precision Shift Right
-    m_opCodeTable2[0XAC].SetOperatorInfo(
-        /* Operator Name = */"SHRD", 
-        /* Byte          = */0XAC, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Double Precision Shift Right
-    m_opCodeTable2[0XAD].SetOperatorInfo(
-        /* Operator Name = */"SHRD", 
-        /* Byte          = */0XAD, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_CL, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Save x87 FPU, MMX, XMM, and MXCSR State
-    m_opCodeTable2[0XAE].SetOperatorInfo(
-        /* Operator Name = */"FXSAVE", 
-        /* Byte          = */0XAE, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_s ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Signed Multiply
-    m_opCodeTable2[0XAF].SetOperatorInfo(
-        /* Operator Name = */"IMUL", 
-        /* Byte          = */0XAF, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare and Exchange
-    m_opCodeTable2[0XB0].SetOperatorInfo(
-        /* Operator Name = */"CMPXCHG", 
-        /* Byte          = */0XB0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare and Exchange
-    m_opCodeTable2[0XB1].SetOperatorInfo(
-        /* Operator Name = */"CMPXCHG", 
-        /* Byte          = */0XB1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Load Far Pointer
-    m_opCodeTable2[0XB2].SetOperatorInfo(
-        /* Operator Name = */"LSS", 
-        /* Byte          = */0XB2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_p ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bit Test and Reset
-    m_opCodeTable2[0XB3].SetOperatorInfo(
-        /* Operator Name = */"BTR", 
-        /* Byte          = */0XB3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Load Far Pointer
-    m_opCodeTable2[0XB4].SetOperatorInfo(
-        /* Operator Name = */"LFS", 
-        /* Byte          = */0XB4, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_p ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Load Far Pointer
-    m_opCodeTable2[0XB5].SetOperatorInfo(
-        /* Operator Name = */"LGS", 
-        /* Byte          = */0XB5, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_p ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move with Zero-Extend
-    m_opCodeTable2[0XB6].SetOperatorInfo(
-        /* Operator Name = */"MOVZX", 
-        /* Byte          = */0XB6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move with Zero-Extend
-    m_opCodeTable2[0XB7].SetOperatorInfo(
-        /* Operator Name = */"MOVZX", 
-        /* Byte          = */0XB7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_w ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Jump to IA-64 Instruction Set
-    m_opCodeTable2[0XB8].SetOperatorInfo(
-        /* Operator Name = */"JMPE", 
-        /* Byte          = */0XB8, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Undefined Instruction
-    m_opCodeTable2[0XB9].SetOperatorInfo(
-        /* Operator Name = */"UD1", 
-        /* Byte          = */0XB9, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bit Test
-    m_opCodeTable2[0XBA].SetOperatorInfo(
-        /* Operator Name = */"BT", 
-        /* Byte          = */0XBA, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bit Test and Complement
-    m_opCodeTable2[0XBB].SetOperatorInfo(
-        /* Operator Name = */"BTC", 
-        /* Byte          = */0XBB, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bit Scan Forward
-    m_opCodeTable2[0XBC].SetOperatorInfo(
-        /* Operator Name = */"BSF", 
-        /* Byte          = */0XBC, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bit Scan Reverse
-    m_opCodeTable2[0XBD].SetOperatorInfo(
-        /* Operator Name = */"BSR", 
-        /* Byte          = */0XBD, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move with Sign-Extension
-    m_opCodeTable2[0XBE].SetOperatorInfo(
-        /* Operator Name = */"MOVSX", 
-        /* Byte          = */0XBE, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move with Sign-Extension
-    m_opCodeTable2[0XBF].SetOperatorInfo(
-        /* Operator Name = */"MOVSX", 
-        /* Byte          = */0XBF, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_w ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Exchange and Add
-    m_opCodeTable2[0XC0].SetOperatorInfo(
-        /* Operator Name = */"XADD", 
-        /* Byte          = */0XC0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_b ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_b ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Exchange and Add
-    m_opCodeTable2[0XC1].SetOperatorInfo(
-        /* Operator Name = */"XADD", 
-        /* Byte          = */0XC1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_E, OpCodeOperandType_v ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_v ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare Packed Single-FP Values
-    m_opCodeTable2[0XC2].SetOperatorInfo(
-        /* Operator Name = */"CMPPS", 
-        /* Byte          = */0XC2, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Store Doubleword Using Non-Temporal Hint
-    m_opCodeTable2[0XC3].SetOperatorInfo(
-        /* Operator Name = */"MOVNTI", 
-        /* Byte          = */0XC3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Insert Word
-    m_opCodeTable2[0XC4].SetOperatorInfo(
-        /* Operator Name = */"PINSRW", 
-        /* Byte          = */0XC4, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_R, OpCodeOperandType_d ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Extract Word
-    m_opCodeTable2[0XC5].SetOperatorInfo(
-        /* Operator Name = */"PEXTRW", 
-        /* Byte          = */0XC5, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_N, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shuffle Packed Single-FP Values
-    m_opCodeTable2[0XC6].SetOperatorInfo(
-        /* Operator Name = */"SHUFPS", 
-        /* Byte          = */0XC6, 
-        /* Operand Count = */3, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_ps ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_ps ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_I, OpCodeOperandType_b ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compare and Exchange Bytes
-    m_opCodeTable2[0XC7].SetOperatorInfo(
-        /* Operator Name = */"CMPXCHG8B", 
-        /* Byte          = */0XC7, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Byte Swap
-    m_opCodeTable2[0XC8].SetOperatorInfo(
-        /* Operator Name = */"BSWAP", 
-        /* Byte          = */0XC8, 
-        /* Operand Count = */1, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RAX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XC9].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RCX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XCA].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XCB].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBX, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XCC].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XCD].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RBP, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XCE].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RSI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XCF].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_RDI, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Packed Double-FP Add/Subtract
-    m_opCodeTable2[0XD0].SetOperatorInfo(
-        /* Operator Name = */"ADDSUBPD", 
-        /* Byte          = */0XD0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_pd ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_pd ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Right Logical
-    m_opCodeTable2[0XD1].SetOperatorInfo(
-        /* Operator Name = */"PSRLW", 
-        /* Byte          = */0XD1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Right Logical
-    m_opCodeTable2[0XD2].SetOperatorInfo(
-        /* Operator Name = */"PSRLD", 
-        /* Byte          = */0XD2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Right Logical
-    m_opCodeTable2[0XD3].SetOperatorInfo(
-        /* Operator Name = */"PSRLQ", 
-        /* Byte          = */0XD3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Quadword Integers
-    m_opCodeTable2[0XD4].SetOperatorInfo(
-        /* Operator Name = */"PADDQ", 
-        /* Byte          = */0XD4, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Multiply Packed Signed Integers and Store Low Result
-    m_opCodeTable2[0XD5].SetOperatorInfo(
-        /* Operator Name = */"PMULLW", 
-        /* Byte          = */0XD5, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Quadword
-    m_opCodeTable2[0XD6].SetOperatorInfo(
-        /* Operator Name = */"MOVQ", 
-        /* Byte          = */0XD6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Move Byte Mask
-    m_opCodeTable2[0XD7].SetOperatorInfo(
-        /* Operator Name = */"PMOVMSKB", 
-        /* Byte          = */0XD7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_G, OpCodeOperandType_d ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_N, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Unsigned Integers with Unsigned Saturation
-    m_opCodeTable2[0XD8].SetOperatorInfo(
-        /* Operator Name = */"PSUBUSB", 
-        /* Byte          = */0XD8, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Unsigned Integers with Unsigned Saturation
-    m_opCodeTable2[0XD9].SetOperatorInfo(
-        /* Operator Name = */"PSUBUSW", 
-        /* Byte          = */0XD9, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Minimum of Packed Unsigned Byte Integers
-    m_opCodeTable2[0XDA].SetOperatorInfo(
-        /* Operator Name = */"PMINUB", 
-        /* Byte          = */0XDA, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Logical AND
-    m_opCodeTable2[0XDB].SetOperatorInfo(
-        /* Operator Name = */"PAND", 
-        /* Byte          = */0XDB, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Unsigned Integers with Unsigned Saturation
-    m_opCodeTable2[0XDC].SetOperatorInfo(
-        /* Operator Name = */"PADDUSB", 
-        /* Byte          = */0XDC, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Unsigned Integers with Unsigned Saturation
-    m_opCodeTable2[0XDD].SetOperatorInfo(
-        /* Operator Name = */"PADDUSW", 
-        /* Byte          = */0XDD, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Maximum of Packed Unsigned Byte Integers
-    m_opCodeTable2[0XDE].SetOperatorInfo(
-        /* Operator Name = */"PMAXUB", 
-        /* Byte          = */0XDE, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Logical AND NOT
-    m_opCodeTable2[0XDF].SetOperatorInfo(
-        /* Operator Name = */"PANDN", 
-        /* Byte          = */0XDF, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Average Packed Integers
-    m_opCodeTable2[0XE0].SetOperatorInfo(
-        /* Operator Name = */"PAVGB", 
-        /* Byte          = */0XE0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Right Arithmetic
-    m_opCodeTable2[0XE1].SetOperatorInfo(
-        /* Operator Name = */"PSRAW", 
-        /* Byte          = */0XE1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Right Arithmetic
-    m_opCodeTable2[0XE2].SetOperatorInfo(
-        /* Operator Name = */"PSRAD", 
-        /* Byte          = */0XE2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Average Packed Integers
-    m_opCodeTable2[0XE3].SetOperatorInfo(
-        /* Operator Name = */"PAVGW", 
-        /* Byte          = */0XE3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Multiply Packed Unsigned Integers and Store High Result
-    m_opCodeTable2[0XE4].SetOperatorInfo(
-        /* Operator Name = */"PMULHUW", 
-        /* Byte          = */0XE4, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Multiply Packed Signed Integers and Store High Result
-    m_opCodeTable2[0XE5].SetOperatorInfo(
-        /* Operator Name = */"PMULHW", 
-        /* Byte          = */0XE5, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Convert Packed Double-FP Values to DW Integers
-    m_opCodeTable2[0XE6].SetOperatorInfo(
-        /* Operator Name = */"CVTPD2DQ", 
-        /* Byte          = */0XE6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_dq ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_W, OpCodeOperandType_pd ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Store of Quadword Using Non-Temporal Hint
-    m_opCodeTable2[0XE7].SetOperatorInfo(
-        /* Operator Name = */"MOVNTQ", 
-        /* Byte          = */0XE7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Signed Integers with Signed Saturation
-    m_opCodeTable2[0XE8].SetOperatorInfo(
-        /* Operator Name = */"PSUBSB", 
-        /* Byte          = */0XE8, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Signed Integers with Signed Saturation
-    m_opCodeTable2[0XE9].SetOperatorInfo(
-        /* Operator Name = */"PSUBSW", 
-        /* Byte          = */0XE9, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Minimum of Packed Signed Word Integers
-    m_opCodeTable2[0XEA].SetOperatorInfo(
-        /* Operator Name = */"PMINSW", 
-        /* Byte          = */0XEA, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Bitwise Logical OR
-    m_opCodeTable2[0XEB].SetOperatorInfo(
-        /* Operator Name = */"POR", 
-        /* Byte          = */0XEB, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Signed Integers with Signed Saturation
-    m_opCodeTable2[0XEC].SetOperatorInfo(
-        /* Operator Name = */"PADDSB", 
-        /* Byte          = */0XEC, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Signed Integers with Signed Saturation
-    m_opCodeTable2[0XED].SetOperatorInfo(
-        /* Operator Name = */"PADDSW", 
-        /* Byte          = */0XED, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Maximum of Packed Signed Word Integers
-    m_opCodeTable2[0XEE].SetOperatorInfo(
-        /* Operator Name = */"PMAXSW", 
-        /* Byte          = */0XEE, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Logical Exclusive OR
-    m_opCodeTable2[0XEF].SetOperatorInfo(
-        /* Operator Name = */"PXOR", 
-        /* Byte          = */0XEF, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Load Unaligned Integer 128 Bits
-    m_opCodeTable2[0XF0].SetOperatorInfo(
-        /* Operator Name = */"LDDQU", 
-        /* Byte          = */0XF0, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_V, OpCodeOperandType_dq ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_M, OpCodeOperandType_dq ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Left Logical
-    m_opCodeTable2[0XF1].SetOperatorInfo(
-        /* Operator Name = */"PSLLW", 
-        /* Byte          = */0XF1, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Left Logical
-    m_opCodeTable2[0XF2].SetOperatorInfo(
-        /* Operator Name = */"PSLLD", 
-        /* Byte          = */0XF2, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Shift Packed Data Left Logical
-    m_opCodeTable2[0XF3].SetOperatorInfo(
-        /* Operator Name = */"PSLLQ", 
-        /* Byte          = */0XF3, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Multiply Packed Unsigned DW Integers
-    m_opCodeTable2[0XF4].SetOperatorInfo(
-        /* Operator Name = */"PMULUDQ", 
-        /* Byte          = */0XF4, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Multiply and Add Packed Integers
-    m_opCodeTable2[0XF5].SetOperatorInfo(
-        /* Operator Name = */"PMADDWD", 
-        /* Byte          = */0XF5, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Compute Sum of Absolute Differences
-    m_opCodeTable2[0XF6].SetOperatorInfo(
-        /* Operator Name = */"PSADBW", 
-        /* Byte          = */0XF6, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Store Selected Bytes of Quadword
-    m_opCodeTable2[0XF7].SetOperatorInfo(
-        /* Operator Name = */"MASKMOVQ", 
-        /* Byte          = */0XF7, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_N, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Integers
-    m_opCodeTable2[0XF8].SetOperatorInfo(
-        /* Operator Name = */"PSUBB", 
-        /* Byte          = */0XF8, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Integers
-    m_opCodeTable2[0XF9].SetOperatorInfo(
-        /* Operator Name = */"PSUBW", 
-        /* Byte          = */0XF9, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Integers
-    m_opCodeTable2[0XFA].SetOperatorInfo(
-        /* Operator Name = */"PSUBD", 
-        /* Byte          = */0XFA, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Subtract Packed Quadword Integers
-    m_opCodeTable2[0XFB].SetOperatorInfo(
-        /* Operator Name = */"PSUBQ", 
-        /* Byte          = */0XFB, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Integers
-    m_opCodeTable2[0XFC].SetOperatorInfo(
-        /* Operator Name = */"PADDB", 
-        /* Byte          = */0XFC, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Integers
-    m_opCodeTable2[0XFD].SetOperatorInfo(
-        /* Operator Name = */"PADDW", 
-        /* Byte          = */0XFD, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Add Packed Integers
-    m_opCodeTable2[0XFE].SetOperatorInfo(
-        /* Operator Name = */"PADDD", 
-        /* Byte          = */0XFE, 
-        /* Operand Count = */2, 
-        /* Valid OpCode  = */true, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_P, OpCodeOperandType_q ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Q, OpCodeOperandType_q ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
-
-    // Brief : Instruction Invalid in 64-bit Mode
-    m_opCodeTable2[0XFF].SetOperatorInfo(
-        /* Operator Name = */"xx_INVALID_xx", 
-        /* Byte          = */0, 
-        /* Operand Count = */0, 
-        /* Valid OpCode  = */false, 
-        /* Escape Code   = */false, 
-        /* Operand 1     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 2     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 3     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ),
-        /* Operand 4     = */OpCodeOperand_t( OpCodeAddressingMethod_Invalid, OpCodeOperandType_Invalid ) 
-    );
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void Tables_t::InitThreeByteOpCodeTable_3A()
+{
 }
