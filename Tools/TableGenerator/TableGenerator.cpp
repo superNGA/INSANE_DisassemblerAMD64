@@ -1053,8 +1053,6 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
                             Entry_t* pNew       = new Entry_t();
                             *pNew                = *pDefaultEntry;
                             pNew->m_iSecOpcd    = iRMSlotIndex;
-                            // pNew->m_iPrefix     = iRMSlotIndex;
-                            // pNew->m_iOpcdExt    = iRMSlotIndex;
 
                             pNoMem->m_vecVarients.push_back(pNew);
                             nDefaultEntries++;
@@ -1668,7 +1666,7 @@ static inline void Indent(int iIndentation, std::ofstream& hFile) { for (int i =
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void PrintInvalidEntry(Byte iByte, const char* szGroupName, std::ofstream& hFile, int iIndentation)
+static inline void PrintInvalidEntry(Byte iByte, const char* szGroupName, std::ofstream& hFile, int iIndentation, bool bValid = false)
 {
     // Byte we are printing.
     Indent(iIndentation, hFile); 
@@ -1688,7 +1686,7 @@ static inline void PrintInvalidEntry(Byte iByte, const char* szGroupName, std::o
 
     // Inst. valid ?
     Indent(iIndentation + 1, hFile); 
-    hFile << "/*bValidOpcd     = */" << "false" << ",\n";
+    hFile << "/*bValidOpcd     = */" << (bValid == true ? "true" : "false") << ",\n";
 
     // Inst. escape?
     Indent(iIndentation + 1, hFile); 
@@ -1973,8 +1971,13 @@ static inline void PrintEntry(Entry_t* pEntry, std::string szGroupName, std::ofs
     }
     else
     {
-        Indent(iIndentation, hFile);
+        // Dump this too, so its marked as valid entry.
+        // Indent(iIndentation, hFile);
+        PrintValidEntry(pEntry, szGroupName, hFile, iIndentation, s_iRecurseCounter > 1);
+        hFile << std::endl;
 
+
+        Indent(iIndentation, hFile);
         std::string szFnName = s_iRecurseCounter == 1 ? 
             std::format("{}.InitVarientType(",  szGroupName) : 
             std::format("{}->InitVarientType(", szGroupName);

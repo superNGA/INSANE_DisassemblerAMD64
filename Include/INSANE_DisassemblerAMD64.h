@@ -20,6 +20,7 @@ namespace InsaneDASM64
 
     // Foward Decls...
     struct OpCodeDesc_t;
+    struct LegacyPrefix_t;
 }
 
 
@@ -48,8 +49,8 @@ namespace InsaneDASM64::SpecialChars
     constexpr Byte ESCAPE_OPCODE_FIRST_INDEX    = 0X0F;
 
     // Acts as escape opcode character when appears as second byte.
-    constexpr Byte ESCAPE_OPCODE_SECOND_INDEX_A = 0X38;
-    constexpr Byte ESCAPE_OPCODE_SECOND_INDEX_B = 0X3A;
+    constexpr Byte ESCAPE_OPCODE_SECOND_INDEX_38 = 0X38;
+    constexpr Byte ESCAPE_OPCODE_SECOND_INDEX_3A = 0X3A;
 }
 
 
@@ -276,22 +277,20 @@ namespace InsaneDASM64
 
         Byte GetMostSignificantOpCode() const;
         bool PushOpCode     (Byte iByte);
-        void CopyOperandInfo(const OpCodeDesc_t* pOperatorInfo);
+        void StoreOperatorDesc(OpCodeDesc_t* pOperatorInfo);
+
+        bool ModRMRequired(const LegacyPrefix_t* pPrefix) const;
+        bool InitChildVarient(const LegacyPrefix_t* pPrefix, Byte iModRM);
+
 
         // NOTE : One OpCode_t will hold all the OpCodes that are present in one
         //        instruction. That means, if multibyte opcode is present in one instruction,
         //        we will store all bytes ( 1 to 3 ) in a single OpCode_t struct.
-
-
         Byte            m_opBytes[Rules::MAX_OPBYTES];
-        int32_t         m_nOpBytes       = 0;
+        int32_t         m_nOpBytes        = 0;
 
-        // OpCodeFlag_t    m_iOpCodeFlag    = OpCodeFlag_t::OpCodeFlag_None;
-
-        Operand_t       m_operands[Rules::MAX_OPERANDS];
-        int32_t         m_nOperands      = 0;
-
-        const char*     m_szOperatorName = nullptr;
+        OpCodeDesc_t*   m_pRootOpCodeDesc = nullptr;
+        OpCodeDesc_t*   m_pOpCodeDesc     = nullptr;
     };
 
 
@@ -366,7 +365,7 @@ namespace InsaneDASM64
         bool           m_bHasModRM = false;
         Byte           m_iModRM    = 0x00;
 
-        bool           m_bHasSID   = false;
+        bool           m_bHasSIB   = false;
         Byte           m_iSIB      = 0x00;
 
         Displacement_t m_displacement;
@@ -385,7 +384,8 @@ namespace InsaneDASM64
         IDASMErrorCode_InvalidOpCode,
         IDASMErrorCode_NoOpByteFound,
         IDASMErrorCode_ModRMNotFound,
-        IDASMErrorCode_SIDNotFound,
+        IDASMErrorCode_SIBNotFound,
+        IDASMErrorCode_InvalidDispSize,
         IDASMErrorCode_NoImmediateFound,
         IDASMErrorCode_InvalidImmediateSize,
         IDASMErrorCode_Count

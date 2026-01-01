@@ -47,7 +47,7 @@ void OpCodeDesc_t::Init(
 
 
     //? Delete this
-    printf("Initialized 0x%02X { %s }\n", m_iByte, m_szName);
+    // printf("Initialized 0x%02X { %s }\n", m_iByte, m_szName);
 }
 
 
@@ -56,7 +56,7 @@ void OpCodeDesc_t::Init(
 bool OpCodeDesc_t::InsertVarient(int iIndex)
 {
     //? Delete this
-    printf("Inserting varient @ [ %d ] index for byte [ 0x%02X ]\n", iIndex, m_iByte);
+    // printf("Inserting varient @ [ %d ] index for byte [ 0x%02X ]\n", iIndex, m_iByte);
 
     assert(m_pVarients != nullptr && "Varient array is not initialized");
     if (m_pVarients == nullptr)
@@ -68,8 +68,10 @@ bool OpCodeDesc_t::InsertVarient(int iIndex)
         return false;
 
 
+    //? Delete this
     // Invalid child index?
-    printf("Varient : %d, iIndex = %d, Min : %d, Max : %zu\n", m_iVarientType, iIndex, 0, GetMaxVarients(m_iVarientType));
+    //printf("Varient : %d, iIndex = %d, Min : %d, Max : %zu\n", m_iVarientType, iIndex, 0, GetMaxVarients(m_iVarientType));
+
 
     assert(iIndex >= 0 && iIndex < GetMaxVarients(m_iVarientType) && "Invalid index while inserting varient.");
     if (iIndex < 0 || iIndex >= GetMaxVarients(m_iVarientType))
@@ -80,7 +82,8 @@ bool OpCodeDesc_t::InsertVarient(int iIndex)
     // assert(m_pVarients[iIndex] == nullptr && "Element already inserted @ this index!");
     if(m_pVarients[iIndex] != nullptr)
     {
-        printf(RED "Trying to insert varient @ index [ %d ], varinent { %s } already inserted @ this index." RESET, iIndex, m_pVarients[iIndex]->m_szName);
+        //? Delete this
+        // printf(RED "Trying to insert varient @ index [ %d ], varinent { %s } already inserted @ this index." RESET, iIndex, m_pVarients[iIndex]->m_szName);
         return true;
     }
 
@@ -152,7 +155,7 @@ bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
     memset(m_pVarients, 0, iVarientArraySize);
 
     //? Delete this
-    printf("Inititalized varient type : %d, Varient Array : %p\n", m_iVarientType, m_pVarients);
+    // printf("Inititalized varient type : %d, Varient Array : %p\n", m_iVarientType, m_pVarients);
 
     return true;
 }
@@ -194,6 +197,32 @@ uint16_t Tables_t::GetInstType(Byte iOpCode) const
     assert(m_bInstTypeLUTInit == true && "[Tables_t] Instruction type LUT is not initialized!");
 
     return m_instTypeLUT[iOpCode];
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+OpCodeDesc_t* Tables_t::GetOpCodeTable(int iTableIndex, Byte iEscapeByte)
+{
+    switch (iTableIndex)
+    {
+    case 1: return m_opCodeTable1;
+    case 2: return m_opCodeTable2;
+    case 3:
+    {
+        if (iEscapeByte == SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_38)
+            return m_opCodeTable3_38;
+        
+        if (iEscapeByte == SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_3A)
+            return m_opCodeTable3_3A;
+
+        break;
+    }
+
+    default: break;
+    }
+
+    return nullptr;
 }
 
 
@@ -302,8 +331,8 @@ IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
         
     // Setting Escape characters...
     m_opCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsEscapeCode    = true;
-    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_A].m_bIsEscapeCode = true;
-    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_B].m_bIsEscapeCode = true;
+    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_38].m_bIsEscapeCode = true;
+    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_3A].m_bIsEscapeCode = true;
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -2106,6 +2135,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
+    // 0x80
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0x80].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x80,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0x80].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0x80].InsertVarient(0);
@@ -2236,6 +2279,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
+
+    // 0x81
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0x81].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x81,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
     m_opCodeTable1[0x81].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
@@ -2376,6 +2433,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bEscapeOpcd    = */false,
         /*bModrmRequired = */false,
         /*iByte          = */0x82,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x83
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0x83].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x83,
         /*nOperands      = */0,
         /*operand1       = */Operand_t(),
         /*operand2       = */Operand_t(),
@@ -2667,6 +2738,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
+    // 0x8F
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0x8F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0x8F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0x8F].InsertVarient(0);
@@ -2685,6 +2770,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
+
+    // 0x90
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0x90].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x90,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
     m_opCodeTable1[0x90].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
 
@@ -3379,6 +3478,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
+    // 0xC0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xC0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xC0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xC0].InsertVarient(0);
@@ -3509,6 +3622,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
+
+    // 0xC1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xC1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
     m_opCodeTable1[0xC1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
@@ -3697,6 +3824,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
+    // 0xC6
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xC6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xC6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xC6].InsertVarient(0);
@@ -3715,6 +3856,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
+
+    // 0xC7
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xC7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
     m_opCodeTable1[0xC7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
@@ -3841,6 +3996,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bEscapeOpcd    = */false,
         /*bModrmRequired = */false,
         /*iByte          = */0xCF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xD0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD0,
         /*nOperands      = */0,
         /*operand1       = */Operand_t(),
         /*operand2       = */Operand_t(),
@@ -3978,6 +4147,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand4       = */Operand_t());
     }
 
+    // 0xD1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xD1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xD1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xD1].InsertVarient(0);
@@ -4109,6 +4292,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand4       = */Operand_t());
     }
 
+    // 0xD2
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xD2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xD2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xD2].InsertVarient(0);
@@ -4239,6 +4436,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
+
+    // 0xD3
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xD3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
     m_opCodeTable1[0xD3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
@@ -4427,10 +4638,38 @@ void Tables_t::InitOneByteOpCodeTable()
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
+    // 0xD8
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xD8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xD8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xD8].InsertVarient(0);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4471,6 +4710,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD8].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4511,6 +4764,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD8].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4534,6 +4801,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD8].m_pVarients[0x02]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD8].m_pVarients[0x02]->m_pVarients[0x03]->InsertVarient(1);
@@ -4556,6 +4837,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD8].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4579,6 +4874,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD8].m_pVarients[0x03]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD8].m_pVarients[0x03]->m_pVarients[0x03]->InsertVarient(1);
@@ -4601,6 +4910,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD8].InsertVarient(4);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4641,6 +4964,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD8].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4681,6 +5018,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD8].InsertVarient(6);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x06]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4721,6 +5072,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD8].InsertVarient(7);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD8].m_pVarients[0x07]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD8].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4760,6 +5125,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
     }
 
+    // 0xD9
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xD9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xD9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xD9].InsertVarient(0);
@@ -4780,6 +5159,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD9].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD9].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD9].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4803,6 +5196,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD9].m_pVarients[0x01]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD9].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(1);
@@ -4825,6 +5232,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD9].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD9].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD9].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4848,6 +5269,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD9].m_pVarients[0x02]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD9].m_pVarients[0x02]->m_pVarients[0x03]->InsertVarient(0);
@@ -4870,6 +5305,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD9].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD9].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD9].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4910,6 +5359,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD9].InsertVarient(4);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD9].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD9].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -4933,6 +5396,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD9].m_pVarients[0x04]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD9].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
@@ -5003,6 +5480,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD9].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD9].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD9].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5026,6 +5517,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD9].m_pVarients[0x05]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD9].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(0);
@@ -5144,6 +5649,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD9].InsertVarient(6);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD9].m_pVarients[0x06]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD9].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5167,6 +5686,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD9].m_pVarients[0x06]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD9].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(0);
@@ -5301,6 +5834,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xD9].InsertVarient(7);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xD9].m_pVarients[0x07]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xD9].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5324,6 +5871,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xD9].m_pVarients[0x07]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xD9].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(0);
@@ -5457,10 +6018,38 @@ void Tables_t::InitOneByteOpCodeTable()
         }
     }
 
+    // 0xDA
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xDA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xDA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xDA].InsertVarient(0);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDA].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDA].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5501,6 +6090,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDA].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDA].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDA].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5541,6 +6144,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDA].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDA].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDA].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5581,6 +6198,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDA].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDA].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDA].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5637,6 +6268,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDA].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDA].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDA].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5660,6 +6305,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDA].m_pVarients[0x05]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDA].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(1);
@@ -5713,10 +6372,38 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand4       = */Operand_t());
     }
 
+    // 0xDB
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xDB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xDB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xDB].InsertVarient(0);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDB].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDB].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5757,6 +6444,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDB].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDB].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDB].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5797,6 +6498,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDB].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDB].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDB].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5837,6 +6552,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDB].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDB].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDB].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -5877,10 +6606,38 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDB].InsertVarient(4);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDB].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDB].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         m_opCodeTable1[0xDB].m_pVarients[0x04]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDB].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
@@ -5999,6 +6756,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDB].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDB].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDB].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6070,10 +6841,38 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand4       = */Operand_t());
     }
 
+    // 0xDC
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xDC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xDC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xDC].InsertVarient(0);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6114,6 +6913,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDC].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6154,6 +6967,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDC].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6194,6 +7021,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDC].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6234,6 +7075,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDC].InsertVarient(4);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6274,6 +7129,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDC].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6314,6 +7183,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDC].InsertVarient(6);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x06]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6354,6 +7237,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDC].InsertVarient(7);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDC].m_pVarients[0x07]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDC].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6393,10 +7290,38 @@ void Tables_t::InitOneByteOpCodeTable()
         }
     }
 
+    // 0xDD
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xDD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xDD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xDD].InsertVarient(0);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDD].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDD].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6437,6 +7362,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDD].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDD].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDD].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6477,6 +7416,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDD].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDD].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDD].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6517,6 +7470,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDD].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDD].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDD].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6557,6 +7524,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDD].InsertVarient(4);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDD].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDD].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6580,6 +7561,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDD].m_pVarients[0x04]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDD].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(1);
@@ -6714,6 +7709,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDD].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDD].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDD].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6737,6 +7746,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDD].m_pVarients[0x05]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDD].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(1);
@@ -6790,10 +7813,38 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand4       = */Operand_t());
     }
 
+    // 0xDE
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xDE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xDE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xDE].InsertVarient(0);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6817,6 +7868,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDE].m_pVarients[0x00]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDE].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(1);
@@ -6951,6 +8016,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDE].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -6974,6 +8053,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDE].m_pVarients[0x01]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDE].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(1);
@@ -7108,6 +8201,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDE].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7148,6 +8255,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDE].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7171,6 +8292,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDE].m_pVarients[0x03]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDE].m_pVarients[0x03]->m_pVarients[0x03]->InsertVarient(1);
@@ -7193,6 +8328,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDE].InsertVarient(4);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7216,6 +8365,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDE].m_pVarients[0x04]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDE].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(1);
@@ -7350,6 +8513,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDE].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7373,6 +8550,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDE].m_pVarients[0x05]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDE].m_pVarients[0x05]->m_pVarients[0x03]->InsertVarient(1);
@@ -7507,6 +8698,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDE].InsertVarient(6);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x06]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7530,6 +8735,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDE].m_pVarients[0x06]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDE].m_pVarients[0x06]->m_pVarients[0x03]->InsertVarient(1);
@@ -7664,6 +8883,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDE].InsertVarient(7);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDE].m_pVarients[0x07]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDE].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7687,6 +8920,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDE].m_pVarients[0x07]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDE].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(1);
@@ -7820,10 +9067,38 @@ void Tables_t::InitOneByteOpCodeTable()
         }
     }
 
+    // 0xDF
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xDF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xDF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xDF].InsertVarient(0);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDF].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDF].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7864,6 +9139,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDF].InsertVarient(1);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDF].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDF].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7904,6 +9193,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDF].InsertVarient(2);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDF].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDF].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7944,6 +9247,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDF].InsertVarient(3);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDF].m_pVarients[0x03]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDF].m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -7984,6 +9301,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDF].InsertVarient(4);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDF].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDF].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -8007,6 +9338,20 @@ void Tables_t::InitOneByteOpCodeTable()
         }
         m_opCodeTable1[0xDF].m_pVarients[0x04]->InsertVarient(3);
         {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
             m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
 
             m_opCodeTable1[0xDF].m_pVarients[0x04]->m_pVarients[0x03]->InsertVarient(0);
@@ -8045,6 +9390,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDF].InsertVarient(5);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDF].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDF].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -8085,6 +9444,20 @@ void Tables_t::InitOneByteOpCodeTable()
     }
     m_opCodeTable1[0xDF].InsertVarient(6);
     {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable1[0xDF].m_pVarients[0x06]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
         m_opCodeTable1[0xDF].m_pVarients[0x06]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
 
         // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
@@ -8448,6 +9821,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
+    // 0xF6
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xF6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xF6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xF6].InsertVarient(0);
@@ -8578,6 +9965,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
+
+    // 0xF7
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xF7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
     m_opCodeTable1[0xF7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
@@ -8794,6 +10195,20 @@ void Tables_t::InitOneByteOpCodeTable()
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
+    // 0xFE
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xFE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
     m_opCodeTable1[0xFE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 
     m_opCodeTable1[0xFE].InsertVarient(0);
@@ -8828,6 +10243,20 @@ void Tables_t::InitOneByteOpCodeTable()
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
+
+    // 0xFF
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable1[0xFF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
 
     m_opCodeTable1[0xFF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
 

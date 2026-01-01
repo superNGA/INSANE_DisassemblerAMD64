@@ -10,7 +10,7 @@ int main(void)
 {
     // Input & Output data for disassembler.
     //std::vector<InsaneDASM64::Byte> vecInput = { 0x48, 0x83, 0xEC, 0x28, 0xC7, 0x44, 0x24, 0x24, 0x00, 0x00, 0x00, 0x00, 0xE8, 0xEF, 0xCE, 0xFF, 0xFF, 0x24, 0x01 };
-    std::vector<InsaneDASM64::Byte> vecInputSimple = {
+    std::vector<InsaneDASM64::Byte> vecInput1234 = {
         0x55,
         0x48, 0x89, 0xE5,
         0x48, 0x83, 0xEC, 0x20,
@@ -33,7 +33,7 @@ int main(void)
     };
 
 
-    std::vector<InsaneDASM64::Byte> vecInput = {
+    std::vector<InsaneDASM64::Byte> vecInput2 = {
         // ---- no ModR/M ----
         0x0F, 0x05,             // SYSCALL
         0x0F, 0x31,             // RDTSC
@@ -56,7 +56,7 @@ int main(void)
 
 
 
-    std::vector<InsaneDASM64::Byte> vecInputOkOk = {
+    std::vector<InsaneDASM64::Byte> vecInput = {
         // ---- simple, no ModRM ----
         0x90,                         // nop
         0xC3,                         // ret

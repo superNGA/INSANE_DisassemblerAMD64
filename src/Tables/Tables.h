@@ -121,6 +121,7 @@ namespace INSANE_DASM64_NAMESPACE
 
         uint16_t                  GetInstType(Byte iOpCode) const;
 
+        OpCodeDesc_t* GetOpCodeTable(int iTableIndex, Byte iEscapeByte);
 
         // To associate all leagacy prefix with simple consecutive numbers.
         // Returns 0 on default case.
@@ -129,7 +130,7 @@ namespace INSANE_DASM64_NAMESPACE
 
     private:
         InsaneDASM64::IDASMErrorCode_t _InitializeInstTypeLUT();
-        uint16_t                       m_instTypeLUT[0xFFLLU + 1LLU]; // 256 entries...
+        uint16_t                       m_instTypeLUT[0x100llu]; // 256 entries...
         bool                           m_bInstTypeLUTInit = false;
 
 
@@ -141,10 +142,10 @@ namespace INSANE_DASM64_NAMESPACE
 
 
         // Tables...
-        OpCodeDesc_t              m_opCodeTable1   [0x100];
-        OpCodeDesc_t              m_opCodeTable2   [0x100];
-        OpCodeDesc_t              m_opCodeTable3_38[0x100];
-        OpCodeDesc_t              m_opCodeTable3_3A[0x100];
+        OpCodeDesc_t                   m_opCodeTable1   [0x100llu];
+        OpCodeDesc_t                   m_opCodeTable2   [0x100llu];
+        OpCodeDesc_t                   m_opCodeTable3_38[0x100llu];
+        OpCodeDesc_t                   m_opCodeTable3_3A[0x100llu];
 
 
         bool                      m_bOpCodeTableInit = false;
