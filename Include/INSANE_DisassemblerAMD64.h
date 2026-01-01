@@ -54,6 +54,15 @@ namespace InsaneDASM64::SpecialChars
 }
 
 
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+namespace InsaneDASM64::Masks
+{
+    constexpr size_t MODRM_MOD = 0b11000000llu;
+    constexpr size_t MODRM_REG = 0b111000llu;
+    constexpr size_t MODRM_RM  = 0b111llu;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -341,6 +350,22 @@ namespace InsaneDASM64
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+    struct ModRM_t
+    {
+        inline void Store(Byte modrm) { m_modrm = modrm; }
+        inline Byte Get() const { return m_modrm; }
+        
+        // Bits are shifted before returning. 
+        uint64_t ModValue() const;
+        uint64_t RegValue() const;
+        uint64_t RMValue() const;
+
+        Byte m_modrm = 0x00;
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     struct Instruction_t
     {
 
@@ -363,7 +388,7 @@ namespace InsaneDASM64
         int32_t        m_iREXIndex = -1;
 
         bool           m_bHasModRM = false;
-        Byte           m_iModRM    = 0x00;
+        ModRM_t        m_modrm;
 
         bool           m_bHasSIB   = false;
         Byte           m_iSIB      = 0x00;

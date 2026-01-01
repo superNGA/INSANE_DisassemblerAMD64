@@ -13,6 +13,7 @@
 #include <sstream>
 #include <assert.h>
 #include "Tables/Tables.h"
+#include "Math/SafeBitWiseOps.h"
 
 
 // NOTE : Mind this.
@@ -70,7 +71,7 @@ static inline void PrintInstBytes(const std::vector<ParsedInst_t>& vecInput)
 
         if (inst.m_bHasModRM == true)
         {
-            printf("0x%02X ", inst.m_iModRM);
+            printf("0x%02X ", inst.m_modrm);
         }
         else
         {
@@ -305,7 +306,7 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
 
 
                 inst.m_bHasModRM = true;
-                inst.m_iModRM    = vecInput[iByteIndex];
+                inst.m_modrm.Store(vecInput[iByteIndex]);
                 iByteIndex++;
             }
 
@@ -313,12 +314,14 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
             // At this point, we have modRM byte ( if any ), legacy prefix ( if any ) 
             // and root opcode description. Now we can and we must find the child opcode varient
             // that is refered in this instruction.
-            inst.m_opCode.InitChildVarient(&inst.m_legacyPrefix, inst.m_iModRM);
+            inst.m_opCode.InitChildVarient(&inst.m_legacyPrefix, inst.m_modrm.Get());
 
 
 
             // Store SIB if required. MOD == 11 && R/M == 100
-            bool bSIBRequired = inst.m_bHasModRM == true && (inst.m_iModRM & 0b11000000) != 0b11000000 && (inst.m_iModRM & 0b111) == 0b100;
+            //bool bSIBRequired = inst.m_bHasModRM == true && (inst.m_modrm & 0b11000000) != 0b11000000 && (inst.m_modrm & 0b111) == 0b100;
+            Byte modrm        = inst.m_modrm.Get();
+            bool bSIBRequired = inst.m_bHasModRM == true && inst.m_modrm.ModValue() != 0b11 && inst.m_modrm.RMValue() == 0b100;
             if (bSIBRequired == true)
             {
                 // Bytes left in byte stream?
@@ -337,17 +340,17 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
             int iDisplacementSize = 0;
             if (inst.m_bHasModRM == true)
             {
-                Byte iMod = (inst.m_iModRM & 0b11000000);
+                uint64_t iMod = inst.m_modrm.ModValue();
 
-                if (iMod == 0b01000000)
+                if (iMod == 0b01)
                 {
                     iDisplacementSize = 1;
                 }
-                else if (iMod == 0b10000000 || (iMod == 0 && (inst.m_iModRM & 0b111) == 0b101))
+                else if (iMod == 0b10 || (iMod == 0b00 && inst.m_modrm.RMValue() == 0b101))
                 {
                     iDisplacementSize = 4;
                 }
-                else if (iMod == 0 && (inst.m_iSIB & 0b111) == 0b101) // base == 101 ?
+                else if (iMod == 0b00 && (inst.m_iSIB & 0b111) == 0b101) // base == 101 ?
                 {
                     iDisplacementSize = 4;
                 }
@@ -445,271 +448,6 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
-//{
-//    assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!.");
-//
-//    vecOutput.clear();
-//
-//    // Temporary instruction.
-//    ParsedInst_t inst;
-//
-//
-//    size_t nBytes = vecInput.size();
-//    for (size_t iByteIndex = 0LLU; iByteIndex < nBytes; iByteIndex++)
-//    {
-//        Byte        iByte     = vecInput[iByteIndex];
-//        InstTypes_t iInstType = static_cast<InstTypes_t>(G::g_tables.GetInstType(iByte));
-//
-//
-//        // If this byte is a legacy prefix.
-//        if ((iInstType & InstTypes_t::InstTypes_LegacyPrefixGrpAll) != false)
-//        {
-//            // We iterate forward ( upto Rules::MAX_LEGACY_PREFIX ( 4 ) bytes ) and collect all prefix.
-//            size_t iPrefixIndex = iByteIndex;
-//            for (iPrefixIndex = iByteIndex; iPrefixIndex < nBytes && iPrefixIndex - iByteIndex < Rules::MAX_LEGACY_PREFIX; iPrefixIndex++)
-//            {
-//                Byte iPrefixByte = vecInput[iPrefixIndex];
-//
-//                // if this byte ain't a prefix, break. We have already stored all consecutive prefix in this instruction.
-//                if ((G::g_tables.GetInstType(iPrefixByte) & InstTypes_t::InstTypes_LegacyPrefixGrpAll) == false)
-//                    break;
-//
-//
-//                // Can we even store this prefix ? 
-//                if (inst.m_legacyPrefix.PrefixCount() >= Rules::MAX_LEGACY_PREFIX)
-//                    return IDASMErrorCode_t::IDASMErrorCode_TooManyPefix; // already stored 'MAX_LEGACY_PREFIX' no. of prefixies.
-//
-//
-//                inst.m_legacyPrefix.PushPrefix(iPrefixByte);
-//            }
-//            iByteIndex = iPrefixIndex;
-//        }
-//        // If this byte is a REX, skip till the last consecutive REX byte and store the last one.
-//        else if ((iInstType & InstTypes_t::InstTypes_REX) != false)
-//        {
-//            for (size_t iREXIndex = iByteIndex; iREXIndex < nBytes - 1LLU; iREXIndex++)
-//            {
-//                Byte iCurByte  = vecInput[iREXIndex];
-//                Byte iNextByte = vecInput[iREXIndex + 1LLU];
-//
-//
-//                // Next byte ain't REX, and this byte is. Store only this one.
-//                if ((G::g_tables.GetInstType(iNextByte) & InstTypes_t::InstTypes_REX) == false)
-//                {
-//                    inst.m_bHasREX   = true;
-//                    inst.m_iREX      = iCurByte;
-//                    inst.m_iREXIndex = iREXIndex;
-//                    iByteIndex       = iREXIndex;
-//
-//                    break;
-//                }
-//
-//            }
-//        }
-//        else // if neither REX nor LegacyPrefix.
-//        {
-//            // 1. is REX immediately preceding OpCode check...
-//            if (inst.m_bHasREX == true && inst.m_iREXIndex != iByteIndex - 1LLU && inst.m_opCode.OpByteCount() == 0)
-//                return IDASMErrorCode_t::IDASMErrorCode_REXNotPrecedingOpCode;
-//
-//
-//            // 2. Collect upto MAX_OPBYTES opcodes and gets its equivalent isntruction / operand properties.
-//            for (size_t iOpCodeByteIndex = iByteIndex; iOpCodeByteIndex < nBytes && iOpCodeByteIndex - iByteIndex < Rules::MAX_OPBYTES; iOpCodeByteIndex++)
-//            {
-//
-//                // NOTE: +1 is cause, when 0 opbytes are stored we want to check in table1 ( one byte opcodes )
-//                //        when opbytes are 1, we wanna look in table 2 ( two byte opcode ), and so on.
-//                int                   iTableIndex   = inst.m_opCode.OpByteCount() + 1;
-//                Byte                  iOpByte       = vecInput[iOpCodeByteIndex];
-//                const OperatorInfo_t* pOperatorInfo = G::g_tables.GetOperatorInfo(iOpByte, iTableIndex); // We wanna look at the next table.
-//
-//                if (pOperatorInfo->m_bIsValidOpCode == false)
-//                {
-//                    printf("Invalid opcode found : 0x%02X\n", iOpByte);
-//                    return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
-//                }
-//
-//                inst.m_opCode.PushOpCode(iOpByte);
-//
-//                if (pOperatorInfo->m_bIsEscapeOpCode == false)
-//                {
-//                    inst.m_opCode.CopyOperandInfo(pOperatorInfo);
-//                    inst.m_opCode.m_szOperatorName = pOperatorInfo->m_szOperatorName;
-//                    break;
-//                }
-//            }
-//
-//
-//            // Did we store any opbytes from the loop above ?
-//            if (inst.m_opCode.OpByteCount() <= 0)
-//                return IDASMErrorCode_t::IDASMErrorCode_NoOpByteFound;
-//
-//
-//            int iByteCaptured = inst.m_opCode.OpByteCount();
-//            assert(iByteCaptured > 0 && "Negative amount of bytes captured. This is unacceptable!!!");
-//            iByteIndex += static_cast<size_t>(iByteCaptured) - 1LLU; // NOTE : ByteCaputured will be > 0 @ this point.
-//
-//
-//            printf("Stored OpCodes : ");
-//            for (int i = 0; i < inst.m_opCode.m_nOpBytes; i++)
-//                printf("0x%02X ", inst.m_opCode.m_opBytes[i]);
-//            printf("\n");
-//
-//
-//            // 3. Collect ModR/M if required.
-//            for (int iOperandIndex = 0; iOperandIndex < inst.m_opCode.m_nOperands; iOperandIndex++)
-//            {
-//                OpCodeOperand_t* pOperand = &inst.m_opCode.m_operands[iOperandIndex];
-//                if (pOperand->m_iAddressingMethod == OpCodeAddressingMethod_E ||
-//                    pOperand->m_iAddressingMethod == OpCodeAddressingMethod_W ||
-//                    pOperand->m_iAddressingMethod == OpCodeAddressingMethod_Q)
-//                {
-//
-//                    // Is out of bound?
-//                    if (iByteIndex + 1 >= nBytes) // NOTE : iByteIndex is pointing at the last byte acknowledged / stored. + 1 to get byte we gonna store now.
-//                        return IDASMErrorCode_t::ErrorCode_ModRMNotFound;
-//
-//                    // move the interator forward by one and Store the ModRM.
-//                    iByteIndex++;
-//                    inst.m_bHasModRM = true;
-//                    inst.m_iModRM    = vecInput[iByteIndex];
-//
-//                    printf("opcode [ 0x%02X ] -> modR/M [ 0x%02X ]\n", inst.m_opCode.m_opBytes[inst.m_opCode.m_nOpBytes - 1], inst.m_iModRM);
-//
-//                    break;
-//                }
-//            }
-//
-//
-//            // 4. Collect SIB if required.
-//            bool bSIDRequired = inst.m_bHasModRM == true && (inst.m_iModRM & 0b11000000) != 0b11000000 && (inst.m_iModRM & 0b111) == 0b100;
-//
-//            if (bSIDRequired == true)
-//            {
-//                if (iByteIndex + 1 >= nBytes) // NOTE : iByteIndex is pointing at the last byte acknowledged / stored. + 1 to get byte we gonna store now.
-//                    return IDASMErrorCode_t::IDASMErrorCode_SIBNotFound;
-//
-//                iByteIndex++;
-//                inst.m_bHasSIB = true;
-//                inst.m_iSIB    = vecInput[iByteIndex];
-//
-//                printf("SID Byte captured : 0x%02X, for ModR/M : 0x%02X\n", inst.m_iSIB, inst.m_iModRM);
-//            }
-//
-//
-//            // 5. Collect Displacement if required.
-//            int iDisplacementSize = 0;
-//            if (inst.m_bHasModRM == true)
-//            {
-//                Byte iMod = (inst.m_iModRM & 0b11000000);
-//
-//                if (iMod == 0b01000000)
-//                {
-//                    iDisplacementSize = 1;
-//                }
-//                else if (iMod == 0b10000000 || (iMod == 0 && (inst.m_iModRM & 0b111) == 0b101))
-//                {
-//                    iDisplacementSize = 4;
-//                }
-//                else if (iMod == 0 && (inst.m_iSIB & 0b111) == 0b101) // index == 101 ?
-//                {
-//                    iDisplacementSize = 4;
-//                }
-//            }
-//
-//
-//            size_t iNextByteIndex = iByteIndex + 1LLU;
-//            for (int iDispByteIndex = 0; iDispByteIndex < iDisplacementSize && iDispByteIndex + iNextByteIndex < nBytes; iDispByteIndex++)
-//            {
-//                Byte iDispByte = vecInput[iDispByteIndex + iNextByteIndex];
-//                
-//                inst.m_displacement.PushByte(iDispByte);
-//            }
-//            iByteIndex += inst.m_displacement.ByteCount(); // Move iterator by whatever we have collected. so we land at the last byte stored.
-//
-//
-//            // 6. Collect Immediate if required.
-//            bool bRequireImmediate = false; OpCodeOperandType_t iOperandType = OpCodeOperandType_Invalid;
-//            for (int i = 0; i < inst.m_opCode.OperandCount(); i++)
-//            {
-//                OpCodeOperand_t* pOperand = &inst.m_opCode.m_operands[i];
-//                if (pOperand->m_iAddressingMethod == OpCodeAddressingMethod_I || pOperand->m_iAddressingMethod == OpCodeAddressingMethod_J)
-//                {
-//                    iOperandType      = pOperand->m_iOperandType;
-//                    bRequireImmediate = true;
-//                    break;
-//                }
-//            }
-//
-//
-//            if (bRequireImmediate == true)
-//            {
-//                if (iByteIndex >= nBytes)
-//                    return IDASMErrorCode_t::ErrorCode_NoImmediateFound;
-//
-//                int iOperandSize = 4; // default 4 bytes operand size in 64 bit mode.
-//                for (int i = 0; i < inst.m_legacyPrefix.PrefixCount(); i++)
-//                    if (inst.m_legacyPrefix.m_legacyPrefix[i] == 0x66)
-//                        iOperandSize = 2;
-//
-//                if (inst.m_iREX & 0b00001000) // is REX.W == 1
-//                    iOperandSize = 4;
-//
-//
-//                int iImmediateSize = 0;
-//                switch (iOperandType)
-//                {
-//                case OpCodeOperandType_b: iImmediateSize = 1; break;
-//                case OpCodeOperandType_w: iImmediateSize = 2; break;
-//                case OpCodeOperandType_d: iImmediateSize = 4; break;
-//                case OpCodeOperandType_q: iImmediateSize = 6; break;
-//                case OpCodeOperandType_v: iImmediateSize = iOperandSize; break;
-//                case OpCodeOperandType_z: iImmediateSize = iOperandSize; break;
-//                default: break;
-//                }
-//
-//                // Tha Magical Exception.
-//                if ((inst.m_iREX & 0b00001000) != 0 && iOperandType == OpCodeOperandType_v && (inst.m_opCode.GetMostSignificantOpCode() >= 0xB8 || inst.m_opCode.GetMostSignificantOpCode() <= 0xBF))
-//                    iImmediateSize = 8;
-//
-//
-//                // We know there is an immediate, but the immediate size is deemed 0. We fucked up somewhere.
-//                if (iImmediateSize == 0)
-//                    return IDASMErrorCode_t::IDASMErrorCode_InvalidImmediateSize;
-//
-//
-//                printf("///////////////// Immediate Size : %d ////////////////////\n", iImmediateSize);
-//
-//
-//                // Consume immediate bytes...
-//                size_t iNextByteIndex = iByteIndex + 1LLU;
-//                for (int iImmediateIndex = 0; iImmediateIndex < iImmediateSize && iImmediateIndex + iNextByteIndex < nBytes; iImmediateIndex++)
-//                {
-//                    Byte iImmediateByte = vecInput[iImmediateIndex + iNextByteIndex];
-//                    inst.m_immediate.PushByte(iImmediateByte);
-//                }
-//                iByteIndex += inst.m_immediate.ByteCount();
-//
-//
-//                // We tried to store immediate byte we were unable to store any immediate somehow.
-//                if (inst.m_immediate.ByteCount() <= 0)
-//                    return IDASMErrorCode_t::IDASMErrorCode_NoImmediateFound;
-//            }
-//            
-//
-//            // 7. Collect Rel8 if required.
-//            // 8. This instruction is complete, store it.
-//            vecOutput.push_back(inst);
-//
-//
-//            // 8. Clear.
-//            inst.Clear();
-//        }
-//    }
-//
-//
-//    return IDASMErrorCode_t::IDASMErrorCode_Success;
-//}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1070,7 +808,6 @@ void ParsedInst_t::Clear()
     m_iREXIndex  = -1; // This is used to check if REX preseeds the OpBytes or not. ( they must.)
 
     m_bHasModRM  = false;
-    m_iModRM     = 0x00;
 
     m_bHasSIB    = false;
     m_iSIB       = 0x00;
@@ -1114,4 +851,28 @@ void Operand_t::Reset()
 {
     m_iOperandCatagory = OperandCatagory_Undefined;
     m_iOperandRegister = Register_t(Register_t::RegisterClass_Invalid, -1, -1);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+uint64_t ModRM_t::ModValue() const
+{
+    return Maths::SafeAnd(m_modrm, Masks::MODRM_MOD) >> 6;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+uint64_t ModRM_t::RegValue() const
+{
+    return Maths::SafeAnd(m_modrm, Masks::MODRM_REG) >> 3;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+uint64_t ModRM_t::RMValue() const
+{
+    return Maths::SafeAnd(m_modrm, Masks::MODRM_RM);
 }

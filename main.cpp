@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "Include/INSANE_DisassemblerAMD64.h"
+#include "src/Math/SafeBitWiseOps.h"
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,7 @@ int main(void)
 
 
 
-    std::vector<InsaneDASM64::Byte> vecInput123 = {
+    std::vector<InsaneDASM64::Byte> vecInputokok = {
         // ---- simple, no ModRM ----
         0x90,                         // nop
         0xC3,                         // ret
@@ -125,7 +126,7 @@ int main(void)
     };
 
 
-    std::vector<InsaneDASM64::Byte> vecInput38 = {
+    std::vector<InsaneDASM64::Byte> vecInput = {
         // 66 0F 38 00 C1 -> pshufb xmm0, xmm1 (SSSE3, XMM)
         0x66, 0x0F, 0x38, 0x00, 0xC1,
 
@@ -149,7 +150,7 @@ int main(void)
     };
 
 
-    std::vector<InsaneDASM64::Byte> vecInput = {
+    std::vector<InsaneDASM64::Byte> vecInput3A = {
         // 66 0F 3A 0F C1 00 -> palignr xmm0, xmm1, 0 (SSSE3, XMM)
         0x66, 0x0F, 0x3A, 0x0F, 0xC1, 0x00,
 
