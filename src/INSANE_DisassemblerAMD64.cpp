@@ -267,7 +267,7 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
                 OpCodeDesc_t* pOpCodeDesc = &pOpCodeTable[iOpCodeByte];
                 if (pOpCodeDesc == nullptr || pOpCodeDesc->m_bIsValidCode == false)
                 {
-                    printf("nullptr table\n");
+                    printf("OpCode description is invalid or is nullptr.\n");
                     return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
                 }
 

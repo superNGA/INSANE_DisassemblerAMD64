@@ -33,7 +33,7 @@ int main(void)
     };
 
 
-    std::vector<InsaneDASM64::Byte> vecInput2 = {
+    std::vector<InsaneDASM64::Byte> vecInputTwoBytes = {
         // ---- no ModR/M ----
         0x0F, 0x05,             // SYSCALL
         0x0F, 0x31,             // RDTSC
@@ -56,7 +56,7 @@ int main(void)
 
 
 
-    std::vector<InsaneDASM64::Byte> vecInput = {
+    std::vector<InsaneDASM64::Byte> vecInput123 = {
         // ---- simple, no ModRM ----
         0x90,                         // nop
         0xC3,                         // ret
@@ -125,6 +125,52 @@ int main(void)
     };
 
 
+    std::vector<InsaneDASM64::Byte> vecInput38 = {
+        // 66 0F 38 00 C1 -> pshufb xmm0, xmm1 (SSSE3, XMM)
+        0x66, 0x0F, 0x38, 0x00, 0xC1,
+
+        // 0F 38 00 C1 -> pshufb mm0, mm1 (SSSE3, MMX)
+        0x0F, 0x38, 0x00, 0xC1,
+
+        // 66 0F 38 0B C1 -> pmulhrsw xmm0, xmm1 (SSSE3)
+        0x66, 0x0F, 0x38, 0x0B, 0xC1,
+
+        // 66 0F 38 1C C1 -> pabsb xmm0, xmm1 (SSSE3)
+        0x66, 0x0F, 0x38, 0x1C, 0xC1,
+
+        // 66 0F 38 37 C1 -> pcmpgtq xmm0, xmm1 (SSE4.2)
+        0x66, 0x0F, 0x38, 0x37, 0xC1,
+
+        // F2 0F 38 F0 C1 -> crc32 eax, cl (SSE4.2, byte)
+        0xF2, 0x0F, 0x38, 0xF0, 0xC1,
+
+        // F2 0F 38 F1 C8 -> crc32 ecx, eax (SSE4.2, 32-bit)
+        0xF2, 0x0F, 0x38, 0xF1, 0xC8
+    };
+
+
+    std::vector<InsaneDASM64::Byte> vecInput = {
+        // 66 0F 3A 0F C1 00 -> palignr xmm0, xmm1, 0 (SSSE3, XMM)
+        0x66, 0x0F, 0x3A, 0x0F, 0xC1, 0x00,
+
+        // 0F 3A 0F C1 00 -> palignr mm0, mm1, 0 (SSSE3, MMX)
+        0x0F, 0x3A, 0x0F, 0xC1, 0x00,
+
+        // 66 0F 3A 08 C1 03 -> roundps xmm0, xmm1, 3 (SSE4.1)
+        0x66, 0x0F, 0x3A, 0x08, 0xC1, 0x03,
+
+        // 66 0F 3A 0C C1 0F -> blendps xmm0, xmm1, 0x0F (SSE4.1)
+        0x66, 0x0F, 0x3A, 0x0C, 0xC1, 0x0F,
+
+        // 66 0F 3A 0E C1 AA -> pblendw xmm0, xmm1, 0xAA (SSE4.1)
+        0x66, 0x0F, 0x3A, 0x0E, 0xC1, 0xAA,
+
+        // 66 0F 3A 41 C1 55 -> dppd xmm0, xmm1, 0x55 (SSE4.1)
+        0x66, 0x0F, 0x3A, 0x41, 0xC1, 0x55,
+
+        // 66 0F 3A 61 C1 10 -> pcmpestri xmm0, xmm1, 0x10 (SSE4.2)
+        0x66, 0x0F, 0x3A, 0x61, 0xC1, 0x10
+    };
 
 
     std::vector<InsaneDASM64::Instruction_t> vecOutput;

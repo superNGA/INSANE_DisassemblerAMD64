@@ -330,9 +330,12 @@ IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
 
         
     // Setting Escape characters...
-    m_opCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsEscapeCode    = true;
+    m_opCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsEscapeCode     = true;
     m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_38].m_bIsEscapeCode = true;
     m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_3A].m_bIsEscapeCode = true;
+    m_opCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsValidCode      = true;
+    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_38].m_bIsValidCode  = true;
+    m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_3A].m_bIsValidCode  = true;
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -10381,6 +10384,9806 @@ void Tables_t::InitOneByteOpCodeTable()
 ///////////////////////////////////////////////////////////////////////////
 void Tables_t::InitTwoByteOpCodeTable()
 {
+    // 0x0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x00].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x00].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x00].InsertVarient(0);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x00].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x00].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x00].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable2[0x00].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable2[0x00].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable2[0x00].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable2[0x00].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0x0
+            // Brief : Store Local Descriptor Table Register
+            m_opCodeTable2[0x00].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"SLDT",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x0,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x00].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0x0
+            // Brief : Store Local Descriptor Table Register
+            m_opCodeTable2[0x00].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"SLDT",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x0,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable2[0x00].InsertVarient(1);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x00].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x00].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x00].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable2[0x00].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable2[0x00].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable2[0x00].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable2[0x00].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0x0
+            // Brief : Store Task Register
+            m_opCodeTable2[0x00].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"STR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x0,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x00].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0x0
+            // Brief : Store Task Register
+            m_opCodeTable2[0x00].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"STR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x0,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable2[0x00].InsertVarient(2);
+    {
+        // 0x0
+        // Brief : Load Local Descriptor Table Register
+        m_opCodeTable2[0x00].m_pVarients[0x02]->Init(
+            /*szName         = */"LLDT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x00].InsertVarient(3);
+    {
+        // 0x0
+        // Brief : Load Task Register
+        m_opCodeTable2[0x00].m_pVarients[0x03]->Init(
+            /*szName         = */"LTR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x00].InsertVarient(4);
+    {
+        // 0x0
+        // Brief : Verify a Segment for Reading
+        m_opCodeTable2[0x00].m_pVarients[0x04]->Init(
+            /*szName         = */"VERR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x00].InsertVarient(5);
+    {
+        // 0x0
+        // Brief : Verify a Segment for Writing
+        m_opCodeTable2[0x00].m_pVarients[0x05]->Init(
+            /*szName         = */"VERW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x00].InsertVarient(6);
+    {
+        // 0x0
+        // Brief : Jump to IA-64 Instruction Set
+        m_opCodeTable2[0x00].m_pVarients[0x06]->Init(
+            /*szName         = */"JMPE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x01].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x01].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x01].InsertVarient(0);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x01].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x01].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x01].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0x1
+            // Brief : Store Global Descriptor Table Register
+            m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"SGDT",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x1,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x01].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
+            m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0x1
+                // Brief : Call to VM Monitor
+                m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"VMCALL",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(2);
+            {
+                // 0x1
+                // Brief : Launch Virtual Machine
+                m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x02]->Init(
+                    /*szName         = */"VMLAUNCH",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(3);
+            {
+                // 0x1
+                // Brief : Resume Virtual Machine
+                m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x03]->Init(
+                    /*szName         = */"VMRESUME",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->InsertVarient(4);
+            {
+                // 0x1
+                // Brief : Leave VMX Operation
+                m_opCodeTable2[0x01].m_pVarients[0x00]->m_pVarients[0x03]->m_pVarients[0x04]->Init(
+                    /*szName         = */"VMXOFF",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable2[0x01].InsertVarient(1);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x01].m_pVarients[0x01]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x01].m_pVarients[0x01]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x01].m_pVarients[0x01]->InsertVarient(0);
+        m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x01] = m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x00];
+        m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x02] = m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x00];
+        {
+            // 0x1
+            // Brief : Store Interrupt Descriptor Table Register
+            m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x00]->Init(
+                /*szName         = */"SIDT",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x1,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x01].m_pVarients[0x01]->InsertVarient(3);
+        {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
+            m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0x1
+                // Brief : Set Up Monitor Address
+                m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"MONITOR",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0x1
+                // Brief : Monitor Wait
+                m_opCodeTable2[0x01].m_pVarients[0x01]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"MWAIT",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable2[0x01].InsertVarient(2);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x01].m_pVarients[0x02]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x01].m_pVarients[0x02]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x01].m_pVarients[0x02]->InsertVarient(0);
+        m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x01] = m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x00];
+        m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x02] = m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x00];
+        {
+            // 0x1
+            // Brief : Load Global Descriptor Table Register
+            m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x00]->Init(
+                /*szName         = */"LGDT",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x1,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x01].m_pVarients[0x02]->InsertVarient(3);
+        {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
+            m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0x1
+                // Brief : Get Value of Extended Control Register
+                m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"XGETBV",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0x1
+                // Brief : Set Extended Control Register
+                m_opCodeTable2[0x01].m_pVarients[0x02]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"XSETBV",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+    m_opCodeTable2[0x01].InsertVarient(3);
+    {
+        // 0x1
+        // Brief : Load Interrupt Descriptor Table Register
+        m_opCodeTable2[0x01].m_pVarients[0x03]->Init(
+            /*szName         = */"LIDT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x01].InsertVarient(4);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x01].m_pVarients[0x04]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x01].m_pVarients[0x04]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x01].m_pVarients[0x04]->InsertVarient(0);
+        m_opCodeTable2[0x01].m_pVarients[0x04]->m_pVarients[0x01] = m_opCodeTable2[0x01].m_pVarients[0x04]->m_pVarients[0x00];
+        m_opCodeTable2[0x01].m_pVarients[0x04]->m_pVarients[0x02] = m_opCodeTable2[0x01].m_pVarients[0x04]->m_pVarients[0x00];
+        {
+            // 0x1
+            // Brief : Store Machine Status Word
+            m_opCodeTable2[0x01].m_pVarients[0x04]->m_pVarients[0x00]->Init(
+                /*szName         = */"SMSW",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x1,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x01].m_pVarients[0x04]->InsertVarient(3);
+        {
+            // 0x1
+            // Brief : Store Machine Status Word
+            m_opCodeTable2[0x01].m_pVarients[0x04]->m_pVarients[0x03]->Init(
+                /*szName         = */"SMSW",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x1,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable2[0x01].InsertVarient(6);
+    {
+        // 0x1
+        // Brief : Load Machine Status Word
+        m_opCodeTable2[0x01].m_pVarients[0x06]->Init(
+            /*szName         = */"LMSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x01].InsertVarient(7);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x01].m_pVarients[0x07]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x01].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x01].m_pVarients[0x07]->InsertVarient(0);
+        m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x01] = m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x00];
+        m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x02] = m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x00];
+        {
+            // 0x1
+            // Brief : Invalidate TLB Entry
+            m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x00]->Init(
+                /*szName         = */"INVLPG",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x1,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x01].m_pVarients[0x07]->InsertVarient(3);
+        {
+            // 0x0
+            // Brief : Invalid Instruction in 64-Bit Mode
+            m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x03]->Init(
+                /*szName         = */"xx_INVALID_xx",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */false,
+                /*iByte          = */0x0,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+
+            m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x03]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_RM);
+
+            m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(0);
+            {
+                // 0x1
+                // Brief : Swap GS Base Register
+                m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x00]->Init(
+                    /*szName         = */"SWAPGS",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+            m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x03]->InsertVarient(1);
+            {
+                // 0x1
+                // Brief : Read Time-Stamp Counter and Processor ID
+                m_opCodeTable2[0x01].m_pVarients[0x07]->m_pVarients[0x03]->m_pVarients[0x01]->Init(
+                    /*szName         = */"RDTSCP",
+                    /*bValidOpcd     = */true,
+                    /*bEscapeOpcd    = */false,
+                    /*bModrmRequired = */true,
+                    /*iByte          = */0x1,
+                    /*nOperands      = */0,
+                    /*operand1       = */Operand_t(),
+                    /*operand2       = */Operand_t(),
+                    /*operand3       = */Operand_t(),
+                    /*operand4       = */Operand_t());
+            }
+        }
+    }
+
+    // 0x2
+    // Brief : Load Access Rights Byte
+    m_opCodeTable2[0x02].Init(
+        /*szName         = */"LAR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3
+    // Brief : Load Segment Limit
+    m_opCodeTable2[0x03].Init(
+        /*szName         = */"LSL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5
+    // Brief : Fast System Call
+    m_opCodeTable2[0x05].Init(
+        /*szName         = */"SYSCALL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6
+    // Brief : Clear Task-Switched Flag in CR0
+    m_opCodeTable2[0x06].Init(
+        /*szName         = */"CLTS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7
+    // Brief : Return From Fast System Call
+    m_opCodeTable2[0x07].Init(
+        /*szName         = */"SYSRET",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8
+    // Brief : Invalidate Internal Caches
+    m_opCodeTable2[0x08].Init(
+        /*szName         = */"INVD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9
+    // Brief : Write Back and Invalidate Cache
+    m_opCodeTable2[0x09].Init(
+        /*szName         = */"WBINVD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD
+    // Brief : No Operation
+    m_opCodeTable2[0x0D].Init(
+        /*szName         = */"NOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x10
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x10].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x10,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x10].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x10].InsertVarient(0);
+    {
+        // 0x10
+        // Brief : Move Unaligned Packed Single-FP Values
+        m_opCodeTable2[0x10].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVUPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x10].InsertVarient(3);
+    {
+        // 0x10
+        // Brief : Move Scalar Single-FP Values
+        m_opCodeTable2[0x10].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x10].InsertVarient(10);
+    {
+        // 0x10
+        // Brief : Move Unaligned Packed Double-FP Value
+        m_opCodeTable2[0x10].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVUPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x10].InsertVarient(2);
+    {
+        // 0x10
+        // Brief : Move Scalar Double-FP Value
+        m_opCodeTable2[0x10].m_pVarients[0x02]->Init(
+            /*szName         = */"MOVSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x11
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x11].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x11,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x11].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x11].InsertVarient(0);
+    {
+        // 0x11
+        // Brief : Move Unaligned Packed Single-FP Values
+        m_opCodeTable2[0x11].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVUPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x11].InsertVarient(3);
+    {
+        // 0x11
+        // Brief : Move Scalar Single-FP Values
+        m_opCodeTable2[0x11].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x11].InsertVarient(10);
+    {
+        // 0x11
+        // Brief : Move Unaligned Packed Double-FP Values
+        m_opCodeTable2[0x11].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVUPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x11].InsertVarient(2);
+    {
+        // 0x11
+        // Brief : Move Scalar Double-FP Value
+        m_opCodeTable2[0x11].m_pVarients[0x02]->Init(
+            /*szName         = */"MOVSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x12
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x12].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x12,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x12].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x12].InsertVarient(0);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x12].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x12].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x12].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable2[0x12].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable2[0x12].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable2[0x12].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable2[0x12].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0x12
+            // Brief : Move Low Packed Single-FP Values
+            m_opCodeTable2[0x12].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"MOVLPS",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x12,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x12].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0x12
+            // Brief : Move Packed Single-FP Values High to Low
+            m_opCodeTable2[0x12].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"MOVHLPS",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x12,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable2[0x12].InsertVarient(10);
+    {
+        // 0x12
+        // Brief : Move Low Packed Double-FP Value
+        m_opCodeTable2[0x12].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVLPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x12].InsertVarient(2);
+    {
+        // 0x12
+        // Brief : Move One Double-FP and Duplicate
+        m_opCodeTable2[0x12].m_pVarients[0x02]->Init(
+            /*szName         = */"MOVDDUP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x12].InsertVarient(3);
+    {
+        // 0x12
+        // Brief : Move Packed Single-FP Low and Duplicate
+        m_opCodeTable2[0x12].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVSLDUP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x13
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x13].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x13,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x13].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x13].InsertVarient(0);
+    {
+        // 0x13
+        // Brief : Move Low Packed Single-FP Values
+        m_opCodeTable2[0x13].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVLPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x13,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x13].InsertVarient(10);
+    {
+        // 0x13
+        // Brief : Move Low Packed Double-FP Value
+        m_opCodeTable2[0x13].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVLPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x13,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x14
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x14].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x14,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x14].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x14].InsertVarient(0);
+    {
+        // 0x14
+        // Brief : Unpack and Interleave Low Packed Single-FP Values
+        m_opCodeTable2[0x14].m_pVarients[0x00]->Init(
+            /*szName         = */"UNPCKLPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x14,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x14].InsertVarient(10);
+    {
+        // 0x14
+        // Brief : Unpack and Interleave Low Packed Double-FP Values
+        m_opCodeTable2[0x14].m_pVarients[0x0A]->Init(
+            /*szName         = */"UNPCKLPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x14,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x15
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x15].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x15,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x15].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x15].InsertVarient(0);
+    {
+        // 0x15
+        // Brief : Unpack and Interleave High Packed Single-FP Values
+        m_opCodeTable2[0x15].m_pVarients[0x00]->Init(
+            /*szName         = */"UNPCKHPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x15,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x15].InsertVarient(10);
+    {
+        // 0x15
+        // Brief : Unpack and Interleave High Packed Double-FP Values
+        m_opCodeTable2[0x15].m_pVarients[0x0A]->Init(
+            /*szName         = */"UNPCKHPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x15,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x16
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x16].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x16,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x16].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x16].InsertVarient(0);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0x16].m_pVarients[0x00]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0x16].m_pVarients[0x00]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0x16].m_pVarients[0x00]->InsertVarient(0);
+        m_opCodeTable2[0x16].m_pVarients[0x00]->m_pVarients[0x01] = m_opCodeTable2[0x16].m_pVarients[0x00]->m_pVarients[0x00];
+        m_opCodeTable2[0x16].m_pVarients[0x00]->m_pVarients[0x02] = m_opCodeTable2[0x16].m_pVarients[0x00]->m_pVarients[0x00];
+        {
+            // 0x16
+            // Brief : Move High Packed Single-FP Values
+            m_opCodeTable2[0x16].m_pVarients[0x00]->m_pVarients[0x00]->Init(
+                /*szName         = */"MOVHPS",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x16,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0x16].m_pVarients[0x00]->InsertVarient(3);
+        {
+            // 0x16
+            // Brief : Move Packed Single-FP Values Low to High
+            m_opCodeTable2[0x16].m_pVarients[0x00]->m_pVarients[0x03]->Init(
+                /*szName         = */"MOVLHPS",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x16,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable2[0x16].InsertVarient(10);
+    {
+        // 0x16
+        // Brief : Move High Packed Double-FP Value
+        m_opCodeTable2[0x16].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVHPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x16].InsertVarient(3);
+    {
+        // 0x16
+        // Brief : Move Packed Single-FP High and Duplicate
+        m_opCodeTable2[0x16].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVSHDUP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x17
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x17].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x17,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x17].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x17].InsertVarient(0);
+    {
+        // 0x17
+        // Brief : Move High Packed Single-FP Values
+        m_opCodeTable2[0x17].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVHPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x17,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x17].InsertVarient(10);
+    {
+        // 0x17
+        // Brief : Move High Packed Double-FP Value
+        m_opCodeTable2[0x17].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVHPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x17,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x18
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x18].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x18,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x18].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x18].InsertVarient(0);
+    {
+        // 0x18
+        // Brief : Prefetch Data Into Caches
+        m_opCodeTable2[0x18].m_pVarients[0x00]->Init(
+            /*szName         = */"PREFETCHNTA",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x18].InsertVarient(1);
+    {
+        // 0x18
+        // Brief : Prefetch Data Into Caches
+        m_opCodeTable2[0x18].m_pVarients[0x01]->Init(
+            /*szName         = */"PREFETCHT0",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x18].InsertVarient(2);
+    {
+        // 0x18
+        // Brief : Prefetch Data Into Caches
+        m_opCodeTable2[0x18].m_pVarients[0x02]->Init(
+            /*szName         = */"PREFETCHT1",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x18].InsertVarient(3);
+    {
+        // 0x18
+        // Brief : Prefetch Data Into Caches
+        m_opCodeTable2[0x18].m_pVarients[0x03]->Init(
+            /*szName         = */"PREFETCHT2",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x18].InsertVarient(4);
+    {
+        // 0x18
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x18].m_pVarients[0x04]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x18].InsertVarient(5);
+    {
+        // 0x18
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x18].m_pVarients[0x05]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x18].InsertVarient(6);
+    {
+        // 0x18
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x18].m_pVarients[0x06]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x18].InsertVarient(7);
+    {
+        // 0x18
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x18].m_pVarients[0x07]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x19
+    // Brief : Hintable NOP
+    m_opCodeTable2[0x19].Init(
+        /*szName         = */"HINT_NOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x19,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1A
+    // Brief : Hintable NOP
+    m_opCodeTable2[0x1A].Init(
+        /*szName         = */"HINT_NOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1A,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1B
+    // Brief : Hintable NOP
+    m_opCodeTable2[0x1B].Init(
+        /*szName         = */"HINT_NOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1B,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1C
+    // Brief : Hintable NOP
+    m_opCodeTable2[0x1C].Init(
+        /*szName         = */"HINT_NOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1C,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1D
+    // Brief : Hintable NOP
+    m_opCodeTable2[0x1D].Init(
+        /*szName         = */"HINT_NOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1D,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1E
+    // Brief : Hintable NOP
+    m_opCodeTable2[0x1E].Init(
+        /*szName         = */"HINT_NOP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1E,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1F
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x1F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x1F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x1F].InsertVarient(0);
+    {
+        // 0x1F
+        // Brief : No Operation
+        m_opCodeTable2[0x1F].m_pVarients[0x00]->Init(
+            /*szName         = */"NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x1F].InsertVarient(1);
+    {
+        // 0x1F
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x1F].m_pVarients[0x01]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x1F].InsertVarient(2);
+    {
+        // 0x1F
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x1F].m_pVarients[0x02]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x1F].InsertVarient(3);
+    {
+        // 0x1F
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x1F].m_pVarients[0x03]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x1F].InsertVarient(4);
+    {
+        // 0x1F
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x1F].m_pVarients[0x04]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x1F].InsertVarient(5);
+    {
+        // 0x1F
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x1F].m_pVarients[0x05]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x1F].InsertVarient(6);
+    {
+        // 0x1F
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x1F].m_pVarients[0x06]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x1F].InsertVarient(7);
+    {
+        // 0x1F
+        // Brief : Hintable NOP
+        m_opCodeTable2[0x1F].m_pVarients[0x07]->Init(
+            /*szName         = */"HINT_NOP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x20
+    // Brief : Move to/from Control Registers
+    m_opCodeTable2[0x20].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x20,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand2       = */Operand_t( OperandMode_CRn, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x21
+    // Brief : Move to/from Debug Registers
+    m_opCodeTable2[0x21].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x21,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand2       = */Operand_t( OperandMode_DRn, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x22
+    // Brief : Move to/from Control Registers
+    m_opCodeTable2[0x22].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x22,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_CRn, OperandType_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x23
+    // Brief : Move to/from Debug Registers
+    m_opCodeTable2[0x23].Init(
+        /*szName         = */"MOV",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x23,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_DRn, OperandType_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x24
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x24].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x24,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x25
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x25].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x25,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x26
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x26].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x26,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x27
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x27].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x27,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x28
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x28].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x28,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x28].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x28].InsertVarient(0);
+    {
+        // 0x28
+        // Brief : Move Aligned Packed Single-FP Values
+        m_opCodeTable2[0x28].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVAPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x28,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x28].InsertVarient(10);
+    {
+        // 0x28
+        // Brief : Move Aligned Packed Double-FP Values
+        m_opCodeTable2[0x28].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVAPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x28,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x29
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x29].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x29,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x29].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x29].InsertVarient(0);
+    {
+        // 0x29
+        // Brief : Move Aligned Packed Single-FP Values
+        m_opCodeTable2[0x29].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVAPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x29,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x29].InsertVarient(10);
+    {
+        // 0x29
+        // Brief : Move Aligned Packed Double-FP Values
+        m_opCodeTable2[0x29].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVAPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x29,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x2A
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x2A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x2A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x2A].InsertVarient(0);
+    {
+        // 0x2A
+        // Brief : Convert Packed DW Integers to Single-FP Values
+        m_opCodeTable2[0x2A].m_pVarients[0x00]->Init(
+            /*szName         = */"CVTPI2PS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64mmx ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2A].InsertVarient(3);
+    {
+        // 0x2A
+        // Brief : Convert DW Integer to Scalar Single-FP Value
+        m_opCodeTable2[0x2A].m_pVarients[0x03]->Init(
+            /*szName         = */"CVTSI2SS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2A].InsertVarient(10);
+    {
+        // 0x2A
+        // Brief : Convert Packed DW Integers to Double-FP Values
+        m_opCodeTable2[0x2A].m_pVarients[0x0A]->Init(
+            /*szName         = */"CVTPI2PD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64mmx ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2A].InsertVarient(2);
+    {
+        // 0x2A
+        // Brief : Convert DW Integer to Scalar Double-FP Value
+        m_opCodeTable2[0x2A].m_pVarients[0x02]->Init(
+            /*szName         = */"CVTSI2SD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x2B
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x2B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x2B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x2B].InsertVarient(0);
+    {
+        // 0x2B
+        // Brief : Store Packed Single-FP Values Using Non-Temporal Hint
+        m_opCodeTable2[0x2B].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVNTPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2B].InsertVarient(10);
+    {
+        // 0x2B
+        // Brief : Store Packed Double-FP Values Using Non-Temporal Hint
+        m_opCodeTable2[0x2B].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVNTPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x2C
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x2C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x2C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x2C].InsertVarient(0);
+    {
+        // 0x2C
+        // Brief : Convert with Trunc. Packed Single-FP Values to DW Integers
+        m_opCodeTable2[0x2C].m_pVarients[0x00]->Init(
+            /*szName         = */"CVTTPS2PI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2C].InsertVarient(3);
+    {
+        // 0x2C
+        // Brief : Convert with Trunc. Scalar Single-FP Value to DW Integer
+        m_opCodeTable2[0x2C].m_pVarients[0x03]->Init(
+            /*szName         = */"CVTTSS2SI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2C].InsertVarient(10);
+    {
+        // 0x2C
+        // Brief : Convert with Trunc. Packed Double-FP Values to DW Integers
+        m_opCodeTable2[0x2C].m_pVarients[0x0A]->Init(
+            /*szName         = */"CVTTPD2PI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2C].InsertVarient(2);
+    {
+        // 0x2C
+        // Brief : Conv. with Trunc. Scalar Double-FP Value to Signed DW Int
+        m_opCodeTable2[0x2C].m_pVarients[0x02]->Init(
+            /*szName         = */"CVTTSD2SI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x2D
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x2D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x2D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x2D].InsertVarient(0);
+    {
+        // 0x2D
+        // Brief : Convert Packed Single-FP Values to DW Integers
+        m_opCodeTable2[0x2D].m_pVarients[0x00]->Init(
+            /*szName         = */"CVTPS2PI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2D].InsertVarient(3);
+    {
+        // 0x2D
+        // Brief : Convert Scalar Single-FP Value to DW Integer
+        m_opCodeTable2[0x2D].m_pVarients[0x03]->Init(
+            /*szName         = */"CVTSS2SI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2D].InsertVarient(10);
+    {
+        // 0x2D
+        // Brief : Convert Packed Double-FP Values to DW Integers
+        m_opCodeTable2[0x2D].m_pVarients[0x0A]->Init(
+            /*szName         = */"CVTPD2PI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2D].InsertVarient(2);
+    {
+        // 0x2D
+        // Brief : Convert Scalar Double-FP Value to DW Integer
+        m_opCodeTable2[0x2D].m_pVarients[0x02]->Init(
+            /*szName         = */"CVTSD2SI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x2E
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x2E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x2E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x2E].InsertVarient(0);
+    {
+        // 0x2E
+        // Brief : Unordered Compare Scalar Single-FP Values and Set EFLAGS
+        m_opCodeTable2[0x2E].m_pVarients[0x00]->Init(
+            /*szName         = */"UCOMISS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2E].InsertVarient(10);
+    {
+        // 0x2E
+        // Brief : Unordered Compare Scalar Double-FP Values and Set EFLAGS
+        m_opCodeTable2[0x2E].m_pVarients[0x0A]->Init(
+            /*szName         = */"UCOMISD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x2F
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x2F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x2F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x2F].InsertVarient(0);
+    {
+        // 0x2F
+        // Brief : Compare Scalar Ordered Single-FP Values and Set EFLAGS
+        m_opCodeTable2[0x2F].m_pVarients[0x00]->Init(
+            /*szName         = */"COMISS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x2F].InsertVarient(10);
+    {
+        // 0x2F
+        // Brief : Compare Scalar Ordered Double-FP Values and Set EFLAGS
+        m_opCodeTable2[0x2F].m_pVarients[0x0A]->Init(
+            /*szName         = */"COMISD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x30
+    // Brief : Write to Model Specific Register
+    m_opCodeTable2[0x30].Init(
+        /*szName         = */"WRMSR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x30,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x31
+    // Brief : Read Time-Stamp Counter
+    m_opCodeTable2[0x31].Init(
+        /*szName         = */"RDTSC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x31,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x32
+    // Brief : Read from Model Specific Register
+    m_opCodeTable2[0x32].Init(
+        /*szName         = */"RDMSR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x32,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x33
+    // Brief : Read Performance-Monitoring Counters
+    m_opCodeTable2[0x33].Init(
+        /*szName         = */"RDPMC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x33,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x34
+    // Brief : Fast System Call
+    m_opCodeTable2[0x34].Init(
+        /*szName         = */"SYSENTER",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x34,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x35
+    // Brief : Fast Return from Fast System Call
+    m_opCodeTable2[0x35].Init(
+        /*szName         = */"SYSEXIT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x35,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x36
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x36].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x36,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x37
+    // Brief : GETSEC Leaf Functions
+    m_opCodeTable2[0x37].Init(
+        /*szName         = */"GETSEC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x37,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x38
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x38].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x38,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x39
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x39].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x39,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x3A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x3B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x3C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x3D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x3E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x3F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x40
+    // Brief : Conditional Move - overflow (OF=1)
+    m_opCodeTable2[0x40].Init(
+        /*szName         = */"CMOVO",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x40,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x41
+    // Brief : Conditional Move - not overflow (OF=0)
+    m_opCodeTable2[0x41].Init(
+        /*szName         = */"CMOVNO",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x41,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x42
+    // Brief : Conditional Move - below/not above or equal/carry (CF=1)
+    m_opCodeTable2[0x42].Init(
+        /*szName         = */"CMOVB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x42,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x43
+    // Brief : Conditional Move - not below/above or equal/not carry (CF=0)
+    m_opCodeTable2[0x43].Init(
+        /*szName         = */"CMOVNB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x43,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x44
+    // Brief : Conditional Move - zero/equal (ZF=1)
+    m_opCodeTable2[0x44].Init(
+        /*szName         = */"CMOVZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x44,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x45
+    // Brief : Conditional Move - not zero/not equal (ZF=0)
+    m_opCodeTable2[0x45].Init(
+        /*szName         = */"CMOVNZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x45,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x46
+    // Brief : Conditional Move - below or equal/not above (CF=1 OR ZF=1)
+    m_opCodeTable2[0x46].Init(
+        /*szName         = */"CMOVBE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x46,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x47
+    // Brief : Conditional Move - not below or equal/above (CF=0 AND ZF=0)
+    m_opCodeTable2[0x47].Init(
+        /*szName         = */"CMOVNBE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x47,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x48
+    // Brief : Conditional Move - sign (SF=1)
+    m_opCodeTable2[0x48].Init(
+        /*szName         = */"CMOVS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x48,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x49
+    // Brief : Conditional Move - not sign (SF=0)
+    m_opCodeTable2[0x49].Init(
+        /*szName         = */"CMOVNS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x49,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4A
+    // Brief : Conditional Move - parity/parity even (PF=1)
+    m_opCodeTable2[0x4A].Init(
+        /*szName         = */"CMOVP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4A,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4B
+    // Brief : Conditional Move - not parity/parity odd (PF=0)
+    m_opCodeTable2[0x4B].Init(
+        /*szName         = */"CMOVNP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4B,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4C
+    // Brief : Conditional Move - less/not greater (SF!=OF)
+    m_opCodeTable2[0x4C].Init(
+        /*szName         = */"CMOVL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4C,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4D
+    // Brief : Conditional Move - not less/greater or equal (SF=OF)
+    m_opCodeTable2[0x4D].Init(
+        /*szName         = */"CMOVNL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4D,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4E
+    // Brief : Conditional Move - less or equal/not greater ((ZF=1) OR (SF!=OF))
+    m_opCodeTable2[0x4E].Init(
+        /*szName         = */"CMOVLE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4E,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4F
+    // Brief : Conditional Move - not less nor equal/greater ((ZF=0) AND (SF=OF))
+    m_opCodeTable2[0x4F].Init(
+        /*szName         = */"CMOVNLE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4F,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x50
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x50].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x50,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x50].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x50].InsertVarient(0);
+    {
+        // 0x50
+        // Brief : Extract Packed Single-FP Sign Mask
+        m_opCodeTable2[0x50].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVMSKPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x50].InsertVarient(10);
+    {
+        // 0x50
+        // Brief : Extract Packed Double-FP Sign Mask
+        m_opCodeTable2[0x50].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVMSKPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x51
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x51].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x51,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x51].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x51].InsertVarient(0);
+    {
+        // 0x51
+        // Brief : Compute Square Roots of Packed Single-FP Values
+        m_opCodeTable2[0x51].m_pVarients[0x00]->Init(
+            /*szName         = */"SQRTPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x51].InsertVarient(3);
+    {
+        // 0x51
+        // Brief : Compute Square Root of Scalar Single-FP Value
+        m_opCodeTable2[0x51].m_pVarients[0x03]->Init(
+            /*szName         = */"SQRTSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x51].InsertVarient(10);
+    {
+        // 0x51
+        // Brief : Compute Square Roots of Packed Double-FP Values
+        m_opCodeTable2[0x51].m_pVarients[0x0A]->Init(
+            /*szName         = */"SQRTPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x51].InsertVarient(2);
+    {
+        // 0x51
+        // Brief : Compute Square Root of Scalar Double-FP Value
+        m_opCodeTable2[0x51].m_pVarients[0x02]->Init(
+            /*szName         = */"SQRTSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x52
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x52].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x52,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x52].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x52].InsertVarient(0);
+    {
+        // 0x52
+        // Brief : Compute Recipr. of Square Roots of Packed Single-FP Values
+        m_opCodeTable2[0x52].m_pVarients[0x00]->Init(
+            /*szName         = */"RSQRTPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x52,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x52].InsertVarient(3);
+    {
+        // 0x52
+        // Brief : Compute Recipr. of Square Root of Scalar Single-FP Value
+        m_opCodeTable2[0x52].m_pVarients[0x03]->Init(
+            /*szName         = */"RSQRTSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x52,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x53
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x53].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x53,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x53].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x53].InsertVarient(0);
+    {
+        // 0x53
+        // Brief : Compute Reciprocals of Packed Single-FP Values
+        m_opCodeTable2[0x53].m_pVarients[0x00]->Init(
+            /*szName         = */"RCPPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x53,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x53].InsertVarient(3);
+    {
+        // 0x53
+        // Brief : Compute Reciprocal of Scalar Single-FP Values
+        m_opCodeTable2[0x53].m_pVarients[0x03]->Init(
+            /*szName         = */"RCPSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x53,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x54
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x54].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x54,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x54].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x54].InsertVarient(0);
+    {
+        // 0x54
+        // Brief : Bitwise Logical AND of Packed Single-FP Values
+        m_opCodeTable2[0x54].m_pVarients[0x00]->Init(
+            /*szName         = */"ANDPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x54,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x54].InsertVarient(10);
+    {
+        // 0x54
+        // Brief : Bitwise Logical AND of Packed Double-FP Values
+        m_opCodeTable2[0x54].m_pVarients[0x0A]->Init(
+            /*szName         = */"ANDPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x54,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x55
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x55].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x55,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x55].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x55].InsertVarient(0);
+    {
+        // 0x55
+        // Brief : Bitwise Logical AND NOT of Packed Single-FP Values
+        m_opCodeTable2[0x55].m_pVarients[0x00]->Init(
+            /*szName         = */"ANDNPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x55,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x55].InsertVarient(10);
+    {
+        // 0x55
+        // Brief : Bitwise Logical AND NOT of Packed Double-FP Values
+        m_opCodeTable2[0x55].m_pVarients[0x0A]->Init(
+            /*szName         = */"ANDNPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x55,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x56
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x56].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x56,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x56].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x56].InsertVarient(0);
+    {
+        // 0x56
+        // Brief : Bitwise Logical OR of Single-FP Values
+        m_opCodeTable2[0x56].m_pVarients[0x00]->Init(
+            /*szName         = */"ORPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x56,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x56].InsertVarient(10);
+    {
+        // 0x56
+        // Brief : Bitwise Logical OR of Double-FP Values
+        m_opCodeTable2[0x56].m_pVarients[0x0A]->Init(
+            /*szName         = */"ORPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x56,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x57
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x57].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x57,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x57].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x57].InsertVarient(0);
+    {
+        // 0x57
+        // Brief : Bitwise Logical XOR for Single-FP Values
+        m_opCodeTable2[0x57].m_pVarients[0x00]->Init(
+            /*szName         = */"XORPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x57,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x57].InsertVarient(10);
+    {
+        // 0x57
+        // Brief : Bitwise Logical XOR for Double-FP Values
+        m_opCodeTable2[0x57].m_pVarients[0x0A]->Init(
+            /*szName         = */"XORPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x57,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x58
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x58].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x58,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x58].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x58].InsertVarient(0);
+    {
+        // 0x58
+        // Brief : Add Packed Single-FP Values
+        m_opCodeTable2[0x58].m_pVarients[0x00]->Init(
+            /*szName         = */"ADDPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x58].InsertVarient(3);
+    {
+        // 0x58
+        // Brief : Add Scalar Single-FP Values
+        m_opCodeTable2[0x58].m_pVarients[0x03]->Init(
+            /*szName         = */"ADDSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x58].InsertVarient(10);
+    {
+        // 0x58
+        // Brief : Add Packed Double-FP Values
+        m_opCodeTable2[0x58].m_pVarients[0x0A]->Init(
+            /*szName         = */"ADDPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x58].InsertVarient(2);
+    {
+        // 0x58
+        // Brief : Add Scalar Double-FP Values
+        m_opCodeTable2[0x58].m_pVarients[0x02]->Init(
+            /*szName         = */"ADDSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x59
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x59].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x59,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x59].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x59].InsertVarient(0);
+    {
+        // 0x59
+        // Brief : Multiply Packed Single-FP Values
+        m_opCodeTable2[0x59].m_pVarients[0x00]->Init(
+            /*szName         = */"MULPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x59].InsertVarient(3);
+    {
+        // 0x59
+        // Brief : Multiply Scalar Single-FP Value
+        m_opCodeTable2[0x59].m_pVarients[0x03]->Init(
+            /*szName         = */"MULSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x59].InsertVarient(10);
+    {
+        // 0x59
+        // Brief : Multiply Packed Double-FP Values
+        m_opCodeTable2[0x59].m_pVarients[0x0A]->Init(
+            /*szName         = */"MULPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x59].InsertVarient(2);
+    {
+        // 0x59
+        // Brief : Multiply Scalar Double-FP Values
+        m_opCodeTable2[0x59].m_pVarients[0x02]->Init(
+            /*szName         = */"MULSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x5A
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x5A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x5A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x5A].InsertVarient(0);
+    {
+        // 0x5A
+        // Brief : Convert Packed Single-FP Values to Double-FP Values
+        m_opCodeTable2[0x5A].m_pVarients[0x00]->Init(
+            /*szName         = */"CVTPS2PD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5A].InsertVarient(10);
+    {
+        // 0x5A
+        // Brief : Convert Packed Double-FP Values to Single-FP Values
+        m_opCodeTable2[0x5A].m_pVarients[0x0A]->Init(
+            /*szName         = */"CVTPD2PS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5A].InsertVarient(3);
+    {
+        // 0x5A
+        // Brief : Convert Scalar Single-FP Value to Scalar Double-FP Value 
+        m_opCodeTable2[0x5A].m_pVarients[0x03]->Init(
+            /*szName         = */"CVTSS2SD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5A].InsertVarient(2);
+    {
+        // 0x5A
+        // Brief : Convert Scalar Double-FP Value to Scalar Single-FP Value
+        m_opCodeTable2[0x5A].m_pVarients[0x02]->Init(
+            /*szName         = */"CVTSD2SS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x5B
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x5B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x5B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x5B].InsertVarient(0);
+    {
+        // 0x5B
+        // Brief : Convert Packed DW Integers to Single-FP Values
+        m_opCodeTable2[0x5B].m_pVarients[0x00]->Init(
+            /*szName         = */"CVTDQ2PS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5B].InsertVarient(10);
+    {
+        // 0x5B
+        // Brief : Convert Packed Single-FP Values to DW Integers
+        m_opCodeTable2[0x5B].m_pVarients[0x0A]->Init(
+            /*szName         = */"CVTPS2DQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5B].InsertVarient(3);
+    {
+        // 0x5B
+        // Brief : Convert with Trunc. Packed Single-FP Values to DW Integers
+        m_opCodeTable2[0x5B].m_pVarients[0x03]->Init(
+            /*szName         = */"CVTTPS2DQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x5C
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x5C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x5C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x5C].InsertVarient(0);
+    {
+        // 0x5C
+        // Brief : Subtract Packed Single-FP Values
+        m_opCodeTable2[0x5C].m_pVarients[0x00]->Init(
+            /*szName         = */"SUBPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5C].InsertVarient(3);
+    {
+        // 0x5C
+        // Brief : Subtract Scalar Single-FP Values
+        m_opCodeTable2[0x5C].m_pVarients[0x03]->Init(
+            /*szName         = */"SUBSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5C].InsertVarient(10);
+    {
+        // 0x5C
+        // Brief : Subtract Packed Double-FP Values
+        m_opCodeTable2[0x5C].m_pVarients[0x0A]->Init(
+            /*szName         = */"SUBPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5C].InsertVarient(2);
+    {
+        // 0x5C
+        // Brief : Subtract Scalar Double-FP Values
+        m_opCodeTable2[0x5C].m_pVarients[0x02]->Init(
+            /*szName         = */"SUBSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x5D
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x5D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x5D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x5D].InsertVarient(0);
+    {
+        // 0x5D
+        // Brief : Return Minimum Packed Single-FP Values
+        m_opCodeTable2[0x5D].m_pVarients[0x00]->Init(
+            /*szName         = */"MINPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5D].InsertVarient(3);
+    {
+        // 0x5D
+        // Brief : Return Minimum Scalar Single-FP Value
+        m_opCodeTable2[0x5D].m_pVarients[0x03]->Init(
+            /*szName         = */"MINSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5D].InsertVarient(10);
+    {
+        // 0x5D
+        // Brief : Return Minimum Packed Double-FP Values
+        m_opCodeTable2[0x5D].m_pVarients[0x0A]->Init(
+            /*szName         = */"MINPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5D].InsertVarient(2);
+    {
+        // 0x5D
+        // Brief : Return Minimum Scalar Double-FP Value
+        m_opCodeTable2[0x5D].m_pVarients[0x02]->Init(
+            /*szName         = */"MINSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x5E
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x5E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x5E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x5E].InsertVarient(0);
+    {
+        // 0x5E
+        // Brief : Divide Packed Single-FP Values
+        m_opCodeTable2[0x5E].m_pVarients[0x00]->Init(
+            /*szName         = */"DIVPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5E].InsertVarient(3);
+    {
+        // 0x5E
+        // Brief : Divide Scalar Single-FP Values
+        m_opCodeTable2[0x5E].m_pVarients[0x03]->Init(
+            /*szName         = */"DIVSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5E].InsertVarient(10);
+    {
+        // 0x5E
+        // Brief : Divide Packed Double-FP Values
+        m_opCodeTable2[0x5E].m_pVarients[0x0A]->Init(
+            /*szName         = */"DIVPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5E].InsertVarient(2);
+    {
+        // 0x5E
+        // Brief : Divide Scalar Double-FP Values
+        m_opCodeTable2[0x5E].m_pVarients[0x02]->Init(
+            /*szName         = */"DIVSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x5F
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x5F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x5F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x5F].InsertVarient(0);
+    {
+        // 0x5F
+        // Brief : Return Maximum Packed Single-FP Values
+        m_opCodeTable2[0x5F].m_pVarients[0x00]->Init(
+            /*szName         = */"MAXPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5F].InsertVarient(3);
+    {
+        // 0x5F
+        // Brief : Return Maximum Scalar Single-FP Value
+        m_opCodeTable2[0x5F].m_pVarients[0x03]->Init(
+            /*szName         = */"MAXSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5F].InsertVarient(10);
+    {
+        // 0x5F
+        // Brief : Return Maximum Packed Double-FP Values
+        m_opCodeTable2[0x5F].m_pVarients[0x0A]->Init(
+            /*szName         = */"MAXPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x5F].InsertVarient(2);
+    {
+        // 0x5F
+        // Brief : Return Maximum Scalar Double-FP Value
+        m_opCodeTable2[0x5F].m_pVarients[0x02]->Init(
+            /*szName         = */"MAXSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x60
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x60].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x60,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x60].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x60].InsertVarient(0);
+    {
+        // 0x60
+        // Brief : Unpack Low Data
+        m_opCodeTable2[0x60].m_pVarients[0x00]->Init(
+            /*szName         = */"PUNPCKLBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x60,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x60].InsertVarient(10);
+    {
+        // 0x60
+        // Brief : Unpack Low Data
+        m_opCodeTable2[0x60].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKLBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x60,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x61
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x61].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x61,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x61].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x61].InsertVarient(0);
+    {
+        // 0x61
+        // Brief : Unpack Low Data
+        m_opCodeTable2[0x61].m_pVarients[0x00]->Init(
+            /*szName         = */"PUNPCKLWD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x61,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x61].InsertVarient(10);
+    {
+        // 0x61
+        // Brief : Unpack Low Data
+        m_opCodeTable2[0x61].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKLWD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x61,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x62
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x62].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x62,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x62].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x62].InsertVarient(0);
+    {
+        // 0x62
+        // Brief : Unpack Low Data
+        m_opCodeTable2[0x62].m_pVarients[0x00]->Init(
+            /*szName         = */"PUNPCKLDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x62,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x62].InsertVarient(10);
+    {
+        // 0x62
+        // Brief : Unpack Low Data
+        m_opCodeTable2[0x62].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKLDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x62,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x63
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x63].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x63,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x63].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x63].InsertVarient(0);
+    {
+        // 0x63
+        // Brief : Pack with Signed Saturation
+        m_opCodeTable2[0x63].m_pVarients[0x00]->Init(
+            /*szName         = */"PACKSSWB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x63,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x63].InsertVarient(10);
+    {
+        // 0x63
+        // Brief : Pack with Signed Saturation
+        m_opCodeTable2[0x63].m_pVarients[0x0A]->Init(
+            /*szName         = */"PACKSSWB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x63,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x64
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x64].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x64,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x64].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x64].InsertVarient(0);
+    {
+        // 0x64
+        // Brief : Compare Packed Signed Integers for Greater Than
+        m_opCodeTable2[0x64].m_pVarients[0x00]->Init(
+            /*szName         = */"PCMPGTB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x64,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x64].InsertVarient(10);
+    {
+        // 0x64
+        // Brief : Compare Packed Signed Integers for Greater Than
+        m_opCodeTable2[0x64].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPGTB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x64,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x65
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x65].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x65,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x65].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x65].InsertVarient(0);
+    {
+        // 0x65
+        // Brief : Compare Packed Signed Integers for Greater Than
+        m_opCodeTable2[0x65].m_pVarients[0x00]->Init(
+            /*szName         = */"PCMPGTW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x65,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x65].InsertVarient(10);
+    {
+        // 0x65
+        // Brief : Compare Packed Signed Integers for Greater Than
+        m_opCodeTable2[0x65].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPGTW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x65,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x66
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x66].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x66,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x66].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x66].InsertVarient(0);
+    {
+        // 0x66
+        // Brief : Compare Packed Signed Integers for Greater Than
+        m_opCodeTable2[0x66].m_pVarients[0x00]->Init(
+            /*szName         = */"PCMPGTD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x66,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x66].InsertVarient(10);
+    {
+        // 0x66
+        // Brief : Compare Packed Signed Integers for Greater Than
+        m_opCodeTable2[0x66].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPGTD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x66,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x67
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x67].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x67,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x67].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x67].InsertVarient(0);
+    {
+        // 0x67
+        // Brief : Pack with Unsigned Saturation
+        m_opCodeTable2[0x67].m_pVarients[0x00]->Init(
+            /*szName         = */"PACKUSWB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x67,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x67].InsertVarient(10);
+    {
+        // 0x67
+        // Brief : Pack with Unsigned Saturation
+        m_opCodeTable2[0x67].m_pVarients[0x0A]->Init(
+            /*szName         = */"PACKUSWB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x67,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x68
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x68].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x68,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x68].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x68].InsertVarient(0);
+    {
+        // 0x68
+        // Brief : Unpack High Data
+        m_opCodeTable2[0x68].m_pVarients[0x00]->Init(
+            /*szName         = */"PUNPCKHBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x68,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x68].InsertVarient(10);
+    {
+        // 0x68
+        // Brief : Unpack High Data
+        m_opCodeTable2[0x68].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKHBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x68,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x69
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x69].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x69,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x69].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x69].InsertVarient(0);
+    {
+        // 0x69
+        // Brief : Unpack High Data
+        m_opCodeTable2[0x69].m_pVarients[0x00]->Init(
+            /*szName         = */"PUNPCKHWD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x69,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x69].InsertVarient(10);
+    {
+        // 0x69
+        // Brief : Unpack High Data
+        m_opCodeTable2[0x69].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKHWD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x69,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x6A
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x6A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x6A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x6A].InsertVarient(0);
+    {
+        // 0x6A
+        // Brief : Unpack High Data
+        m_opCodeTable2[0x6A].m_pVarients[0x00]->Init(
+            /*szName         = */"PUNPCKHDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x6A].InsertVarient(10);
+    {
+        // 0x6A
+        // Brief : Unpack High Data
+        m_opCodeTable2[0x6A].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKHDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x6B
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x6B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x6B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x6B].InsertVarient(0);
+    {
+        // 0x6B
+        // Brief : Pack with Signed Saturation
+        m_opCodeTable2[0x6B].m_pVarients[0x00]->Init(
+            /*szName         = */"PACKSSDW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x6B].InsertVarient(10);
+    {
+        // 0x6B
+        // Brief : Pack with Signed Saturation
+        m_opCodeTable2[0x6B].m_pVarients[0x0A]->Init(
+            /*szName         = */"PACKSSDW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x6C
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x6C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x6C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x6C].InsertVarient(10);
+    {
+        // 0x6C
+        // Brief : Unpack Low Data
+        m_opCodeTable2[0x6C].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKLQDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x6D
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x6D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x6D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x6D].InsertVarient(10);
+    {
+        // 0x6D
+        // Brief : Unpack High Data
+        m_opCodeTable2[0x6D].m_pVarients[0x0A]->Init(
+            /*szName         = */"PUNPCKHQDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x6E
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x6E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x6E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x6E].InsertVarient(0);
+    {
+        // 0x6E
+        // Brief : Move Doubleword/Quadword
+        m_opCodeTable2[0x6E].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x6E].InsertVarient(10);
+    {
+        // 0x6E
+        // Brief : Move Doubleword/Quadword
+        m_opCodeTable2[0x6E].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x6F
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x6F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x6F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x6F].InsertVarient(0);
+    {
+        // 0x6F
+        // Brief : Move Quadword
+        m_opCodeTable2[0x6F].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x6F].InsertVarient(10);
+    {
+        // 0x6F
+        // Brief : Move Aligned Double Quadword
+        m_opCodeTable2[0x6F].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVDQA",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x6F].InsertVarient(3);
+    {
+        // 0x6F
+        // Brief : Move Unaligned Double Quadword
+        m_opCodeTable2[0x6F].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVDQU",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x70
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x70].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x70,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x70].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x70].InsertVarient(0);
+    {
+        // 0x70
+        // Brief : Shuffle Packed Words
+        m_opCodeTable2[0x70].m_pVarients[0x00]->Init(
+            /*szName         = */"PSHUFW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x70,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x70].InsertVarient(2);
+    {
+        // 0x70
+        // Brief : Shuffle Packed Low Words
+        m_opCodeTable2[0x70].m_pVarients[0x02]->Init(
+            /*szName         = */"PSHUFLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x70,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x70].InsertVarient(3);
+    {
+        // 0x70
+        // Brief : Shuffle Packed High Words
+        m_opCodeTable2[0x70].m_pVarients[0x03]->Init(
+            /*szName         = */"PSHUFHW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x70,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x70].InsertVarient(10);
+    {
+        // 0x70
+        // Brief : Shuffle Packed Doublewords
+        m_opCodeTable2[0x70].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSHUFD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x70,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x71
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x71].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x71,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x71].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x71].InsertVarient(2);
+    {
+        // 0x71
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0x71].m_pVarients[0x02]->Init(
+            /*szName         = */"PSRLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x71,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x71].InsertVarient(4);
+    {
+        // 0x71
+        // Brief : Shift Packed Data Right Arithmetic
+        m_opCodeTable2[0x71].m_pVarients[0x04]->Init(
+            /*szName         = */"PSRAW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x71,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x71].InsertVarient(6);
+    {
+        // 0x71
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0x71].m_pVarients[0x06]->Init(
+            /*szName         = */"PSLLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x71,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x72
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x72].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x72,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x72].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x72].InsertVarient(2);
+    {
+        // 0x72
+        // Brief : Shift Double Quadword Right Logical
+        m_opCodeTable2[0x72].m_pVarients[0x02]->Init(
+            /*szName         = */"PSRLD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x72,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x72].InsertVarient(4);
+    {
+        // 0x72
+        // Brief : Shift Packed Data Right Arithmetic
+        m_opCodeTable2[0x72].m_pVarients[0x04]->Init(
+            /*szName         = */"PSRAD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x72,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x72].InsertVarient(6);
+    {
+        // 0x72
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0x72].m_pVarients[0x06]->Init(
+            /*szName         = */"PSLLD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x72,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x73
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x73].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x73,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x73].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x73].InsertVarient(2);
+    {
+        // 0x73
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0x73].m_pVarients[0x02]->Init(
+            /*szName         = */"PSRLQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x73,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x73].InsertVarient(3);
+    {
+        // 0x73
+        // Brief : Shift Double Quadword Right Logical
+        m_opCodeTable2[0x73].m_pVarients[0x03]->Init(
+            /*szName         = */"PSRLDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x73,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x73].InsertVarient(6);
+    {
+        // 0x73
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0x73].m_pVarients[0x06]->Init(
+            /*szName         = */"PSLLQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x73,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x73].InsertVarient(7);
+    {
+        // 0x73
+        // Brief : Shift Double Quadword Left Logical
+        m_opCodeTable2[0x73].m_pVarients[0x07]->Init(
+            /*szName         = */"PSLLDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x73,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x74
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x74].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x74,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x74].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x74].InsertVarient(0);
+    {
+        // 0x74
+        // Brief : Compare Packed Data for Equal
+        m_opCodeTable2[0x74].m_pVarients[0x00]->Init(
+            /*szName         = */"PCMPEQB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x74,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x74].InsertVarient(10);
+    {
+        // 0x74
+        // Brief : Compare Packed Data for Equal
+        m_opCodeTable2[0x74].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPEQB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x74,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x75
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x75].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x75,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x75].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x75].InsertVarient(0);
+    {
+        // 0x75
+        // Brief : Compare Packed Data for Equal
+        m_opCodeTable2[0x75].m_pVarients[0x00]->Init(
+            /*szName         = */"PCMPEQW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x75,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x75].InsertVarient(10);
+    {
+        // 0x75
+        // Brief : Compare Packed Data for Equal
+        m_opCodeTable2[0x75].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPEQW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x75,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x76
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x76].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x76,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x76].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x76].InsertVarient(0);
+    {
+        // 0x76
+        // Brief : Compare Packed Data for Equal
+        m_opCodeTable2[0x76].m_pVarients[0x00]->Init(
+            /*szName         = */"PCMPEQD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x76,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x76].InsertVarient(10);
+    {
+        // 0x76
+        // Brief : Compare Packed Data for Equal
+        m_opCodeTable2[0x76].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPEQD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x76,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x77
+    // Brief : Empty MMX Technology State
+    m_opCodeTable2[0x77].Init(
+        /*szName         = */"EMMS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x77,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x78
+    // Brief : Read Field from Virtual-Machine Control Structure
+    m_opCodeTable2[0x78].Init(
+        /*szName         = */"VMREAD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x78,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x79
+    // Brief : Write Field to Virtual-Machine Control Structure
+    m_opCodeTable2[0x79].Init(
+        /*szName         = */"VMWRITE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x79,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x7A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0x7B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7C
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x7C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x7C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x7C].InsertVarient(10);
+    {
+        // 0x7C
+        // Brief : Packed Double-FP Horizontal Add
+        m_opCodeTable2[0x7C].m_pVarients[0x0A]->Init(
+            /*szName         = */"HADDPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x7C].InsertVarient(2);
+    {
+        // 0x7C
+        // Brief : Packed Single-FP Horizontal Add
+        m_opCodeTable2[0x7C].m_pVarients[0x02]->Init(
+            /*szName         = */"HADDPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x7D
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x7D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x7D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x7D].InsertVarient(10);
+    {
+        // 0x7D
+        // Brief : Packed Double-FP Horizontal Subtract
+        m_opCodeTable2[0x7D].m_pVarients[0x0A]->Init(
+            /*szName         = */"HSUBPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x7D].InsertVarient(2);
+    {
+        // 0x7D
+        // Brief : Packed Single-FP Horizontal Subtract
+        m_opCodeTable2[0x7D].m_pVarients[0x02]->Init(
+            /*szName         = */"HSUBPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x7E
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x7E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x7E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x7E].InsertVarient(0);
+    {
+        // 0x7E
+        // Brief : Move Doubleword/Quadword
+        m_opCodeTable2[0x7E].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x7E].InsertVarient(10);
+    {
+        // 0x7E
+        // Brief : Move Doubleword/Quadword
+        m_opCodeTable2[0x7E].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x7E].InsertVarient(3);
+    {
+        // 0x7E
+        // Brief : Move Quadword
+        m_opCodeTable2[0x7E].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x7F
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x7F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x7F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0x7F].InsertVarient(0);
+    {
+        // 0x7F
+        // Brief : Move Quadword
+        m_opCodeTable2[0x7F].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x7F].InsertVarient(10);
+    {
+        // 0x7F
+        // Brief : Move Aligned Double Quadword
+        m_opCodeTable2[0x7F].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVDQA",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0x7F].InsertVarient(3);
+    {
+        // 0x7F
+        // Brief : Move Unaligned Double Quadword
+        m_opCodeTable2[0x7F].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVDQU",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x80
+    // Brief : Jump near if overflow (OF=1)
+    m_opCodeTable2[0x80].Init(
+        /*szName         = */"JO",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x80,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x81
+    // Brief : Jump near if not overflow (OF=0)
+    m_opCodeTable2[0x81].Init(
+        /*szName         = */"JNO",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x81,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x82
+    // Brief : Jump near if below/not above or equal/carry (CF=1)
+    m_opCodeTable2[0x82].Init(
+        /*szName         = */"JB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x82,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x83
+    // Brief : Jump near if not below/above or equal/not carry (CF=0)
+    m_opCodeTable2[0x83].Init(
+        /*szName         = */"JNB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x83,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x84
+    // Brief : Jump near if zero/equal (ZF=1)
+    m_opCodeTable2[0x84].Init(
+        /*szName         = */"JZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x84,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x85
+    // Brief : Jump near if not zero/not equal (ZF=0)
+    m_opCodeTable2[0x85].Init(
+        /*szName         = */"JNZ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x85,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x86
+    // Brief : Jump near if below or equal/not above (CF=1 OR ZF=1)
+    m_opCodeTable2[0x86].Init(
+        /*szName         = */"JBE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x86,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x87
+    // Brief : Jump near if not below or equal/above (CF=0 AND ZF=0)
+    m_opCodeTable2[0x87].Init(
+        /*szName         = */"JNBE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x87,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x88
+    // Brief : Jump near if sign (SF=1)
+    m_opCodeTable2[0x88].Init(
+        /*szName         = */"JS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x88,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x89
+    // Brief : Jump near if not sign (SF=0)
+    m_opCodeTable2[0x89].Init(
+        /*szName         = */"JNS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x89,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8A
+    // Brief : Jump near if parity/parity even (PF=1)
+    m_opCodeTable2[0x8A].Init(
+        /*szName         = */"JP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8A,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8B
+    // Brief : Jump near if not parity/parity odd (PF=0)
+    m_opCodeTable2[0x8B].Init(
+        /*szName         = */"JNP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8B,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8C
+    // Brief : Jump near if less/not greater (SF!=OF)
+    m_opCodeTable2[0x8C].Init(
+        /*szName         = */"JL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8C,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8D
+    // Brief : Jump near if not less/greater or equal (SF=OF)
+    m_opCodeTable2[0x8D].Init(
+        /*szName         = */"JNL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8D,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8E
+    // Brief : Jump near if less or equal/not greater ((ZF=1) OR (SF!=OF))
+    m_opCodeTable2[0x8E].Init(
+        /*szName         = */"JLE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8E,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8F
+    // Brief : Jump near if not less nor equal/greater ((ZF=0) AND (SF=OF))
+    m_opCodeTable2[0x8F].Init(
+        /*szName         = */"JNLE",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8F,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x90
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x90].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x90,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x90].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x90].InsertVarient(0);
+    {
+        // 0x90
+        // Brief : Set Byte on Condition - overflow (OF=1)
+        m_opCodeTable2[0x90].m_pVarients[0x00]->Init(
+            /*szName         = */"SETO",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x90,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x91
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x91].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x91,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x91].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x91].InsertVarient(0);
+    {
+        // 0x91
+        // Brief : Set Byte on Condition - not overflow (OF=0)
+        m_opCodeTable2[0x91].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNO",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x91,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x92
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x92].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x92,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x92].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x92].InsertVarient(0);
+    {
+        // 0x92
+        // Brief : Set Byte on Condition - below/not above or equal/carry (CF=1)
+        m_opCodeTable2[0x92].m_pVarients[0x00]->Init(
+            /*szName         = */"SETB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x92,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x93
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x93].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x93,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x93].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x93].InsertVarient(0);
+    {
+        // 0x93
+        // Brief : Set Byte on Condition - not below/above or equal/not carry (CF=0)
+        m_opCodeTable2[0x93].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x93,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x94
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x94].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x94,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x94].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x94].InsertVarient(0);
+    {
+        // 0x94
+        // Brief : Set Byte on Condition - zero/equal (ZF=1)
+        m_opCodeTable2[0x94].m_pVarients[0x00]->Init(
+            /*szName         = */"SETZ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x94,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x95
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x95].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x95,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x95].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x95].InsertVarient(0);
+    {
+        // 0x95
+        // Brief : Set Byte on Condition - not zero/not equal (ZF=0)
+        m_opCodeTable2[0x95].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNZ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x95,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x96
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x96].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x96,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x96].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x96].InsertVarient(0);
+    {
+        // 0x96
+        // Brief : Set Byte on Condition - below or equal/not above (CF=1 OR ZF=1)
+        m_opCodeTable2[0x96].m_pVarients[0x00]->Init(
+            /*szName         = */"SETBE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x96,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x97
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x97].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x97,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x97].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x97].InsertVarient(0);
+    {
+        // 0x97
+        // Brief : Set Byte on Condition - not below or equal/above (CF=0 AND ZF=0)
+        m_opCodeTable2[0x97].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNBE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x97,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x98
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x98].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x98,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x98].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x98].InsertVarient(0);
+    {
+        // 0x98
+        // Brief : Set Byte on Condition - sign (SF=1)
+        m_opCodeTable2[0x98].m_pVarients[0x00]->Init(
+            /*szName         = */"SETS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x98,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x99
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x99].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x99,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x99].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x99].InsertVarient(0);
+    {
+        // 0x99
+        // Brief : Set Byte on Condition - not sign (SF=0)
+        m_opCodeTable2[0x99].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x99,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x9A
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x9A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x9A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x9A].InsertVarient(0);
+    {
+        // 0x9A
+        // Brief : Set Byte on Condition - parity/parity even (PF=1)
+        m_opCodeTable2[0x9A].m_pVarients[0x00]->Init(
+            /*szName         = */"SETP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9A,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x9B
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x9B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x9B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x9B].InsertVarient(0);
+    {
+        // 0x9B
+        // Brief : Set Byte on Condition - not parity/parity odd (PF=0)
+        m_opCodeTable2[0x9B].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9B,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x9C
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x9C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x9C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x9C].InsertVarient(0);
+    {
+        // 0x9C
+        // Brief : Set Byte on Condition - less/not greater (SF!=OF)
+        m_opCodeTable2[0x9C].m_pVarients[0x00]->Init(
+            /*szName         = */"SETL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9C,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x9D
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x9D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x9D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x9D].InsertVarient(0);
+    {
+        // 0x9D
+        // Brief : Set Byte on Condition - not less/greater or equal (SF=OF)
+        m_opCodeTable2[0x9D].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNL",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9D,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x9E
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x9E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x9E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x9E].InsertVarient(0);
+    {
+        // 0x9E
+        // Brief : Set Byte on Condition - less or equal/not greater ((ZF=1) OR (SF!=OF))
+        m_opCodeTable2[0x9E].m_pVarients[0x00]->Init(
+            /*szName         = */"SETLE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9E,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x9F
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0x9F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0x9F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0x9F].InsertVarient(0);
+    {
+        // 0x9F
+        // Brief : Set Byte on Condition - not less nor equal/greater ((ZF=0) AND (SF=OF))
+        m_opCodeTable2[0x9F].m_pVarients[0x00]->Init(
+            /*szName         = */"SETNLE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9F,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xA0
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable2[0xA0].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA0,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_Segment, 4, 16 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA1
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable2[0xA1].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA1,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_Segment, 4, 16 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA2
+    // Brief : CPU Identification
+    m_opCodeTable2[0xA2].Init(
+        /*szName         = */"CPUID",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA3
+    // Brief : Bit Test
+    m_opCodeTable2[0xA3].Init(
+        /*szName         = */"BT",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA3,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA4
+    // Brief : Double Precision Shift Left
+    m_opCodeTable2[0xA4].Init(
+        /*szName         = */"SHLD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA4,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xA5
+    // Brief : Double Precision Shift Left
+    m_opCodeTable2[0xA5].Init(
+        /*szName         = */"SHLD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA5,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+        /*operand4       = */Operand_t());
+
+    // 0xA6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xA6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xA7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA8
+    // Brief : Push Word, Doubleword or Quadword Onto the Stack
+    m_opCodeTable2[0xA8].Init(
+        /*szName         = */"PUSH",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA8,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_Segment, 5, 16 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA9
+    // Brief : Pop a Value from the Stack
+    m_opCodeTable2[0xA9].Init(
+        /*szName         = */"POP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA9,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_Segment, 5, 16 ) ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAA
+    // Brief : Resume from System Management Mode
+    m_opCodeTable2[0xAA].Init(
+        /*szName         = */"RSM",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAB
+    // Brief : Bit Test and Set
+    m_opCodeTable2[0xAB].Init(
+        /*szName         = */"BTS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAB,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAC
+    // Brief : Double Precision Shift Right
+    m_opCodeTable2[0xAC].Init(
+        /*szName         = */"SHRD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAC,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xAD
+    // Brief : Double Precision Shift Right
+    m_opCodeTable2[0xAD].Init(
+        /*szName         = */"SHRD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAD,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
+        /*operand4       = */Operand_t());
+
+    // 0xAE
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xAE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xAE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0xAE].InsertVarient(0);
+    {
+        // 0xAE
+        // Brief : Save x87 FPU, MMX, XMM, and MXCSR State
+        m_opCodeTable2[0xAE].m_pVarients[0x00]->Init(
+            /*szName         = */"FXSAVE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAE,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_512 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xAE].InsertVarient(1);
+    {
+        // 0xAE
+        // Brief : Restore x87 FPU, MMX, XMM, and MXCSR State
+        m_opCodeTable2[0xAE].m_pVarients[0x01]->Init(
+            /*szName         = */"FXRSTOR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAE,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_512 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xAE].InsertVarient(2);
+    {
+        // 0xAE
+        // Brief : Load MXCSR Register
+        m_opCodeTable2[0xAE].m_pVarients[0x02]->Init(
+            /*szName         = */"LDMXCSR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAE,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xAE].InsertVarient(3);
+    {
+        // 0xAE
+        // Brief : Store MXCSR Register State
+        m_opCodeTable2[0xAE].m_pVarients[0x03]->Init(
+            /*szName         = */"STMXCSR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAE,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_32 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xAE].InsertVarient(4);
+    {
+        // 0xAE
+        // Brief : Save Processor Extended States
+        m_opCodeTable2[0xAE].m_pVarients[0x04]->Init(
+            /*szName         = */"XSAVE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAE,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xAE].InsertVarient(5);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0xAE].m_pVarients[0x05]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0xAE].m_pVarients[0x05]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0xAE].m_pVarients[0x05]->InsertVarient(0);
+        m_opCodeTable2[0xAE].m_pVarients[0x05]->m_pVarients[0x01] = m_opCodeTable2[0xAE].m_pVarients[0x05]->m_pVarients[0x00];
+        m_opCodeTable2[0xAE].m_pVarients[0x05]->m_pVarients[0x02] = m_opCodeTable2[0xAE].m_pVarients[0x05]->m_pVarients[0x00];
+        {
+            // 0xAE
+            // Brief : Restore Processor Extended States
+            m_opCodeTable2[0xAE].m_pVarients[0x05]->m_pVarients[0x00]->Init(
+                /*szName         = */"XRSTOR",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xAE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0xAE].m_pVarients[0x05]->InsertVarient(3);
+        {
+            // 0xAE
+            // Brief : Load Fence
+            m_opCodeTable2[0xAE].m_pVarients[0x05]->m_pVarients[0x03]->Init(
+                /*szName         = */"LFENCE",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xAE,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+    m_opCodeTable2[0xAE].InsertVarient(6);
+    {
+        // 0xAE
+        // Brief : Memory Fence
+        m_opCodeTable2[0xAE].m_pVarients[0x06]->Init(
+            /*szName         = */"MFENCE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAE,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xAE].InsertVarient(7);
+    {
+        // 0x0
+        // Brief : Invalid Instruction in 64-Bit Mode
+        m_opCodeTable2[0xAE].m_pVarients[0x07]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0x0,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+
+        m_opCodeTable2[0xAE].m_pVarients[0x07]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+
+        // Copying index 0 to index 1 and 2, cause modrm.mod == 0, 1 or 2 collectively represents "mem" catagory.
+        m_opCodeTable2[0xAE].m_pVarients[0x07]->InsertVarient(0);
+        m_opCodeTable2[0xAE].m_pVarients[0x07]->m_pVarients[0x01] = m_opCodeTable2[0xAE].m_pVarients[0x07]->m_pVarients[0x00];
+        m_opCodeTable2[0xAE].m_pVarients[0x07]->m_pVarients[0x02] = m_opCodeTable2[0xAE].m_pVarients[0x07]->m_pVarients[0x00];
+        {
+            // 0xAE
+            // Brief : Flush Cache Line
+            m_opCodeTable2[0xAE].m_pVarients[0x07]->m_pVarients[0x00]->Init(
+                /*szName         = */"CLFLUSH",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xAE,
+                /*nOperands      = */1,
+                /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+        m_opCodeTable2[0xAE].m_pVarients[0x07]->InsertVarient(3);
+        {
+            // 0xAE
+            // Brief : Store Fence
+            m_opCodeTable2[0xAE].m_pVarients[0x07]->m_pVarients[0x03]->Init(
+                /*szName         = */"SFENCE",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xAE,
+                /*nOperands      = */0,
+                /*operand1       = */Operand_t(),
+                /*operand2       = */Operand_t(),
+                /*operand3       = */Operand_t(),
+                /*operand4       = */Operand_t());
+        }
+    }
+
+    // 0xAF
+    // Brief : Signed Multiply
+    m_opCodeTable2[0xAF].Init(
+        /*szName         = */"IMUL",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAF,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB0
+    // Brief : Compare and Exchange
+    m_opCodeTable2[0xB0].Init(
+        /*szName         = */"CMPXCHG",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB0,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB1
+    // Brief : Compare and Exchange
+    m_opCodeTable2[0xB1].Init(
+        /*szName         = */"CMPXCHG",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB1,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB2
+    // Brief : Load Far Pointer
+    m_opCodeTable2[0xB2].Init(
+        /*szName         = */"LSS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB2,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_ptp ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB3
+    // Brief : Bit Test and Reset
+    m_opCodeTable2[0xB3].Init(
+        /*szName         = */"BTR",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB3,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB4
+    // Brief : Load Far Pointer
+    m_opCodeTable2[0xB4].Init(
+        /*szName         = */"LFS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB4,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_ptp ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB5
+    // Brief : Load Far Pointer
+    m_opCodeTable2[0xB5].Init(
+        /*szName         = */"LGS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB5,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_ptp ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB6
+    // Brief : Move with Zero-Extend
+    m_opCodeTable2[0xB6].Init(
+        /*szName         = */"MOVZX",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB6,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB7
+    // Brief : Move with Zero-Extend
+    m_opCodeTable2[0xB7].Init(
+        /*szName         = */"MOVZX",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB7,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB8
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xB8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xB8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xB8].InsertVarient(0);
+    {
+        // 0xB8
+        // Brief : Jump to IA-64 Instruction Set
+        m_opCodeTable2[0xB8].m_pVarients[0x00]->Init(
+            /*szName         = */"JMPE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */false,
+            /*iByte          = */0xB8,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t(),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xB8].InsertVarient(3);
+    {
+        // 0xB8
+        // Brief : Bit Population Count
+        m_opCodeTable2[0xB8].m_pVarients[0x03]->Init(
+            /*szName         = */"POPCNT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xB9
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable2[0xB9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBA
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xBA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xBA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0xBA].InsertVarient(4);
+    {
+        // 0xBA
+        // Brief : Bit Test
+        m_opCodeTable2[0xBA].m_pVarients[0x04]->Init(
+            /*szName         = */"BT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xBA].InsertVarient(5);
+    {
+        // 0xBA
+        // Brief : Bit Test and Set
+        m_opCodeTable2[0xBA].m_pVarients[0x05]->Init(
+            /*szName         = */"BTS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xBA].InsertVarient(6);
+    {
+        // 0xBA
+        // Brief : Bit Test and Reset
+        m_opCodeTable2[0xBA].m_pVarients[0x06]->Init(
+            /*szName         = */"BTR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xBA].InsertVarient(7);
+    {
+        // 0xBA
+        // Brief : Bit Test and Complement
+        m_opCodeTable2[0xBA].m_pVarients[0x07]->Init(
+            /*szName         = */"BTC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xBB
+    // Brief : Bit Test and Complement
+    m_opCodeTable2[0xBB].Init(
+        /*szName         = */"BTC",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBB,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBC
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xBC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xBC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xBC].InsertVarient(0);
+    {
+        // 0xBC
+        // Brief : Bit Scan Forward
+        m_opCodeTable2[0xBC].m_pVarients[0x00]->Init(
+            /*szName         = */"BSF",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xBC].InsertVarient(3);
+    {
+        // 0xBC
+        // Brief : Count the Number of Trailing Zero Bits
+        m_opCodeTable2[0xBC].m_pVarients[0x03]->Init(
+            /*szName         = */"TZCNT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xBD
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xBD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xBD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xBD].InsertVarient(0);
+    {
+        // 0xBD
+        // Brief : Bit Scan Reverse
+        m_opCodeTable2[0xBD].m_pVarients[0x00]->Init(
+            /*szName         = */"BSR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBD,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xBD].InsertVarient(3);
+    {
+        // 0xBD
+        // Brief : Count the Number of Leading Zero Bits
+        m_opCodeTable2[0xBD].m_pVarients[0x03]->Init(
+            /*szName         = */"LZCNT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBD,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xBE
+    // Brief : Move with Sign-Extension
+    m_opCodeTable2[0xBE].Init(
+        /*szName         = */"MOVSX",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBE,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBF
+    // Brief : Move with Sign-Extension
+    m_opCodeTable2[0xBF].Init(
+        /*szName         = */"MOVSX",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBF,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC0
+    // Brief : Exchange and Add
+    m_opCodeTable2[0xC0].Init(
+        /*szName         = */"XADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC0,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC1
+    // Brief : Exchange and Add
+    m_opCodeTable2[0xC1].Init(
+        /*szName         = */"XADD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC1,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC2
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xC2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xC2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xC2].InsertVarient(0);
+    {
+        // 0xC2
+        // Brief : Compare Packed Single-FP Values
+        m_opCodeTable2[0xC2].m_pVarients[0x00]->Init(
+            /*szName         = */"CMPPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC2].InsertVarient(3);
+    {
+        // 0xC2
+        // Brief : Compare Scalar Single-FP Values
+        m_opCodeTable2[0xC2].m_pVarients[0x03]->Init(
+            /*szName         = */"CMPSS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC2].InsertVarient(10);
+    {
+        // 0xC2
+        // Brief : Compare Packed Double-FP Values
+        m_opCodeTable2[0xC2].m_pVarients[0x0A]->Init(
+            /*szName         = */"CMPPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC2].InsertVarient(2);
+    {
+        // 0xC2
+        // Brief : Compare Scalar Double-FP Values
+        m_opCodeTable2[0xC2].m_pVarients[0x02]->Init(
+            /*szName         = */"CMPSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC3
+    // Brief : Store Doubleword Using Non-Temporal Hint
+    m_opCodeTable2[0xC3].Init(
+        /*szName         = */"MOVNTI",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC3,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_m, OperandType_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC4
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xC4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xC4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xC4].InsertVarient(0);
+    {
+        // 0xC4
+        // Brief : Insert Word
+        m_opCodeTable2[0xC4].m_pVarients[0x00]->Init(
+            /*szName         = */"PINSRW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC4].InsertVarient(10);
+    {
+        // 0xC4
+        // Brief : Insert Word
+        m_opCodeTable2[0xC4].m_pVarients[0x0A]->Init(
+            /*szName         = */"PINSRW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC5
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xC5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xC5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xC5].InsertVarient(0);
+    {
+        // 0xC5
+        // Brief : Extract Word
+        m_opCodeTable2[0xC5].m_pVarients[0x00]->Init(
+            /*szName         = */"PEXTRW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC5].InsertVarient(10);
+    {
+        // 0xC5
+        // Brief : Extract Word
+        m_opCodeTable2[0xC5].m_pVarients[0x0A]->Init(
+            /*szName         = */"PEXTRW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC6
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xC6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xC6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xC6].InsertVarient(0);
+    {
+        // 0xC6
+        // Brief : Shuffle Packed Single-FP Values
+        m_opCodeTable2[0xC6].m_pVarients[0x00]->Init(
+            /*szName         = */"SHUFPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC6,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC6].InsertVarient(10);
+    {
+        // 0xC6
+        // Brief : Shuffle Packed Double-FP Values
+        m_opCodeTable2[0xC6].m_pVarients[0x0A]->Init(
+            /*szName         = */"SHUFPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC6,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC7
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xC7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xC7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_REG);
+
+    m_opCodeTable2[0xC7].InsertVarient(1);
+    {
+        // 0xC7
+        // Brief : Compare and Exchange Bytes
+        m_opCodeTable2[0xC7].m_pVarients[0x01]->Init(
+            /*szName         = */"CMPXCHG8B",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC7].InsertVarient(6);
+    {
+        // 0xC7
+        // Brief : Enter VMX Operation
+        m_opCodeTable2[0xC7].m_pVarients[0x06]->Init(
+            /*szName         = */"VMXON",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xC7].InsertVarient(7);
+    {
+        // 0xC7
+        // Brief : Store Pointer to Virtual-Machine Control Structure
+        m_opCodeTable2[0xC7].m_pVarients[0x07]->Init(
+            /*szName         = */"VMPTRST",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC7,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t(),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC8
+    // Brief : Byte Swap
+    m_opCodeTable2[0xC8].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC8,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC9
+    // Brief : Byte Swap
+    m_opCodeTable2[0xC9].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC9,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCA
+    // Brief : Byte Swap
+    m_opCodeTable2[0xCA].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCA,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCB
+    // Brief : Byte Swap
+    m_opCodeTable2[0xCB].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCB,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCC
+    // Brief : Byte Swap
+    m_opCodeTable2[0xCC].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCC,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCD
+    // Brief : Byte Swap
+    m_opCodeTable2[0xCD].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCD,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCE
+    // Brief : Byte Swap
+    m_opCodeTable2[0xCE].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCE,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCF
+    // Brief : Byte Swap
+    m_opCodeTable2[0xCF].Init(
+        /*szName         = */"BSWAP",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCF,
+        /*nOperands      = */1,
+        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD0].InsertVarient(10);
+    {
+        // 0xD0
+        // Brief : Packed Double-FP Add/Subtract
+        m_opCodeTable2[0xD0].m_pVarients[0x0A]->Init(
+            /*szName         = */"ADDSUBPD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD0].InsertVarient(2);
+    {
+        // 0xD0
+        // Brief : Packed Single-FP Add/Subtract
+        m_opCodeTable2[0xD0].m_pVarients[0x02]->Init(
+            /*szName         = */"ADDSUBPS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD1].InsertVarient(0);
+    {
+        // 0xD1
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0xD1].m_pVarients[0x00]->Init(
+            /*szName         = */"PSRLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD1].InsertVarient(10);
+    {
+        // 0xD1
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0xD1].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSRLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD2
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD2].InsertVarient(0);
+    {
+        // 0xD2
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0xD2].m_pVarients[0x00]->Init(
+            /*szName         = */"PSRLD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD2].InsertVarient(10);
+    {
+        // 0xD2
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0xD2].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSRLD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD3
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD3].InsertVarient(0);
+    {
+        // 0xD3
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0xD3].m_pVarients[0x00]->Init(
+            /*szName         = */"PSRLQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD3].InsertVarient(10);
+    {
+        // 0xD3
+        // Brief : Shift Packed Data Right Logical
+        m_opCodeTable2[0xD3].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSRLQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD4
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD4].InsertVarient(0);
+    {
+        // 0xD4
+        // Brief : Add Packed Quadword Integers
+        m_opCodeTable2[0xD4].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD4].InsertVarient(10);
+    {
+        // 0xD4
+        // Brief : Add Packed Quadword Integers
+        m_opCodeTable2[0xD4].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD5
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD5].InsertVarient(0);
+    {
+        // 0xD5
+        // Brief : Multiply Packed Signed Integers and Store Low Result
+        m_opCodeTable2[0xD5].m_pVarients[0x00]->Init(
+            /*szName         = */"PMULLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD5].InsertVarient(10);
+    {
+        // 0xD5
+        // Brief : Multiply Packed Signed Integers and Store Low Result
+        m_opCodeTable2[0xD5].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMULLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD6
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD6].InsertVarient(10);
+    {
+        // 0xD6
+        // Brief : Move Quadword
+        m_opCodeTable2[0xD6].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD6].InsertVarient(3);
+    {
+        // 0xD6
+        // Brief : Move Quadword from MMX Technology to XMM Register
+        m_opCodeTable2[0xD6].m_pVarients[0x03]->Init(
+            /*szName         = */"MOVQ2DQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD6].InsertVarient(2);
+    {
+        // 0xD6
+        // Brief : Move Quadword from XMM to MMX Technology Register
+        m_opCodeTable2[0xD6].m_pVarients[0x02]->Init(
+            /*szName         = */"MOVDQ2Q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD7
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD7].InsertVarient(0);
+    {
+        // 0xD7
+        // Brief : Move Byte Mask
+        m_opCodeTable2[0xD7].m_pVarients[0x00]->Init(
+            /*szName         = */"PMOVMSKB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD7].InsertVarient(10);
+    {
+        // 0xD7
+        // Brief : Move Byte Mask
+        m_opCodeTable2[0xD7].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMOVMSKB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD8
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD8].InsertVarient(0);
+    {
+        // 0xD8
+        // Brief : Subtract Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xD8].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBUSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD8].InsertVarient(10);
+    {
+        // 0xD8
+        // Brief : Subtract Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xD8].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBUSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xD9
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xD9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xD9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xD9].InsertVarient(0);
+    {
+        // 0xD9
+        // Brief : Subtract Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xD9].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBUSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xD9].InsertVarient(10);
+    {
+        // 0xD9
+        // Brief : Subtract Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xD9].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBUSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xDA
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xDA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xDA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xDA].InsertVarient(0);
+    {
+        // 0xDA
+        // Brief : Minimum of Packed Unsigned Byte Integers
+        m_opCodeTable2[0xDA].m_pVarients[0x00]->Init(
+            /*szName         = */"PMINUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xDA].InsertVarient(10);
+    {
+        // 0xDA
+        // Brief : Minimum of Packed Unsigned Byte Integers
+        m_opCodeTable2[0xDA].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMINUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xDB
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xDB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xDB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xDB].InsertVarient(0);
+    {
+        // 0xDB
+        // Brief : Logical AND
+        m_opCodeTable2[0xDB].m_pVarients[0x00]->Init(
+            /*szName         = */"PAND",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xDB].InsertVarient(10);
+    {
+        // 0xDB
+        // Brief : Logical AND
+        m_opCodeTable2[0xDB].m_pVarients[0x0A]->Init(
+            /*szName         = */"PAND",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xDC
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xDC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xDC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xDC].InsertVarient(0);
+    {
+        // 0xDC
+        // Brief : Add Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xDC].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDUSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xDC].InsertVarient(10);
+    {
+        // 0xDC
+        // Brief : Add Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xDC].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDUSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xDD
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xDD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xDD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xDD].InsertVarient(0);
+    {
+        // 0xDD
+        // Brief : Add Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xDD].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDUSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDD,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xDD].InsertVarient(10);
+    {
+        // 0xDD
+        // Brief : Add Packed Unsigned Integers with Unsigned Saturation
+        m_opCodeTable2[0xDD].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDUSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDD,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xDE
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xDE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xDE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xDE].InsertVarient(0);
+    {
+        // 0xDE
+        // Brief : Maximum of Packed Unsigned Byte Integers
+        m_opCodeTable2[0xDE].m_pVarients[0x00]->Init(
+            /*szName         = */"PMAXUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDE,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xDE].InsertVarient(10);
+    {
+        // 0xDE
+        // Brief : Maximum of Packed Unsigned Byte Integers
+        m_opCodeTable2[0xDE].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMAXUB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDE,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xDF
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xDF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xDF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xDF].InsertVarient(0);
+    {
+        // 0xDF
+        // Brief : Logical AND NOT
+        m_opCodeTable2[0xDF].m_pVarients[0x00]->Init(
+            /*szName         = */"PANDN",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDF,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xDF].InsertVarient(10);
+    {
+        // 0xDF
+        // Brief : Logical AND NOT
+        m_opCodeTable2[0xDF].m_pVarients[0x0A]->Init(
+            /*szName         = */"PANDN",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDF,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE0].InsertVarient(0);
+    {
+        // 0xE0
+        // Brief : Average Packed Integers
+        m_opCodeTable2[0xE0].m_pVarients[0x00]->Init(
+            /*szName         = */"PAVGB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE0].InsertVarient(10);
+    {
+        // 0xE0
+        // Brief : Average Packed Integers
+        m_opCodeTable2[0xE0].m_pVarients[0x0A]->Init(
+            /*szName         = */"PAVGB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE1].InsertVarient(0);
+    {
+        // 0xE1
+        // Brief : Shift Packed Data Right Arithmetic
+        m_opCodeTable2[0xE1].m_pVarients[0x00]->Init(
+            /*szName         = */"PSRAW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE1].InsertVarient(10);
+    {
+        // 0xE1
+        // Brief : Shift Packed Data Right Arithmetic
+        m_opCodeTable2[0xE1].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSRAW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE2
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE2].InsertVarient(0);
+    {
+        // 0xE2
+        // Brief : Shift Packed Data Right Arithmetic
+        m_opCodeTable2[0xE2].m_pVarients[0x00]->Init(
+            /*szName         = */"PSRAD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE2].InsertVarient(10);
+    {
+        // 0xE2
+        // Brief : Shift Packed Data Right Arithmetic
+        m_opCodeTable2[0xE2].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSRAD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE3
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE3].InsertVarient(0);
+    {
+        // 0xE3
+        // Brief : Average Packed Integers
+        m_opCodeTable2[0xE3].m_pVarients[0x00]->Init(
+            /*szName         = */"PAVGW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE3].InsertVarient(10);
+    {
+        // 0xE3
+        // Brief : Average Packed Integers
+        m_opCodeTable2[0xE3].m_pVarients[0x0A]->Init(
+            /*szName         = */"PAVGW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE4
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE4].InsertVarient(0);
+    {
+        // 0xE4
+        // Brief : Multiply Packed Unsigned Integers and Store High Result
+        m_opCodeTable2[0xE4].m_pVarients[0x00]->Init(
+            /*szName         = */"PMULHUW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE4].InsertVarient(10);
+    {
+        // 0xE4
+        // Brief : Multiply Packed Unsigned Integers and Store High Result
+        m_opCodeTable2[0xE4].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMULHUW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE5
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE5].InsertVarient(0);
+    {
+        // 0xE5
+        // Brief : Multiply Packed Signed Integers and Store High Result
+        m_opCodeTable2[0xE5].m_pVarients[0x00]->Init(
+            /*szName         = */"PMULHW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE5].InsertVarient(10);
+    {
+        // 0xE5
+        // Brief : Multiply Packed Signed Integers and Store High Result
+        m_opCodeTable2[0xE5].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMULHW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE6
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE6].InsertVarient(2);
+    {
+        // 0xE6
+        // Brief : Convert Packed Double-FP Values to DW Integers
+        m_opCodeTable2[0xE6].m_pVarients[0x02]->Init(
+            /*szName         = */"CVTPD2DQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE6].InsertVarient(10);
+    {
+        // 0xE6
+        // Brief : Convert with Trunc. Packed Double-FP Values to DW Integers
+        m_opCodeTable2[0xE6].m_pVarients[0x0A]->Init(
+            /*szName         = */"CVTTPD2DQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE6].InsertVarient(3);
+    {
+        // 0xE6
+        // Brief : Convert Packed DW Integers to Double-FP Values
+        m_opCodeTable2[0xE6].m_pVarients[0x03]->Init(
+            /*szName         = */"CVTDQ2PD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE7
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE7].InsertVarient(0);
+    {
+        // 0xE7
+        // Brief : Store of Quadword Using Non-Temporal Hint
+        m_opCodeTable2[0xE7].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVNTQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE7].InsertVarient(10);
+    {
+        // 0xE7
+        // Brief : Store Double Quadword Using Non-Temporal Hint
+        m_opCodeTable2[0xE7].m_pVarients[0x0A]->Init(
+            /*szName         = */"MOVNTDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE8
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE8].InsertVarient(0);
+    {
+        // 0xE8
+        // Brief : Subtract Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xE8].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE8].InsertVarient(10);
+    {
+        // 0xE8
+        // Brief : Subtract Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xE8].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xE9
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xE9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xE9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xE9].InsertVarient(0);
+    {
+        // 0xE9
+        // Brief : Subtract Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xE9].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xE9].InsertVarient(10);
+    {
+        // 0xE9
+        // Brief : Subtract Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xE9].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xEA
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xEA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xEA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xEA].InsertVarient(0);
+    {
+        // 0xEA
+        // Brief : Minimum of Packed Signed Word Integers
+        m_opCodeTable2[0xEA].m_pVarients[0x00]->Init(
+            /*szName         = */"PMINSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xEA].InsertVarient(10);
+    {
+        // 0xEA
+        // Brief : Minimum of Packed Signed Word Integers
+        m_opCodeTable2[0xEA].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMINSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xEB
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xEB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xEB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xEB].InsertVarient(0);
+    {
+        // 0xEB
+        // Brief : Bitwise Logical OR
+        m_opCodeTable2[0xEB].m_pVarients[0x00]->Init(
+            /*szName         = */"POR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xEB].InsertVarient(10);
+    {
+        // 0xEB
+        // Brief : Bitwise Logical OR
+        m_opCodeTable2[0xEB].m_pVarients[0x0A]->Init(
+            /*szName         = */"POR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xEC
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xEC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xEC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xEC].InsertVarient(0);
+    {
+        // 0xEC
+        // Brief : Add Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xEC].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xEC].InsertVarient(10);
+    {
+        // 0xEC
+        // Brief : Add Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xEC].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xED
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xED].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xED,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xED].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xED].InsertVarient(0);
+    {
+        // 0xED
+        // Brief : Add Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xED].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xED,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xED].InsertVarient(10);
+    {
+        // 0xED
+        // Brief : Add Packed Signed Integers with Signed Saturation
+        m_opCodeTable2[0xED].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xED,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xEE
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xEE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xEE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xEE].InsertVarient(0);
+    {
+        // 0xEE
+        // Brief : Maximum of Packed Signed Word Integers
+        m_opCodeTable2[0xEE].m_pVarients[0x00]->Init(
+            /*szName         = */"PMAXSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEE,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xEE].InsertVarient(10);
+    {
+        // 0xEE
+        // Brief : Maximum of Packed Signed Word Integers
+        m_opCodeTable2[0xEE].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMAXSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEE,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xEF
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xEF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xEF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xEF].InsertVarient(0);
+    {
+        // 0xEF
+        // Brief : Logical Exclusive OR
+        m_opCodeTable2[0xEF].m_pVarients[0x00]->Init(
+            /*szName         = */"PXOR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEF,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xEF].InsertVarient(10);
+    {
+        // 0xEF
+        // Brief : Logical Exclusive OR
+        m_opCodeTable2[0xEF].m_pVarients[0x0A]->Init(
+            /*szName         = */"PXOR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEF,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF0].InsertVarient(2);
+    {
+        // 0xF0
+        // Brief : Load Unaligned Integer 128 Bits
+        m_opCodeTable2[0xF0].m_pVarients[0x02]->Init(
+            /*szName         = */"LDDQU",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF1].InsertVarient(0);
+    {
+        // 0xF1
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0xF1].m_pVarients[0x00]->Init(
+            /*szName         = */"PSLLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF1].InsertVarient(10);
+    {
+        // 0xF1
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0xF1].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSLLW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF2
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF2].InsertVarient(0);
+    {
+        // 0xF2
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0xF2].m_pVarients[0x00]->Init(
+            /*szName         = */"PSLLD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF2].InsertVarient(10);
+    {
+        // 0xF2
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0xF2].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSLLD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF3
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF3].InsertVarient(0);
+    {
+        // 0xF3
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0xF3].m_pVarients[0x00]->Init(
+            /*szName         = */"PSLLQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF3].InsertVarient(10);
+    {
+        // 0xF3
+        // Brief : Shift Packed Data Left Logical
+        m_opCodeTable2[0xF3].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSLLQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF4
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF4].InsertVarient(0);
+    {
+        // 0xF4
+        // Brief : Multiply Packed Unsigned DW Integers
+        m_opCodeTable2[0xF4].m_pVarients[0x00]->Init(
+            /*szName         = */"PMULUDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF4].InsertVarient(10);
+    {
+        // 0xF4
+        // Brief : Multiply Packed Unsigned DW Integers
+        m_opCodeTable2[0xF4].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMULUDQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF5
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF5].InsertVarient(0);
+    {
+        // 0xF5
+        // Brief : Multiply and Add Packed Integers
+        m_opCodeTable2[0xF5].m_pVarients[0x00]->Init(
+            /*szName         = */"PMADDWD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF5].InsertVarient(10);
+    {
+        // 0xF5
+        // Brief : Multiply and Add Packed Integers
+        m_opCodeTable2[0xF5].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMADDWD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF6
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF6].InsertVarient(0);
+    {
+        // 0xF6
+        // Brief : Compute Sum of Absolute Differences
+        m_opCodeTable2[0xF6].m_pVarients[0x00]->Init(
+            /*szName         = */"PSADBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF6].InsertVarient(10);
+    {
+        // 0xF6
+        // Brief : Compute Sum of Absolute Differences
+        m_opCodeTable2[0xF6].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSADBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF7
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF7].InsertVarient(0);
+    {
+        // 0xF7
+        // Brief : Store Selected Bytes of Quadword
+        m_opCodeTable2[0xF7].m_pVarients[0x00]->Init(
+            /*szName         = */"MASKMOVQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF7].InsertVarient(10);
+    {
+        // 0xF7
+        // Brief : Store Selected Bytes of Double Quadword
+        m_opCodeTable2[0xF7].m_pVarients[0x0A]->Init(
+            /*szName         = */"MASKMOVDQU",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF8
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF8].InsertVarient(0);
+    {
+        // 0xF8
+        // Brief : Subtract Packed Integers
+        m_opCodeTable2[0xF8].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF8].InsertVarient(10);
+    {
+        // 0xF8
+        // Brief : Subtract Packed Integers
+        m_opCodeTable2[0xF8].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF9
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xF9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xF9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xF9].InsertVarient(0);
+    {
+        // 0xF9
+        // Brief : Subtract Packed Integers
+        m_opCodeTable2[0xF9].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xF9].InsertVarient(10);
+    {
+        // 0xF9
+        // Brief : Subtract Packed Integers
+        m_opCodeTable2[0xF9].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xFA
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xFA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xFA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xFA].InsertVarient(0);
+    {
+        // 0xFA
+        // Brief : Subtract Packed Integers
+        m_opCodeTable2[0xFA].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xFA].InsertVarient(10);
+    {
+        // 0xFA
+        // Brief : Subtract Packed Integers
+        m_opCodeTable2[0xFA].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xFB
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xFB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xFB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xFB].InsertVarient(0);
+    {
+        // 0xFB
+        // Brief : Subtract Packed Quadword Integers
+        m_opCodeTable2[0xFB].m_pVarients[0x00]->Init(
+            /*szName         = */"PSUBQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xFB].InsertVarient(10);
+    {
+        // 0xFB
+        // Brief : Subtract Packed Quadword Integers
+        m_opCodeTable2[0xFB].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSUBQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xFC
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xFC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xFC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xFC].InsertVarient(0);
+    {
+        // 0xFC
+        // Brief : Add Packed Integers
+        m_opCodeTable2[0xFC].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xFC].InsertVarient(10);
+    {
+        // 0xFC
+        // Brief : Add Packed Integers
+        m_opCodeTable2[0xFC].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xFD
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xFD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xFD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xFD].InsertVarient(0);
+    {
+        // 0xFD
+        // Brief : Add Packed Integers
+        m_opCodeTable2[0xFD].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFD,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xFD].InsertVarient(10);
+    {
+        // 0xFD
+        // Brief : Add Packed Integers
+        m_opCodeTable2[0xFD].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFD,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xFE
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable2[0xFE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xFE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable2[0xFE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable2[0xFE].InsertVarient(0);
+    {
+        // 0xFE
+        // Brief : Add Packed Integers
+        m_opCodeTable2[0xFE].m_pVarients[0x00]->Init(
+            /*szName         = */"PADDD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFE,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable2[0xFE].InsertVarient(10);
+    {
+        // 0xFE
+        // Brief : Add Packed Integers
+        m_opCodeTable2[0xFE].m_pVarients[0x0A]->Init(
+            /*szName         = */"PADDD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFE,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
 
 }
 
@@ -10389,6 +20192,4060 @@ void Tables_t::InitTwoByteOpCodeTable()
 ///////////////////////////////////////////////////////////////////////////
 void Tables_t::InitThreeByteOpCodeTable_38()
 {
+    // 0x0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x00].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x00].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x00].InsertVarient(0);
+    {
+        // 0x0
+        // Brief : Packed Shuffle Bytes
+        m_opCodeTable3_38[0x00].m_pVarients[0x00]->Init(
+            /*szName         = */"PSHUFB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x00].InsertVarient(10);
+    {
+        // 0x0
+        // Brief : Packed Shuffle Bytes
+        m_opCodeTable3_38[0x00].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSHUFB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x01].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x01].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x01].InsertVarient(0);
+    {
+        // 0x1
+        // Brief : Packed Horizontal Add
+        m_opCodeTable3_38[0x01].m_pVarients[0x00]->Init(
+            /*szName         = */"PHADDW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x01].InsertVarient(10);
+    {
+        // 0x1
+        // Brief : Packed Horizontal Add
+        m_opCodeTable3_38[0x01].m_pVarients[0x0A]->Init(
+            /*szName         = */"PHADDW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x2
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x02].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x02].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x02].InsertVarient(0);
+    {
+        // 0x2
+        // Brief : Packed Horizontal Add
+        m_opCodeTable3_38[0x02].m_pVarients[0x00]->Init(
+            /*szName         = */"PHADDD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x02].InsertVarient(10);
+    {
+        // 0x2
+        // Brief : Packed Horizontal Add
+        m_opCodeTable3_38[0x02].m_pVarients[0x0A]->Init(
+            /*szName         = */"PHADDD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x3
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x03].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x03].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x03].InsertVarient(0);
+    {
+        // 0x3
+        // Brief : Packed Horizontal Add and Saturate
+        m_opCodeTable3_38[0x03].m_pVarients[0x00]->Init(
+            /*szName         = */"PHADDSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x03].InsertVarient(10);
+    {
+        // 0x3
+        // Brief : Packed Horizontal Add and Saturate
+        m_opCodeTable3_38[0x03].m_pVarients[0x0A]->Init(
+            /*szName         = */"PHADDSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x4
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x04].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x04].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x04].InsertVarient(0);
+    {
+        // 0x4
+        // Brief : Multiply and Add Packed Signed and Unsigned Bytes
+        m_opCodeTable3_38[0x04].m_pVarients[0x00]->Init(
+            /*szName         = */"PMADDUBSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x04].InsertVarient(10);
+    {
+        // 0x4
+        // Brief : Multiply and Add Packed Signed and Unsigned Bytes
+        m_opCodeTable3_38[0x04].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMADDUBSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x5
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x05].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x05].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x05].InsertVarient(0);
+    {
+        // 0x5
+        // Brief : Packed Horizontal Subtract
+        m_opCodeTable3_38[0x05].m_pVarients[0x00]->Init(
+            /*szName         = */"PHSUBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x05].InsertVarient(10);
+    {
+        // 0x5
+        // Brief : Packed Horizontal Subtract
+        m_opCodeTable3_38[0x05].m_pVarients[0x0A]->Init(
+            /*szName         = */"PHSUBW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x6
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x06].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x06].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x06].InsertVarient(0);
+    {
+        // 0x6
+        // Brief : Packed Horizontal Subtract
+        m_opCodeTable3_38[0x06].m_pVarients[0x00]->Init(
+            /*szName         = */"PHSUBD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x06].InsertVarient(10);
+    {
+        // 0x6
+        // Brief : Packed Horizontal Subtract
+        m_opCodeTable3_38[0x06].m_pVarients[0x0A]->Init(
+            /*szName         = */"PHSUBD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x7
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x07].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x07].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x07].InsertVarient(0);
+    {
+        // 0x7
+        // Brief : Packed Horizontal Subtract and Saturate
+        m_opCodeTable3_38[0x07].m_pVarients[0x00]->Init(
+            /*szName         = */"PHSUBSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x07].InsertVarient(10);
+    {
+        // 0x7
+        // Brief : Packed Horizontal Subtract and Saturate
+        m_opCodeTable3_38[0x07].m_pVarients[0x0A]->Init(
+            /*szName         = */"PHSUBSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x8
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x08].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x08].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x08].InsertVarient(0);
+    {
+        // 0x8
+        // Brief : Packed SIGN
+        m_opCodeTable3_38[0x08].m_pVarients[0x00]->Init(
+            /*szName         = */"PSIGNB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x08].InsertVarient(10);
+    {
+        // 0x8
+        // Brief : Packed SIGN
+        m_opCodeTable3_38[0x08].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSIGNB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x8,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x9
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x09].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x09].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x09].InsertVarient(0);
+    {
+        // 0x9
+        // Brief : Packed SIGN
+        m_opCodeTable3_38[0x09].m_pVarients[0x00]->Init(
+            /*szName         = */"PSIGNW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x09].InsertVarient(10);
+    {
+        // 0x9
+        // Brief : Packed SIGN
+        m_opCodeTable3_38[0x09].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSIGNW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xA
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x0A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x0A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x0A].InsertVarient(0);
+    {
+        // 0xA
+        // Brief : Packed SIGN
+        m_opCodeTable3_38[0x0A].m_pVarients[0x00]->Init(
+            /*szName         = */"PSIGND",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x0A].InsertVarient(10);
+    {
+        // 0xA
+        // Brief : Packed SIGN
+        m_opCodeTable3_38[0x0A].m_pVarients[0x0A]->Init(
+            /*szName         = */"PSIGND",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xB
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x0B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x0B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x0B].InsertVarient(0);
+    {
+        // 0xB
+        // Brief : Packed Multiply High with Round and Scale
+        m_opCodeTable3_38[0x0B].m_pVarients[0x00]->Init(
+            /*szName         = */"PMULHRSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x0B].InsertVarient(10);
+    {
+        // 0xB
+        // Brief : Packed Multiply High with Round and Scale
+        m_opCodeTable3_38[0x0B].m_pVarients[0x0A]->Init(
+            /*szName         = */"PMULHRSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xC
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x10
+    // Brief : Variable Blend Packed Bytes
+    m_opCodeTable3_38[0x10].Init(
+        /*szName         = */"PBLENDVB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x10,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x11
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x11].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x11,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x12
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x12].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x12,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x13
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x13].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x13,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x14
+    // Brief : Variable Blend Packed Single-FP Values
+    m_opCodeTable3_38[0x14].Init(
+        /*szName         = */"BLENDVPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x14,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x15
+    // Brief : Variable Blend Packed Double-FP Values
+    m_opCodeTable3_38[0x15].Init(
+        /*szName         = */"BLENDVPD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x15,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x16
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x16].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x16,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x17
+    // Brief : Logical Compare
+    m_opCodeTable3_38[0x17].Init(
+        /*szName         = */"PTEST",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x17,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x18
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x18].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x18,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x19
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x19].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x19,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x1A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x1B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1C
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x1C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x1C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x1C].InsertVarient(0);
+    {
+        // 0x1C
+        // Brief : Packed Absolute Value
+        m_opCodeTable3_38[0x1C].m_pVarients[0x00]->Init(
+            /*szName         = */"PABSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x1C].InsertVarient(10);
+    {
+        // 0x1C
+        // Brief : Packed Absolute Value
+        m_opCodeTable3_38[0x1C].m_pVarients[0x0A]->Init(
+            /*szName         = */"PABSB",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x1D
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x1D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x1D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x1D].InsertVarient(0);
+    {
+        // 0x1D
+        // Brief : Packed Absolute Value
+        m_opCodeTable3_38[0x1D].m_pVarients[0x00]->Init(
+            /*szName         = */"PABSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x1D].InsertVarient(10);
+    {
+        // 0x1D
+        // Brief : Packed Absolute Value
+        m_opCodeTable3_38[0x1D].m_pVarients[0x0A]->Init(
+            /*szName         = */"PABSW",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x1E
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x1E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x1E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x1E].InsertVarient(0);
+    {
+        // 0x1E
+        // Brief : Packed Absolute Value
+        m_opCodeTable3_38[0x1E].m_pVarients[0x00]->Init(
+            /*szName         = */"PABSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x1E].InsertVarient(10);
+    {
+        // 0x1E
+        // Brief : Packed Absolute Value
+        m_opCodeTable3_38[0x1E].m_pVarients[0x0A]->Init(
+            /*szName         = */"PABSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x1F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x1F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x20
+    // Brief : Packed Move with Sign Extend
+    m_opCodeTable3_38[0x20].Init(
+        /*szName         = */"PMOVSXBW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x20,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x21
+    // Brief : Packed Move with Sign Extend
+    m_opCodeTable3_38[0x21].Init(
+        /*szName         = */"PMOVSXBD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x21,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x22
+    // Brief : Packed Move with Sign Extend
+    m_opCodeTable3_38[0x22].Init(
+        /*szName         = */"PMOVSXBQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x22,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x23
+    // Brief : Packed Move with Sign Extend
+    m_opCodeTable3_38[0x23].Init(
+        /*szName         = */"PMOVSXWD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x23,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x24
+    // Brief : Packed Move with Sign Extend
+    m_opCodeTable3_38[0x24].Init(
+        /*szName         = */"PMOVSXWQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x24,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x25
+    // Brief : Packed Move with Sign Extend
+    m_opCodeTable3_38[0x25].Init(
+        /*szName         = */"PMOVSXDQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x25,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x26
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x26].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x26,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x27
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x27].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x27,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x28
+    // Brief : Multiply Packed Signed Dword Integers
+    m_opCodeTable3_38[0x28].Init(
+        /*szName         = */"PMULDQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x28,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x29
+    // Brief : Compare Packed Qword Data for Equal
+    m_opCodeTable3_38[0x29].Init(
+        /*szName         = */"PCMPEQQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x29,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2A
+    // Brief : Load Double Quadword Non-Temporal Aligned Hint
+    m_opCodeTable3_38[0x2A].Init(
+        /*szName         = */"MOVNTDQA",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2A,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2B
+    // Brief : Pack with Unsigned Saturation
+    m_opCodeTable3_38[0x2B].Init(
+        /*szName         = */"PACKUSDW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2B,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x2C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x2D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x2E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x2F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x30
+    // Brief : Packed Move with Zero Extend
+    m_opCodeTable3_38[0x30].Init(
+        /*szName         = */"PMOVZXBW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x30,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x31
+    // Brief : Packed Move with Zero Extend
+    m_opCodeTable3_38[0x31].Init(
+        /*szName         = */"PMOVZXBD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x31,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x32
+    // Brief : Packed Move with Zero Extend
+    m_opCodeTable3_38[0x32].Init(
+        /*szName         = */"PMOVZXBQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x32,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x33
+    // Brief : Packed Move with Zero Extend
+    m_opCodeTable3_38[0x33].Init(
+        /*szName         = */"PMOVZXWD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x33,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x34
+    // Brief : Packed Move with Zero Extend
+    m_opCodeTable3_38[0x34].Init(
+        /*szName         = */"PMOVZXWQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x34,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x35
+    // Brief : Packed Move with Zero Extend
+    m_opCodeTable3_38[0x35].Init(
+        /*szName         = */"PMOVZXDQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x35,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x36
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x36].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x36,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x37
+    // Brief : Compare Packed Qword Data for Greater Than
+    m_opCodeTable3_38[0x37].Init(
+        /*szName         = */"PCMPGTQ",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x37,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x38
+    // Brief : Minimum of Packed Signed Byte Integers
+    m_opCodeTable3_38[0x38].Init(
+        /*szName         = */"PMINSB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x38,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x39
+    // Brief : Minimum of Packed Signed Dword Integers
+    m_opCodeTable3_38[0x39].Init(
+        /*szName         = */"PMINSD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x39,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3A
+    // Brief : Minimum of Packed Unsigned Word Integers
+    m_opCodeTable3_38[0x3A].Init(
+        /*szName         = */"PMINUW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3A,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3B
+    // Brief : Minimum of Packed Unsigned Dword Integers
+    m_opCodeTable3_38[0x3B].Init(
+        /*szName         = */"PMINUD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3B,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3C
+    // Brief : Maximum of Packed Signed Byte Integers
+    m_opCodeTable3_38[0x3C].Init(
+        /*szName         = */"PMAXSB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3C,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3D
+    // Brief : Maximum of Packed Signed Dword Integers
+    m_opCodeTable3_38[0x3D].Init(
+        /*szName         = */"PMAXSD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3D,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3E
+    // Brief : Maximum of Packed Unsigned Word Integers
+    m_opCodeTable3_38[0x3E].Init(
+        /*szName         = */"PMAXUW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3E,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3F
+    // Brief : Maximum of Packed Unsigned Dword Integers
+    m_opCodeTable3_38[0x3F].Init(
+        /*szName         = */"PMAXUD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3F,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x40
+    // Brief : Multiply Packed Signed Dword Integers and Store Low Result
+    m_opCodeTable3_38[0x40].Init(
+        /*szName         = */"PMULLD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x40,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x41
+    // Brief : Packed Horizontal Word Minimum
+    m_opCodeTable3_38[0x41].Init(
+        /*szName         = */"PHMINPOSUW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x41,
+        /*nOperands      = */2,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x42
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x42].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x42,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x43
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x43].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x43,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x44
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x44].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x44,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x45
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x45].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x45,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x46
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x46].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x46,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x47
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x47].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x47,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x48
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x48].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x48,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x49
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x49].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x49,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x4A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x4B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x4C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x4D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x4E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x4F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x50
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x50].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x50,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x51
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x51].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x51,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x52
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x52].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x52,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x53
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x53].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x53,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x54
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x54].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x54,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x55
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x55].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x55,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x56
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x56].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x56,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x57
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x57].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x57,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x58
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x58].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x58,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x59
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x59].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x59,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x5A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x5B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x5C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x5D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x5E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x5F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x60
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x60].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x60,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x61
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x61].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x61,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x62
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x62].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x62,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x63
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x63].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x63,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x64
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x64].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x64,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x65
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x65].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x65,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x66
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x66].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x66,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x67
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x67].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x67,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x68
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x68].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x68,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x69
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x69].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x69,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x6A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x6B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x6C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x6D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x6E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x6F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x70
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x70].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x70,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x71
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x71].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x71,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x72
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x72].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x72,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x73
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x73].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x73,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x74
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x74].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x74,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x75
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x75].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x75,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x76
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x76].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x76,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x77
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x77].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x77,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x78
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x78].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x78,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x79
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x79].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x79,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x7A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x7B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x7C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x7D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x7E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x7F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x80
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x80].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x80,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x80].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x80].InsertVarient(10);
+    {
+        // 0x80
+        // Brief : Invalidate Translations Derived from EPT
+        m_opCodeTable3_38[0x80].m_pVarients[0x0A]->Init(
+            /*szName         = */"INVEPT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x80].InsertVarient(10);
+    {
+        // 0x80
+        // Brief : Invalidate Translations Derived from EPT
+        m_opCodeTable3_38[0x80].m_pVarients[0x0A]->Init(
+            /*szName         = */"INVEPT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x80,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x81
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0x81].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x81,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0x81].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0x81].InsertVarient(10);
+    {
+        // 0x81
+        // Brief : Invalidate Translations Based on VPID
+        m_opCodeTable3_38[0x81].m_pVarients[0x0A]->Init(
+            /*szName         = */"INVVPID",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0x81].InsertVarient(10);
+    {
+        // 0x81
+        // Brief : Invalidate Translations Based on VPID
+        m_opCodeTable3_38[0x81].m_pVarients[0x0A]->Init(
+            /*szName         = */"INVVPID",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x81,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x82
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x82].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x82,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x83
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x83].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x83,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x84
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x84].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x84,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x85
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x85].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x85,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x86
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x86].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x86,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x87
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x87].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x87,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x88
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x88].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x88,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x89
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x89].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x89,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x8A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x8B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x8C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x8D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x8E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x8F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x90
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x90].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x90,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x91
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x91].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x91,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x92
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x92].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x92,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x93
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x93].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x93,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x94
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x94].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x94,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x95
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x95].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x95,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x96
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x96].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x96,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x97
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x97].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x97,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x98
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x98].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x98,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x99
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x99].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x99,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x9A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x9B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x9C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x9D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x9E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x9F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0x9F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA0
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA1
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA2
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA3
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA8
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xA9
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xA9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAA
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xAA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAB
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xAB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAC
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xAC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAD
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xAD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xAE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xAF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xAF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB0
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB1
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB2
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB3
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB8
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xB9
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xB9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBA
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xBA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBB
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xBB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBC
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xBC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBD
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xBD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xBE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xBF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xBF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC0
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC1
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC2
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC3
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC8
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xC9
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xC9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCA
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xCA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCB
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xCB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCC
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xCC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCD
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xCD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xCE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xCF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xCF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD0
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD1
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD2
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD3
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD8
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xD9
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xD9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xDA
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xDA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xDB
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xDB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xDC
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xDC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xDD
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xDD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xDE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xDE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xDF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xDF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE0
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE1
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE2
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE3
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE8
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xE9
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xE9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xEA
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xEA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xEB
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xEB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xEC
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xEC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xED
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xED].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xED,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xEE
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xEE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xEF
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_38[0xEF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0xF0
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0xF0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0xF0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0xF0].InsertVarient(0);
+    {
+        // 0xF0
+        // Brief : Move Data After Swapping Bytes
+        m_opCodeTable3_38[0xF0].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVBE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_m, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0xF0].InsertVarient(2);
+    {
+        // 0xF0
+        // Brief : Accumulate CRC32 Value
+        m_opCodeTable3_38[0xF0].m_pVarients[0x02]->Init(
+            /*szName         = */"CRC32",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0xF1
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_38[0xF1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_38[0xF1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_38[0xF1].InsertVarient(0);
+    {
+        // 0xF1
+        // Brief : Move Data After Swapping Bytes
+        m_opCodeTable3_38[0xF1].m_pVarients[0x00]->Init(
+            /*szName         = */"MOVBE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_m, OperandType_16_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_38[0xF1].InsertVarient(2);
+    {
+        // 0xF1
+        // Brief : Accumulate CRC32 Value
+        m_opCodeTable3_38[0xF1].m_pVarients[0x02]->Init(
+            /*szName         = */"CRC32",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand3       = */Operand_t(),
+            /*operand4       = */Operand_t());
+    }
+
+
 }
 
 
@@ -10396,4 +24253,1545 @@ void Tables_t::InitThreeByteOpCodeTable_38()
 ///////////////////////////////////////////////////////////////////////////
 void Tables_t::InitThreeByteOpCodeTable_3A()
 {
+    // 0x0
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x6
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x7
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x8
+    // Brief : Round Packed Single-FP Values
+    m_opCodeTable3_3A[0x08].Init(
+        /*szName         = */"ROUNDPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x9
+    // Brief : Round Packed Double-FP Values
+    m_opCodeTable3_3A[0x09].Init(
+        /*szName         = */"ROUNDPD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xA
+    // Brief : Round Scalar Single-FP Values
+    m_opCodeTable3_3A[0x0A].Init(
+        /*szName         = */"ROUNDSS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xB
+    // Brief : Round Scalar Double-FP Values
+    m_opCodeTable3_3A[0x0B].Init(
+        /*szName         = */"ROUNDSD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xC
+    // Brief : Blend Packed Single-FP Values
+    m_opCodeTable3_3A[0x0C].Init(
+        /*szName         = */"BLENDPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xD
+    // Brief : Blend Packed Double-FP Values
+    m_opCodeTable3_3A[0x0D].Init(
+        /*szName         = */"BLENDPD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xE
+    // Brief : Blend Packed Words
+    m_opCodeTable3_3A[0x0E].Init(
+        /*szName         = */"PBLENDW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0xF
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_3A[0x0F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_3A[0x0F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_3A[0x0F].InsertVarient(0);
+    {
+        // 0xF
+        // Brief : Packed Align Right
+        m_opCodeTable3_3A[0x0F].m_pVarients[0x00]->Init(
+            /*szName         = */"PALIGNR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_3A[0x0F].InsertVarient(10);
+    {
+        // 0xF
+        // Brief : Packed Align Right
+        m_opCodeTable3_3A[0x0F].m_pVarients[0x0A]->Init(
+            /*szName         = */"PALIGNR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x10
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x10].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x10,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x11
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x11].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x11,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x12
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x12].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x12,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x13
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x13].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x13,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x14
+    // Brief : Extract Byte
+    m_opCodeTable3_3A[0x14].Init(
+        /*szName         = */"PEXTRB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x14,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x15
+    // Brief : Extract Word
+    m_opCodeTable3_3A[0x15].Init(
+        /*szName         = */"PEXTRW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x15,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x16
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_3A[0x16].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x16,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_3A[0x16].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_3A[0x16].InsertVarient(10);
+    {
+        // 0x16
+        // Brief : Extract Dword
+        m_opCodeTable3_3A[0x16].m_pVarients[0x0A]->Init(
+            /*szName         = */"PEXTRD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_3A[0x16].InsertVarient(10);
+    {
+        // 0x16
+        // Brief : Extract Qword
+        m_opCodeTable3_3A[0x16].m_pVarients[0x0A]->Init(
+            /*szName         = */"PEXTRQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
+            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x17
+    // Brief : Extract Packed Single-FP Value
+    m_opCodeTable3_3A[0x17].Init(
+        /*szName         = */"EXTRACTPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x17,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
+        /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x18
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x18].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x18,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x19
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x19].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x19,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x1A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x1B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x1C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x1D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x1E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x1F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x1F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x20
+    // Brief : Insert Byte
+    m_opCodeTable3_3A[0x20].Init(
+        /*szName         = */"PINSRB",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x20,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_8 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x21
+    // Brief : Insert Packed Single-FP Value
+    m_opCodeTable3_3A[0x21].Init(
+        /*szName         = */"INSERTPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x21,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x22
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_3A[0x22].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x22,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_3A[0x22].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_3A[0x22].InsertVarient(10);
+    {
+        // 0x22
+        // Brief : Insert Dword
+        m_opCodeTable3_3A[0x22].m_pVarients[0x0A]->Init(
+            /*szName         = */"PINSRD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x22,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_3A[0x22].InsertVarient(10);
+    {
+        // 0x22
+        // Brief : Insert Qword
+        m_opCodeTable3_3A[0x22].m_pVarients[0x0A]->Init(
+            /*szName         = */"PINSRQ",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x22,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_rm, OperandType_64 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+    // 0x23
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x23].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x23,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x24
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x24].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x24,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x25
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x25].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x25,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x26
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x26].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x26,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x27
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x27].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x27,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x28
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x28].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x28,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x29
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x29].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x29,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x2A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x2B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x2C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x2D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x2E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x2F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x2F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x30
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x30].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x30,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x31
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x31].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x31,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x32
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x32].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x32,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x33
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x33].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x33,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x34
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x34].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x34,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x35
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x35].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x35,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x36
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x36].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x36,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x37
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x37].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x37,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x38
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x38].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x38,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x39
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x39].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x39,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x3A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x3B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x3C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x3D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x3E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x3F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x3F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x40
+    // Brief : Dot Product of Packed Single-FP Values
+    m_opCodeTable3_3A[0x40].Init(
+        /*szName         = */"DPPS",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x40,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x41
+    // Brief : Dot Product of Packed Double-FP Values
+    m_opCodeTable3_3A[0x41].Init(
+        /*szName         = */"DPPD",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x41,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x42
+    // Brief : Compute Multiple Packed Sums of Absolute Difference
+    m_opCodeTable3_3A[0x42].Init(
+        /*szName         = */"MPSADBW",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x42,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x43
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x43].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x43,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x44
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x44].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x44,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x45
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x45].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x45,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x46
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x46].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x46,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x47
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x47].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x47,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x48
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x48].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x48,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x49
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x49].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x49,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x4A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x4B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x4C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x4D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x4E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x4F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x4F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x50
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x50].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x50,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x51
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x51].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x51,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x52
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x52].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x52,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x53
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x53].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x53,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x54
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x54].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x54,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x55
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x55].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x55,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x56
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x56].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x56,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x57
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x57].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x57,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x58
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x58].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x58,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x59
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x59].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x59,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5A
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x5A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5B
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x5B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5C
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x5C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5D
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x5D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5E
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x5E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x5F
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x5F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x60
+    // Brief : Packed Compare Explicit Length Strings, Return Mask
+    m_opCodeTable3_3A[0x60].Init(
+        /*szName         = */"PCMPESTRM",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x60,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x61
+    // Brief : Packed Compare Explicit Length Strings, Return Index
+    m_opCodeTable3_3A[0x61].Init(
+        /*szName         = */"PCMPESTRI",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x61,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand4       = */Operand_t());
+
+    // 0x62
+    //? Brief : Invalid instruction in 64-bit mode.
+    m_opCodeTable3_3A[0x62].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x62,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    // 0x63
+    // Brief : Invalid Instruction in 64-Bit Mode
+    m_opCodeTable3_3A[0x63].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x63,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t(),
+        /*operand2       = */Operand_t(),
+        /*operand3       = */Operand_t(),
+        /*operand4       = */Operand_t());
+
+    m_opCodeTable3_3A[0x63].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+
+    m_opCodeTable3_3A[0x63].InsertVarient(10);
+    {
+        // 0x63
+        // Brief : Packed Compare Implicit Length Strings, Return Mask
+        m_opCodeTable3_3A[0x63].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPISTRM",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x63,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+    m_opCodeTable3_3A[0x63].InsertVarient(10);
+    {
+        // 0x63
+        // Brief : Packed Compare Implicit Length Strings, Return Index
+        m_opCodeTable3_3A[0x63].m_pVarients[0x0A]->Init(
+            /*szName         = */"PCMPISTRI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x63,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand4       = */Operand_t());
+    }
+
+
 }

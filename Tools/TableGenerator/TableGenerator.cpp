@@ -68,27 +68,27 @@ std::unordered_map<std::string, std::string> g_mapAddressingModeLinker =
 std::unordered_map<std::string, std::string> g_mapOperandTypeLinker = 
 {
     {"a", "16or32_twice"},
-    {"b", "8"}, {"bcd", "80dec"}, {"bs", "8"}, {"bsq", "!"}, {"bss", "8"},
-    {"c", "!"},
+    {"b", "8"}, {"bcd", "80dec"}, {"bs", "8"}, {"bsq", "Invalid"}, {"bss", "8"},
+    {"c", "Invalid"},
     {"d", "32"}, {"di", "32int"}, {"dqp", "32_64"}, {"ds", "32"},
     {"dq", "128"},
     {"dr", "64real"}, // No equivalent in intel's manual.
     {"e", "14_28"}, {"er", "80real"}, // Not equivalent in intel's manual.
     {"p", "p"}, 
     {"pi", "64mmx"}, 
-    {"pd", "!"}, 
+    {"pd", "Invalid"}, 
     {"ps", "128pf"},
     {"psq", "64"},
-    {"pt", "!"},
+    {"pt", "Invalid"},
     {"ptp", "ptp"},
     {"q", "64"},
     {"qi", "64int"},
     {"qp", "64"},
     // Note : Nothing seems to be connecting to the qq operandtype ( 256 bits ).
-    {"s", "!"}, {"sd", "!"}, {"si", "!"},
-    {"ss", "!"},
+    {"s", "Invalid"}, {"sd", "Invalid"}, {"si", "Invalid"},
+    {"ss", "Invalid"},
     {"sr", "32real"}, {"st", "94_108"}, {"stx", "512"},
-    {"t", "!"},
+    {"t", "Invalid"},
     {"v", "16_32"}, {"vds", "16_32"}, {"vs", "16_32"}, {"vqp", "16_32_64"},
     {"vq", "64_16"},
     {"w", "16"}, {"wi", "16int"}
@@ -341,7 +341,7 @@ int main(void)
 
     // Two byte opcodes...
     std::vector<Entry_t*> vecTwoByteOpCodes;
-    if (false)
+    if (true)
     {
         vecTwoByteOpCodes.reserve(0xFF); vecTwoByteOpCodes.clear();
         CollectEntires(pRootElem->FirstChildElement("two-byte"), vecTwoByteOpCodes, 2);
@@ -350,7 +350,7 @@ int main(void)
 
     // Three Byte OpCodes...
     std::vector<Entry_t*> vecThreeByteOpCodes38, vecThreeByteOpCodes3A;
-    if (false)
+    if (true)
     {
         vecThreeByteOpCodes38.reserve(65); vecThreeByteOpCodes3A.reserve(40);
         CollectThreeByteOpCodeEntries(pRootElem->FirstChildElement("two-byte"), vecThreeByteOpCodes38, 0x38);
@@ -366,10 +366,10 @@ int main(void)
     }
 
     
-    DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); DumpEntryInfo(vecOneByteOpCodes);
-    // DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); // DumpEntryInfo(vecTwoByteOpCodes);
-    // DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes38);
-    // DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n"); // DumpEntryInfo(vecThreeByteOpCodes3A);
+    // DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); DumpEntryInfo(vecOneByteOpCodes);
+    // DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); DumpEntryInfo(vecTwoByteOpCodes);
+    // DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n");  DumpEntryInfo(vecThreeByteOpCodes38);
+    DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n");  DumpEntryInfo(vecThreeByteOpCodes3A);
 
 
     hFile.close();
@@ -1609,6 +1609,14 @@ void CollectThreeByteOpCodeEntries(XMLElement* pRoot, std::vector<Entry_t*>& vec
                     vecElements.size(), 0x0F, iParentIndex, s_iLastByte);
                 
 
+                Byte iEffectiveByte = s_iLastByte;
+                if (pEntry->NextSiblingElement("entry") == nullptr)
+                {
+                    iEffectiveByte = iByte;
+                    vecElements.push_back(pEntry);
+                }
+
+
                 // Single element? store as it is. No branching.
                 if (vecElements.size() == 1llu)
                 {
@@ -1616,7 +1624,7 @@ void CollectThreeByteOpCodeEntries(XMLElement* pRoot, std::vector<Entry_t*>& vec
                     Entry_t* pOpCode = new Entry_t();
                     pOpCode->m_iVarientKey = Entry_t::VarientKey_None;
 
-                    ElementToEntry(pElement, pOpCode, iByte, false, false, false);
+                    ElementToEntry(pElement, pOpCode, iEffectiveByte, false, false, false);
 
                     vecOutput.push_back(pOpCode);
                 }
@@ -1626,13 +1634,13 @@ void CollectThreeByteOpCodeEntries(XMLElement* pRoot, std::vector<Entry_t*>& vec
 
                     for (XMLElement* pElem : vecElements)
                     {
-                        XMLElement* pElement   = vecElements.front();
                         Entry_t* pOpCode       = new Entry_t();
                         pOpCode->m_iVarientKey = Entry_t::VarientKey_None;
 
-                        ElementToEntry(pElement, pOpCode, iByte, true, false, false);
+                        ElementToEntry(pElem, pOpCode, iEffectiveByte, true, false, false);
 
                         pHead->m_iVarientKey = Entry_t::VarientKey_LegacyPrefix;
+                        pHead->m_iByte       = iEffectiveByte;
                         pHead->m_vecVarients.push_back(pOpCode);
                     }
 
@@ -1725,6 +1733,8 @@ static inline void PrintInvalidEntry(Byte iByte, const char* szGroupName, std::o
 std::unordered_map<std::string, std::string> g_mapRegisterToType =
 {
     { "ST", "Register_t( Register_t::RegisterClass_FPU, -1, 64 )" },
+    { "FS", "Register_t( Register_t::RegisterClass_Segment, 4, 16 )" },
+    { "GS", "Register_t( Register_t::RegisterClass_Segment, 5, 16 )" },
 
     // ======================
     // 64-bit
