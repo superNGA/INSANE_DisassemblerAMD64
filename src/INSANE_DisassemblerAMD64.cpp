@@ -71,7 +71,7 @@ static inline void PrintInstBytes(const std::vector<ParsedInst_t>& vecInput)
 
         if (inst.m_bHasModRM == true)
         {
-            printf("0x%02X ", inst.m_modrm);
+            printf("0x%02X ", inst.m_modrm.Get());
         }
         else
         {
@@ -82,7 +82,7 @@ static inline void PrintInstBytes(const std::vector<ParsedInst_t>& vecInput)
 
         if (inst.m_bHasSIB == true)
         {
-            printf("0x%02X ", inst.m_iSIB);
+            printf("0x%02X ", inst.m_SIB.Get());
         }
         else
         {
@@ -142,7 +142,7 @@ IDASMErrorCode_t InsaneDASM64::Initialize()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput)
+IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>& vecInput, std::vector<std::string>& vecOutput)
 {
     vecOutput.clear();
 
@@ -150,7 +150,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Byte>& vecInput, st
     // Parse input...
     std::vector<ParsedInst_t> vecParsedInst; vecParsedInst.clear();
 
-    IDASMErrorCode_t iParserErrorCode = Parse(vecInput, vecParsedInst); /* Delete this */ PrintInstBytes(vecParsedInst);
+    IDASMErrorCode_t iParserErrorCode = Decode(vecInput, vecParsedInst); /* Delete this */ PrintInstBytes(vecParsedInst);
     if (iParserErrorCode != IDASMErrorCode_Success)
         return iParserErrorCode;
 
@@ -160,10 +160,10 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Byte>& vecInput, st
         return IDASMErrorCode_t::IDASMErrorCode_Success;
 
 
-    // Decode...
-    IDASMErrorCode_t iDecodeErrorCode = Decode(vecParsedInst, vecOutput);
-    if (iDecodeErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
-        return iDecodeErrorCode;
+    // Disassemble decoded instruction.
+    IDASMErrorCode_t iDASMErrorCode = Disassemble(vecParsedInst, vecOutput);
+    if (iDASMErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+        return iDASMErrorCode;
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -172,7 +172,15 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Byte>& vecInput, st
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vector<ParsedInst_t>& vecOutput)
+IDASMErrorCode_t Disassemble(const std::vector<ParsedInst_t>& vecInput, std::vector<std::string>& vecOutput)
+{
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::vector<ParsedInst_t>& vecOutput)
 {
     assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
 
@@ -233,7 +241,7 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
                 {
                     inst.m_bHasREX   = true;
                     inst.m_iREX      = iCurByte;
-                    inst.m_iREXIndex = iREXIndex;
+                    inst.m_iREXIndex = static_cast<int32_t>(iREXIndex);
                     iByteIndex       = iREXIndex;
 
                     break;
@@ -256,7 +264,8 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
 
 
                 // NOTE : Last byte / escape byte is only used for 3 byte opcodes. so 0x00 is fine for first 2 iterations...
-                OpCodeDesc_t* pOpCodeTable = G::g_tables.GetOpCodeTable(iOpCodeIndex - iByteIndex + 1llu, iLastByte);
+                int iTableIndex = static_cast<int>(iOpCodeIndex - iByteIndex + 1llu);
+                OpCodeDesc_t* pOpCodeTable = G::g_tables.GetOpCodeTable(iTableIndex, iLastByte);
                 if (pOpCodeTable == nullptr)
                 {
                     printf("nullptr table\n");
@@ -330,7 +339,7 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
 
 
                 inst.m_bHasSIB = true;
-                inst.m_iSIB    = vecInput[iByteIndex];
+                inst.m_SIB.Store(vecInput[iByteIndex]);
                 iByteIndex++;
             }
 
@@ -350,7 +359,7 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
                 {
                     iDisplacementSize = 4;
                 }
-                else if (iMod == 0b00 && (inst.m_iSIB & 0b111) == 0b101) // base == 101 ?
+                else if (iMod == 0b00 && inst.m_SIB.BaseValue() == 0b101) // base == 101 ?
                 {
                     iDisplacementSize = 4;
                 }
@@ -452,14 +461,6 @@ IDASMErrorCode_t InsaneDASM64::Parse(const std::vector<Byte>& vecInput, std::vec
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<ParsedInst_t>& vecParsedInput, std::vector<Instruction_t>& vecOutput)
-{
-    return IDASMErrorCode_t::IDASMErrorCode_Success;
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
 const char* InsaneDASM64::GetErrorMessage(IDASMErrorCode_t iErrorCode)
 {
     switch (iErrorCode)
@@ -480,7 +481,7 @@ const char* InsaneDASM64::GetErrorMessage(IDASMErrorCode_t iErrorCode)
     }
 
     static char s_invalidCodeBuffer[128] = "";
-    sprintf(s_invalidCodeBuffer, "[ Insane Disassembler AMD64 ] Invalid Error Code { %d }", iErrorCode);
+    sprintf_s(s_invalidCodeBuffer, "[ Insane Disassembler AMD64 ] Invalid Error Code { %d }", iErrorCode);
     return s_invalidCodeBuffer;
 }
 
@@ -810,7 +811,6 @@ void ParsedInst_t::Clear()
     m_bHasModRM  = false;
 
     m_bHasSIB    = false;
-    m_iSIB       = 0x00;
 
     m_displacement.Clear();
     m_immediate.Clear();
@@ -875,4 +875,28 @@ uint64_t ModRM_t::RegValue() const
 uint64_t ModRM_t::RMValue() const
 {
     return Maths::SafeAnd(m_modrm, Masks::MODRM_RM);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+uint64_t SIB_t::ScaleValue() const
+{
+    return Maths::SafeAnd(m_SIB, Masks::SIB_SCALE) >> 6;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+uint64_t SIB_t::IndexValue() const
+{
+    return Maths::SafeAnd(m_SIB, Masks::SIB_INDEX) >> 3;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+uint64_t SIB_t::BaseValue() const
+{
+    return Maths::SafeAnd(m_SIB, Masks::SIB_BASE);
 }

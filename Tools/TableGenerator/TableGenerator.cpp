@@ -1,11 +1,50 @@
-// TODO Document this bullshit.
-// BY : INSANE december of 2025
+//=========================================================================
+//                      Legacy Encoding Table Gen for MazeGen's .xml
+//=========================================================================
+// by      : INSANE
+// created : 18/12/2025
+// 
+// purpose : To generate tables ( for a specific format ) using MazeGen's .xml
+//-------------------------------------------------------------------------
 
 
-//x TODO: Store Bytes in each entry.
-//x TODO: Don't print invalid entries.
-//x TODO 0x0f 0x01 ain't getting registerd / printed.
-// TODO level1 explicit nomem fix
+/*
+ReadMe :
+
+Dependencies : 
+    MazeGen's .xml file ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml )
+    TinyXml2 ( https://github.com/leethomason/tinyxml2 )
+
+
+Output Structure :
+    The output will be generated in a tree like structure, Each node is represented by a "Entry_t" struct.
+    Each "Entry_t" node can either be a child node ( represented by m_iVarientKey == VarientKey_None )
+    or it can be split further down depending ( in which case it acts as a parent ) either one of the 
+    following things and m_iVarientKey is set accordingly.
+    ModRM.Mod, ModRM.Reg, ModRM.RM or LegacyPrefix.
+
+    The operand addressing methods are converted to "Coder's edition" http://ref.x86asm.net/ because they 
+    appear to be simpler and more fitting to my use ( no they are fucking not sufficient or fit for my use. They will cause ambiguity. 
+    Now I need to fix 25000 lines of tables and decoder. :[ ).
+    
+    Same with Operand Mode, according to "Coder's edition" of http://ref.x86asm.net/
+    
+    NOTE : Operand addressing mode and operand type, can be modified by changing the std::unordered_map below.
+
+
+How To Use : 
+    -> Acquire the mazegen's .xml file from ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml )
+    and update the path to the file in the main function.
+
+    -> Modify the output files names if you wish to.
+
+    -> Build and run. ( use C++ 20, or anything else that can support std::format )
+
+
+NOTE : 
+    This table gen is made to custom fit the mazegen's .xml, and dumps the output in a very specific format.
+    So to use it for other purposes, creative solutions maybe helpful.
+*/
 
 
 #include <unordered_map>

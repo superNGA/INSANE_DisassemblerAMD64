@@ -61,6 +61,10 @@ namespace InsaneDASM64::Masks
     constexpr size_t MODRM_MOD = 0b11000000llu;
     constexpr size_t MODRM_REG = 0b111000llu;
     constexpr size_t MODRM_RM  = 0b111llu;
+
+    constexpr size_t SIB_SCALE = 0b11000000llu;
+    constexpr size_t SIB_INDEX = 0b111000llu;
+    constexpr size_t SIB_BASE  = 0b111llu;
 }
 
 
@@ -163,8 +167,6 @@ namespace InsaneDASM64
         //      This is an enum holding all relevant operand addressing methods
         // according to the coder's edition mazegen's .xml ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml ), 
         // that is reference for this project.
-        // 
-        //      Geek's edition was giving me too much trouble.
         // 
 
 
@@ -366,6 +368,22 @@ namespace InsaneDASM64
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+    struct SIB_t
+    {
+        inline void Store(Byte SIB) { m_SIB = SIB; }
+        inline Byte Get() const { return m_SIB; }
+        
+        // Bits are shifted before returning. 
+        uint64_t ScaleValue() const;
+        uint64_t IndexValue() const;
+        uint64_t BaseValue() const;
+
+        Byte m_SIB = 0x00;
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     struct Instruction_t
     {
 
@@ -391,7 +409,7 @@ namespace InsaneDASM64
         ModRM_t        m_modrm;
 
         bool           m_bHasSIB   = false;
-        Byte           m_iSIB      = 0x00;
+        SIB_t          m_SIB;
 
         Displacement_t m_displacement;
         Immediate_t    m_immediate;
@@ -420,9 +438,9 @@ namespace InsaneDASM64
     // Functions...
     // NOTE : Each function will return 0 ( ErrorCode_Success ) on success, and a non-zero IDASMErrorCode_t on fail.
     IDASMErrorCode_t Initialize ();
-    IDASMErrorCode_t Disassemble(const std::vector<Byte>&         vecInput,       std::vector<Instruction_t>& vecOutput);
-    IDASMErrorCode_t Parse      (const std::vector<Byte>&         vecInput,       std::vector<ParsedInst_t>&  vecOutput);
-    IDASMErrorCode_t Decode     (const std::vector<ParsedInst_t>& vecParsedInput, std::vector<Instruction_t>& vecOutput);
+    IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>&         vecInput, std::vector<std::string>&  vecOutput);
+    IDASMErrorCode_t Disassemble         (const std::vector<ParsedInst_t>& vecInput, std::vector<std::string>&  vecOutput);
+    IDASMErrorCode_t Decode              (const std::vector<Byte>&         vecInput, std::vector<ParsedInst_t>& vecOutput);
     // TODO ToString function.
 
     const char* GetErrorMessage(IDASMErrorCode_t iErrorCode);
