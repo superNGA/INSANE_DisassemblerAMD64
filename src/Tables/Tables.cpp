@@ -355,8 +355,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x0,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -369,8 +369,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x1,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -383,8 +383,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x2,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -397,8 +397,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x3,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -412,7 +412,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x4,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -426,7 +426,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x5,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -467,8 +467,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x8,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -481,8 +481,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x9,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -495,8 +495,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xA,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -509,8 +509,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -524,7 +524,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xC,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -538,7 +538,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xD,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -579,8 +579,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x10,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -593,8 +593,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x11,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -607,8 +607,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x12,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -621,8 +621,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x13,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -636,7 +636,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x14,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -650,7 +650,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x15,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -691,8 +691,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x18,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -705,8 +705,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x19,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -719,8 +719,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x1A,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -733,8 +733,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x1B,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -748,7 +748,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x1C,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -762,7 +762,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x1D,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -803,8 +803,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x20,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -817,8 +817,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x21,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -831,8 +831,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x22,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -845,8 +845,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x23,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -860,7 +860,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x24,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -874,7 +874,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x25,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -915,8 +915,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x28,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -929,8 +929,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x29,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -943,8 +943,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x2A,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -957,8 +957,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x2B,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -972,7 +972,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x2C,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -986,7 +986,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x2D,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1027,8 +1027,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x30,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1041,8 +1041,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x31,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1055,8 +1055,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x32,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1069,8 +1069,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x33,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1084,7 +1084,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x34,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1098,7 +1098,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x35,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1139,8 +1139,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x38,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1153,8 +1153,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x39,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1167,8 +1167,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x3A,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1181,8 +1181,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x3B,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1196,7 +1196,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x3C,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1210,7 +1210,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0x3D,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1475,7 +1475,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x50,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1489,7 +1489,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x51,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1503,7 +1503,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x52,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1517,7 +1517,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x53,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1531,7 +1531,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x54,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1545,7 +1545,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x55,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1559,7 +1559,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x56,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1573,7 +1573,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x57,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1587,7 +1587,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x58,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1601,7 +1601,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x59,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1615,7 +1615,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x5A,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1629,7 +1629,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x5B,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1643,7 +1643,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x5C,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1657,7 +1657,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x5D,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1671,7 +1671,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x5E,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1685,7 +1685,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x5F,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64_16 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vq ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1741,8 +1741,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x63,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_d ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -1811,7 +1811,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x68,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_vs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1825,9 +1825,9 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x69,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand4       = */Operand_t());
 
     // 0x6A
@@ -1839,7 +1839,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x6A,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_bss ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1853,9 +1853,9 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x6B,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_bs ),
         /*operand4       = */Operand_t());
 
     // 0x6C
@@ -1923,7 +1923,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x70,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1937,7 +1937,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x71,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1951,7 +1951,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x72,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1965,7 +1965,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x73,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1979,7 +1979,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x74,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -1993,7 +1993,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x75,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2007,7 +2007,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x76,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2021,7 +2021,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x77,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2035,7 +2035,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x78,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2049,7 +2049,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x79,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2063,7 +2063,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x7A,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2077,7 +2077,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x7B,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2091,7 +2091,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x7C,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2105,7 +2105,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x7D,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2119,7 +2119,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x7E,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2133,7 +2133,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x7F,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -2165,8 +2165,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2181,8 +2181,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2197,8 +2197,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2213,8 +2213,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2229,8 +2229,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2245,8 +2245,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2261,8 +2261,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2277,8 +2277,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2310,8 +2310,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2326,8 +2326,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2342,8 +2342,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2358,8 +2358,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2374,8 +2374,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2390,8 +2390,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2406,8 +2406,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2422,8 +2422,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2469,8 +2469,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2485,8 +2485,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2501,8 +2501,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2517,8 +2517,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2533,8 +2533,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2549,8 +2549,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2565,8 +2565,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2581,8 +2581,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x83,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_bs ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -2596,8 +2596,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x84,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2610,8 +2610,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x85,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2624,8 +2624,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x86,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2638,8 +2638,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x87,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2652,8 +2652,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x88,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2666,8 +2666,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x89,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2680,8 +2680,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x8A,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2694,8 +2694,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x8B,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2708,8 +2708,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x8C,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
-        /*operand2       = */Operand_t( OperandMode_Sreg, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
+        /*operand2       = */Operand_t( OperandMode_S, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2722,8 +2722,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x8D,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_Invalid ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2736,8 +2736,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x8E,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_Sreg, OperandType_16 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_S, OperandType_w ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -2768,7 +2768,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x8F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64_16 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vq ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -3043,7 +3043,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xA0,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_moffs, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_O, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3057,7 +3057,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xA1,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_moffs, OperandType_16_32_64 ),
+        /*operand2       = */Operand_t( OperandMode_O, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3070,7 +3070,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xA2,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_moffs, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_O, OperandType_b ),
         /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -3084,7 +3084,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xA3,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_moffs, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_O, OperandType_vqp ),
         /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -3155,7 +3155,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xA8,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3169,7 +3169,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xA9,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 64 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3266,8 +3266,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB0,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3280,8 +3280,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB1,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3294,8 +3294,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB2,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3308,8 +3308,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB3,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3322,8 +3322,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB4,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3336,8 +3336,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB5,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3350,8 +3350,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB6,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3364,8 +3364,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB7,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3378,8 +3378,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB8,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3392,8 +3392,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xB9,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3406,8 +3406,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xBA,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3420,8 +3420,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xBB,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3434,8 +3434,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xBC,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3448,8 +3448,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xBD,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3462,8 +3462,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xBE,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3476,8 +3476,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xBF,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3508,8 +3508,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3524,8 +3524,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3540,8 +3540,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3556,8 +3556,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3572,8 +3572,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3588,8 +3588,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3604,8 +3604,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3620,8 +3620,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3653,8 +3653,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3669,8 +3669,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3685,8 +3685,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3701,8 +3701,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3717,8 +3717,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3733,8 +3733,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3749,8 +3749,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3765,8 +3765,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3780,7 +3780,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xC2,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_w ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -3854,8 +3854,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3887,8 +3887,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -3902,8 +3902,8 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xC8,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16 ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_w ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -3930,7 +3930,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCA,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_w ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -3972,7 +3972,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCD,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -4032,7 +4032,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4048,7 +4048,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4064,7 +4064,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4080,7 +4080,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4096,7 +4096,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4112,7 +4112,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4128,7 +4128,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4144,7 +4144,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4177,7 +4177,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4193,7 +4193,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4209,7 +4209,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4225,7 +4225,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4241,7 +4241,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4257,7 +4257,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4273,7 +4273,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4289,7 +4289,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( 1 ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4322,7 +4322,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4338,7 +4338,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4354,7 +4354,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4370,7 +4370,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4386,7 +4386,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4402,7 +4402,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4418,7 +4418,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4434,7 +4434,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4467,7 +4467,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4483,7 +4483,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4499,7 +4499,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4515,7 +4515,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4531,7 +4531,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4547,7 +4547,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4563,7 +4563,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4579,7 +4579,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -4689,7 +4689,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4705,7 +4705,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4743,7 +4743,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4759,7 +4759,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4797,7 +4797,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STim, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_ES, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4870,7 +4870,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STim, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_ES, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4943,7 +4943,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4959,7 +4959,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -4997,7 +4997,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5013,7 +5013,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5051,7 +5051,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5067,7 +5067,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5105,7 +5105,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5121,7 +5121,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD8,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5155,7 +5155,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD9,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_STim, OperandType_32real ),
+            /*operand1       = */Operand_t( OperandMode_ES, OperandType_sr ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -5192,7 +5192,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5265,7 +5265,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5338,7 +5338,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_sr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5354,7 +5354,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5392,7 +5392,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_14_28 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_e ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5513,7 +5513,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5682,7 +5682,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_14_28 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_e ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -5867,7 +5867,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xD9,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6069,7 +6069,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6086,7 +6086,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6123,7 +6123,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6140,7 +6140,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6177,7 +6177,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6194,7 +6194,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6231,7 +6231,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6248,7 +6248,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6264,7 +6264,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDA,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -6301,7 +6301,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6353,7 +6353,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDA,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -6369,7 +6369,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDA,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -6423,7 +6423,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6440,7 +6440,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6477,7 +6477,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6494,7 +6494,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6531,7 +6531,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6548,7 +6548,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6585,7 +6585,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_32int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_di ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6602,7 +6602,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6789,7 +6789,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_80real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_er ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6806,7 +6806,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -6823,7 +6823,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*iByte          = */0xDB,
             /*nOperands      = */2,
             /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-            /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+            /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -6838,7 +6838,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDB,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_80real ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_er ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -6892,7 +6892,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6908,7 +6908,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6946,7 +6946,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6962,7 +6962,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7000,7 +7000,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7016,7 +7016,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7054,7 +7054,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7070,7 +7070,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7108,7 +7108,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7124,7 +7124,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7162,7 +7162,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7178,7 +7178,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7216,7 +7216,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7232,7 +7232,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7270,7 +7270,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7286,7 +7286,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7341,7 +7341,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7357,7 +7357,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7395,7 +7395,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_qi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7411,7 +7411,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7449,7 +7449,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7465,7 +7465,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7503,7 +7503,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64real ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_dr ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7519,7 +7519,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7557,7 +7557,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_94_108 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_st ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7607,7 +7607,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDD,
                     /*nOperands      = */1,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t(),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7623,7 +7623,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDD,
                     /*nOperands      = */1,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t(),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7639,7 +7639,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDD,
                     /*nOperands      = */1,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t(),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7655,7 +7655,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDD,
                     /*nOperands      = */1,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t(),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7671,7 +7671,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDD,
                     /*nOperands      = */1,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t(),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7687,7 +7687,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDD,
                     /*nOperands      = */1,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t(),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7703,7 +7703,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDD,
                     /*nOperands      = */1,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t(),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7742,7 +7742,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDD,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7794,7 +7794,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDD,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_94_108 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_st ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -7810,7 +7810,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDD,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -7864,7 +7864,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7914,7 +7914,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7930,7 +7930,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7946,7 +7946,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7962,7 +7962,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7978,7 +7978,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -7994,7 +7994,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8010,7 +8010,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8049,7 +8049,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8099,7 +8099,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8115,7 +8115,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8131,7 +8131,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8147,7 +8147,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8163,7 +8163,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8179,7 +8179,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8195,7 +8195,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8234,7 +8234,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8250,7 +8250,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8288,7 +8288,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8361,7 +8361,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8411,7 +8411,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8427,7 +8427,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8443,7 +8443,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8459,7 +8459,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8475,7 +8475,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8491,7 +8491,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8507,7 +8507,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8546,7 +8546,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8596,7 +8596,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8612,7 +8612,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8628,7 +8628,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8644,7 +8644,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8660,7 +8660,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8676,7 +8676,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8692,7 +8692,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8731,7 +8731,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8781,7 +8781,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8797,7 +8797,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8813,7 +8813,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8829,7 +8829,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8845,7 +8845,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8861,7 +8861,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8877,7 +8877,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8916,7 +8916,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -8966,7 +8966,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8982,7 +8982,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -8998,7 +8998,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -9014,7 +9014,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -9030,7 +9030,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -9046,7 +9046,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -9062,7 +9062,7 @@ void Tables_t::InitOneByteOpCodeTable()
                     /*bModrmRequired = */true,
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
-                    /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                    /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                     /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
@@ -9118,7 +9118,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9134,7 +9134,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9172,7 +9172,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9188,7 +9188,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9226,7 +9226,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9242,7 +9242,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9280,7 +9280,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_wi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9296,7 +9296,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9334,7 +9334,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_80dec ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_bcd ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9423,7 +9423,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_64int ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_qi ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9440,7 +9440,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDF,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -9477,7 +9477,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_80dec ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_bcd ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -9494,7 +9494,7 @@ void Tables_t::InitOneByteOpCodeTable()
                 /*iByte          = */0xDF,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
-                /*operand2       = */Operand_t( OperandMode_STi, OperandType_Invalid ),
+                /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -9510,7 +9510,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64int ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_qi ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -9525,7 +9525,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE0,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9539,7 +9539,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE1,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9553,7 +9553,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE2,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9567,7 +9567,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE3,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9582,7 +9582,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xE4,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -9596,7 +9596,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*iByte          = */0xE5,
         /*nOperands      = */2,
         /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 32 ) ),
-        /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -9609,7 +9609,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE6,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 8 ) ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9623,7 +9623,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE7,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 0, 32 ) ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9637,7 +9637,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE8,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9651,7 +9651,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xE9,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9679,7 +9679,7 @@ void Tables_t::InitOneByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xEB,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_bs ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -9851,8 +9851,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -9867,8 +9867,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -9883,7 +9883,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -9899,7 +9899,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -9915,7 +9915,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -9931,7 +9931,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -9947,7 +9947,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -9963,7 +9963,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -9996,8 +9996,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -10012,8 +10012,8 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_vds ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -10028,7 +10028,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10044,7 +10044,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10060,7 +10060,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10076,7 +10076,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10092,7 +10092,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10108,7 +10108,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10225,7 +10225,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFE,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10241,7 +10241,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFE,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10274,7 +10274,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10290,7 +10290,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10306,7 +10306,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_q ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10322,7 +10322,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_ptp ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_ptp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10338,7 +10338,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_q ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10354,7 +10354,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_ptp ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_ptp ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10370,7 +10370,7 @@ void Tables_t::InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFF,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64_16 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vq ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10432,7 +10432,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x0,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10448,7 +10448,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x0,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10486,7 +10486,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x0,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10502,7 +10502,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x0,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10519,7 +10519,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x0,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_w ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10535,7 +10535,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x0,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_w ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10551,7 +10551,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x0,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_w ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10567,7 +10567,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x0,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_w ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10637,7 +10637,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x1,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_s ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10758,7 +10758,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x1,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_s ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10847,7 +10847,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x1,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_s ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10915,7 +10915,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_s ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -10952,7 +10952,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x1,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10968,7 +10968,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x1,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10985,7 +10985,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_w ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11022,7 +11022,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x1,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -11089,8 +11089,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x2,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -11103,8 +11103,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x3,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -11243,7 +11243,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xD,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -11303,8 +11303,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x10,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11319,8 +11319,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x10,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11335,8 +11335,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x10,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11351,8 +11351,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x10,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11384,8 +11384,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x11,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11400,8 +11400,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x11,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11416,8 +11416,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x11,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11432,8 +11432,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x11,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11486,8 +11486,8 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x12,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-                /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -11502,8 +11502,8 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x12,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-                /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_q ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -11519,8 +11519,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x12,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11535,8 +11535,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x12,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11551,8 +11551,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x12,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11584,8 +11584,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x13,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11600,8 +11600,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x13,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11633,8 +11633,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x14,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11649,8 +11649,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x14,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11682,8 +11682,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x15,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11698,8 +11698,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x15,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11752,8 +11752,8 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x16,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-                /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -11768,8 +11768,8 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0x16,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-                /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_q ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -11785,8 +11785,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x16,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11801,8 +11801,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x16,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11834,8 +11834,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x17,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11850,8 +11850,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x17,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -11883,7 +11883,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11899,7 +11899,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11915,7 +11915,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11931,7 +11931,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11947,7 +11947,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11963,7 +11963,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11979,7 +11979,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -11995,7 +11995,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x18,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12010,7 +12010,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x19,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -12024,7 +12024,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x1A,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -12038,7 +12038,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x1B,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -12052,7 +12052,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x1C,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -12066,7 +12066,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x1D,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -12080,7 +12080,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x1E,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -12112,7 +12112,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12128,7 +12128,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12144,7 +12144,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12160,7 +12160,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12176,7 +12176,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12192,7 +12192,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12208,7 +12208,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12224,7 +12224,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x1F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_v ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -12239,8 +12239,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x20,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
-        /*operand2       = */Operand_t( OperandMode_CRn, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_R, OperandType_q ),
+        /*operand2       = */Operand_t( OperandMode_C, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -12253,8 +12253,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x21,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
-        /*operand2       = */Operand_t( OperandMode_DRn, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_R, OperandType_q ),
+        /*operand2       = */Operand_t( OperandMode_D, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -12267,8 +12267,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x22,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_CRn, OperandType_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_C, OperandType_q ),
+        /*operand2       = */Operand_t( OperandMode_R, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -12281,8 +12281,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x23,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_DRn, OperandType_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_D, OperandType_q ),
+        /*operand2       = */Operand_t( OperandMode_R, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -12369,8 +12369,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x28,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12385,8 +12385,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x28,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12418,8 +12418,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x29,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12434,8 +12434,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x29,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12467,8 +12467,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64mmx ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_pi ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12483,8 +12483,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12499,8 +12499,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64mmx ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_pi ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12515,8 +12515,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12548,8 +12548,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2B,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12564,8 +12564,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2B,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12597,8 +12597,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_pi ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_psq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12613,8 +12613,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12629,8 +12629,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_pi ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12645,8 +12645,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12678,8 +12678,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_pi ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_psq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12694,8 +12694,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12710,8 +12710,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64mmx ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_pi ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12726,8 +12726,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12759,8 +12759,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12775,8 +12775,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12808,8 +12808,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -12824,8 +12824,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x2F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13063,8 +13063,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x40,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13077,8 +13077,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x41,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13091,8 +13091,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x42,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13105,8 +13105,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x43,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13119,8 +13119,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x44,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13133,8 +13133,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x45,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13147,8 +13147,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x46,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13161,8 +13161,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x47,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13175,8 +13175,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x48,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13189,8 +13189,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x49,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13203,8 +13203,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x4A,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13217,8 +13217,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x4B,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13231,8 +13231,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x4C,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13245,8 +13245,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x4D,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13259,8 +13259,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x4E,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13273,8 +13273,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x4F,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -13305,8 +13305,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x50,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13321,8 +13321,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x50,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13354,8 +13354,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x51,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13370,8 +13370,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x51,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13386,8 +13386,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x51,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13402,8 +13402,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x51,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13435,8 +13435,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x52,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13451,8 +13451,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x52,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13484,8 +13484,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x53,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13500,8 +13500,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x53,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13533,8 +13533,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x54,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13549,8 +13549,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x54,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13582,8 +13582,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x55,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13598,8 +13598,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x55,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13631,8 +13631,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x56,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13647,8 +13647,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x56,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13680,8 +13680,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x57,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13696,8 +13696,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x57,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13729,8 +13729,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x58,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13745,8 +13745,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x58,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13761,8 +13761,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x58,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13777,8 +13777,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x58,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13810,8 +13810,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x59,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13826,8 +13826,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x59,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13842,8 +13842,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x59,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13858,8 +13858,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x59,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13891,8 +13891,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13907,8 +13907,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13923,8 +13923,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13939,8 +13939,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13972,8 +13972,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5B,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -13988,8 +13988,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5B,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14004,8 +14004,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5B,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14037,8 +14037,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14053,8 +14053,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14069,8 +14069,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14085,8 +14085,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14118,8 +14118,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14134,8 +14134,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14150,8 +14150,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14166,8 +14166,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14199,8 +14199,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14215,8 +14215,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14231,8 +14231,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14247,8 +14247,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14280,8 +14280,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14296,8 +14296,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14312,8 +14312,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14328,8 +14328,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x5F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14361,8 +14361,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x60,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14377,8 +14377,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x60,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14410,8 +14410,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x61,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14426,8 +14426,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x61,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14459,8 +14459,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x62,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14475,8 +14475,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x62,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14508,8 +14508,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x63,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14524,8 +14524,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x63,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14557,8 +14557,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x64,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14573,8 +14573,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x64,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14606,8 +14606,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x65,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14622,8 +14622,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x65,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14655,8 +14655,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x66,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14671,8 +14671,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x66,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14704,8 +14704,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x67,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14720,8 +14720,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x67,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14753,8 +14753,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x68,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14769,8 +14769,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x68,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14802,8 +14802,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x69,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14818,8 +14818,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x69,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14851,8 +14851,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14867,8 +14867,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6A,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14900,8 +14900,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6B,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14916,8 +14916,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6B,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14949,8 +14949,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -14982,8 +14982,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15015,8 +15015,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15031,8 +15031,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_d ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15064,8 +15064,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15080,8 +15080,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15096,8 +15096,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x6F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15129,9 +15129,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x70,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0x70].InsertVarient(2);
@@ -15145,9 +15145,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x70,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0x70].InsertVarient(3);
@@ -15161,9 +15161,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x70,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0x70].InsertVarient(10);
@@ -15177,9 +15177,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x70,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -15210,8 +15210,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x71,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15226,8 +15226,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x71,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15242,8 +15242,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x71,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15275,8 +15275,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x72,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15291,8 +15291,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x72,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15307,8 +15307,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x72,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15340,8 +15340,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x73,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15356,8 +15356,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x73,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15372,8 +15372,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x73,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15388,8 +15388,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x73,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15421,8 +15421,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x74,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15437,8 +15437,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x74,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15470,8 +15470,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x75,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15486,8 +15486,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x75,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15519,8 +15519,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x76,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15535,8 +15535,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x76,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15564,8 +15564,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x78,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_q ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -15578,8 +15578,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0x79,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_q ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -15638,8 +15638,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15654,8 +15654,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15687,8 +15687,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15703,8 +15703,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15736,8 +15736,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
-            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_d ),
+            /*operand2       = */Operand_t( OperandMode_P, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15752,8 +15752,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_d ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15768,8 +15768,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15801,8 +15801,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_Q, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_P, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15817,8 +15817,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15833,8 +15833,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x7F,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -15848,7 +15848,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x80,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15862,7 +15862,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x81,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15876,7 +15876,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x82,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15890,7 +15890,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x83,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15904,7 +15904,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x84,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15918,7 +15918,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x85,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15932,7 +15932,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x86,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15946,7 +15946,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x87,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15960,7 +15960,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x88,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15974,7 +15974,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x89,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -15988,7 +15988,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x8A,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -16002,7 +16002,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x8B,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -16016,7 +16016,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x8C,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -16030,7 +16030,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x8D,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -16044,7 +16044,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x8E,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -16058,7 +16058,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0x8F,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_rel, OperandType_16_32 ),
+        /*operand1       = */Operand_t( OperandMode_J, OperandType_vds ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -16090,7 +16090,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x90,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16123,7 +16123,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x91,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16156,7 +16156,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x92,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16189,7 +16189,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x93,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16222,7 +16222,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x94,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16255,7 +16255,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x95,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16288,7 +16288,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x96,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16321,7 +16321,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x97,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16354,7 +16354,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x98,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16387,7 +16387,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x99,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16420,7 +16420,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x9A,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16453,7 +16453,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x9B,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16486,7 +16486,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x9C,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16519,7 +16519,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x9D,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16552,7 +16552,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x9E,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16585,7 +16585,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0x9F,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16642,8 +16642,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xA3,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -16656,9 +16656,9 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xA4,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xA5
@@ -16670,8 +16670,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xA5,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
         /*operand4       = */Operand_t());
 
@@ -16754,8 +16754,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xAB,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -16768,9 +16768,9 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xAC,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xAD
@@ -16782,8 +16782,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xAD,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t( Register_t( Register_t::RegisterClass_GPR, 1, 8 ) ),
         /*operand4       = */Operand_t());
 
@@ -16814,7 +16814,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xAE,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_512 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_stx ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16830,7 +16830,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xAE,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_512 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_stx ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16846,7 +16846,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xAE,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_d ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16862,7 +16862,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xAE,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_32 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_d ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16878,7 +16878,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xAE,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_Invalid ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -16915,7 +16915,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xAE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_Invalid ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_Invalid ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -16985,7 +16985,7 @@ void Tables_t::InitTwoByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xAE,
                 /*nOperands      = */1,
-                /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_b ),
                 /*operand2       = */Operand_t(),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -17017,8 +17017,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xAF,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17031,8 +17031,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB0,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17045,8 +17045,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB1,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17059,8 +17059,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB2,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_ptp ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_ptp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17073,8 +17073,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB3,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17087,8 +17087,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB4,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_ptp ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_ptp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17101,8 +17101,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB5,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_ptp ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_ptp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17115,8 +17115,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB6,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17129,8 +17129,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xB7,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17177,8 +17177,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xB8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17224,8 +17224,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17240,8 +17240,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17256,8 +17256,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17272,8 +17272,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17287,8 +17287,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xBB,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17319,8 +17319,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17335,8 +17335,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17368,8 +17368,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBD,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17384,8 +17384,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xBD,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17399,8 +17399,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xBE,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17413,8 +17413,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xBF,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_rm, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_E, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17427,8 +17427,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xC0,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_b ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17441,8 +17441,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xC1,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_vqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17473,9 +17473,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC2,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0xC2].InsertVarient(3);
@@ -17489,9 +17489,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC2,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0xC2].InsertVarient(10);
@@ -17505,9 +17505,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC2,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0xC2].InsertVarient(2);
@@ -17521,9 +17521,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC2,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -17536,8 +17536,8 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */true,
         /*iByte          = */0xC3,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_m, OperandType_32_64 ),
-        /*operand2       = */Operand_t( OperandMode_r, OperandType_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp ),
+        /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -17568,9 +17568,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC4,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_R, OperandType_dqp ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0xC4].InsertVarient(10);
@@ -17584,9 +17584,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC4,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_R, OperandType_dqp ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -17617,9 +17617,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC5,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_N, OperandType_q ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0xC5].InsertVarient(10);
@@ -17633,9 +17633,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC5,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -17666,9 +17666,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC6,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable2[0xC6].InsertVarient(10);
@@ -17682,9 +17682,9 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC6,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -17715,7 +17715,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -17731,7 +17731,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -17747,7 +17747,7 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xC7,
             /*nOperands      = */1,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
             /*operand2       = */Operand_t(),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -17762,7 +17762,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xC8,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17776,7 +17776,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xC9,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17790,7 +17790,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCA,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17804,7 +17804,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCB,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17818,7 +17818,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCC,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17832,7 +17832,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCD,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17846,7 +17846,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCE,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17860,7 +17860,7 @@ void Tables_t::InitTwoByteOpCodeTable()
         /*bModrmRequired = */false,
         /*iByte          = */0xCF,
         /*nOperands      = */1,
-        /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+        /*operand1       = */Operand_t( OperandMode_Z, OperandType_vqp ),
         /*operand2       = */Operand_t(),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
@@ -17892,8 +17892,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17908,8 +17908,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17941,8 +17941,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17957,8 +17957,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -17990,8 +17990,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18006,8 +18006,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18039,8 +18039,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18055,8 +18055,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18088,8 +18088,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18104,8 +18104,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18137,8 +18137,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18153,8 +18153,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18186,8 +18186,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmmm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18202,8 +18202,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_N, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18218,8 +18218,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18251,8 +18251,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_N, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18267,8 +18267,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18300,8 +18300,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18316,8 +18316,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18349,8 +18349,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18365,8 +18365,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xD9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18398,8 +18398,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18414,8 +18414,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18447,8 +18447,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18463,8 +18463,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18496,8 +18496,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18512,8 +18512,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18545,8 +18545,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDD,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18561,8 +18561,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDD,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18594,8 +18594,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDE,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18610,8 +18610,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDE,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18643,8 +18643,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDF,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18659,8 +18659,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDF,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18692,8 +18692,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18708,8 +18708,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18741,8 +18741,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18757,8 +18757,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18790,8 +18790,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18806,8 +18806,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18839,8 +18839,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18855,8 +18855,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18888,8 +18888,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18904,8 +18904,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18937,8 +18937,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18953,8 +18953,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -18986,8 +18986,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19002,8 +19002,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19018,8 +19018,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19051,8 +19051,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_P, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19067,8 +19067,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19100,8 +19100,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19116,8 +19116,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19149,8 +19149,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19165,8 +19165,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xE9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19198,8 +19198,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19214,8 +19214,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19247,8 +19247,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19263,8 +19263,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19296,8 +19296,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19312,8 +19312,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19345,8 +19345,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xED,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19361,8 +19361,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xED,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19394,8 +19394,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEE,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19410,8 +19410,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEE,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19443,8 +19443,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEF,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19459,8 +19459,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xEF,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19492,8 +19492,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19525,8 +19525,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19541,8 +19541,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19574,8 +19574,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19590,8 +19590,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19623,8 +19623,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19639,8 +19639,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19672,8 +19672,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19688,8 +19688,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19721,8 +19721,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19737,8 +19737,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19770,8 +19770,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19786,8 +19786,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19819,8 +19819,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mm, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_N, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19835,8 +19835,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19868,8 +19868,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19884,8 +19884,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19917,8 +19917,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19933,8 +19933,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xF9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19966,8 +19966,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -19982,8 +19982,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20015,8 +20015,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20031,8 +20031,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20064,8 +20064,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20080,8 +20080,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFC,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20113,8 +20113,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFD,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20129,8 +20129,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFD,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20162,8 +20162,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFE,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20178,8 +20178,8 @@ void Tables_t::InitTwoByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xFE,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20219,8 +20219,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20235,8 +20235,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20268,8 +20268,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20284,8 +20284,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20317,8 +20317,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20333,8 +20333,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x2,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20366,8 +20366,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20382,8 +20382,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x3,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20415,8 +20415,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20431,8 +20431,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x4,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20464,8 +20464,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20480,8 +20480,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x5,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20513,8 +20513,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20529,8 +20529,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x6,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20562,8 +20562,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20578,8 +20578,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x7,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20611,8 +20611,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20627,8 +20627,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x8,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20660,8 +20660,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20676,8 +20676,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x9,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20709,8 +20709,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20725,8 +20725,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xA,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20758,8 +20758,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20774,8 +20774,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -20845,8 +20845,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x10,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -20901,8 +20901,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x14,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -20915,8 +20915,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x15,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -20943,8 +20943,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x17,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21031,8 +21031,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -21047,8 +21047,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1C,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -21080,8 +21080,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -21096,8 +21096,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1D,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -21129,8 +21129,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -21145,8 +21145,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x1E,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -21174,8 +21174,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x20,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21188,8 +21188,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x21,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_d ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21202,8 +21202,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x22,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21216,8 +21216,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x23,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21230,8 +21230,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x24,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_d ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21244,8 +21244,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x25,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21286,8 +21286,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x28,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21300,8 +21300,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x29,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21314,8 +21314,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x2A,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21328,8 +21328,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x2B,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21398,8 +21398,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x30,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21412,8 +21412,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x31,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_d ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21426,8 +21426,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x32,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_16 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_w ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21440,8 +21440,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x33,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21454,8 +21454,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x34,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_d ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21468,8 +21468,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x35,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_64 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_q ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21496,8 +21496,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x37,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21510,8 +21510,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x38,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21524,8 +21524,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x39,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21538,8 +21538,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x3A,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21552,8 +21552,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x3B,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21566,8 +21566,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x3C,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21580,8 +21580,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x3D,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21594,8 +21594,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x3E,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21608,8 +21608,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x3F,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21622,8 +21622,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x40,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -21636,8 +21636,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
         /*bModrmRequired = */true,
         /*iByte          = */0x41,
         /*nOperands      = */2,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
         /*operand3       = */Operand_t(),
         /*operand4       = */Operand_t());
 
@@ -22536,8 +22536,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_d ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -22552,8 +22552,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x80,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -22585,8 +22585,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_d ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -22601,8 +22601,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0x81,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_128 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_dq ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -24174,8 +24174,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xF0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_m, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -24190,8 +24190,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xF0,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_b ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -24223,8 +24223,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xF1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_m, OperandType_16_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_r, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_vqp ),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -24239,8 +24239,8 @@ void Tables_t::InitThreeByteOpCodeTable_38()
             /*bModrmRequired = */true,
             /*iByte          = */0xF1,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( OperandMode_r, OperandType_32_64 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_16_32_64 ),
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_vqp ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
     }
@@ -24374,9 +24374,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x8,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x9
@@ -24388,9 +24388,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x9,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xA
@@ -24402,9 +24402,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0xA,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_ss ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_ss ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xB
@@ -24416,9 +24416,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0xB,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_sd ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_sd ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xC
@@ -24430,9 +24430,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0xC,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xD
@@ -24444,9 +24444,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0xD,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xE
@@ -24458,9 +24458,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0xE,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0xF
@@ -24490,9 +24490,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0xF,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_mm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_mmm64, OperandType_64 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_P, OperandType_q ),
+            /*operand2       = */Operand_t( OperandMode_Q, OperandType_q ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable3_3A[0x0F].InsertVarient(10);
@@ -24506,9 +24506,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0xF,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -24577,9 +24577,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x14,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_m, OperandType_8 ),
-        /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_M, OperandType_b ),
+        /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x15
@@ -24591,9 +24591,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x15,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_m, OperandType_16 ),
-        /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_M, OperandType_w ),
+        /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x16
@@ -24623,9 +24623,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0x16,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_d ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable3_3A[0x16].InsertVarient(10);
@@ -24639,9 +24639,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0x16,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_rm, OperandType_64 ),
-            /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_qp ),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -24654,9 +24654,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x17,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_rm, OperandType_32 ),
-        /*operand2       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_E, OperandType_d ),
+        /*operand2       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x18
@@ -24780,9 +24780,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x20,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_8 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_b ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x21
@@ -24794,9 +24794,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x21,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-        /*operand2       = */Operand_t( OperandMode_m, OperandType_32 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+        /*operand2       = */Operand_t( OperandMode_M, OperandType_d ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x22
@@ -24826,9 +24826,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0x22,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_32 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_d ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable3_3A[0x22].InsertVarient(10);
@@ -24842,9 +24842,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0x22,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_rm, OperandType_64 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_qp ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 
@@ -25263,9 +25263,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x40,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128pf ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128pf ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_ps ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_ps ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x41
@@ -25277,9 +25277,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x41,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_Invalid ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_Invalid ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_pd ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_pd ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x42
@@ -25291,9 +25291,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x42,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x43
@@ -25711,9 +25711,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x60,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x61
@@ -25725,9 +25725,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
         /*bModrmRequired = */true,
         /*iByte          = */0x61,
         /*nOperands      = */3,
-        /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-        /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-        /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+        /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+        /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+        /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
         /*operand4       = */Operand_t());
 
     // 0x62
@@ -25771,9 +25771,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0x63,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
     m_opCodeTable3_3A[0x63].InsertVarient(10);
@@ -25787,9 +25787,9 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*bModrmRequired = */true,
             /*iByte          = */0x63,
             /*nOperands      = */3,
-            /*operand1       = */Operand_t( OperandMode_xmm, OperandType_128 ),
-            /*operand2       = */Operand_t( OperandMode_xmmm, OperandType_128 ),
-            /*operand3       = */Operand_t( OperandMode_imm, OperandType_8 ),
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq ),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq ),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b ),
             /*operand4       = */Operand_t());
     }
 

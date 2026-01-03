@@ -8,7 +8,7 @@
 //-------------------------------------------------------------------------
 #pragma once
 #include <vector>
-
+#include <string>
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,8 @@ namespace InsaneDASM64::Rules
     constexpr size_t MAX_IMMEDIATE_BYTES    = 8llu;
     constexpr size_t MAX_INST_NAME_SIZE     = 0x10llu;
 
-    inline const char* OPCODE_NAME_SENTINAL = "xx_INVALID_xx";
+    inline const char* OPCODE_NAME_SENTINAL   = "xx_INVALID_xx";
+    inline const char* REGISTER_NAME_SENTINAL = "xx_INVALID_REG_xx";
 }
 
 
@@ -103,6 +104,8 @@ namespace InsaneDASM64
             m_iRegisterSize  = iRegisterSize;
         }
 
+        const char* ToString() const;
+
         RegisterClass_t m_iRegisterClass = RegisterClass_Invalid;
         int16_t         m_iRegisterIndex = -1;
         int16_t         m_iRegisterSize  = -1;
@@ -162,7 +165,51 @@ namespace InsaneDASM64
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    enum OperandMode_t : int16_t
+    enum OperandModes_t : int16_t // Geek's edition operand addressing methods.
+    {
+        //      This is an enum holding all operand addressing methods
+        // according to the Geek's edition mazegen's .xml ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml ), 
+        // that is reference for this project.
+        // 
+
+        OperandMode_Invalid = -1,
+        OperandMode_A,
+        OperandMode_BA,
+        OperandMode_BB,
+        OperandMode_BD,
+        OperandMode_C,
+        OperandMode_D,
+        OperandMode_E,
+        OperandMode_ES,
+        OperandMode_EST,
+        OperandMode_F,
+        OperandMode_G,
+        OperandMode_H,
+        OperandMode_I,
+        OperandMode_J,
+        OperandMode_M,
+        OperandMode_N,
+        OperandMode_O,
+        OperandMode_P,
+        OperandMode_Q,
+        OperandMode_R,
+        OperandMode_S,
+        OperandMode_SC,
+        OperandMode_T,
+        OperandMode_U,
+        OperandMode_V,
+        OperandMode_W,
+        OperandMode_X,
+        OperandMode_Y,
+        OperandMode_Z,
+
+        OperandMode_Count,
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    enum CEOperandModes_t : int16_t // Coder's edition operand addressing methods.
     {
         //      This is an enum holding all relevant operand addressing methods
         // according to the coder's edition mazegen's .xml ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml ), 
@@ -170,66 +217,122 @@ namespace InsaneDASM64
         // 
 
 
-        OperandMode_Invalid = -1,
-        OperandMode_ptr = 0,
-        OperandMode_CRn,
-        OperandMode_DRn,
-        OperandMode_rm,
-        OperandMode_STim,
-        OperandMode_STi,
-        OperandMode_r,
-        OperandMode_imm,
-        OperandMode_rel,
-        OperandMode_m,
-        OperandMode_mm,
-        OperandMode_moffs,
-        OperandMode_mmm64,
-        OperandMode_Sreg,
-        OperandMode_TRn,
-        OperandMode_xmm,
-        OperandMode_xmmm,
+        CEOperandMode_Invalid = -1,
+        CEOperandMode_ptr = 0, // [ GEEK : A          ]
+        CEOperandMode_CRn,     // [ GEEK : C          ]
+        CEOperandMode_DRn,     // [ GEEK : D          ]
+        CEOperandMode_rm,      // [ GEEK : E          ]
+        CEOperandMode_STim,    // [ GEEK : ES         ]
+        CEOperandMode_STi,     // [ GEEK : EST        ]
+        CEOperandMode_r,       // [ GEEK : G, H, R, Z ]
+        CEOperandMode_imm,     // [ GEEK : I          ]
+        CEOperandMode_rel,     // [ GEEK : J          ]
+        CEOperandMode_m,       // [ GEEK : M, X, Y, BA, BB, BD ]
+        CEOperandMode_mm,      // [ GEEK : N, P       ]
+        CEOperandMode_moffs,   // [ GEEK : O          ]
+        CEOperandMode_mmm64,   // [ GEEK : Q          ]
+        CEOperandMode_Sreg,    // [ GEEK : S          ]
+        CEOperandMode_TRn,     // [ GEEK : T          ]
+        CEOperandMode_xmm,     // [ GEEK : U, V       ]
+        CEOperandMode_xmmm,    // [ GEEK : W          ]
 
-        OperandMode_Count
+        CEOperandMode_Count
     };
 
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    enum OperandType_t : int16_t
+    enum OperandTypes_t : int16_t
+    {
+        // All different operand types from geek's edition of mazegen's .xml 
+        // ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml )
+        // 
+        // NOTE : Comment are copied from ref.x86asm.net
+        //
+
+        OperandType_Invalid = -1,
+        OperandType_a = 0, // NOTE : Two one-word operands in memory or two double-word operands in memory, depending on operand-size attribute
+        OperandType_b,     // NOTE : Byte, regardless of operand-size attribute.
+        OperandType_bcd,   // NOTE : Packed-BCD. Only x87 FPU instructions
+        OperandType_bs,    // NOTE : Byte, sign-extended to the size of the destination operand.
+        OperandType_bsq,   // NOTE : (Byte, sign-extended to 64 bits.)
+        OperandType_bss,   // NOTE : Byte, sign-extended to the size of the stack pointer
+        OperandType_c,     // NOTE : Byte or word, depending on operand-size attribute.
+        OperandType_d,     // NOTE : Doubleword, regardless of operand-size attribute.
+        OperandType_di,    // NOTE : Doubleword-integer. Only x87 FPU instructions
+        OperandType_dq,    // NOTE : Double-quadword, regardless of operand-size attribute
+        OperandType_dqp,   // NOTE : Doubleword, or quadword, promoted by REX.W in 64-bit mode
+        OperandType_dr,    // NOTE : Double-real. Only x87 FPU instructions
+        OperandType_ds,    // NOTE : Doubleword, sign-extended to 64 bits
+        OperandType_e,     // NOTE : x87 FPU environment
+        OperandType_er,    // NOTE : Extended-real. Only x87 FPU instructions
+        OperandType_p,     // NOTE : 32-bit or 48-bit pointer, depending on operand-size attribute
+        OperandType_pi,    // NOTE : Quadword MMX technology data.
+        OperandType_pd,    // NOTE : 128-bit packed double-precision floating-point data.
+        OperandType_ps,    // NOTE : 128-bit packed single-precision floating-point data.
+        OperandType_psq,   // NOTE : 64-bit packed single-precision floating-point data.
+        OperandType_pt,    // NOTE : (80-bit far pointer.)
+        OperandType_ptp,   // NOTE : 32-bit or 48-bit pointer, depending on operand-size attribute, or 80-bit far pointer, promoted by REX.W in 64-bit mode
+        OperandType_q,     // NOTE : Quadword, regardless of operand-size attribute
+        OperandType_qi,    // NOTE : Qword-integer. Only x87 FPU instructions
+        OperandType_qp,    // NOTE : Quadword, promoted by REX.W
+        OperandType_s,     // NOTE : 6-byte pseudo-descriptor, or 10-byte pseudo-descriptor in 64-bit mode
+        OperandType_sd,    // NOTE : Scalar element of a 128-bit packed double-precision floating data.
+        OperandType_si,    // NOTE : Doubleword integer register (e. g., eax).
+        OperandType_sr,    // NOTE : Single-real. Only x87 FPU instructions
+        OperandType_ss,    // NOTE : Scalar element of a 128-bit packed single-precision floating data.
+        OperandType_st,    // NOTE : x87 FPU state
+        OperandType_stx,   // NOTE : x87 FPU and SIMD state
+        OperandType_t,     // NOTE : 10-byte far pointer.
+        OperandType_v,     // NOTE : Word or doubleword, depending on operand-size attribute
+        OperandType_vds,   // NOTE : Word or doubleword, depending on operand-size attribute, or doubleword, sign-extended to 64 bits for 64-bit operand size.
+        OperandType_vq,    // NOTE : Quadword (default) or word if operand-size prefix is used
+        OperandType_vqp,   // NOTE : Word or doubleword, depending on operand-size attribute, or quadword, promoted by REX.W in 64-bit mode.
+        OperandType_vs,    // NOTE : Word or doubleword sign extended to the size of the stack pointer
+        OperandType_w,     // NOTE : Word, regardless of operand-size attribute
+        OperandType_wi,    // NOTE : Word-integer. Only x87 FPU instructions
+
+        OperandType_Count,
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    enum CEOperandTypes_t : int16_t
     {
         // All different relevant operand types from coder's edition of mazegen's .xml 
         // ( https://github.com/mazegen/x86reference/blob/master/x86reference.xml )
         //
 
 
-        OperandType_Invalid = -1,
+        CEOperandType_Invalid = -1,
 
-        OperandType_8 = 0,        // [ GEEK : b          ] Byte, regardless of operand-size attribute.
-        OpearndType_16or32_twice, // [ GEEK : a          ] Two one-word operands in memory or two double-word operands in memory, depending on operand-size attribute (only BOUND).
-        OperandType_16_32,        // [ GEEK : v, vds, vs ] Word or doubleword, depending on operand-size attribute
-        OperandType_16_32_64,     // [ GEEK : vqp        ] Word or doubleword, depending on operand-size attribute, or quadword, promoted by REX.W in 64-bit mode.
-        OperandType_16,           // [ GEEK : w          ] Word, regardless of operand-size attribute
-        OperandType_16int,        // [ GEEK : wi         ] Word-integer. Only x87 FPU instructions
-        OperandType_32,           // [ GEEK : d, ds      ] Doubleword, regardless of operand-size attribute.
-        OperandType_32int,        // [ GEEK : di         ] Doubleword-integer. Only x87 FPU instructions
-        OperandType_32_64,        // [ GEEK : dqp        ] Doubleword, or quadword, promoted by REX.W in 64-bit mode
-        OperandType_32real,       // [ GEEK : sr         ] Single-real. Only x87 FPU instructions
-        OperandType_64mmx,        // [ GEEK : pi         ] Quadword MMX technology data.
-        OperandType_64,           // [ GEEK : q, qp, psq ] Quadword, regardless of operand-size attribute
-        OperandType_64int,        // [ GEEK : qi         ] Qword-integer. Only x87 FPU instructions
-        OperandType_64real,       // [ GEEK : dr         ] Double-real. Only x87 FPU instructions
-        OperandType_64_16,        // [ GEEK : vq         ] Quadword (default) or word if operand-size prefix is used
-        OperandType_128pf,        // [ GEEK : ps         ] 128-bit packed single-precision floating-point data.
-        OperandType_80dec,        // [ GEEK : bcd        ] Packed-BCD. Only x87 FPU instructions
-        OperandType_128,          // [ GEEK : dq         ] Double-quadword, regardless of operand-size attribute
-        OperandType_14_28,        // [ GEEK : e          ] x87 FPU environment
-        OperandType_80real,       // [ GEEK : er         ] Extended-real. Only x87 FPU instructions
-        OperandType_p,            // [ GEEK : p          ] 32-bit or 48-bit pointer, depending on operand-size attribute ( most likely not used in 64 bit mode ?? )
-        OperandType_ptp,          // [ GEEK : ptp        ] 32-bit or 48-bit pointer, depending on operand-size attribute, or 80-bit far pointer, promoted by REX.W in 64-bit mode (for example, CALLF (FF /3)).
-        OperandType_94_108,       // [ GEEK : st         ] x87 FPU state
-        OperandType_512,          // [ GEEK : stx        ] x87 FPU and SIMD state
+        CEOperandType_8 = 0,        // [ GEEK : b, bs, bss ] Byte, regardless of operand-size attribute.
+        CEOpearndType_16or32_twice, // [ GEEK : a          ] Two one-word operands in memory or two double-word operands in memory, depending on operand-size attribute (only BOUND).
+        CEOperandType_16_32,        // [ GEEK : v, vds, vs ] Word or doubleword, depending on operand-size attribute
+        CEOperandType_16_32_64,     // [ GEEK : vqp        ] Word or doubleword, depending on operand-size attribute, or quadword, promoted by REX.W in 64-bit mode.
+        CEOperandType_16,           // [ GEEK : w          ] Word, regardless of operand-size attribute
+        CEOperandType_16int,        // [ GEEK : wi         ] Word-integer. Only x87 FPU instructions
+        CEOperandType_32,           // [ GEEK : d, ds      ] Doubleword, regardless of operand-size attribute.
+        CEOperandType_32int,        // [ GEEK : di         ] Doubleword-integer. Only x87 FPU instructions
+        CEOperandType_32_64,        // [ GEEK : dqp        ] Doubleword, or quadword, promoted by REX.W in 64-bit mode
+        CEOperandType_32real,       // [ GEEK : sr         ] Single-real. Only x87 FPU instructions
+        CEOperandType_64mmx,        // [ GEEK : pi         ] Quadword MMX technology data.
+        CEOperandType_64,           // [ GEEK : q, qp, psq ] Quadword, regardless of operand-size attribute
+        CEOperandType_64int,        // [ GEEK : qi         ] Qword-integer. Only x87 FPU instructions
+        CEOperandType_64real,       // [ GEEK : dr         ] Double-real. Only x87 FPU instructions
+        CEOperandType_64_16,        // [ GEEK : vq         ] Quadword (default) or word if operand-size prefix is used
+        CEOperandType_128pf,        // [ GEEK : ps         ] 128-bit packed single-precision floating-point data.
+        CEOperandType_80dec,        // [ GEEK : bcd        ] Packed-BCD. Only x87 FPU instructions
+        CEOperandType_128,          // [ GEEK : dq         ] Double-quadword, regardless of operand-size attribute
+        CEOperandType_14_28,        // [ GEEK : e          ] x87 FPU environment
+        CEOperandType_80real,       // [ GEEK : er         ] Extended-real. Only x87 FPU instructions
+        CEOperandType_p,            // [ GEEK : p          ] 32-bit or 48-bit pointer, depending on operand-size attribute ( most likely not used in 64 bit mode ?? )
+        CEOperandType_ptp,          // [ GEEK : ptp        ] 32-bit or 48-bit pointer, depending on operand-size attribute, or 80-bit far pointer, promoted by REX.W in 64-bit mode (for example, CALLF (FF /3)).
+        CEOperandType_94_108,       // [ GEEK : st         ] x87 FPU state
+        CEOperandType_512,          // [ GEEK : stx        ] x87 FPU and SIMD state
 
-        OperandType_Count
+        CEOperandType_Count
     };
 
 
@@ -240,7 +343,7 @@ namespace InsaneDASM64
         Operand_t() { Reset(); }
         Operand_t(int iLiteral);
         Operand_t(Register_t iRegister);
-        Operand_t(OperandMode_t iOperandMode, OperandType_t iOperandType);
+        Operand_t(OperandModes_t iOperandMode, OperandTypes_t iOperandType);
 
         void Reset();
 
@@ -271,8 +374,8 @@ namespace InsaneDASM64
 
         // In case of a OG / normal / legacy operand ( addressing mode + operand type ).
         // These will hold it.
-        OperandMode_t     m_iOperandMode     = OperandMode_Invalid;
-        OperandType_t     m_iOperandType     = OperandType_Invalid;
+        OperandModes_t     m_iOperandMode     = OperandMode_Invalid;
+        OperandTypes_t    m_iOperandType     = OperandType_Invalid;
     };
 
 
@@ -444,4 +547,7 @@ namespace InsaneDASM64
     // TODO ToString function.
 
     const char* GetErrorMessage(IDASMErrorCode_t iErrorCode);
+
+    CEOperandTypes_t GeekToCoderOperandType(OperandTypes_t iOperandType);
+    CEOperandModes_t GeekToCoderOperandMode(OperandModes_t iOperandMode);
 }

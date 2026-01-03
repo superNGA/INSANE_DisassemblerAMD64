@@ -405,9 +405,9 @@ int main(void)
     }
 
     
-    // DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); DumpEntryInfo(vecOneByteOpCodes);
-    // DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); DumpEntryInfo(vecTwoByteOpCodes);
-    // DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n");  DumpEntryInfo(vecThreeByteOpCodes38);
+    DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); DumpEntryInfo(vecOneByteOpCodes);
+    DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); DumpEntryInfo(vecTwoByteOpCodes);
+    DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n");  DumpEntryInfo(vecThreeByteOpCodes38);
     DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n");  DumpEntryInfo(vecThreeByteOpCodes3A);
 
 
@@ -793,7 +793,7 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
 
                     // Store operand addressing mode.
                     pDestOperand->m_iOperandType  = Entry_t::Operand_t::OperandCatagory_Legacy;
-                    pDestOperand->m_szOperandMode = it->second;
+                    pDestOperand->m_szOperandMode = pOperandMode->GetText(); // it->second;
 
 
                     // Try to find operand type...
@@ -810,7 +810,7 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
                         }
 
                         // store operand type.
-                        pDestOperand->m_szOperandType = it->second;
+                        pDestOperand->m_szOperandType = pOperandType->GetText();/*it->second;*/
                     }
                     else // No operand type is present, only addressing mode. This is possible so don't abort in this case.
                     {
@@ -1782,6 +1782,7 @@ std::unordered_map<std::string, std::string> g_mapRegisterToType =
     { "rCX", "Register_t( Register_t::RegisterClass_GPR, 1, 64 )" },
     { "rDX", "Register_t( Register_t::RegisterClass_GPR, 2, 64 )" },
     { "rBX", "Register_t( Register_t::RegisterClass_GPR, 3, 64 )" },
+    { "rBX+AL", "Register_t( Register_t::RegisterClass_GPR, 3, 64 )" }, // sketchy but works.
     { "rSP", "Register_t( Register_t::RegisterClass_GPR, 4, 64 )" },
     { "rBP", "Register_t( Register_t::RegisterClass_GPR, 5, 64 )" },
     { "rSI", "Register_t( Register_t::RegisterClass_GPR, 6, 64 )" },
@@ -1862,9 +1863,12 @@ std::unordered_map<std::string, std::string> g_mapRegisterToType =
 static inline std::string FixRegisterName(std::string szRegister)
 {
     auto it = g_mapRegisterToType.find(szRegister);
+    
     if (it == g_mapRegisterToType.end())
     {
         printf(RED "@@@@@@@@    Failed to find register { %s } in g_mapRegisterToType map\n" RESET, szRegister.c_str());
+        
+        assert(it != g_mapRegisterToType.end() && "Register not found in map.");
         return szRegister;
     }
 
