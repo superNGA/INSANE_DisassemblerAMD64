@@ -174,7 +174,68 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeAndDisassemble(const std::vector
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int OperandTypeToSizeInBytes(CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
+static int OperandTypeToAddressSizeInByte(CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
+{
+    assert((iAddressSizeInByte == 2 || iAddressSizeInByte == 4 || iAddressSizeInByte == 8) && "Invalid operand size!!");
+
+    switch (iCEOperandType)
+    {
+    case InsaneDASM64::CEOperandType_8:            return 1;
+    case InsaneDASM64::CEOpearndType_16or32_twice: return iAddressSizeInByte == 2 ? 4 : 8;
+    case InsaneDASM64::CEOperandType_16_32:        return iAddressSizeInByte == 2 ? 2 : 4;
+    case InsaneDASM64::CEOperandType_16_32_64:     return iAddressSizeInByte;
+
+    case InsaneDASM64::CEOperandType_16:
+    case InsaneDASM64::CEOperandType_16int:        return 2;
+
+    case InsaneDASM64::CEOperandType_32:
+    case InsaneDASM64::CEOperandType_32real:
+    case InsaneDASM64::CEOperandType_32int:        return 4;
+
+    case InsaneDASM64::CEOperandType_32_64:        return iAddressSizeInByte == 8 ? 8 : 4;
+
+    case InsaneDASM64::CEOperandType_64mmx:
+    case InsaneDASM64::CEOperandType_64:
+    case InsaneDASM64::CEOperandType_64int:
+    case InsaneDASM64::CEOperandType_64real:       return 8;
+
+    case InsaneDASM64::CEOperandType_64_16:        return iAddressSizeInByte == 2 ? 2 : 8;
+
+
+    case InsaneDASM64::CEOperandType_128pf:
+    case InsaneDASM64::CEOperandType_80dec:
+    case InsaneDASM64::CEOperandType_128:
+    case InsaneDASM64::CEOperandType_14_28:
+    case InsaneDASM64::CEOperandType_80real:
+    case InsaneDASM64::CEOperandType_p:
+    case InsaneDASM64::CEOperandType_ptp:
+    case InsaneDASM64::CEOperandType_94_108:
+    case InsaneDASM64::CEOperandType_512:
+        break;
+
+    default: break;
+    }
+
+    // If no operand type is any "opinion" of what the address size should be,
+    // we shall default to the address size ( 8 bytes in longmode, unless override by 0x67 address size override prefix, in which case it will be 4 bytes ) ?
+    return iAddressSizeInByte;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static int OperandTypeToAddressSizeInBits(CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
+{
+    int iSize = OperandTypeToAddressSizeInByte(iCEOperandType, iAddressSizeInByte);
+    
+    // Keep the invalid size invalid, and scale valid size.
+    return iSize <= 0 ? -1 : iSize * 8;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static int OperandTypeToOperandSizeInBytes(CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
 {
     // This function is used to determine width of register used when we have to use the modrm byte
     // to determine which register we have to use. Because the operand size is not always the correct
@@ -226,9 +287,9 @@ static int OperandTypeToSizeInBytes(CEOperandTypes_t iCEOperandType, int iOperan
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int OperandTypeToSizeInBits(CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
+static int OperandTypeToOperandSizeInBits(CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
 {
-    int iSize = OperandTypeToSizeInBytes(iCEOperandType, iOperandSizeInBytes);
+    int iSize = OperandTypeToOperandSizeInBytes(iCEOperandType, iOperandSizeInBytes);
     
     // Keep the invalid size invalid, and scale valid size.
     return iSize <= 0 ? -1 : iSize * 8;
@@ -308,20 +369,29 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
                 case CEOperandMode_xmmm:
                 {
                     Register_t::RegisterClass_t iRegisterClass = Register_t::RegisterClass_GPR;
-                    if (iOperandMode == CEOperandModes_t::CEOperandMode_xmmm)
+
+
+                    // Overriding register class.
+                    if (iCEOperandMode == CEOperandModes_t::CEOperandMode_xmmm)
                     {
                         iRegisterClass = Register_t::RegisterClass_SSE;
                     }
-                    else if (iOperandMode == CEOperandModes_t::CEOperandMode_STim || iOperandMode == CEOperandModes_t::CEOperandMode_STi)
+                    else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_STim || iCEOperandMode == CEOperandModes_t::CEOperandMode_STi)
                     {
                         iRegisterClass = Register_t::RegisterClass_FPU;
                     }
-                    else if (iOperandMode == CEOperandModes_t::CEOperandMode_mmm64)
+                    else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_mmm64)
                     {
                         iRegisterClass = Register_t::RegisterClass_MMX;
                     }
 
-                    Register_t reg(iRegisterClass, inst.ModRM_RM(), inst.GetAddressSizeInBytes() * 8);
+
+                    Register_t reg(iRegisterClass, inst.ModRM_RM(),
+                    inst.ModRM_Mod() == 0b11 ? 
+                        OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)) :
+                        OperandTypeToAddressSizeInBits(iCEOperandType, inst.GetAddressSizeInBytes()));
+
+
                     if(inst.ModRM_Mod() == 0b11)
                     {
                         printf("%s", reg.ToString());
@@ -350,7 +420,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
                         bool bNoBaseReg = inst.ModRM_Mod() == 0 && inst.SIB_Base() == 0b101;
                         if (bNoBaseReg == false)
                         {
-                            Register_t iBaseReg(Register_t::RegisterClass_GPR, inst.SIB_Base(), inst.GetAddressSizeInBytes() * 8); // * 8 : Bytes to bits.
+                            Register_t iBaseReg(Register_t::RegisterClass_GPR, inst.SIB_Base(), OperandTypeToAddressSizeInBits(iCEOperandType, inst.GetAddressSizeInBytes())); // * 8 : Bytes to bits.
                             printf("%s", iBaseReg.ToString());
                         }
 
@@ -358,7 +428,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
                         uint64_t iSIBIndex = inst.SIB_Index();
                         if (iSIBIndex != 0b100)
                         {
-                            printf(" + %s", Register_t(Register_t::RegisterClass_GPR, iSIBIndex, inst.GetAddressSizeInBytes() * 8).ToString()); // * 8 : Bytes to bits.
+                            printf(" + %s", Register_t(Register_t::RegisterClass_GPR, iSIBIndex, OperandTypeToAddressSizeInBits(iCEOperandType, inst.GetAddressSizeInBytes())).ToString()); // * 8 : Bytes to bits.
 
                             // Scale.
                             uint64_t iScale = 1llu << inst.SIB_Scale();
@@ -385,16 +455,16 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
 
                 case CEOperandMode_STi:
                 {
-                    Register_t reg(Register_t::RegisterClass_FPU, inst.ModRM_RM(), OperandTypeToSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
+                    Register_t reg(Register_t::RegisterClass_FPU, inst.ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
                     printf("%s", reg.ToString());
                     break;
                 }
 
                 case CEOperandMode_r:
                 {
-                    Register_t reg(Register_t::RegisterClass_GPR, -1, OperandTypeToSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
+                    Register_t reg(Register_t::RegisterClass_GPR, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
 
-                    if (pOperand->m_iOperandMode == OperandMode_G)
+                    if (iOperandMode == OperandMode_G)
                     {
                         reg.m_iRegisterIndex = inst.ModRM_Reg();
                     }
@@ -416,7 +486,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
 
                 case CEOperandMode_mm:
                 {
-                    Register_t reg(Register_t::RegisterClass_MMX, -1, OperandTypeToSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
+                    Register_t reg(Register_t::RegisterClass_MMX, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
 
                     assert((iOperandMode == OperandModes_t::OperandMode_N || iOperandMode == OperandModes_t::OperandMode_P) && "Invalid operand mode with Coder's edition (mm)");
 
@@ -435,14 +505,14 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
 
                 case CEOperandMode_Sreg:
                 {
-                    Register_t reg(Register_t::RegisterClass_Segment, inst.ModRM_Reg(), OperandTypeToSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
+                    Register_t reg(Register_t::RegisterClass_Segment, inst.ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
                     printf("%s", reg.ToString());
                     break;
                 }
 
                 case CEOperandMode_TRn:
                 {
-                    Register_t reg(Register_t::RegisterClass_Test, inst.ModRM_Reg(), OperandTypeToSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
+                    Register_t reg(Register_t::RegisterClass_Test, inst.ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
                     printf("%s", reg.ToString());
                     break;
                 }
@@ -451,7 +521,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
                 {
                     assert((iOperandMode == OperandModes_t::OperandMode_U || iOperandMode == OperandModes_t::OperandMode_V) && "Invalid Operand Modes for Coder's edition operand type : xmm");
 
-                    Register_t reg(Register_t::RegisterClass_SSE, inst.ModRM_RM(), OperandTypeToSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
+                    Register_t reg(Register_t::RegisterClass_SSE, inst.ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
                     if (iOperandMode == OperandModes_t::OperandMode_V)
                         reg.m_iRegisterIndex = inst.ModRM_Reg();
 

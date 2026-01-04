@@ -30,7 +30,12 @@ int main(void)
     // Disassemble...
     {
         //InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::DecodeAndDisassemble(vecInput, vecOutput);
-        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
+        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_001, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_002, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecTwoByteOpCodes_001, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_38, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_3A, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
 
         if (iErrorCode != InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success)
         {
