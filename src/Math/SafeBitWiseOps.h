@@ -27,6 +27,7 @@ namespace INSANE_DASM64_NAMESPACE
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
         extern "C" uint64_t SafeBitWiseOps_And(Bits64_t left, Bits64_t right);
+        extern "C" uint64_t SafeBitWiseOps_Or (Bits64_t left, Bits64_t right);
 
 
         ///////////////////////////////////////////////////////////////////////////
@@ -39,6 +40,19 @@ namespace INSANE_DASM64_NAMESPACE
             memcpy(&iRightBits, &iRight, sizeof(R));
 
             return SafeBitWiseOps_And(iLeftBits, iRightBits);
+        }
+
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+        template <typename L, typename R>
+        uint64_t SafeOr(L iLeft, R iRight)
+        {
+            Bits64_t iLeftBits{ 0llu }, iRightBits{ 0llu };
+            memcpy(&iLeftBits,  &iLeft,  sizeof(L));
+            memcpy(&iRightBits, &iRight, sizeof(R));
+
+            return SafeBitWiseOps_Or(iLeftBits, iRightBits);
         }
     }
 }

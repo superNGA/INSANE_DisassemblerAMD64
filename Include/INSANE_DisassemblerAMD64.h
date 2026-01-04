@@ -66,6 +66,11 @@ namespace InsaneDASM64::Masks
     constexpr size_t SIB_SCALE = 0b11000000llu;
     constexpr size_t SIB_INDEX = 0b111000llu;
     constexpr size_t SIB_BASE  = 0b111llu;
+
+    constexpr size_t REX_W     = 0b1000llu;
+    constexpr size_t REX_R     = 0b100llu;
+    constexpr size_t REX_X     = 0b10llu;
+    constexpr size_t REX_B     = 0b1llu;
 }
 
 
@@ -82,12 +87,14 @@ namespace InsaneDASM64
             RegisterClass_Invalid = -1,
             RegisterClass_GPR,
             RegisterClass_FPU,
-            RegisterClass_SSE,
-            RegisterClass_AVX,
+            RegisterClass_SSE, // xxm
+            RegisterClass_MMX, // mmx
+            RegisterClass_AVX, // ymm
             RegisterClass_AVX512,
             RegisterClass_Segment,
             RegisterClass_Control,
             RegisterClass_Debug,
+            RegisterClass_Test,
         };
 
         Register_t()
@@ -460,10 +467,10 @@ namespace InsaneDASM64
         inline void Store(Byte modrm) { m_modrm = modrm; }
         inline Byte Get() const { return m_modrm; }
         
-        // Bits are shifted before returning. 
-        uint64_t ModValue() const;
-        uint64_t RegValue() const;
-        uint64_t RMValue() const;
+        // REX ignored. Bits are shifted before returning
+        uint64_t ModValueAbs() const;
+        uint64_t RegValueAbs() const;
+        uint64_t RMValueAbs() const;
 
         Byte m_modrm = 0x00;
     };
@@ -476,10 +483,10 @@ namespace InsaneDASM64
         inline void Store(Byte SIB) { m_SIB = SIB; }
         inline Byte Get() const { return m_SIB; }
         
-        // Bits are shifted before returning. 
-        uint64_t ScaleValue() const;
-        uint64_t IndexValue() const;
-        uint64_t BaseValue() const;
+        // REX ignored. Bits are shifted before returning. 
+        uint64_t ScaleValueAbs() const;
+        uint64_t IndexValueAbs() const;
+        uint64_t BaseValueAbs() const;
 
         Byte m_SIB = 0x00;
     };
@@ -500,6 +507,19 @@ namespace InsaneDASM64
         ParsedInst_t();
 
         void Clear();
+        int GetOperandSizeInBytes(bool bIgnoreREXW) const;
+        int GetAddressSizeInBytes() const;
+
+        // NOTE : These functions account for the REX bits. 
+        //        And the indivigual functions of ModRM_t or SIB_t don't account for that.
+        //        So take precaution while using these functions.
+        uint64_t ModRM_Reg() const;
+        uint64_t ModRM_Mod() const;
+        uint64_t ModRM_RM()  const;
+        uint64_t SIB_Scale() const;
+        uint64_t SIB_Index() const;
+        uint64_t SIB_Base()  const;
+
 
         LegacyPrefix_t m_legacyPrefix;
         OpCode_t       m_opCode;

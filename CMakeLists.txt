@@ -16,6 +16,9 @@ ${ASM_SOURCES}
 "src/INSANE_DisassemblerAMD64.cpp" 
 "src/Tables/Tables.h" "src/Tables/Tables.cpp"  
 "src/ObjectNomenclature.h"
-"src/Math/SafeBitWiseOps.h" "src/Util/TestCases/TestCases.h" "src/Util/TestCases/TestCases.cpp")
+"src/Math/SafeBitWiseOps.h" 
+"src/Util/TestCases/TestCases.h" "src/Util/TestCases/TestCases.cpp" 
+"src/Util/Terminal/Terminal.h"
+"src/Util/Terminal/ConsoleSystem.cpp" "src/Util/Terminal/ConsoleSystem.h")
 
 target_compile_features(INSANE_DisassemblerAMD64 PRIVATE cxx_std_17)

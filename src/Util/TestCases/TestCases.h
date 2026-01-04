@@ -28,5 +28,7 @@ namespace INSANE_DASM64_NAMESPACE
         // Three byte opcode instructions ( escaped via 0x38 & 0x3A respectively )
         extern std::vector<Byte> g_vecThreeByteOpCodes_38;
         extern std::vector<Byte> g_vecThreeByteOpCodes_3A;
+
+        extern std::vector<Byte> g_vecBubbleSortAsm;
     }
 }

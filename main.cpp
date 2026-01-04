@@ -26,10 +26,11 @@ int main(void)
         }
     }
 
-    // std::vector<InsaneDASM64::Byte> vecInput = { 0x48, 0x89, 0xC8, 0x48, 0x21, 0xD0, 0xC3 };
+    std::vector<InsaneDASM64::Byte> vecInput = { 0x48, 0x89, 0xC8, 0x48, 0x21, 0xD0, 0xC3 };
     // Disassemble...
     {
-        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_002/*vecInput*/, vecOutput);
+        //InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::DecodeAndDisassemble(vecInput, vecOutput);
+        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
 
         if (iErrorCode != InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success)
         {

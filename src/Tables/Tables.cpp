@@ -15,14 +15,6 @@
 using namespace INSANE_DASM64_NAMESPACE;
 
 
-//? Delete this
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[93m"
-#define RESET   "\033[0m"
-#define CYAN    "\033[96m"
-
-
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 void OpCodeDesc_t::Init(
