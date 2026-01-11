@@ -47,11 +47,16 @@ namespace InsaneDASM64::Rules
 namespace InsaneDASM64::SpecialChars
 {
     // Acts as escape opcode character when appears as first byte.
-    constexpr Byte ESCAPE_OPCODE_FIRST_INDEX    = 0X0F;
+    constexpr Byte ESCAPE_OPCODE_FIRST_INDEX     = 0X0F;
 
     // Acts as escape opcode character when appears as second byte.
     constexpr Byte ESCAPE_OPCODE_SECOND_INDEX_38 = 0X38;
     constexpr Byte ESCAPE_OPCODE_SECOND_INDEX_3A = 0X3A;
+
+
+    // First byte for VEX encoded instructions.
+    constexpr Byte VEX_PREFIX_C4                 = 0XC4;
+    constexpr Byte VEX_PREFIX_C5                 = 0XC5;
 }
 
 
@@ -496,15 +501,32 @@ namespace InsaneDASM64
     ///////////////////////////////////////////////////////////////////////////
     struct Instruction_t
     {
+        enum InstEncodingTypes_t
+        {
+            InstEncodingType_Invalid = -1,
+            InstEncodingType_Legacy = 0,
+            InstEncodingType_VEX,
+            InstEncodingType_EVEX,
+            InstEncodingType_XOP,
 
+            InstEncodingType_Count
+        };
+
+        Instruction_t() {};
+        Instruction_t(InstEncodingTypes_t iEncoding) { InitEncodingType(iEncoding); }
+        bool InitEncodingType(InstEncodingTypes_t iEncoding);
+
+
+        void*               m_pInst             = nullptr;
+        InstEncodingTypes_t m_iInstEncodingType = InstEncodingTypes_t::InstEncodingType_Invalid;
     };
 
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    struct ParsedInst_t
+    struct LegacyInst_t
     {
-        ParsedInst_t();
+        LegacyInst_t();
 
         void Clear();
         int GetOperandSizeInBytes(bool bIgnoreREXW) const;
@@ -541,6 +563,14 @@ namespace InsaneDASM64
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+    struct VEXInst_t
+    {
+
+    };
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     enum IDASMErrorCode_t : int
     {
         IDASMErrorCode_Success    = 0, // All functions return ErrorCode_Success on success.
@@ -561,13 +591,11 @@ namespace InsaneDASM64
     // Functions...
     // NOTE : Each function will return 0 ( ErrorCode_Success ) on success, and a non-zero IDASMErrorCode_t on fail.
     IDASMErrorCode_t Initialize ();
-    IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>&         vecInput, std::vector<std::string>&  vecOutput);
-    IDASMErrorCode_t Disassemble         (const std::vector<ParsedInst_t>& vecInput, std::vector<std::string>&  vecOutput);
-    IDASMErrorCode_t Decode              (const std::vector<Byte>&         vecInput, std::vector<ParsedInst_t>& vecOutput);
-    // TODO ToString function.
+    IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>&          vecInput, std::vector<std::string>&   vecOutput);
+    IDASMErrorCode_t Disassemble         (const std::vector<Instruction_t>& vecInput, std::vector<std::string>&   vecOutput);
+    IDASMErrorCode_t Decode              (const std::vector<Byte>&          vecInput, std::vector<Instruction_t>& vecOutput);
 
-    const char* GetErrorMessage(IDASMErrorCode_t iErrorCode);
-
+    const char*      GetErrorMessage       (IDASMErrorCode_t iErrorCode);
     CEOperandTypes_t GeekToCoderOperandType(OperandTypes_t iOperandType);
     CEOperandModes_t GeekToCoderOperandMode(OperandModes_t iOperandMode);
 }

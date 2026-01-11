@@ -112,7 +112,7 @@ void ConsoleSystem_t::drawDevider()
     uint32_t consoleWidth = _getConsoleWidth();
     for (int i = 0; i < consoleWidth; i++)
     {
-        printf(deviderCharacter);
+        printf("%s", deviderCharacter);
     }
     printf("\n");
 }

@@ -8,9 +8,7 @@
 //-------------------------------------------------------------------------
 #include "../Include/INSANE_DisassemblerAMD64.h"
 
-#include <iostream>
 #include <vector>
-#include <sstream>
 #include <assert.h>
 #include "Tables/Tables.h"
 #include "Math/SafeBitWiseOps.h"
@@ -22,11 +20,30 @@
 using namespace INSANE_DASM64_NAMESPACE;
 
 
-// Local Fn...
-static inline void PrintInstBytes(const std::vector<ParsedInst_t>& vecInput)
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+namespace INSANE_DASM64_NAMESPACE
 {
-    for (const ParsedInst_t& inst : vecInput)
+    // Local functions, for decoding different encodings. To be used only in the main InsaneDASM64::decode function.
+    // NOTE : These functions update the iterator ( index in the byteStream ) according to the bytes they consume.
+    static IDASMErrorCode_t DecodeLegacyEncoding     (const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator);
+    static IDASMErrorCode_t DecodeVEXEncoding        (const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator);
+
+    // Local functions, for decoding different encodings. To be used only in the main InsaneDASM64::decode function.
+    static IDASMErrorCode_t DisassembleLegacyEncoding(const LegacyInst_t* inst, std::string& szOutput);
+    static IDASMErrorCode_t DisassembleVEXEncoding   (const VEXInst_t* inst,    std::string& szOutput);
+};
+
+
+
+// Local Fn...
+static inline void PrintInstBytes(const std::vector<Instruction_t>& vecInput)
+{
+    for (const Instruction_t& instO : vecInput)
     {
+        const LegacyInst_t& inst = *reinterpret_cast<LegacyInst_t*>(instO.m_pInst);
+
         if (inst.m_opCode.OpByteCount() == 0)
         {
             printf("EMTPY INSTRUCTION!\n");
@@ -150,14 +167,14 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeAndDisassemble(const std::vector
 
 
     // Parse input...
-    std::vector<ParsedInst_t> vecParsedInst; vecParsedInst.clear();
+    std::vector<Instruction_t> vecParsedInst; vecParsedInst.clear();
 
-    IDASMErrorCode_t iParserErrorCode = Decode(vecInput, vecParsedInst); /* Delete this */ PrintInstBytes(vecParsedInst);
-    if (iParserErrorCode != IDASMErrorCode_Success)
-        return iParserErrorCode;
+    IDASMErrorCode_t iDecoderErrorCode = Decode(vecInput, vecParsedInst); /* Delete this */ PrintInstBytes(vecParsedInst);
+    if (iDecoderErrorCode != IDASMErrorCode_Success)
+        return iDecoderErrorCode;
 
 
-    // Parsing didn't fail but its empty :(
+    // Decoding didn't fail but its empty :(
     if (vecParsedInst.empty() == true)
         return IDASMErrorCode_t::IDASMErrorCode_Success;
 
@@ -298,250 +315,33 @@ static int OperandTypeToOperandSizeInBits(CEOperandTypes_t iCEOperandType, int i
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedInst_t>& vecInput, std::vector<std::string>& vecOutput)
+IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<Instruction_t>& vecInput, std::vector<std::string>& vecOutput)
 {
-    for (const ParsedInst_t& inst : vecInput)
+    for(const Instruction_t& inst : vecInput)
     {
-        const OpCodeDesc_t* pOpCodeDesc = inst.m_opCode.m_pOpCodeDesc;
-        assert(pOpCodeDesc != nullptr && "OpCodeDescription pointer was null");
+        std::string szInst(Rules::OPCODE_NAME_SENTINAL);
 
 
-        // Dump our the operator name.
-        printf("%s ", pOpCodeDesc->m_szName);
-
-
-        // Iterate all operands and disassembler.
-        for (int iOperandIndex = 0; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
+        switch (inst.m_iInstEncodingType) 
         {
-            const Operand_t* pOperand = &pOpCodeDesc->m_operands[iOperandIndex];
-
-            CEOperandModes_t iCEOperandMode = GeekToCoderOperandMode(pOperand->m_iOperandMode);
-            CEOperandTypes_t iCEOperandType = GeekToCoderOperandType(pOperand->m_iOperandType);
-            OperandModes_t   iOperandMode   = pOperand->m_iOperandMode;
-            OperandTypes_t   iOperandType   = pOperand->m_iOperandType;
-
-
-            switch (pOperand->m_iOperandCatagory)
-            {
-            // Simple and easy, just print a fucking int.
-            case Operand_t::OperandCatagory_Literal:
-                printf("%d", pOperand->m_iOperandLiteral);
+            case Instruction_t::InstEncodingType_Legacy:
+                DisassembleLegacyEncoding(reinterpret_cast<LegacyInst_t*>(inst.m_pInst), szInst);
                 break;
 
-
-            // Simple and easy, just print register name.
-            case Operand_t::OperandCatagory_Register:
-                printf("%s", pOperand->m_iOperandRegister.ToString());
+            case Instruction_t::InstEncodingType_VEX:
+                DisassembleVEXEncoding(reinterpret_cast<VEXInst_t*>(inst.m_pInst), szInst);
                 break;
 
-
-            // This will get nasty. There are many operand addressing methods, and we 
-            // need to take care of all of them. 
-            case Operand_t::OperandCatagory_Legacy:
-            {
-                
-                switch(iCEOperandMode)
-                {
-                case CEOperandMode_CRn:
-                    printf("%s", Register_t(Register_t::RegisterClass_Control, inst.ModRM_Reg(), 0).ToString());
-                    break;
-
-                case CEOperandMode_DRn:
-                    printf("%s", Register_t(Register_t::RegisterClass_Debug, inst.ModRM_Reg(), 0).ToString());
-                    break;
-                
-                case CEOperandMode_ptr:
-                case CEOperandMode_rel:
-                case CEOperandMode_imm:
-                case CEOperandMode_moffs:
-                {
-                    printf("0x"); // Handling endian.
-                    for (int i = inst.m_immediate.ByteCount() - 1; i >= 0; i--)
-                    {
-                        printf("%02X", inst.m_immediate.m_immediateByte[i]);
-                    }
-                    break;
-                }
-
-                case CEOperandMode_m:
-                case CEOperandMode_rm:
-                case CEOperandMode_mmm64:
-                case CEOperandMode_xmmm:
-                {
-                    Register_t::RegisterClass_t iRegisterClass = Register_t::RegisterClass_GPR;
-
-
-                    // Overriding register class.
-                    if (iCEOperandMode == CEOperandModes_t::CEOperandMode_xmmm)
-                    {
-                        iRegisterClass = Register_t::RegisterClass_SSE;
-                    }
-                    else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_STim || iCEOperandMode == CEOperandModes_t::CEOperandMode_STi)
-                    {
-                        iRegisterClass = Register_t::RegisterClass_FPU;
-                    }
-                    else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_mmm64)
-                    {
-                        iRegisterClass = Register_t::RegisterClass_MMX;
-                    }
-
-
-                    Register_t reg(iRegisterClass, inst.ModRM_RM(),
-                    inst.ModRM_Mod() == 0b11 ? 
-                        OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)) :
-                        OperandTypeToAddressSizeInBits(iCEOperandType, inst.GetAddressSizeInBytes()));
-
-
-                    if(inst.ModRM_Mod() == 0b11)
-                    {
-                        printf("%s", reg.ToString());
-                        break;
-                    }
-                    else if (inst.m_bHasSIB == false)
-                    {
-                        printf("[ %s ", reg.ToString());
-                        
-                        // Printing displacement, if any.
-                        if(inst.m_displacement.ByteCount() > 0)
-                        {
-                            printf("+ 0x");
-                            for (int i = inst.m_displacement.ByteCount() - 1; i >= 0; i--)
-                            {
-                                printf("%02X", inst.m_displacement.m_iDispBytes[i]);
-                            }
-                        }
-
-                        printf("]");
-                    }
-                    else // Here are expecting memory address using SIB byte.
-                    {
-                        printf("[ ");
-
-                        bool bNoBaseReg = inst.ModRM_Mod() == 0 && inst.SIB_Base() == 0b101;
-                        if (bNoBaseReg == false)
-                        {
-                            Register_t iBaseReg(Register_t::RegisterClass_GPR, inst.SIB_Base(), OperandTypeToAddressSizeInBits(iCEOperandType, inst.GetAddressSizeInBytes())); // * 8 : Bytes to bits.
-                            printf("%s", iBaseReg.ToString());
-                        }
-
-                        // Index register.
-                        uint64_t iSIBIndex = inst.SIB_Index();
-                        if (iSIBIndex != 0b100)
-                        {
-                            printf(" + %s", Register_t(Register_t::RegisterClass_GPR, iSIBIndex, OperandTypeToAddressSizeInBits(iCEOperandType, inst.GetAddressSizeInBytes())).ToString()); // * 8 : Bytes to bits.
-
-                            // Scale.
-                            uint64_t iScale = 1llu << inst.SIB_Scale();
-                            if (iScale > 1)
-                            {
-                                printf(" * %llu", iScale);
-                            }
-                        }
-
-                        // Displacement ( if any )
-                        if(inst.m_displacement.ByteCount() > 0)
-                        {
-                            printf(" + 0x");
-                            for (int i = inst.m_displacement.ByteCount() - 1; i >= 0; i--)
-                            {
-                                printf("%02X", inst.m_displacement.m_iDispBytes[i]);
-                            }
-                        }
-
-                        printf(" ]");
-                    }
-                    break;
-                }
-
-                case CEOperandMode_STi:
-                {
-                    Register_t reg(Register_t::RegisterClass_FPU, inst.ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
-                    printf("%s", reg.ToString());
-                    break;
-                }
-
-                case CEOperandMode_r:
-                {
-                    Register_t reg(Register_t::RegisterClass_GPR, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
-
-                    if (iOperandMode == OperandMode_G)
-                    {
-                        reg.m_iRegisterIndex = inst.ModRM_Reg();
-                    }
-                    else if (iOperandMode == OperandModes_t::OperandMode_Z)
-                    {
-                        // REX.B bit extends the "Lower 3 bits of the opcode". How bizzare is that?
-                        reg.m_iRegisterIndex = Maths::SafeOr(
-                            Maths::SafeAnd(inst.m_opCode.m_pOpCodeDesc->m_iByte, 0b111), 
-                            Maths::SafeAnd(inst.m_bHasREX == false ? 0llu : inst.m_iREX, Masks::REX_B) << 3llu);
-                    }
-                    else // Addressing mode H & R, fall under this case.
-                    {
-                        reg.m_iRegisterIndex = inst.ModRM_RM();
-                    }
-
-                    printf("%s", reg.ToString());
-                    break;
-                }
-
-                case CEOperandMode_mm:
-                {
-                    Register_t reg(Register_t::RegisterClass_MMX, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
-
-                    assert((iOperandMode == OperandModes_t::OperandMode_N || iOperandMode == OperandModes_t::OperandMode_P) && "Invalid operand mode with Coder's edition (mm)");
-
-                    if (iOperandMode == OperandModes_t::OperandMode_N)
-                    {
-                        reg.m_iRegisterIndex = inst.ModRM_RM();
-                    }
-                    else if (iOperandMode == OperandModes_t::OperandMode_P)
-                    {
-                        reg.m_iRegisterIndex = inst.ModRM_Reg();
-                    }
-
-                    printf("%s", reg.ToString());
-                    break;
-                }
-
-                case CEOperandMode_Sreg:
-                {
-                    Register_t reg(Register_t::RegisterClass_Segment, inst.ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
-                    printf("%s", reg.ToString());
-                    break;
-                }
-
-                case CEOperandMode_TRn:
-                {
-                    Register_t reg(Register_t::RegisterClass_Test, inst.ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
-                    printf("%s", reg.ToString());
-                    break;
-                }
-
-                case CEOperandMode_xmm:
-                {
-                    assert((iOperandMode == OperandModes_t::OperandMode_U || iOperandMode == OperandModes_t::OperandMode_V) && "Invalid Operand Modes for Coder's edition operand type : xmm");
-
-                    Register_t reg(Register_t::RegisterClass_SSE, inst.ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst.GetOperandSizeInBytes(false)));
-                    if (iOperandMode == OperandModes_t::OperandMode_V)
-                        reg.m_iRegisterIndex = inst.ModRM_Reg();
-
-                    printf("%s", reg.ToString());
-                    break;
-                }
-
-                // Just a __placeholder__ for now.
-                default: printf(CONSOLE_RED "%d %d" CONSOLE_RESET, pOperand->m_iOperandMode, pOperand->m_iOperandType); break;
-                }
-            }
+            case Instruction_t::InstEncodingType_EVEX:
+            case Instruction_t::InstEncodingType_XOP:
+            default:
+                FAIL_LOG("Incompatible encoding : %d", inst.m_iInstEncodingType);
+                assert(false && "Incompatible encoding type");
                 break;
-
-            default: break;
-            }
-
-            printf(", ");
         }
 
-        printf("\n");
+
+        vecOutput.push_back(szInst);
     }
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -550,23 +350,348 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<ParsedIn
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInput, std::vector<ParsedInst_t>& vecOutput)
+static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const LegacyInst_t* inst, std::string& szOutput)
+{
+    const OpCodeDesc_t* pOpCodeDesc = inst->m_opCode.m_pOpCodeDesc;
+    assert(pOpCodeDesc != nullptr && "OpCodeDescription pointer was null");
+
+
+    // Dump our the operator name.
+    printf("%s ", pOpCodeDesc->m_szName);
+
+
+    // Iterate all operands and disassembler.
+    for (int iOperandIndex = 0; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
+    {
+        const Operand_t* pOperand = &pOpCodeDesc->m_operands[iOperandIndex];
+
+        CEOperandModes_t iCEOperandMode = GeekToCoderOperandMode(pOperand->m_iOperandMode);
+        CEOperandTypes_t iCEOperandType = GeekToCoderOperandType(pOperand->m_iOperandType);
+        OperandModes_t   iOperandMode   = pOperand->m_iOperandMode;
+        OperandTypes_t   iOperandType   = pOperand->m_iOperandType;
+
+
+        switch (pOperand->m_iOperandCatagory)
+        {
+            // Simple and easy, just print a fucking int.
+            case Operand_t::OperandCatagory_Literal:
+                printf("%d", pOperand->m_iOperandLiteral);
+                break;
+
+
+                // Simple and easy, just print register name.
+            case Operand_t::OperandCatagory_Register:
+                printf("%s", pOperand->m_iOperandRegister.ToString());
+                break;
+
+
+                // This will get nasty. There are many operand addressing methods, and we 
+                // need to take care of all of them. 
+            case Operand_t::OperandCatagory_Legacy:
+                {
+
+                    switch(iCEOperandMode)
+                    {
+                        case CEOperandMode_CRn:
+                            printf("%s", Register_t(Register_t::RegisterClass_Control, inst->ModRM_Reg(), 0).ToString());
+                            break;
+
+                        case CEOperandMode_DRn:
+                            printf("%s", Register_t(Register_t::RegisterClass_Debug, inst->ModRM_Reg(), 0).ToString());
+                            break;
+
+                        case CEOperandMode_ptr:
+                        case CEOperandMode_rel:
+                        case CEOperandMode_imm:
+                        case CEOperandMode_moffs:
+                            {
+                                printf("0x"); // Handling endian.
+                                for (int i = inst->m_immediate.ByteCount() - 1; i >= 0; i--)
+                                {
+                                    printf("%02X", inst->m_immediate.m_immediateByte[i]);
+                                }
+                                break;
+                            }
+
+                        case CEOperandMode_m:
+                        case CEOperandMode_rm:
+                        case CEOperandMode_mmm64:
+                        case CEOperandMode_xmmm:
+                            {
+                                Register_t::RegisterClass_t iRegisterClass = Register_t::RegisterClass_GPR;
+
+
+                                // Overriding register class.
+                                if (iCEOperandMode == CEOperandModes_t::CEOperandMode_xmmm)
+                                {
+                                    iRegisterClass = Register_t::RegisterClass_SSE;
+                                }
+                                else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_STim || iCEOperandMode == CEOperandModes_t::CEOperandMode_STi)
+                                {
+                                    iRegisterClass = Register_t::RegisterClass_FPU;
+                                }
+                                else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_mmm64)
+                                {
+                                    iRegisterClass = Register_t::RegisterClass_MMX;
+                                }
+
+
+                                Register_t reg(iRegisterClass, inst->ModRM_RM(),
+                                        inst->ModRM_Mod() == 0b11 ? 
+                                        OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)) :
+                                        OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes()));
+
+
+                                if(inst->ModRM_Mod() == 0b11)
+                                {
+                                    printf("%s", reg.ToString());
+                                    break;
+                                }
+                                else if (inst->m_bHasSIB == false)
+                                {
+                                    printf("[ %s ", reg.ToString());
+
+                                    // Printing displacement, if any.
+                                    if(inst->m_displacement.ByteCount() > 0)
+                                    {
+                                        printf("+ 0x");
+                                        for (int i = inst->m_displacement.ByteCount() - 1; i >= 0; i--)
+                                        {
+                                            printf("%02X", inst->m_displacement.m_iDispBytes[i]);
+                                        }
+                                    }
+
+                                    printf("]");
+                                }
+                                else // Here are expecting memory address using SIB byte.
+                                {
+                                    printf("[ ");
+
+                                    bool bNoBaseReg = inst->ModRM_Mod() == 0 && inst->SIB_Base() == 0b101;
+                                    if (bNoBaseReg == false)
+                                    {
+                                        Register_t iBaseReg(Register_t::RegisterClass_GPR, inst->SIB_Base(), OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())); // * 8 : Bytes to bits.
+                                        printf("%s", iBaseReg.ToString());
+                                    }
+
+                                    // Index register.
+                                    uint64_t iSIBIndex = inst->SIB_Index();
+                                    if (iSIBIndex != 0b100)
+                                    {
+                                        printf(" + %s", Register_t(Register_t::RegisterClass_GPR, iSIBIndex, OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())).ToString()); // * 8 : Bytes to bits.
+
+                                        // Scale.
+                                        uint64_t iScale = 1llu << inst->SIB_Scale();
+                                        if (iScale > 1)
+                                        {
+                                            printf(" * %llu", iScale);
+                                        }
+                                    }
+
+                                    // Displacement ( if any )
+                                    if(inst->m_displacement.ByteCount() > 0)
+                                    {
+                                        printf(" + 0x");
+                                        for (int i = inst->m_displacement.ByteCount() - 1; i >= 0; i--)
+                                        {
+                                            printf("%02X", inst->m_displacement.m_iDispBytes[i]);
+                                        }
+                                    }
+
+                                    printf(" ]");
+                                }
+                                break;
+                            }
+
+                        case CEOperandMode_STi:
+                            {
+                                Register_t reg(Register_t::RegisterClass_FPU, inst->ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                printf("%s", reg.ToString());
+                                break;
+                            }
+
+                        case CEOperandMode_r:
+                            {
+                                Register_t reg(Register_t::RegisterClass_GPR, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+
+                                if (iOperandMode == OperandMode_G)
+                                {
+                                    reg.m_iRegisterIndex = inst->ModRM_Reg();
+                                }
+                                else if (iOperandMode == OperandModes_t::OperandMode_Z)
+                                {
+                                    // REX.B bit extends the "Lower 3 bits of the opcode". How bizzare is that?
+                                    reg.m_iRegisterIndex = Maths::SafeOr(
+                                            Maths::SafeAnd(inst->m_opCode.m_pOpCodeDesc->m_iByte, 0b111), 
+                                            Maths::SafeAnd(inst->m_bHasREX == false ? 0llu : inst->m_iREX, Masks::REX_B) << 3llu);
+                                }
+                                else // Addressing mode H & R, fall under this case.
+                                {
+                                    reg.m_iRegisterIndex = inst->ModRM_RM();
+                                }
+
+                                printf("%s", reg.ToString());
+                                break;
+                            }
+
+                        case CEOperandMode_mm:
+                            {
+                                Register_t reg(Register_t::RegisterClass_MMX, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+
+                                assert((iOperandMode == OperandModes_t::OperandMode_N || iOperandMode == OperandModes_t::OperandMode_P) && "Invalid operand mode with Coder's edition (mm)");
+
+                                if (iOperandMode == OperandModes_t::OperandMode_N)
+                                {
+                                    reg.m_iRegisterIndex = inst->ModRM_RM();
+                                }
+                                else if (iOperandMode == OperandModes_t::OperandMode_P)
+                                {
+                                    reg.m_iRegisterIndex = inst->ModRM_Reg();
+                                }
+
+                                printf("%s", reg.ToString());
+                                break;
+                            }
+
+                        case CEOperandMode_Sreg:
+                            {
+                                Register_t reg(Register_t::RegisterClass_Segment, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                printf("%s", reg.ToString());
+                                break;
+                            }
+
+                        case CEOperandMode_TRn:
+                            {
+                                Register_t reg(Register_t::RegisterClass_Test, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                printf("%s", reg.ToString());
+                                break;
+                            }
+
+                        case CEOperandMode_xmm:
+                            {
+                                assert((iOperandMode == OperandModes_t::OperandMode_U || iOperandMode == OperandModes_t::OperandMode_V) && "Invalid Operand Modes for Coder's edition operand type : xmm");
+
+                                Register_t reg(Register_t::RegisterClass_SSE, inst->ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                if (iOperandMode == OperandModes_t::OperandMode_V)
+                                    reg.m_iRegisterIndex = inst->ModRM_Reg();
+
+                                printf("%s", reg.ToString());
+                                break;
+                            }
+
+                            // Just a __placeholder__ for now.
+                        default: printf(CONSOLE_RED "%d %d" CONSOLE_RESET, pOperand->m_iOperandMode, pOperand->m_iOperandType); break;
+                    }
+                }
+                break;
+
+            default: break;
+        }
+
+        printf(", ");
+    }
+
+    printf("\n");
+
+
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleVEXEncoding(const VEXInst_t* inst, std::string& szOutput)
+{
+    assert(false && "VEX disassembler is not implemted yet.");
+
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput)
+{
+    assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
+    assert(vecOutput.empty()           == true && "Why is output not empty");
+    vecOutput.clear();
+
+
+    // No input?
+    if(vecInput.empty() == true)
+        return IDASMErrorCode_t::IDASMErrorCode_Success;
+
+
+    size_t nBytes = vecInput.size();
+    for(size_t iByteIndex = 0llu; iByteIndex < nBytes; iByteIndex++)
+    {
+        Byte             iByte = vecInput[iByteIndex];
+        Instruction_t    inst;
+
+        IDASMErrorCode_t iErrorCode = IDASMErrorCode_t::IDASMErrorCode_Success;
+
+
+        // First we determine which encoding does the instruction has.
+        switch (iByte) 
+        {
+            case SpecialChars::VEX_PREFIX_C4:
+            case SpecialChars::VEX_PREFIX_C5:
+                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_VEX);
+                iErrorCode = DecodeVEXEncoding(vecInput, &inst, iByteIndex);
+                break;
+
+            default: 
+                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_Legacy);
+                iErrorCode = DecodeLegacyEncoding(vecInput, &inst, iByteIndex);
+                break;
+        }
+
+
+        // Did we fail the decode ?
+        if(iErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+            return iErrorCode;
+
+
+        vecOutput.push_back(inst);
+    }
+
+
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator)
+{
+    assert(false && "VEX decoder is not implemented yet.");
+
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator)
 {
     assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
 
-    
-    vecOutput.clear();
 
+    // Valid Iterator??
+    assert(iIterator >= 0llu && iIterator < vecInput.size() && "Out of bound interator.");
+
+    
     // Empty input?
     if (vecInput.empty() == true)
         return IDASMErrorCode_t::IDASMErrorCode_Success;
 
 
-    ParsedInst_t inst;
+    LegacyInst_t* pInst = reinterpret_cast<LegacyInst_t*>(pInstOut->m_pInst);
+    pInst->Clear();
 
 
     size_t nBytes = vecInput.size();
-    for (size_t iByteIndex = 0LLU; iByteIndex < nBytes; iByteIndex++)
+    for (size_t iByteIndex = iIterator; iByteIndex < nBytes; iByteIndex++)
     {
         Byte        iByte     = vecInput[iByteIndex];
         InstTypes_t iInstType = static_cast<InstTypes_t>(G::g_tables.GetInstType(iByte));
@@ -589,11 +714,11 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
 
 
                 // More than max prefix?
-                if (inst.m_legacyPrefix.PrefixCount() >= Rules::MAX_LEGACY_PREFIX)
+                if (pInst->m_legacyPrefix.PrefixCount() >= Rules::MAX_LEGACY_PREFIX)
                     return IDASMErrorCode_t::IDASMErrorCode_TooManyPefix; // already stored 'MAX_LEGACY_PREFIX' no. of prefixies.
 
 
-                inst.m_legacyPrefix.PushPrefix(iPrefixByte);
+                pInst->m_legacyPrefix.PushPrefix(iPrefixByte);
             }
             iByteIndex = iPrefixIndex - 1; // So we don't skip one byte.
 
@@ -609,9 +734,9 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
                 // Next byte != REX, and current Byte == REX. Store current & break.
                 if ((G::g_tables.GetInstType(iNextByte) & InstTypes_t::InstTypes_REX) == false)
                 {
-                    inst.m_bHasREX   = true;
-                    inst.m_iREX      = iCurByte;
-                    inst.m_iREXIndex = static_cast<int32_t>(iREXIndex);
+                    pInst->m_bHasREX   = true;
+                    pInst->m_iREX      = iCurByte;
+                    pInst->m_iREXIndex = static_cast<int32_t>(iREXIndex);
                     iByteIndex       = iREXIndex;
 
                     break;
@@ -621,7 +746,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
         else // != REX && != LegacyPrefix
         {
             // OpCode Immediately preceeding REX?
-            if (inst.m_bHasREX == true && inst.m_iREXIndex != iByteIndex - 1llu && inst.m_opCode.OpByteCount() == 0)
+            if (pInst->m_bHasREX == true && pInst->m_iREXIndex != iByteIndex - 1llu && pInst->m_opCode.OpByteCount() == 0)
                 return IDASMErrorCode_t::IDASMErrorCode_REXNotPrecedingOpCode;
 
 
@@ -652,13 +777,13 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
                 }
 
 
-                inst.m_opCode.PushOpCode(iOpCodeByte);
+                pInst->m_opCode.PushOpCode(iOpCodeByte);
 
 
                 // Escape??
                 if(pOpCodeDesc->m_bIsEscapeCode == false)
                 { 
-                    inst.m_opCode.StoreOperatorDesc(pOpCodeDesc);
+                    pInst->m_opCode.StoreOperatorDesc(pOpCodeDesc);
                     break;
                 }
 
@@ -668,24 +793,24 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
 
             
             // Must store atleast 1 opcode byte.
-            if (inst.m_opCode.OpByteCount() <= 0)
+            if (pInst->m_opCode.OpByteCount() <= 0)
                 return IDASMErrorCode_t::IDASMErrorCode_NoOpByteFound;
 
 
             // Incrementus iteratus.
-            iByteIndex += inst.m_opCode.OpByteCount();
+            iByteIndex += pInst->m_opCode.OpByteCount();
 
 
             // Store ModRM byte if required.
-            if (inst.m_opCode.ModRMRequired(&inst.m_legacyPrefix) == true)
+            if (pInst->m_opCode.ModRMRequired(&pInst->m_legacyPrefix) == true)
             {
                 // Bytes left in byte stream?
                 if (iByteIndex >= nBytes)
                     return IDASMErrorCode_t::IDASMErrorCode_ModRMNotFound;
 
 
-                inst.m_bHasModRM = true;
-                inst.m_modrm.Store(vecInput[iByteIndex]);
+                pInst->m_bHasModRM = true;
+                pInst->m_modrm.Store(vecInput[iByteIndex]);
                 iByteIndex++;
             }
 
@@ -693,14 +818,14 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
             // At this point, we have modRM byte ( if any ), legacy prefix ( if any ) 
             // and root opcode description. Now we can and we must find the child opcode varient
             // that is refered in this instruction.
-            inst.m_opCode.InitChildVarient(&inst.m_legacyPrefix, inst.m_modrm.Get());
+            pInst->m_opCode.InitChildVarient(&pInst->m_legacyPrefix, pInst->m_modrm.Get());
 
 
 
             // Store SIB if required. MOD == 11 && R/M == 100
-            //bool bSIBRequired = inst.m_bHasModRM == true && (inst.m_modrm & 0b11000000) != 0b11000000 && (inst.m_modrm & 0b111) == 0b100;
-            Byte modrm        = inst.m_modrm.Get();
-            bool bSIBRequired = inst.m_bHasModRM == true && inst.m_modrm.ModValueAbs() != 0b11 && inst.m_modrm.RMValueAbs() == 0b100;
+            //bool bSIBRequired = inst->m_bHasModRM == true && (inst->m_modrm & 0b11000000) != 0b11000000 && (inst->m_modrm & 0b111) == 0b100;
+            Byte modrm        = pInst->m_modrm.Get();
+            bool bSIBRequired = pInst->m_bHasModRM == true && pInst->m_modrm.ModValueAbs() != 0b11 && pInst->m_modrm.RMValueAbs() == 0b100;
             if (bSIBRequired == true)
             {
                 // Bytes left in byte stream?
@@ -708,8 +833,8 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
                     return IDASMErrorCode_t::IDASMErrorCode_SIBNotFound;
 
 
-                inst.m_bHasSIB = true;
-                inst.m_SIB.Store(vecInput[iByteIndex]);
+                pInst->m_bHasSIB = true;
+                pInst->m_SIB.Store(vecInput[iByteIndex]);
                 iByteIndex++;
             }
 
@@ -717,19 +842,19 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
             // Store displacement if required.
             // calc. size of displacement here.
             int iDisplacementSize = 0;
-            if (inst.m_bHasModRM == true)
+            if (pInst->m_bHasModRM == true)
             {
-                uint64_t iMod = inst.m_modrm.ModValueAbs();
+                uint64_t iMod = pInst->m_modrm.ModValueAbs();
 
                 if (iMod == 0b01)
                 {
                     iDisplacementSize = 1;
                 }
-                else if (iMod == 0b10 || (iMod == 0b00 && inst.m_modrm.RMValueAbs() == 0b101))
+                else if (iMod == 0b10 || (iMod == 0b00 && pInst->m_modrm.RMValueAbs() == 0b101))
                 {
                     iDisplacementSize = 4;
                 }
-                else if (iMod == 0b00 && inst.m_SIB.BaseValueAbs() == 0b101) // base == 101 ?
+                else if (iMod == 0b00 && pInst->m_SIB.BaseValueAbs() == 0b101) // base == 101 ?
                 {
                     iDisplacementSize = 4;
                 }
@@ -743,17 +868,17 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
             {
                 Byte iDispByte = vecInput[iDispIndex];
 
-                inst.m_displacement.PushByte(iDispByte);
+                pInst->m_displacement.PushByte(iDispByte);
             }
-            iByteIndex += inst.m_displacement.ByteCount();
+            iByteIndex += pInst->m_displacement.ByteCount();
 
 
             // Store immediate if required.
             CEOperandTypes_t iImmOperandType = CEOperandTypes_t::CEOperandType_Invalid;
             OperandModes_t   iImmOperandMode = OperandModes_t::OperandMode_Invalid;
-            for (int iOperandIndex = 0; iOperandIndex < inst.m_opCode.m_pOpCodeDesc->m_nOperands; iOperandIndex++)
+            for (int iOperandIndex = 0; iOperandIndex < pInst->m_opCode.m_pOpCodeDesc->m_nOperands; iOperandIndex++)
             {
-                const Operand_t* pOperand = &inst.m_opCode.m_pOpCodeDesc->m_operands[iOperandIndex];
+                const Operand_t* pOperand = &pInst->m_opCode.m_pOpCodeDesc->m_operands[iOperandIndex];
 
                 // If we found an operand with addresing method that requires immediate, store its operand type, and 
                 // break out.
@@ -776,7 +901,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
                 int iImmediateSize = 0;
                 if (iImmOperandMode == OperandMode_O)
                 {
-                    iImmediateSize = inst.GetAddressSizeInBytes();
+                    iImmediateSize = pInst->GetAddressSizeInBytes();
                 }
                 else
                 {
@@ -786,8 +911,8 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
                     case CEOperandType_16:       iImmediateSize = 2;            break;
                     case CEOperandType_32:       iImmediateSize = 4;            break;
                     case CEOperandType_64:       iImmediateSize = 8;            break;
-                    case CEOperandType_16_32:    iImmediateSize = inst.GetOperandSizeInBytes(true);  break;
-                    case CEOperandType_16_32_64: iImmediateSize = inst.GetOperandSizeInBytes(false); break; // Promoted to qword by REX.W ?
+                    case CEOperandType_16_32:    iImmediateSize = pInst->GetOperandSizeInBytes(true);  break;
+                    case CEOperandType_16_32_64: iImmediateSize = pInst->GetOperandSizeInBytes(false); break; // Promoted to qword by REX.W ?
 
                     default: break;
                     }
@@ -800,13 +925,13 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
 
                 for (size_t iImmediateIndex = iByteIndex; iImmediateIndex < nBytes && iImmediateIndex - iByteIndex < iImmediateSize; iImmediateIndex++)
                 {
-                    inst.m_immediate.PushByte(vecInput[iImmediateIndex]);
+                    pInst->m_immediate.PushByte(vecInput[iImmediateIndex]);
                 }
-                iByteIndex += inst.m_immediate.ByteCount();
+                iByteIndex += pInst->m_immediate.ByteCount();
 
 
                 // Check if we collected all immediate bytes.
-                if (inst.m_immediate.ByteCount() != iImmediateSize)
+                if (pInst->m_immediate.ByteCount() != iImmediateSize)
                     return IDASMErrorCode_t::IDASMErrorCode_InvalidImmediateSize;
             }
 
@@ -815,9 +940,8 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
             assert(iByteIndex > 0llu && "Byte index can't be 0 after storing a entire instruction. Alteast one byte must be stored!");
             iByteIndex--;
 
-
-            vecOutput.push_back(inst);
-            inst.Clear();
+            iIterator = iByteIndex;
+            return IDASMErrorCode_t::IDASMErrorCode_Success;
         }
     }
 
@@ -1178,7 +1302,7 @@ int LegacyPrefix_t::PrefixCount() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-ParsedInst_t::ParsedInst_t()
+LegacyInst_t::LegacyInst_t()
 {
     Clear();
 }
@@ -1263,7 +1387,7 @@ bool Immediate_t::PushByte(Byte iByte)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void ParsedInst_t::Clear()
+void LegacyInst_t::Clear()
 {
     m_opCode.Clear();
     m_legacyPrefix.Clear();
@@ -1283,7 +1407,7 @@ void ParsedInst_t::Clear()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-int ParsedInst_t::GetOperandSizeInBytes(bool bIgnoreREXW) const
+int LegacyInst_t::GetOperandSizeInBytes(bool bIgnoreREXW) const
 {
     // REX.W == true ?
     if (m_bHasREX == true && bIgnoreREXW == false)
@@ -1308,7 +1432,7 @@ int ParsedInst_t::GetOperandSizeInBytes(bool bIgnoreREXW) const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-int InsaneDASM64::ParsedInst_t::GetAddressSizeInBytes() const
+int InsaneDASM64::LegacyInst_t::GetAddressSizeInBytes() const
 {
     // Address-size override prefix present ?
     for (int i = 0; i < m_legacyPrefix.PrefixCount(); i++)
@@ -1321,7 +1445,7 @@ int InsaneDASM64::ParsedInst_t::GetAddressSizeInBytes() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint64_t ParsedInst_t::ModRM_Reg() const
+uint64_t LegacyInst_t::ModRM_Reg() const
 {
     assert(m_bHasModRM == true && "Instruction doesn't have a modrm byte.");
     if (m_bHasModRM == false)
@@ -1337,7 +1461,7 @@ uint64_t ParsedInst_t::ModRM_Reg() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint64_t ParsedInst_t::ModRM_Mod() const
+uint64_t LegacyInst_t::ModRM_Mod() const
 {
     assert(m_bHasModRM == true && "Instruction doesn't have a modrm byte.");
     if (m_bHasModRM == false)
@@ -1349,7 +1473,7 @@ uint64_t ParsedInst_t::ModRM_Mod() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint64_t ParsedInst_t::ModRM_RM() const
+uint64_t LegacyInst_t::ModRM_RM() const
 {
     assert(m_bHasModRM == true && "Instruction doesn't have a modrm byte.");
     if (m_bHasModRM == false)
@@ -1372,7 +1496,7 @@ uint64_t ParsedInst_t::ModRM_RM() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint64_t ParsedInst_t::SIB_Scale() const
+uint64_t LegacyInst_t::SIB_Scale() const
 {
     assert(m_bHasSIB == true && "SIB byte is not present for this instruction.");
     if (m_bHasSIB == false)
@@ -1386,7 +1510,7 @@ uint64_t ParsedInst_t::SIB_Scale() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint64_t ParsedInst_t::SIB_Index() const
+uint64_t LegacyInst_t::SIB_Index() const
 {
     assert(m_bHasSIB == true && "SIB byte is not present for this instruction.");
     if (m_bHasSIB == false)
@@ -1401,7 +1525,7 @@ uint64_t ParsedInst_t::SIB_Index() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint64_t ParsedInst_t::SIB_Base() const
+uint64_t LegacyInst_t::SIB_Base() const
 {
     assert(m_bHasSIB == true && "SIB byte is not present for this instruction.");
     if (m_bHasSIB == false)
@@ -1612,4 +1736,57 @@ const char* Register_t::ToString() const
     }
 
     return Rules::REGISTER_NAME_SENTINAL;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool INSANE_DASM64_NAMESPACE::Instruction_t::InitEncodingType(InstEncodingTypes_t iEncoding)
+{
+    // Is the encoding type valid.
+    bool bValidEncoding = iEncoding >= InstEncodingTypes_t::InstEncodingType_Legacy && iEncoding < InstEncodingTypes_t::InstEncodingType_Count;
+    assert(bValidEncoding == true && "Invalid encoding type passed for initializing instruction.");
+    if(bValidEncoding == false)
+        return false;
+
+
+    // Instruction encoding must not be set.
+    assert(m_iInstEncodingType == InstEncodingType_Invalid && "Instruction is already initialized to some type");
+    if (m_iInstEncodingType != InstEncodingType_Invalid)
+        return false;
+
+
+    // Instruction pointer must be NULL.
+    assert(m_pInst == nullptr && "Instruction pointer is pointing to some memory address before initializing");
+    if(m_pInst != nullptr)
+        return false;
+
+
+    // Get the instruction size.
+    size_t iInstSize = 0llu;
+    switch (iEncoding) 
+    {
+        case InstEncodingType_Legacy: iInstSize = sizeof(LegacyInst_t); break;
+        case InstEncodingType_VEX:    iInstSize = sizeof(VEXInst_t);    break;
+
+        default: assert(false && "Size of this instruction encoding type is not know. Not implemented yet!"); break;
+    }
+    assert(iInstSize > 0llu && iInstSize < 0x100 && "Invalid instruction size."); // Sanity checks. So we don't accidently blow up.
+
+
+    // Boom!
+    m_iInstEncodingType = iEncoding;
+    m_pInst             = malloc(iInstSize);
+
+
+    // TODO We will make a arena allocator soon, so will need to be rewritten.
+    if(m_pInst == nullptr)
+    {
+        FAIL_LOG("Failed memory allocation for inst encoding [ %d ] and size [ %zu ]", iEncoding, iInstSize);
+        return false;
+    }
+
+    // If we don't clear it, bad things will happen.
+    memset(m_pInst, 0, iInstSize);
+    return true;
 }
