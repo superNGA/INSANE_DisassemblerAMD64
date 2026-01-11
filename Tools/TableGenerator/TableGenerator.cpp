@@ -136,6 +136,41 @@ std::unordered_map<std::string, std::string> g_mapOperandTypeLinker =
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
+enum InstExtGrps_t 
+{
+    InstExtGrp_Invalid = -1,
+    InstExtGrp_MMX = 0,
+    InstExtGrp_SSE1,
+    InstExtGrp_SSE2,
+    InstExtGrp_SSE3,
+    InstExtGrp_SSSE3,
+    InstExtGrp_SSE41,
+    InstExtGrp_SSE42,
+    InstExtGrp_VMX,
+    InstExtGrp_SMX,
+
+    InstExtGrp_Count
+};
+std::unordered_map<std::string, InstExtGrps_t> g_mapInstExtGrpToEnum = 
+{
+    // Only some bitch ass instructions have this instruction extension group. So excuse them.
+    {"lzcnt", InstExtGrps_t::InstExtGrp_Invalid},
+    {"bmi1",  InstExtGrps_t::InstExtGrp_Invalid},
+    
+    {"mmx",   InstExtGrps_t::InstExtGrp_MMX},
+    {"sse1",  InstExtGrps_t::InstExtGrp_SSE1},
+    {"sse2",  InstExtGrps_t::InstExtGrp_SSE2},
+    {"sse3",  InstExtGrps_t::InstExtGrp_SSE3},
+    {"ssse3", InstExtGrps_t::InstExtGrp_SSSE3},
+    {"sse41", InstExtGrps_t::InstExtGrp_SSE41},
+    {"sse42", InstExtGrps_t::InstExtGrp_SSE42},
+    {"vmx",   InstExtGrps_t::InstExtGrp_VMX},
+    {"smx",   InstExtGrps_t::InstExtGrp_SMX}
+};
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 struct EntryID_t
 {
     EntryID_t(uint64_t ID = 0llu) { m_iID = ID; }
@@ -239,14 +274,15 @@ struct Entry_t
         m_iVarientKey = VarientKey_None;
     }
 
-    std::string m_szName    = "xx_INVALID_xx";
-    bool        m_bIsValid  = false;
-    bool        m_bIsEscape = false;
-    Byte        m_iByte     = 0x00;
-    bool        m_bModRm    = false;
-    bool        m_bEntryGenNeeded = false;
-    std::string m_szBrief   = "Invalid Instruction in 64-Bit Mode";
-    EntryID_t   m_iID;
+    std::string   m_szName          = "xx_INVALID_xx";
+    bool          m_bIsValid        = false;
+    bool          m_bIsEscape       = false;
+    Byte          m_iByte           = 0x00;
+    bool          m_bModRm          = false;
+    bool          m_bEntryGenNeeded = false;
+    std::string   m_szBrief         = "Invalid Instruction in 64-Bit Mode";
+    InstExtGrps_t m_iInstrExtGrp    = InstExtGrps_t::InstExtGrp_Invalid;
+    EntryID_t     m_iID;
 
     struct Operand_t
     {
@@ -341,12 +377,20 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
     const std::vector<XMLElement*>& vecLevel2NoMem,
     const std::vector<XMLElement*>& vecLevel2SecOpcd, 
     const std::vector<XMLElement*>& vecLevel2SecOpcdPrefix);
-void DumpEntryInfo(std::vector<Entry_t*>& vecEntries);
+void DumpEntryInfo(std::vector<Entry_t*>& vecEntries, void* fn = nullptr);
 void DumpTable(std::vector<Entry_t*>& vecEntries, const char* szTableName, std::ofstream& hFile);
 
 // Linear searching "g_collisionSolutionTable" i.e. Collision Solution talbe, and
 // return if an entry exists for this entry, returns nullptr on fail.
 CollisionSolution_t* FindIDCollisionSol(int iOpCode, int iTableID, EntryID_t iID, const char* szGroupName);
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static bool FilterFn(Entry_t* pEntry)
+{
+    return pEntry->m_iInstrExtGrp != InstExtGrps_t::InstExtGrp_Invalid;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -405,10 +449,10 @@ int main(void)
     }
 
     
-    DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); DumpEntryInfo(vecOneByteOpCodes);
-    DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); DumpEntryInfo(vecTwoByteOpCodes);
-    DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n");  DumpEntryInfo(vecThreeByteOpCodes38);
-    DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n");  DumpEntryInfo(vecThreeByteOpCodes3A);
+    DumpTable(vecOneByteOpCodes,     "m_opCodeTable1",    hFile); printf("\n"); DumpEntryInfo(vecOneByteOpCodes, nullptr);
+    // DumpTable(vecTwoByteOpCodes,     "m_opCodeTable2",    hFile); printf("\n"); DumpEntryInfo(vecTwoByteOpCodes, reinterpret_cast<void*>(FilterFn));
+    // DumpTable(vecThreeByteOpCodes38, "m_opCodeTable3_38", hFile); printf("\n"); DumpEntryInfo(vecThreeByteOpCodes38, reinterpret_cast<void*>(FilterFn));
+    // DumpTable(vecThreeByteOpCodes3A, "m_opCodeTable3_3A", hFile); printf("\n"); DumpEntryInfo(vecThreeByteOpCodes3A, reinterpret_cast<void*>(FilterFn));
 
 
     hFile.close();
@@ -722,9 +766,27 @@ void ElementToEntry(XMLElement* pElem, Entry_t* pEntry, Byte iByte, bool bPrefix
         return;
     }
 
+    
+    // Storing instruction extension group.
+    XMLElement* pInstrExt = FindChildRecurse(pElem, "instr_ext");
+    if(pInstrExt != nullptr)
+    {
+        auto it = g_mapInstExtGrpToEnum.find(pInstrExt->GetText());
+        if(it == g_mapInstExtGrpToEnum.end())
+        {
+            printf(RED "Instruction { 0x%02X } had extension group { %s } that couldn't be found in map" RESET, iByte, pInstrExt->GetText());
+            assert(false && "Instruction had extension group that couldn't be found in the map");
+            return;
+        }
+
+        assert(pInstrExt->NextSiblingElement("instr_ext") == nullptr && "Two Instruction extension groups present in one instruction.");
+
+        pEntry->m_iInstrExtGrp = it->second;
+    }
+
+
     pEntry->m_szName  = FindChildRecurse(pSyntax, "mnem")->GetText();
     pEntry->m_szBrief = FindChildRecurse(pElem,   "brief")->GetText();
-
     RemoveNonAsciiChars(pEntry->m_szBrief); // causes bullshit
 
     printf("Brief : %s\n", pEntry->m_szBrief.c_str());
@@ -1133,7 +1195,7 @@ void CombineEntries(Byte iByte, Entry_t* pOutput,
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void DumpEntryRecurse(std::vector<Entry_t*>& vecEntries, int iIndentation, Entry_t::VarientKey_t iSplitMethod = Entry_t::VarientKey_None)
+void DumpEntryRecurse(std::vector<Entry_t*>& vecEntries, int iIndentation, Entry_t::VarientKey_t iSplitMethod = Entry_t::VarientKey_None, void* pFn = nullptr)
 {
     if (iSplitMethod != Entry_t::VarientKey_None)
     {
@@ -1159,6 +1221,15 @@ void DumpEntryRecurse(std::vector<Entry_t*>& vecEntries, int iIndentation, Entry
 
     for (Entry_t* pEntry : vecEntries)
     {
+
+        // pFn : Function used to modify the function of this fn. Works as a filter.
+        if(pFn != nullptr)
+        {
+            bool bShouldDump = ((bool(*)(Entry_t*))(pFn))(pEntry);
+            if(bShouldDump == false)
+                continue;
+        }
+
         if (pEntry->m_szName != "xx_INVALID_xx")
         {
             for (int i = 0; i < iIndentation; i++)
@@ -1204,6 +1275,7 @@ void DumpEntryRecurse(std::vector<Entry_t*>& vecEntries, int iIndentation, Entry
             printf("\n");
         }
 
+
         DumpEntryRecurse(pEntry->m_vecVarients, iIndentation + 1, pEntry->m_iVarientKey);
 
         if (iIndentation == 0)
@@ -1214,12 +1286,12 @@ void DumpEntryRecurse(std::vector<Entry_t*>& vecEntries, int iIndentation, Entry
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void DumpEntryInfo(std::vector<Entry_t*>& vecEntries)
+void DumpEntryInfo(std::vector<Entry_t*>& vecEntries, void* fn)
 {
     printf(GREEN "Starting Entry Dump...\n" RESET);
 
 
-    DumpEntryRecurse(vecEntries, 0);
+    DumpEntryRecurse(vecEntries, 0, Entry_t::VarientKey_t::VarientKey_None, fn);
 }
 
 

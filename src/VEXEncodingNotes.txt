@@ -1,0 +1,35 @@
+VEX Encoding notes
+
+VEX Encoding : encoding scheme that combines prefix bytes, opcode extension field, 
+operand encoding fields, and vector length encoding capability into a new prefix, referred to as VEX.
+
+VEX Prefix : 3 bytes max size
+
+NOTE : if any of the 0xF0, 0x66, 0xF2, 0xF3 or REX prefix ( 0x40 - 0x4F ) preceds the VEX prefix, its a #UD ( invalid opcode exception )
+
+
+VEX prefix structure : 
+    2 byte VEX prefix ( 0xC5 as first byte ):
+
+               7 6543 2 10
+        0xC5 | R vvvv L pp 
+
+    3 byte VEX prefix ( 0xC4 as first byte ):
+
+               7 6 5 4 3210   7 6543 2 10
+        0xC4 | R X B m-mmmm | W vvvv L pp
+
+VEX.L == 0 : 128 bit vector
+VEX.L == 1 : 256 bit vector
+
+
+We have SSE ( SSE 1 -to- SSE 4.2 ), they deal with floating pointer & intergers in SIMD fashion, using XMM registers.
+Next we got the AVX ( Advanced vector extension ) instruction set, which does the same thing as SSE instructions using widder
+registers ( YMM ) and VEX encodign instead of legacy encoding.
+
+
+2 byte opcodes have a 0x0F byte leading by default, that means all 2 byte VEX encoded opcodes belong to two byte opcode table.
+3 byte opcode's prefix byte goes as follows : 
+    vex.m-mmmm -> 00001 : 0x0F
+    vex.m-mmmm -> 00010 : 0x0F 0x38
+    vex.m-mmmm -> 00011 : 0x0F 0x3A

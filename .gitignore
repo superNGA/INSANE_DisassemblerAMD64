@@ -3,6 +3,14 @@ out/
 CMakePresets.json
 
 # Ignoring Table Generators unnecessary stuff.
-Tools/TableGenerator/
+Tools/TableGenerator/*
+!Tools/TableGenerator/
 !Tools/TableGenerator/TableGenerator.cpp
 !Tools/TableGenerator/build.bat
+
+# Ignoring Valid AVX inst dumper's unnecessary stuff.
+Tools/ValidAVXInst/*
+!Tools/ValidAVXInst/
+!Tools/ValidAVXInst/ValidAVXInst.cpp
+!Tools/ValidAVXInst/build.bat
+!Tools/ValidAVXInst/run.bat

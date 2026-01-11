@@ -16,6 +16,7 @@ int main(void)
     vecOutput.clear();
 
 
+
     // Initialize disassembler.
     {
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::Initialize();

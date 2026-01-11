@@ -292,6 +292,803 @@ IDASMErrorCode_t Tables_t::_InitializeInstTypeLUT()
     }
 
 
+    // Here we mark all opcodes that are valid AVX instructions, according to their
+    // leading opcodes. 
+    {
+        // VBLENDPD [ Brief : Blend Packed Double Precision Floats ]
+        m_instTypeLUT[0x0D] |= InstTypes_AVXLeadBy0x3A;
+
+        // VBLENDPS [ Brief : Blend Packed Single Precision Floats ]
+        m_instTypeLUT[0x0C] |= InstTypes_AVXLeadBy0x3A;
+
+        // VBLENDVPD [ Brief : Variable Blend Packed Double Precision Floats ]
+        m_instTypeLUT[0x4B] |= InstTypes_AVXLeadBy0x3A;
+
+        // VBLENDVPS [ Brief : Variable Blend Packed Single Precision Floats ]
+        m_instTypeLUT[0x4A] |= InstTypes_AVXLeadBy0x3A;
+
+        // VDPPD [ Brief : Packed Double Precision Dot Products ]
+        m_instTypeLUT[0x41] |= InstTypes_AVXLeadBy0x3A;
+
+        // VDPPS [ Brief : Packed Single Precision Dot Products ]
+        m_instTypeLUT[0x40] |= InstTypes_AVXLeadBy0x3A;
+
+        // VEXTRACTPS [ Brief : Extract From Packed Single Precision Floats ]
+        m_instTypeLUT[0x17] |= InstTypes_AVXLeadBy0x3A;
+
+        // VINSERTPS [ Brief : Insert Into Packed Single Precision Floats ]
+        m_instTypeLUT[0x21] |= InstTypes_AVXLeadBy0x3A;
+
+        // VMOVNTDQA [ Brief : Load Double Quadword Non-temporal Aligned ]
+        m_instTypeLUT[0x2A] |= InstTypes_AVXLeadBy0x38;
+
+        //  VMPSADBW [ Brief : Multiple Packed Sums of Absolute Difference ]
+        m_instTypeLUT[0x42] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPACKUSDW [ Brief : Pack with Unsigned Saturation ]
+        m_instTypeLUT[0x2B] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPBLENDVB [ Brief : Variable Blend Packed Bytes ]
+        m_instTypeLUT[0x4C] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPBLENDW [ Brief : Blend Packed Words ]
+        m_instTypeLUT[0x0E] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPCMPEQQ [ Brief : Compare Packed Qword Data of Equal ]
+        m_instTypeLUT[0x29] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPEXTRB [ Brief : Extract Byte ]
+        m_instTypeLUT[0x14] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPEXTRD [ Brief : Extract DWord ]
+        m_instTypeLUT[0x16] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPEXTRQ [ Brief : Extract QWord ]
+        m_instTypeLUT[0x16] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPEXTRW [ Brief : Extract Word ]
+        m_instTypeLUT[0x15] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPHMINPOSUW [ Brief : Packed Horizontal Word Minimum ]
+        m_instTypeLUT[0x41] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPINSRB [ Brief : Insert Byte ]
+        m_instTypeLUT[0x20] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPINSRD [ Brief : Insert DWord ]
+        m_instTypeLUT[0x22] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPINSRQ [ Brief : Insert QWord ]
+        m_instTypeLUT[0x22] |= InstTypes_AVXLeadBy0x3A;
+
+        // VPMAXSB [ Brief : Maximum of Packed Signed Byte Integers ]
+        m_instTypeLUT[0x3C] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMAXSD [ Brief : Maximum of Packed Signed Dword Integers ]
+        m_instTypeLUT[0x3D] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMAXUD [ Brief : Maximum of Packed Unsigned Dword Integers ]
+        m_instTypeLUT[0x3F] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMAXUW [ Brief : Maximum of Packed Unsigned Word Integers ]
+        m_instTypeLUT[0x3E] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMINSB [ Brief : Minimum of Packed Signed Byte Integers ]
+        m_instTypeLUT[0x38] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMINSD [ Brief : Minimum of Packed Signed Dword Integers ]
+        m_instTypeLUT[0x39] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMINUD [ Brief : Minimum of Packed Unsigned Dword Integers ]
+        m_instTypeLUT[0x3B] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMINUW [ Brief : Minimum of Packed Unsigned Word Integers ]
+        m_instTypeLUT[0x3A] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMOVSXBD [ Brief : Packed Move Sign Extend - Byte to Dword ]
+        m_instTypeLUT[0x21] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMOVSXBQ [ Brief : Packed Move Sign Extend - Byte to Qword ]
+        m_instTypeLUT[0x22] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMOVSXBW [ Brief : Packed Move Sign Extend - Byte to Word ]
+        m_instTypeLUT[0x20] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMOVSXWD [ Brief : Packed Move Sign Extend - Word to Dword ]
+        m_instTypeLUT[0x23] |= InstTypes_AVXLeadBy0x38;
+
+        // VPMOVSXWQ [ Brief : Packed Move Sign Extend - Word to Qword ]
+        m_instTypeLUT[0x24] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMOVSXDQ [ Brief : Packed Move Sign Extend - Dword to Qword ]
+        m_instTypeLUT[0x25] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMOVZXBD [ Brief : Packed Move Zero Extend - Byte to Dword ]
+        m_instTypeLUT[0x31] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMOVZXBQ [ Brief : Packed Move Zero Extend - Byte to Qword ]
+        m_instTypeLUT[0x32] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMOVZXBW [ Brief : Packed Move Zero Extend - Byte to Word ]
+        m_instTypeLUT[0x30] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMOVZXWD [ Brief : Packed Move Zero Extend - Word to Dword ]
+        m_instTypeLUT[0x33] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMOVZXWQ [ Brief : Packed Move Zero Extend - Word to Qword ]
+        m_instTypeLUT[0x34] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMOVZXDQ [ Brief : Packed Move Zero Extend - Dword to Qword ]
+        m_instTypeLUT[0x35] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMULDQ [ Brief : Multiply Packed Signed Dword Integers ]
+        m_instTypeLUT[0x28] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMULLD [ Brief : Multiply Packed Signed Dword Integers, Store low Result ]
+        m_instTypeLUT[0x40] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPTEST [ Brief : Logical Compare ]
+        m_instTypeLUT[0x17] |= InstTypes_AVXLeadBy0x38;
+
+        //  VROUNDPD [ Brief : Round Packed Double Precision Values ]
+        m_instTypeLUT[0x09] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VROUNDPS [ Brief : Round Packed Single Precision Values ]
+        m_instTypeLUT[0x08] |= InstTypes_AVXLeadBy0x3A;
+
+        // VROUNDSD [ Brief : Round Scalar Double Precision Value ]
+        m_instTypeLUT[0x0B] |= InstTypes_AVXLeadBy0x3A;
+
+        // VROUNDSS [ Brief : Round Scalar Single Precision Value ]
+        m_instTypeLUT[0x0A] |= InstTypes_AVXLeadBy0x3A;
+
+        // VPCMPESTRI [ Brief : Packed Compare Explicit Length Strings, Return Index ]
+        m_instTypeLUT[0x61] |= InstTypes_AVXLeadBy0x3A;
+
+        // VPCMPESTRM [ Brief : Packed Compare Explicit Length Strings, Return Mask ]
+        m_instTypeLUT[0x60] |= InstTypes_AVXLeadBy0x3A;
+
+        // VPCMPGTQ [ Brief : Compare Packed Data for Greater Than ]
+        m_instTypeLUT[0x28] |= InstTypes_AVXLeadBy0x38;
+
+        // VPCMPISTRI [ Brief : Packed Compare Implicit Length Strings, Return Index ]
+        m_instTypeLUT[0x63] |= InstTypes_AVXLeadBy0x3A;
+
+        // VPCMPISTRM [ Brief : Packed Compare Implicit Length Strings, Return Mask ]
+        m_instTypeLUT[0x62] |= InstTypes_AVXLeadBy0x3A;
+
+        // VAESDEC [ Brief : Perform One Round of an AES Decryption Flow ]
+        m_instTypeLUT[0xDE] |= InstTypes_AVXLeadBy0x38;
+
+        // VAESDECLAST [ Brief : Perform Last Round of an AES Decryption Flow ]
+        m_instTypeLUT[0xDF] |= InstTypes_AVXLeadBy0x38;
+
+        // VAESENC [ Brief : Perform One Round of an AES Encryption Flow ]
+        m_instTypeLUT[0xDC] |= InstTypes_AVXLeadBy0x38;
+
+        // VAESENCLAST [ Brief : Perform Last Round of an AES Encryption Flow ]
+        m_instTypeLUT[0xDD] |= InstTypes_AVXLeadBy0x38;
+
+        // VAESIMC [ Brief : Perform the AES InvMixColumn Transformation ]
+        m_instTypeLUT[0xDB] |= InstTypes_AVXLeadBy0x38;
+
+        //  VAESKEYGENASSIST [ Brief : AES Round Key Generation Assist ]
+        m_instTypeLUT[0xDF] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPABSB [ Brief : Packed Absolute Value ]
+        m_instTypeLUT[0x1C] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPABSD [ Brief : Packed Absolute Value ]
+        m_instTypeLUT[0x1E] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPABSW [ Brief : Packed Absolute Value ]
+        m_instTypeLUT[0x1D] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPALIGNR [ Brief : Packed Align Right ]
+        m_instTypeLUT[0xDD] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPHADDD [ Brief : Packed Horizontal Add ]
+        m_instTypeLUT[0x02] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPHADDW [ Brief : Packed Horizontal Add ]
+        m_instTypeLUT[0x01] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPHADDSW [ Brief : Packed Horizontal Add and Saturate ]
+        m_instTypeLUT[0x03] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPHSUBD [ Brief : Packed Horizontal Subtract ]
+        m_instTypeLUT[0x06] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPHSUBW [ Brief : Packed Horizontal Subtract ]
+        m_instTypeLUT[0x05] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPHSUBSW [ Brief : Packed Horizontal Subtract and Saturate ]
+        m_instTypeLUT[0x07] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMADDUBSW [ Brief : Multiply and Add Packed Signed and Unsigned Bytes ]
+        m_instTypeLUT[0x04] |= InstTypes_AVXLeadBy0x38;
+
+        //  VPMULHRSW [ Brief : Packed Multiply High with Round and Scale ]
+        m_instTypeLUT[0x0B] |= InstTypes_AVXLeadBy0x38;
+
+        // VPSHUFB [ Brief : Packed Shuffle Bytes ]
+        m_instTypeLUT[0x00] |= InstTypes_AVXLeadBy0x38;
+
+        // VPSIGNB [ Brief : Packed SIGN ]
+        m_instTypeLUT[0x08] |= InstTypes_AVXLeadBy0x38;
+
+        // VPSIGND [ Brief : Packed SIGN ]
+        m_instTypeLUT[0x0A] |= InstTypes_AVXLeadBy0x38;
+
+        // VPSIGNW [ Brief : Packed SIGN ]
+        m_instTypeLUT[0x09] |= InstTypes_AVXLeadBy0x38;
+
+        // VADDSUBPD [ Brief : Packed Double-FP Add/Subtract ]
+        m_instTypeLUT[0xD0] |= InstTypes_AVXLeadBy0x0F;
+
+        // VADDSUBPS [ Brief : Packed Single-FP Add/Subtract ]
+        m_instTypeLUT[0xD0] |= InstTypes_AVXLeadBy0x0F;
+
+        // VHADDPD [ Brief : Packed Double-FP Horizontal Add ]
+        m_instTypeLUT[0x7C] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VHADDPS [ Brief : Packed Single-FP Horizontal Add ]
+        m_instTypeLUT[0x7C] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VHSUBPD [ Brief : Packed Double-FP Horizontal Subtract ]
+        m_instTypeLUT[0x7D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VHSUBPS [ Brief : Packed Single-FP Horizontal Subtract ]
+        m_instTypeLUT[0x7D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VLDDQU [ Brief : Load Unaligned Integer 128 Bits ]
+        m_instTypeLUT[0xF0] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVDDUP [ Brief : Move One Double-FP and Duplicate ]
+        m_instTypeLUT[0x12] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVHLPS [ Brief : Move Packed Single Precision Floating-Point Values High to Low ]
+        m_instTypeLUT[0x12] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVSHDUP [ Brief : Move Packed Single-FP High and Duplicate ]
+        m_instTypeLUT[0x16] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVSLDUP [ Brief : Move Packed Single-FP Low and Duplicate ]
+        m_instTypeLUT[0x12] |= InstTypes_AVXLeadBy0x0F;
+
+        // VADDPD [ Brief : Add Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x58] |= InstTypes_AVXLeadBy0x0F;
+
+        // VADDSD [ Brief : Add Scalar Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x58] |= InstTypes_AVXLeadBy0x0F;
+
+        // VANDPD [ Brief : Bitwise Logical AND of Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x54] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VANDNPD [ Brief : Bitwise Logical AND NOT of Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x55] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCMPPD [ Brief : Compare Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0xC2] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCMPSD [ Brief : Compare Scalar Double Precision Floating-Point Values ]
+        m_instTypeLUT[0xC2] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCOMISD [ Brief : Compare Scalar Ordered Double Precision Floating-Point Values and Set EFLAGS ]
+        m_instTypeLUT[0x2F] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTDQ2PDâ [ Brief : Packed Dword Integers to Packed Double Precision FP Values ]
+        m_instTypeLUT[0xE6] |= InstTypes_AVXLeadBy0x0F;
+
+        // VCVTDQ2PSâ [ Brief : Packed Dword Integers to Packed Single Precision FP Values ]
+        m_instTypeLUT[0x5B] |= InstTypes_AVXLeadBy0x0F;
+
+        // VCVTPD2DQâ [ Brief : Packed Double Precision FP Values to Packed Dword Integers ]
+        m_instTypeLUT[0xE6] |= InstTypes_AVXLeadBy0x0F;
+
+        // VCVTPD2PSâ [ Brief : Packed Double Precision FP Values to Packed Single Precision FP Values ]
+        m_instTypeLUT[0x5A] |= InstTypes_AVXLeadBy0x0F;
+
+        // VCVTPS2DQâ [ Brief : Packed Single Precision FP Values to Packed Dword Integers ]
+        m_instTypeLUT[0x5B] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTPS2PDâ [ Brief : Packed Single Precision FP Values to Packed Double Precision FP Values ]
+        m_instTypeLUT[0x5A] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTSD2SIâ [ Brief : Scalar Double Precision FP Value to Signed Integer ]
+        m_instTypeLUT[0x2D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTSD2SS [ Brief : Convert Scalar Double Precision FP Value to Scalar Single Precision FP Value ]
+        m_instTypeLUT[0x5A] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTSI2SDâ [ Brief : Signed Integer to Scalar Double Precision FP Value ]
+        m_instTypeLUT[0x2A] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTSS2SD [ Brief : Convert Scalar Single Precision FP Value to Scalar Double Precision FP Value ]
+        m_instTypeLUT[0x5A] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTTPD2DQâ [ Brief : with Truncation Packed Double Precision FP Values to Packed Dword Integers ]
+        m_instTypeLUT[0xE6] |= InstTypes_AVXLeadBy0x0F;
+
+        // VCVTTPS2DQâ [ Brief : with Truncation Packed Single Precision FP Values to Packed Dword Integers ]
+        m_instTypeLUT[0x5B] |= InstTypes_AVXLeadBy0x0F;
+
+        // VCVTTSD2SIâ [ Brief : with Truncation Scalar Double Precision FP Value to Signed Integer ]
+        m_instTypeLUT[0x2C] |= InstTypes_AVXLeadBy0x0F;
+
+        // VDIVPD [ Brief : Divide Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x5E] |= InstTypes_AVXLeadBy0x0F;
+
+        // VDIVSD [ Brief : Divide Scalar Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x5E] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMASKMOVDQUâ [ Brief : Selected Bytes of Double Quadword ]
+        m_instTypeLUT[0xF7] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMAXPD [ Brief : Return Maximum Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x5F] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMAXSD [ Brief : Return Maximum Scalar Double Precision Floating-Point Value ]
+        m_instTypeLUT[0x5F] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMINPD [ Brief : Return Minimum Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x5D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMINSD [ Brief : Return Minimum Scalar Double Precision Floating-Point Value ]
+        m_instTypeLUT[0x5D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVAPD [ Brief : Move Aligned Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x28] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x29] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVD [ Brief : Move Doubleword ]
+        m_instTypeLUT[0x6E] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x7E] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVQ [ Brief : Move Quadword ]
+        m_instTypeLUT[0x6E] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x7E] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVDQA [ Brief : Move Aligned Double Quadword ]
+        m_instTypeLUT[0x6F] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x7F] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVDQU [ Brief : Move Unaligned Double Quadword ]
+        m_instTypeLUT[0x6F] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x7F] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVHPD [ Brief : Move High Packed Double Precision Floating-Point Value ]
+        m_instTypeLUT[0x16] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x17] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVLPD [ Brief : Move Low Packed Double Precision Floating-Point Value ]
+        m_instTypeLUT[0x12] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x13] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVMSKPD [ Brief : Extract Packed Double Precision Floating-Point Sign Mask ]
+        m_instTypeLUT[0x50] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVNTDQ [ Brief : Store Double Quadword Using Non-Temporal Hint ]
+        m_instTypeLUT[0xE7] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVNTPD [ Brief : Store Packed Double Precision Floating-Point Values Using Non-Temporal Hint ]
+        m_instTypeLUT[0x2B] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVSD [ Brief : Move Scalar Double Precision Floating-Point Value ]
+        m_instTypeLUT[0x10] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x11] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVUPD [ Brief : Move Unaligned Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x10] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x11] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMULPD [ Brief : Multiply Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x59] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMULSD [ Brief : Multiply Scalar Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x59] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VORPD [ Brief : Bitwise Logical OR of Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x56] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPACKSSWBâ [ Brief : with Signed Saturation ]
+        m_instTypeLUT[0x63] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPACKSSDWâ [ Brief : with Signed Saturation ]
+        m_instTypeLUT[0x6B] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPACKUSWBâ [ Brief : with Unsigned Saturation ]
+        m_instTypeLUT[0x67] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPADDB [ Brief : Add Packed Integers ]
+        m_instTypeLUT[0xFC] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPADDW [ Brief : Add Packed Integers ]
+        m_instTypeLUT[0xFD] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPADDD [ Brief : Add Packed Integers ]
+        m_instTypeLUT[0xFE] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPADDQ [ Brief : Add Packed Quadword Integers ]
+        m_instTypeLUT[0xD4] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPADDSB [ Brief : Add Packed Signed Integers with Signed Saturation ]
+        m_instTypeLUT[0xEC] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPADDSW [ Brief : Add Packed Signed Integers with Signed Saturation ]
+        m_instTypeLUT[0xED] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPADDUSB [ Brief : Add Packed Unsigned Integers with Unsigned Saturation ]
+        m_instTypeLUT[0xDC] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPADDUSW [ Brief : Add Packed Unsigned Integers with Unsigned Saturation ]
+        m_instTypeLUT[0xDD] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPAND [ Brief : Logical AND ]
+        m_instTypeLUT[0xDB] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPANDN [ Brief : Logical AND NOT ]
+        m_instTypeLUT[0xDF] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPAVGB [ Brief : Average Packed Integers ]
+        m_instTypeLUT[0xE0] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPAVGW [ Brief : Average Packed Integers ]
+        m_instTypeLUT[0xE3] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPCMPEQB [ Brief : Compare Packed Data for Equal ]
+        m_instTypeLUT[0x74] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPCMPEQW [ Brief : Compare Packed Data for Equal ]
+        m_instTypeLUT[0x75] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPCMPEQD [ Brief : Compare Packed Data for Equal ]
+        m_instTypeLUT[0x76] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPCMPGTB [ Brief : Compare Packed Signed Integers for Greater Than ]
+        m_instTypeLUT[0x64] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPCMPGTW [ Brief : Compare Packed Signed Integers for Greater Than ]
+        m_instTypeLUT[0x65] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPCMPGTD [ Brief : Compare Packed Signed Integers for Greater Than ]
+        m_instTypeLUT[0x66] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPEXTRW [ Brief : Extract Word ]
+        m_instTypeLUT[0xC5] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPINSRW [ Brief : Insert Word ]
+        m_instTypeLUT[0xC4] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPMADDWD [ Brief : Multiply and Add Packed Integers ]
+        m_instTypeLUT[0xF5] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPMAXSW [ Brief : Maximum of Packed Signed Word Integers ]
+        m_instTypeLUT[0xEE] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPMAXUB [ Brief : Maximum of Packed Unsigned Byte Integers ]
+        m_instTypeLUT[0xDE] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPMINSW [ Brief : Minimum of Packed Signed Word Integers ]
+        m_instTypeLUT[0xEA] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPMINUB [ Brief : Minimum of Packed Unsigned Byte Integers ]
+        m_instTypeLUT[0xDA] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPMOVMSKB [ Brief : Move Byte Mask ]
+        m_instTypeLUT[0xD7] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPMULHUW [ Brief : Multiply Packed Unsigned Integers and Store High Result ]
+        m_instTypeLUT[0xE4] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPMULHW [ Brief : Multiply Packed Signed Integers and Store High Result ]
+        m_instTypeLUT[0xE5] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPMULLW [ Brief : Multiply Packed Signed Integers and Store Low Result ]
+        m_instTypeLUT[0xD5] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPMULUDQ [ Brief : Multiply Packed Unsigned Doubleword Integers ]
+        m_instTypeLUT[0xF4] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPOR [ Brief : Bitwise Logical OR ]
+        m_instTypeLUT[0xEB] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSADBW [ Brief : Compute Sum of Absolute Differences ]
+        m_instTypeLUT[0xF6] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSHUFD [ Brief : Shuffle Packed Doublewords ]
+        m_instTypeLUT[0x70] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSHUFHW [ Brief : Shuffle Packed High Words ]
+        m_instTypeLUT[0x70] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSHUFLW [ Brief : Shuffle Packed Low Words ]
+        m_instTypeLUT[0x70] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSLLDQ [ Brief : Shift Double Quadword Left Logical ]
+        m_instTypeLUT[0x73] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSLLW [ Brief : Shift Packed Data Left Logical ]
+        m_instTypeLUT[0xF1] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x71] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSLLD [ Brief : Shift Packed Data Left Logical ]
+        m_instTypeLUT[0xF2] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x72] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSLLQ [ Brief : Shift Packed Data Left Logical ]
+        m_instTypeLUT[0xF3] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x73] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSRAW [ Brief : Shift Packed Data Right Arithmetic ]
+        m_instTypeLUT[0xE1] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x71] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSRAD [ Brief : Shift Packed Data Right Arithmetic ]
+        m_instTypeLUT[0xE2] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x72] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSRLDQ [ Brief : Shift Double Quadword Right Logical ]
+        m_instTypeLUT[0x73] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSRLW [ Brief : Shift Packed Data Right Logical ]
+        m_instTypeLUT[0xD1] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x71] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSRLD [ Brief : Shift Packed Data Right Logical ]
+        m_instTypeLUT[0xD2] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x72] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSRLQ [ Brief : Shift Packed Data Right Logical ]
+        m_instTypeLUT[0xD3] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x73] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSUBB [ Brief : Subtract Packed Integers ]
+        m_instTypeLUT[0xF8] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSUBW [ Brief : Subtract Packed Integers ]
+        m_instTypeLUT[0xF9] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPSUBD [ Brief : Subtract Packed Integers ]
+        m_instTypeLUT[0xFA] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSUBQ [ Brief : Subtract Packed Quadword Integers ]
+        m_instTypeLUT[0xFB] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSUBSB [ Brief : Subtract Packed Signed Integers with Signed Saturation ]
+        m_instTypeLUT[0xE8] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSUBSW [ Brief : Subtract Packed Signed Integers with Signed Saturation ]
+        m_instTypeLUT[0xE9] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSUBUSB [ Brief : Subtract Packed Unsigned Integers with Unsigned Saturation ]
+        m_instTypeLUT[0xD8] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPSUBUSW [ Brief : Subtract Packed Unsigned Integers with Unsigned Saturation ]
+        m_instTypeLUT[0xD9] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPUNPCKHBW [ Brief : Unpack High Data ]
+        m_instTypeLUT[0x68] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPUNPCKHWD [ Brief : Unpack High Data ]
+        m_instTypeLUT[0x69] |= InstTypes_AVXLeadBy0x0F;
+
+        // VPUNPCKHDQ [ Brief : Unpack High Data ]
+        m_instTypeLUT[0x6A] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPUNPCKHQDQ [ Brief : Unpack High Data ]
+        m_instTypeLUT[0x6D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPUNPCKLBW [ Brief : Unpack Low Data ]
+        m_instTypeLUT[0x60] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPUNPCKLWD [ Brief : Unpack Low Data ]
+        m_instTypeLUT[0x61] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPUNPCKLDQ [ Brief : Unpack Low Data ]
+        m_instTypeLUT[0x62] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPUNPCKLQDQ [ Brief : Unpack Low Data ]
+        m_instTypeLUT[0x6C] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VPXOR [ Brief : Logical Exclusive OR ]
+        m_instTypeLUT[0xEF] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VSHUFPD [ Brief : Shuffle Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0xC6] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSQRTPD [ Brief : Compute Square Roots of Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x51] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSQRTSD [ Brief : Compute Square Root of Scalar Double Precision Floating-Point Value ]
+        m_instTypeLUT[0x51] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSUBPD [ Brief : Subtract Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x5C] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSUBSD [ Brief : Subtract Scalar Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x5C] |= InstTypes_AVXLeadBy0x0F;
+
+        // VUCOMISD [ Brief : Unordered Compare Scalar Double Precision Floating-Point Values and Set EFLAGS ]
+        m_instTypeLUT[0x2E] |= InstTypes_AVXLeadBy0x0F;
+
+        // VUNPCKHPD [ Brief : Unpack and Interleave High Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x15] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VUNPCKHPS [ Brief : Unpack and Interleave High Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x15] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VUNPCKLPD [ Brief : Unpack and Interleave Low Packed Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x14] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VUNPCKLPS [ Brief : Unpack and Interleave Low Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x14] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VXORPD [ Brief : Bitwise Logical XOR for Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x57] |= InstTypes_AVXLeadBy0x0F;
+
+        // VADDPS [ Brief : Add Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x58] |= InstTypes_AVXLeadBy0x0F;
+
+        // VADDSS [ Brief : Add Scalar Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x58] |= InstTypes_AVXLeadBy0x0F;
+
+        // VANDPS [ Brief : Bitwise Logical AND of Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x54] |= InstTypes_AVXLeadBy0x0F;
+
+        // VANDNPS [ Brief : Bitwise Logical AND NOT of Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x55] |= InstTypes_AVXLeadBy0x0F;
+
+        // VCMPPS [ Brief : Compare Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0xC2] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCMPSS [ Brief : Compare Scalar Single Precision Floating-Point Values ]
+        m_instTypeLUT[0xC2] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCOMISS [ Brief : Compare Scalar Ordered Single Precision Floating-Point Values and Set EFLAGS ]
+        m_instTypeLUT[0x2F] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTSI2SS [ Brief : Convert Signed Integer to Scalar Single Precision FP Value ]
+        m_instTypeLUT[0x2A] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTSS2SI [ Brief : Convert Scalar Single Precision FP Value to Signed Integer ]
+        m_instTypeLUT[0x2D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VCVTTSS2SI [ Brief : Convert with Truncation Scalar Single Precision FP Value to Signed Integer ]
+        m_instTypeLUT[0x2C] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VDIVPS [ Brief : Divide Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x5E] |= InstTypes_AVXLeadBy0x0F;
+
+        // VDIVSS [ Brief : Divide Scalar Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x5E] |= InstTypes_AVXLeadBy0x0F;
+
+        // VLDMXCSR [ Brief : Load MXCSR Register ]
+        m_instTypeLUT[0xE0] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMAXPS [ Brief : Return Maximum Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x5F] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMAXSS [ Brief : Return Maximum Scalar Single Precision Floating-Point Value ]
+        m_instTypeLUT[0x5F] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMINPS [ Brief : Return Minimum Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x5D] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMINSS [ Brief : Return Minimum Scalar Single Precision Floating-Point Value ]
+        m_instTypeLUT[0x5D] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVAPSâ [ Brief : Aligned Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x28] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x29] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVHPS [ Brief : Move High Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x16] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x17] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVLHPS [ Brief : Move Packed Single Precision Floating-Point Values Low to High ]
+        m_instTypeLUT[0x16] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVLPS [ Brief : Move Low Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x12] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x13] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVMSKPS [ Brief : Extract Packed Single Precision Floating-Point Sign Mask ]
+        m_instTypeLUT[0x50] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VMOVNTPS [ Brief : Store Packed Single Precision Floating-Point Values Using Non-Temporal Hint ]
+        m_instTypeLUT[0x2B] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVSS [ Brief : Move Scalar Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x10] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x11] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMOVUPSâ [ Brief : Unaligned Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x10] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x11] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMULPS [ Brief : Multiply Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x59] |= InstTypes_AVXLeadBy0x0F;
+
+        // VMULSS [ Brief : Multiply Scalar Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x59] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VORPS [ Brief : Bitwise Logical OR of Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x56] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VRCPPS [ Brief : Compute Reciprocals of Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x53] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VRCPSS [ Brief : Compute Reciprocal of Scalar Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x53] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VRSQRTPS [ Brief : Compute Reciprocals of Square Roots of Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x52] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VRSQRTSS [ Brief : Compute Reciprocal of Square Root of Scalar Single Precision Floating-Point Value ]
+        m_instTypeLUT[0x52] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSHUFPS [ Brief : Shuffle Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0xC6] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSQRTPS [ Brief : Compute Square Roots of Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x51] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSQRTSS [ Brief : Compute Square Root of Scalar Single Precision Floating-Point Value ]
+        m_instTypeLUT[0x51] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSTMXCSR [ Brief : Store MXCSR Register State ]
+        m_instTypeLUT[0xAE] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSUBPS [ Brief : Subtract Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x5C] |= InstTypes_AVXLeadBy0x0F;
+
+        // VSUBSS [ Brief : Subtract Scalar Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x5C] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VUCOMISS [ Brief : Unordered Compare Scalar Single Precision Floating-Point Values and Set EFLAGS ]
+        m_instTypeLUT[0x2E] |= InstTypes_AVXLeadBy0x0F;
+
+        //  UNPCKHPS [ Brief : Unpack and Interleave High Packed Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x15] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x50] |= InstTypes_AVXLeadBy0x0F;
+
+        //  UNPCKLPS [ Brief : Unpack and Interleave Low Packed Single Precision Floating-Point Value ]
+        m_instTypeLUT[0x14] |= InstTypes_AVXLeadBy0x0F;
+        m_instTypeLUT[0x40] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VXORPS [ Brief : Bitwise Logical XOR for Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x57] |= InstTypes_AVXLeadBy0x0F;
+
+        //  VBROADCAST [ Brief : with Broadcast ]
+        m_instTypeLUT[0x18] |= InstTypes_AVXLeadBy0x38;
+        m_instTypeLUT[0x19] |= InstTypes_AVXLeadBy0x38;
+        m_instTypeLUT[0x1A] |= InstTypes_AVXLeadBy0x38;
+
+        //  VEXTRACTF128 [ Brief : Extract Packed Floating-Point Values ]
+        m_instTypeLUT[0x19] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VINSERTF128 [ Brief : Insert Packed Floating-Point Values ]
+        m_instTypeLUT[0x18] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPERMILPD [ Brief : Permute Double Precision Floating-Point Values ]
+        m_instTypeLUT[0x0D] |= InstTypes_AVXLeadBy0x38;
+        m_instTypeLUT[0x05] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPERMILPS [ Brief : Permute Single Precision Floating-Point Values ]
+        m_instTypeLUT[0x0C] |= InstTypes_AVXLeadBy0x38;
+        m_instTypeLUT[0x04] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VPERM2F128 [ Brief : Permute Floating-Point Values ]
+        m_instTypeLUT[0x06] |= InstTypes_AVXLeadBy0x3A;
+
+        //  VTESTPD/VTESTPS [ Brief : Packed Bit Test ]
+        m_instTypeLUT[0x0E] |= InstTypes_AVXLeadBy0x38;
+        m_instTypeLUT[0x0F] |= InstTypes_AVXLeadBy0x38;
+
+    }
+
+
     return InsaneDASM64::IDASMErrorCode_Success;
 }
 

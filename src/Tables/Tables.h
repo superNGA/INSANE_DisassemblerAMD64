@@ -20,18 +20,23 @@ namespace INSANE_DASM64_NAMESPACE
     ///////////////////////////////////////////////////////////////////////////
     enum InstTypes_t : uint16_t
     {
-        InstTypes_LegacyPrefixGrp1 = (1 << 0),
-        InstTypes_LegacyPrefixGrp2 = (1 << 1),
-        InstTypes_LegacyPrefixGrp3 = (1 << 2),
-        InstTypes_LegacyPrefixGrp4 = (1 << 3),
+        InstTypes_LegacyPrefixGrp1   = (1 << 0),
+        InstTypes_LegacyPrefixGrp2   = (1 << 1),
+        InstTypes_LegacyPrefixGrp3   = (1 << 2),
+        InstTypes_LegacyPrefixGrp4   = (1 << 3),
 
         // All legacy prefixies.
-        InstTypes_LegacyPrefixGrpAll = 
+        InstTypes_LegacyPrefixGrpAll =
             InstTypes_LegacyPrefixGrp1 | InstTypes_LegacyPrefixGrp2 | InstTypes_LegacyPrefixGrp3 | InstTypes_LegacyPrefixGrp4,
 
-        InstTypes_REX              = (1 << 4),
+        InstTypes_REX                = (1 << 4),
 
-        InstTypes_OpCode           = (1 << 5)
+        InstTypes_OpCode             = (1 << 5),
+
+        // For AVX opcodes. According to their leading opcodes.
+        InstTypes_AVXLeadBy0x0F      = (1 << 6),
+        InstTypes_AVXLeadBy0x38      = (1 << 7),
+        InstTypes_AVXLeadBy0x3A      = (1 << 8),
     };
 
 
