@@ -30,5 +30,9 @@ namespace INSANE_DASM64_NAMESPACE
         extern std::vector<Byte> g_vecThreeByteOpCodes_3A;
 
         extern std::vector<Byte> g_vecBubbleSortAsm;
+
+
+        // VEX encoded intructions.
+        extern std::vector<Byte> g_vecVEXTestCase_001;
     }
 }

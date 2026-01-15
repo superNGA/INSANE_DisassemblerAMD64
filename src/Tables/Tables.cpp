@@ -8,7 +8,7 @@
 //-------------------------------------------------------------------------
 #include "Tables.h"
 #include "assert.h"
-#include <iostream> // TODO : Don't use this shit, make something better & and debug only!.
+#include "../Util/Terminal/Terminal.h"
 
 
 // NOTE : Mind this.
@@ -166,8 +166,9 @@ Tables_t::Tables_t()
 ///////////////////////////////////////////////////////////////////////////
 IDASMErrorCode_t Tables_t::Initialize()
 {
-    _InitializeInstTypeLUT(); m_bInstTypeLUTInit = true; // can't fail, so no checks required here.
-    _InitializeOpCodeTable(); m_bOpCodeTableInit = true; // can't fail, so no checks required here.
+    _InitializeInstTypeLUT();     m_bInstTypeLUTInit = true; // can't fail, so no checks required here.
+    _InitializeOpCodeTable();     m_bOpCodeTableInit = true; // can't fail, so no checks required here.
+    _InitializeVEXOpCodeTables(); m_bVEXOpCodeTables = true; // can't fail, so no checks required here.
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -212,6 +213,21 @@ OpCodeDesc_t* Tables_t::GetOpCodeTable(int iTableIndex, Byte iEscapeByte)
     }
 
     default: break;
+    }
+
+    return nullptr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+OpCodeDesc_t* Tables_t::GetVEXOpCodeTable(Byte iEscapeByte)
+{
+    switch(iEscapeByte)
+    {
+        case SpecialChars::ESCAPE_OPCODE_FIRST_INDEX:     return m_VEXTwoByteOpCodes;
+        case SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_38: return m_VEXThreeByteOpCodes_38;
+        case SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_3A: return m_VEXThreeByteOpCodes_3A;
     }
 
     return nullptr;
@@ -1125,6 +1141,32 @@ IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
     m_opCodeTable1[SpecialChars::ESCAPE_OPCODE_FIRST_INDEX].m_bIsValidCode      = true;
     m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_38].m_bIsValidCode  = true;
     m_opCodeTable2[SpecialChars::ESCAPE_OPCODE_SECOND_INDEX_3A].m_bIsValidCode  = true;
+
+
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+IDASMErrorCode_t Tables_t::_InitializeVEXOpCodeTables()
+{
+    memset(m_VEXTwoByteOpCodes,      0, sizeof(m_VEXTwoByteOpCodes));
+    memset(m_VEXThreeByteOpCodes_38, 0, sizeof(m_VEXThreeByteOpCodes_38));
+    memset(m_VEXThreeByteOpCodes_3A, 0, sizeof(m_VEXThreeByteOpCodes_3A));
+
+
+    for(int i = 0; i < 0xFF; i++)
+    {
+        m_VEXTwoByteOpCodes[i].Reset();
+        m_VEXThreeByteOpCodes_38[i].Reset();
+        m_VEXThreeByteOpCodes_3A[i].Reset();
+    }
+
+
+    _InitVEXTwoByteOpCodes();
+    _InitVEXThreeByteOpCodes_38();
+    _InitVEXThreeByteOpCodes_3A();
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -26591,6 +26633,7444 @@ void Tables_t::_InitThreeByteOpCodeTable_3A()
 ///////////////////////////////////////////////////////////////////////////
 void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXTwoByteOpCodes()
 {
+    // 0x0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xF
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x10
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x10].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x10,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x10].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x10].InsertVarient(0);
+    {
+        // 0x10
+        // vmovups Vps,Wps 
+        m_VEXTwoByteOpCodes[0x10].m_pVarients[0]->Init(
+            /*szName         = */"vmovups",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x10].InsertVarient(10);
+    {
+        // 0x10
+        // vmovupd Vpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x10].m_pVarients[10]->Init(
+            /*szName         = */"vmovupd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x10].InsertVarient(3);
+    {
+        // 0x10
+        // vmovss Vx,Hx,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x10].m_pVarients[3]->Init(
+            /*szName         = */"vmovss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x10].InsertVarient(2);
+    {
+        // 0x10
+        // vmovsd Vx,Hx,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x10].m_pVarients[2]->Init(
+            /*szName         = */"vmovsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x10,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x11
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x11].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x11,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x11].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x11].InsertVarient(0);
+    {
+        // 0x11
+        // vmovups Wps,Vps 
+        m_VEXTwoByteOpCodes[0x11].m_pVarients[0]->Init(
+            /*szName         = */"vmovups",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x11].InsertVarient(10);
+    {
+        // 0x11
+        // vmovupd Wpd,Vpd (66) 
+        m_VEXTwoByteOpCodes[0x11].m_pVarients[10]->Init(
+            /*szName         = */"vmovupd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x11].InsertVarient(3);
+    {
+        // 0x11
+        // vmovss Wss,Hx,Vss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x11].m_pVarients[3]->Init(
+            /*szName         = */"vmovss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x11].InsertVarient(2);
+    {
+        // 0x11
+        // vmovsd Wsd,Hx,Vsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x11].m_pVarients[2]->Init(
+            /*szName         = */"vmovsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x11,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x12
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x12].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x12,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x12].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x12].InsertVarient(0);
+    {
+        // 0x12
+        // vmovlps Vq,Hq,Mq (v1) 
+        m_VEXTwoByteOpCodes[0x12].m_pVarients[0]->Init(
+            /*szName         = */"vmovlps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x12].InsertVarient(0);
+    {
+        // 0x12
+        // vmovhlps Vq,Hq,Uq (v1) 
+        m_VEXTwoByteOpCodes[0x12].m_pVarients[0]->Init(
+            /*szName         = */"vmovhlps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_q),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x12].InsertVarient(10);
+    {
+        // 0x12
+        // vmovlpd Vq,Hq,Mq (66),(v1) 
+        m_VEXTwoByteOpCodes[0x12].m_pVarients[10]->Init(
+            /*szName         = */"vmovlpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x12].InsertVarient(3);
+    {
+        // 0x12
+        // vmovsldup Vx,Wx (F3) 
+        m_VEXTwoByteOpCodes[0x12].m_pVarients[3]->Init(
+            /*szName         = */"vmovsldup",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x12].InsertVarient(2);
+    {
+        // 0x12
+        // vmovddup Vx,Wx (F2)
+        m_VEXTwoByteOpCodes[0x12].m_pVarients[2]->Init(
+            /*szName         = */"vmovddup",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x12,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x13
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x13].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x13,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x13].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x13].InsertVarient(0);
+    {
+        // 0x13
+        // vmovlps Mq,Vq (v1) 
+        m_VEXTwoByteOpCodes[0x13].m_pVarients[0]->Init(
+            /*szName         = */"vmovlps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x13,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x13].InsertVarient(10);
+    {
+        // 0x13
+        // vmovlpd Mq,Vq (66),(v1)
+        m_VEXTwoByteOpCodes[0x13].m_pVarients[10]->Init(
+            /*szName         = */"vmovlpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x13,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x14
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x14].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x14,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x14].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x14].InsertVarient(0);
+    {
+        // 0x14
+        // vunpcklps Vx,Hx,Wx 
+        m_VEXTwoByteOpCodes[0x14].m_pVarients[0]->Init(
+            /*szName         = */"vunpcklps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x14,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x14].InsertVarient(10);
+    {
+        // 0x14
+        // vunpcklpd Vx,Hx,Wx (66)
+        m_VEXTwoByteOpCodes[0x14].m_pVarients[10]->Init(
+            /*szName         = */"vunpcklpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x14,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x15
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x15].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x15,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x15].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x15].InsertVarient(0);
+    {
+        // 0x15
+        // vunpckhps Vx,Hx,Wx 
+        m_VEXTwoByteOpCodes[0x15].m_pVarients[0]->Init(
+            /*szName         = */"vunpckhps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x15,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x15].InsertVarient(10);
+    {
+        // 0x15
+        // vunpckhpd Vx,Hx,Wx (66)
+        m_VEXTwoByteOpCodes[0x15].m_pVarients[10]->Init(
+            /*szName         = */"vunpckhpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x15,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x16
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x16].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x16,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x16].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x16].InsertVarient(0);
+    {
+        // 0x16
+        // vmovhps Vdq,Hq,Mq (v1) 
+        m_VEXTwoByteOpCodes[0x16].m_pVarients[0]->Init(
+            /*szName         = */"vmovhps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x16].InsertVarient(0);
+    {
+        // 0x16
+        // vmovlhps Vdq,Hq,Uq (v1) 
+        m_VEXTwoByteOpCodes[0x16].m_pVarients[0]->Init(
+            /*szName         = */"vmovlhps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_q),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x16].InsertVarient(10);
+    {
+        // 0x16
+        // vmovhpd Vdq,Hq,Mq (66),(v1) 
+        m_VEXTwoByteOpCodes[0x16].m_pVarients[10]->Init(
+            /*szName         = */"vmovhpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x16].InsertVarient(3);
+    {
+        // 0x16
+        // vmovshdup Vx,Wx (F3)
+        m_VEXTwoByteOpCodes[0x16].m_pVarients[3]->Init(
+            /*szName         = */"vmovshdup",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x17
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x17].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x17,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x17].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x17].InsertVarient(0);
+    {
+        // 0x17
+        // vmovhps Mq,Vq (v1) 
+        m_VEXTwoByteOpCodes[0x17].m_pVarients[0]->Init(
+            /*szName         = */"vmovhps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x17,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x17].InsertVarient(10);
+    {
+        // 0x17
+        // vmovhpd Mq,Vq (66),(v1)
+        m_VEXTwoByteOpCodes[0x17].m_pVarients[10]->Init(
+            /*szName         = */"vmovhpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x17,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x18
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x18].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x18,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x19
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x19].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x19,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x1A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x1B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x1C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x1D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x1E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x1F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x20
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x20].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x20,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x21
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x21].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x21,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x22
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x22].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x22,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x23
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x23].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x23,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x24
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x24].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x24,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x25
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x25].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x25,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x26
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x26].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x26,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x27
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x27].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x27,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x28
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x28].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x28,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x28].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x28].InsertVarient(0);
+    {
+        // 0x28
+        // vmovaps Vps,Wps 
+        m_VEXTwoByteOpCodes[0x28].m_pVarients[0]->Init(
+            /*szName         = */"vmovaps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x28,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x28].InsertVarient(10);
+    {
+        // 0x28
+        // vmovapd Vpd,Wpd (66)
+        m_VEXTwoByteOpCodes[0x28].m_pVarients[10]->Init(
+            /*szName         = */"vmovapd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x28,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x29
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x29].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x29,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x29].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x29].InsertVarient(0);
+    {
+        // 0x29
+        // vmovaps Wps,Vps 
+        m_VEXTwoByteOpCodes[0x29].m_pVarients[0]->Init(
+            /*szName         = */"vmovaps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x29,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x29].InsertVarient(10);
+    {
+        // 0x29
+        // vmovapd Wpd,Vpd (66)
+        m_VEXTwoByteOpCodes[0x29].m_pVarients[10]->Init(
+            /*szName         = */"vmovapd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x29,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x2A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x2A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x2A].InsertVarient(3);
+    {
+        // 0x2A
+        // vcvtsi2ss Vss,Hss,Ey (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x2A].m_pVarients[3]->Init(
+            /*szName         = */"vcvtsi2ss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x2A].InsertVarient(2);
+    {
+        // 0x2A
+        // vcvtsi2sd Vsd,Hsd,Ey (F2),(v1)
+        m_VEXTwoByteOpCodes[0x2A].m_pVarients[2]->Init(
+            /*szName         = */"vcvtsi2sd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x2B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x2B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x2B].InsertVarient(0);
+    {
+        // 0x2B
+        // vmovntps Mps,Vps 
+        m_VEXTwoByteOpCodes[0x2B].m_pVarients[0]->Init(
+            /*szName         = */"vmovntps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x2B].InsertVarient(10);
+    {
+        // 0x2B
+        // vmovntpd Mpd,Vpd (66)
+        m_VEXTwoByteOpCodes[0x2B].m_pVarients[10]->Init(
+            /*szName         = */"vmovntpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x2C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x2C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x2C].InsertVarient(3);
+    {
+        // 0x2C
+        // vcvttss2si Gy,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x2C].m_pVarients[3]->Init(
+            /*szName         = */"vcvttss2si",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x2C].InsertVarient(2);
+    {
+        // 0x2C
+        // vcvttsd2si Gy,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x2C].m_pVarients[2]->Init(
+            /*szName         = */"vcvttsd2si",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x2D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x2D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x2D].InsertVarient(3);
+    {
+        // 0x2D
+        // vcvtss2si Gy,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x2D].m_pVarients[3]->Init(
+            /*szName         = */"vcvtss2si",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x2D].InsertVarient(2);
+    {
+        // 0x2D
+        // vcvtsd2si Gy,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x2D].m_pVarients[2]->Init(
+            /*szName         = */"vcvtsd2si",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x2E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x2E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x2E].InsertVarient(0);
+    {
+        // 0x2E
+        // vucomiss Vss,Wss (v1) 
+        m_VEXTwoByteOpCodes[0x2E].m_pVarients[0]->Init(
+            /*szName         = */"vucomiss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x2E].InsertVarient(10);
+    {
+        // 0x2E
+        // vucomisd  Vsd,Wsd (66),(v1)
+        m_VEXTwoByteOpCodes[0x2E].m_pVarients[10]->Init(
+            /*szName         = */"vucomisd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2F
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x2F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x2F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x2F].InsertVarient(0);
+    {
+        // 0x2F
+        // vcomiss Vss,Wss (v1) 
+        m_VEXTwoByteOpCodes[0x2F].m_pVarients[0]->Init(
+            /*szName         = */"vcomiss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x2F].InsertVarient(10);
+    {
+        // 0x2F
+        // vcomisd  Vsd,Wsd (66),(v1)
+        m_VEXTwoByteOpCodes[0x2F].m_pVarients[10]->Init(
+            /*szName         = */"vcomisd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x30
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x30].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x30,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x31
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x31].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x31,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x32
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x32].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x32,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x33
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x33].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x33,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x34
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x34].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x34,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x35
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x35].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x35,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x36
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x36].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x36,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x37
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x37].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x37,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x38
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x38].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x38,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x39
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x39].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x39,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x3A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x3B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x3C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x3D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x3E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x3F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x40
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x40].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x40,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x41
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x41].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x41,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x41].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x41].InsertVarient(0);
+    {
+        // 0x41
+        // kandw/q Vk,Hk,Uk 
+        m_VEXTwoByteOpCodes[0x41].m_pVarients[0]->Init(
+            /*szName         = */"kandw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x41,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x41].InsertVarient(10);
+    {
+        // 0x41
+        // kandb/d Vk,Hk,Uk (66)
+        m_VEXTwoByteOpCodes[0x41].m_pVarients[10]->Init(
+            /*szName         = */"kandb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x41,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x42
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x42].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x42,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x42].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x42].InsertVarient(0);
+    {
+        // 0x42
+        // kandnw/q Vk,Hk,Uk 
+        m_VEXTwoByteOpCodes[0x42].m_pVarients[0]->Init(
+            /*szName         = */"kandnw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x42,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x42].InsertVarient(10);
+    {
+        // 0x42
+        // kandnb/d Vk,Hk,Uk (66)
+        m_VEXTwoByteOpCodes[0x42].m_pVarients[10]->Init(
+            /*szName         = */"kandnb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x42,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x43
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x43].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x43,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x44
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x44].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x44,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x44].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x44].InsertVarient(0);
+    {
+        // 0x44
+        // knotw/q Vk,Uk 
+        m_VEXTwoByteOpCodes[0x44].m_pVarients[0]->Init(
+            /*szName         = */"knotw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x44,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x44].InsertVarient(10);
+    {
+        // 0x44
+        // knotb/d Vk,Uk (66)
+        m_VEXTwoByteOpCodes[0x44].m_pVarients[10]->Init(
+            /*szName         = */"knotb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x44,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x45
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x45].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x45,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x45].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x45].InsertVarient(0);
+    {
+        // 0x45
+        // korw/q Vk,Hk,Uk 
+        m_VEXTwoByteOpCodes[0x45].m_pVarients[0]->Init(
+            /*szName         = */"korw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x45,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x45].InsertVarient(10);
+    {
+        // 0x45
+        // korb/d Vk,Hk,Uk (66)
+        m_VEXTwoByteOpCodes[0x45].m_pVarients[10]->Init(
+            /*szName         = */"korb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x45,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x46
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x46].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x46,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x46].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x46].InsertVarient(0);
+    {
+        // 0x46
+        // kxnorw/q Vk,Hk,Uk 
+        m_VEXTwoByteOpCodes[0x46].m_pVarients[0]->Init(
+            /*szName         = */"kxnorw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x46,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x46].InsertVarient(10);
+    {
+        // 0x46
+        // kxnorb/d Vk,Hk,Uk (66)
+        m_VEXTwoByteOpCodes[0x46].m_pVarients[10]->Init(
+            /*szName         = */"kxnorb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x46,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x47
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x47].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x47,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x47].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x47].InsertVarient(0);
+    {
+        // 0x47
+        // kxorw/q Vk,Hk,Uk 
+        m_VEXTwoByteOpCodes[0x47].m_pVarients[0]->Init(
+            /*szName         = */"kxorw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x47,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x47].InsertVarient(10);
+    {
+        // 0x47
+        // kxorb/d Vk,Hk,Uk (66)
+        m_VEXTwoByteOpCodes[0x47].m_pVarients[10]->Init(
+            /*szName         = */"kxorb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x47,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x48
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x48].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x48,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x49
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x49].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x49,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x4A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x4A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x4A].InsertVarient(0);
+    {
+        // 0x4A
+        // kaddw/q Vk,Hk,Uk 
+        m_VEXTwoByteOpCodes[0x4A].m_pVarients[0]->Init(
+            /*szName         = */"kaddw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x4A].InsertVarient(10);
+    {
+        // 0x4A
+        // kaddb/d Vk,Hk,Uk (66)
+        m_VEXTwoByteOpCodes[0x4A].m_pVarients[10]->Init(
+            /*szName         = */"kaddb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x4B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x4B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x4B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x4B].InsertVarient(10);
+    {
+        // 0x4B
+        // kunpckbw Vk,Hk,Uk (66) 
+        m_VEXTwoByteOpCodes[0x4B].m_pVarients[10]->Init(
+            /*szName         = */"kunpckbw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4B,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x4B].InsertVarient(0);
+    {
+        // 0x4B
+        // kunpckwd/dq Vk,Hk,Uk
+        m_VEXTwoByteOpCodes[0x4B].m_pVarients[0]->Init(
+            /*szName         = */"kunpckwd/dq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4B,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x4C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x4C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x4D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x4E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x4F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x50
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x50].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x50,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x50].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x50].InsertVarient(0);
+    {
+        // 0x50
+        // vmovmskps Gy,Ups 
+        m_VEXTwoByteOpCodes[0x50].m_pVarients[0]->Init(
+            /*szName         = */"vmovmskps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x50].InsertVarient(10);
+    {
+        // 0x50
+        // vmovmskpd Gy,Upd (66)
+        m_VEXTwoByteOpCodes[0x50].m_pVarients[10]->Init(
+            /*szName         = */"vmovmskpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x51
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x51].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x51,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x51].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x51].InsertVarient(0);
+    {
+        // 0x51
+        // vsqrtps Vps,Wps 
+        m_VEXTwoByteOpCodes[0x51].m_pVarients[0]->Init(
+            /*szName         = */"vsqrtps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x51].InsertVarient(10);
+    {
+        // 0x51
+        // vsqrtpd Vpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x51].m_pVarients[10]->Init(
+            /*szName         = */"vsqrtpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x51].InsertVarient(3);
+    {
+        // 0x51
+        // vsqrtss Vss,Hss,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x51].m_pVarients[3]->Init(
+            /*szName         = */"vsqrtss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x51].InsertVarient(2);
+    {
+        // 0x51
+        // vsqrtsd Vsd,Hsd,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x51].m_pVarients[2]->Init(
+            /*szName         = */"vsqrtsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x52
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x52].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x52,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x52].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x52].InsertVarient(0);
+    {
+        // 0x52
+        // vrsqrtps Vps,Wps 
+        m_VEXTwoByteOpCodes[0x52].m_pVarients[0]->Init(
+            /*szName         = */"vrsqrtps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x52,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x52].InsertVarient(3);
+    {
+        // 0x52
+        // vrsqrtss Vss,Hss,Wss (F3),(v1)
+        m_VEXTwoByteOpCodes[0x52].m_pVarients[3]->Init(
+            /*szName         = */"vrsqrtss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x52,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x53
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x53].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x53,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x53].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x53].InsertVarient(0);
+    {
+        // 0x53
+        // vrcpps Vps,Wps 
+        m_VEXTwoByteOpCodes[0x53].m_pVarients[0]->Init(
+            /*szName         = */"vrcpps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x53,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x53].InsertVarient(3);
+    {
+        // 0x53
+        // vrcpss Vss,Hss,Wss (F3),(v1)
+        m_VEXTwoByteOpCodes[0x53].m_pVarients[3]->Init(
+            /*szName         = */"vrcpss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x53,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x54
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x54].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x54,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x54].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x54].InsertVarient(0);
+    {
+        // 0x54
+        // vandps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x54].m_pVarients[0]->Init(
+            /*szName         = */"vandps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x54,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x54].InsertVarient(10);
+    {
+        // 0x54
+        // vandpd Vpd,Hpd,Wpd (66)
+        m_VEXTwoByteOpCodes[0x54].m_pVarients[10]->Init(
+            /*szName         = */"vandpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x54,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x55
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x55].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x55,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x55].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x55].InsertVarient(0);
+    {
+        // 0x55
+        // vandnps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x55].m_pVarients[0]->Init(
+            /*szName         = */"vandnps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x55,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x55].InsertVarient(10);
+    {
+        // 0x55
+        // vandnpd Vpd,Hpd,Wpd (66)
+        m_VEXTwoByteOpCodes[0x55].m_pVarients[10]->Init(
+            /*szName         = */"vandnpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x55,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x56
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x56].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x56,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x56].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x56].InsertVarient(0);
+    {
+        // 0x56
+        // vorps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x56].m_pVarients[0]->Init(
+            /*szName         = */"vorps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x56,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x56].InsertVarient(10);
+    {
+        // 0x56
+        // vorpd Vpd,Hpd,Wpd (66)
+        m_VEXTwoByteOpCodes[0x56].m_pVarients[10]->Init(
+            /*szName         = */"vorpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x56,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x57
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x57].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x57,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x57].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x57].InsertVarient(0);
+    {
+        // 0x57
+        // vxorps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x57].m_pVarients[0]->Init(
+            /*szName         = */"vxorps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x57,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x57].InsertVarient(10);
+    {
+        // 0x57
+        // vxorpd Vpd,Hpd,Wpd (66)
+        m_VEXTwoByteOpCodes[0x57].m_pVarients[10]->Init(
+            /*szName         = */"vxorpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x57,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x58
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x58].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x58,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x58].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x58].InsertVarient(0);
+    {
+        // 0x58
+        // vaddps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x58].m_pVarients[0]->Init(
+            /*szName         = */"vaddps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x58].InsertVarient(10);
+    {
+        // 0x58
+        // vaddpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x58].m_pVarients[10]->Init(
+            /*szName         = */"vaddpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x58].InsertVarient(3);
+    {
+        // 0x58
+        // vaddss Vss,Hss,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x58].m_pVarients[3]->Init(
+            /*szName         = */"vaddss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x58].InsertVarient(2);
+    {
+        // 0x58
+        // vaddsd Vsd,Hsd,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x58].m_pVarients[2]->Init(
+            /*szName         = */"vaddsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x59
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x59].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x59,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x59].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x59].InsertVarient(0);
+    {
+        // 0x59
+        // vmulps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x59].m_pVarients[0]->Init(
+            /*szName         = */"vmulps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x59].InsertVarient(10);
+    {
+        // 0x59
+        // vmulpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x59].m_pVarients[10]->Init(
+            /*szName         = */"vmulpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x59].InsertVarient(3);
+    {
+        // 0x59
+        // vmulss Vss,Hss,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x59].m_pVarients[3]->Init(
+            /*szName         = */"vmulss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x59].InsertVarient(2);
+    {
+        // 0x59
+        // vmulsd Vsd,Hsd,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x59].m_pVarients[2]->Init(
+            /*szName         = */"vmulsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x5A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x5A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x5A].InsertVarient(0);
+    {
+        // 0x5A
+        // vcvtps2pd Vpd,Wps 
+        m_VEXTwoByteOpCodes[0x5A].m_pVarients[0]->Init(
+            /*szName         = */"vcvtps2pd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5A].InsertVarient(10);
+    {
+        // 0x5A
+        // vcvtpd2ps Vps,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x5A].m_pVarients[10]->Init(
+            /*szName         = */"vcvtpd2ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5A].InsertVarient(3);
+    {
+        // 0x5A
+        // vcvtss2sd Vsd,Hx,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x5A].m_pVarients[3]->Init(
+            /*szName         = */"vcvtss2sd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5A].InsertVarient(2);
+    {
+        // 0x5A
+        // vcvtsd2ss Vss,Hx,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x5A].m_pVarients[2]->Init(
+            /*szName         = */"vcvtsd2ss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x5B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x5B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x5B].InsertVarient(0);
+    {
+        // 0x5B
+        // vcvtdq2ps Vps,Wdq 
+        m_VEXTwoByteOpCodes[0x5B].m_pVarients[0]->Init(
+            /*szName         = */"vcvtdq2ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5B].InsertVarient(10);
+    {
+        // 0x5B
+        // vcvtps2dq Vdq,Wps (66) 
+        m_VEXTwoByteOpCodes[0x5B].m_pVarients[10]->Init(
+            /*szName         = */"vcvtps2dq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5B].InsertVarient(3);
+    {
+        // 0x5B
+        // vcvttps2dq Vdq,Wps (F3)
+        m_VEXTwoByteOpCodes[0x5B].m_pVarients[3]->Init(
+            /*szName         = */"vcvttps2dq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x5C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x5C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x5C].InsertVarient(0);
+    {
+        // 0x5C
+        // vsubps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x5C].m_pVarients[0]->Init(
+            /*szName         = */"vsubps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5C].InsertVarient(10);
+    {
+        // 0x5C
+        // vsubpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x5C].m_pVarients[10]->Init(
+            /*szName         = */"vsubpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5C].InsertVarient(3);
+    {
+        // 0x5C
+        // vsubss Vss,Hss,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x5C].m_pVarients[3]->Init(
+            /*szName         = */"vsubss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5C].InsertVarient(2);
+    {
+        // 0x5C
+        // vsubsd Vsd,Hsd,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x5C].m_pVarients[2]->Init(
+            /*szName         = */"vsubsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x5D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x5D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x5D].InsertVarient(0);
+    {
+        // 0x5D
+        // vminps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x5D].m_pVarients[0]->Init(
+            /*szName         = */"vminps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5D].InsertVarient(10);
+    {
+        // 0x5D
+        // vminpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x5D].m_pVarients[10]->Init(
+            /*szName         = */"vminpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5D].InsertVarient(3);
+    {
+        // 0x5D
+        // vminss Vss,Hss,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x5D].m_pVarients[3]->Init(
+            /*szName         = */"vminss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5D].InsertVarient(2);
+    {
+        // 0x5D
+        // vminsd Vsd,Hsd,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x5D].m_pVarients[2]->Init(
+            /*szName         = */"vminsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x5E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x5E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x5E].InsertVarient(0);
+    {
+        // 0x5E
+        // vdivps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x5E].m_pVarients[0]->Init(
+            /*szName         = */"vdivps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5E].InsertVarient(10);
+    {
+        // 0x5E
+        // vdivpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x5E].m_pVarients[10]->Init(
+            /*szName         = */"vdivpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5E].InsertVarient(3);
+    {
+        // 0x5E
+        // vdivss Vss,Hss,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x5E].m_pVarients[3]->Init(
+            /*szName         = */"vdivss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5E].InsertVarient(2);
+    {
+        // 0x5E
+        // vdivsd Vsd,Hsd,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x5E].m_pVarients[2]->Init(
+            /*szName         = */"vdivsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5F
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x5F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x5F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x5F].InsertVarient(0);
+    {
+        // 0x5F
+        // vmaxps Vps,Hps,Wps 
+        m_VEXTwoByteOpCodes[0x5F].m_pVarients[0]->Init(
+            /*szName         = */"vmaxps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5F].InsertVarient(10);
+    {
+        // 0x5F
+        // vmaxpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x5F].m_pVarients[10]->Init(
+            /*szName         = */"vmaxpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5F].InsertVarient(3);
+    {
+        // 0x5F
+        // vmaxss Vss,Hss,Wss (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x5F].m_pVarients[3]->Init(
+            /*szName         = */"vmaxss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x5F].InsertVarient(2);
+    {
+        // 0x5F
+        // vmaxsd Vsd,Hsd,Wsd (F2),(v1)
+        m_VEXTwoByteOpCodes[0x5F].m_pVarients[2]->Init(
+            /*szName         = */"vmaxsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5F,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x60
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x60].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x60,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x60].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x60].InsertVarient(10);
+    {
+        // 0x60
+        // vpunpcklbw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x60].m_pVarients[10]->Init(
+            /*szName         = */"vpunpcklbw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x60,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x61
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x61].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x61,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x61].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x61].InsertVarient(10);
+    {
+        // 0x61
+        // vpunpcklwd Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x61].m_pVarients[10]->Init(
+            /*szName         = */"vpunpcklwd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x61,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x62
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x62].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x62,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x62].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x62].InsertVarient(10);
+    {
+        // 0x62
+        // vpunpckldq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x62].m_pVarients[10]->Init(
+            /*szName         = */"vpunpckldq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x62,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x63
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x63].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x63,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x63].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x63].InsertVarient(10);
+    {
+        // 0x63
+        // vpacksswb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x63].m_pVarients[10]->Init(
+            /*szName         = */"vpacksswb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x63,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x64
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x64].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x64,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x64].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x64].InsertVarient(10);
+    {
+        // 0x64
+        // vpcmpgtb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x64].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpgtb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x64,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x65
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x65].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x65,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x65].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x65].InsertVarient(10);
+    {
+        // 0x65
+        // vpcmpgtw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x65].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpgtw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x65,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x66
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x66].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x66,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x66].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x66].InsertVarient(10);
+    {
+        // 0x66
+        // vpcmpgtd Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x66].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpgtd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x66,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x67
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x67].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x67,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x67].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x67].InsertVarient(10);
+    {
+        // 0x67
+        // vpackuswb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x67].m_pVarients[10]->Init(
+            /*szName         = */"vpackuswb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x67,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x68
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x68].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x68,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x68].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x68].InsertVarient(10);
+    {
+        // 0x68
+        // vpunpckhbw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x68].m_pVarients[10]->Init(
+            /*szName         = */"vpunpckhbw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x68,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x69
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x69].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x69,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x69].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x69].InsertVarient(10);
+    {
+        // 0x69
+        // vpunpckhwd Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x69].m_pVarients[10]->Init(
+            /*szName         = */"vpunpckhwd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x69,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x6A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x6A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x6A].InsertVarient(10);
+    {
+        // 0x6A
+        // vpunpckhdq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x6A].m_pVarients[10]->Init(
+            /*szName         = */"vpunpckhdq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x6B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x6B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x6B].InsertVarient(10);
+    {
+        // 0x6B
+        // vpackssdw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x6B].m_pVarients[10]->Init(
+            /*szName         = */"vpackssdw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6B,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x6C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x6C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x6C].InsertVarient(10);
+    {
+        // 0x6C
+        // vpunpcklqdq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x6C].m_pVarients[10]->Init(
+            /*szName         = */"vpunpcklqdq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x6D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x6D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x6D].InsertVarient(10);
+    {
+        // 0x6D
+        // vpunpckhqdq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x6D].m_pVarients[10]->Init(
+            /*szName         = */"vpunpckhqdq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x6E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x6E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x6E].InsertVarient(10);
+    {
+        // 0x6E
+        // vmovd/q Vy,Ey (66),(v1)
+        m_VEXTwoByteOpCodes[0x6E].m_pVarients[10]->Init(
+            /*szName         = */"vmovd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6F
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x6F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x6F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x6F].InsertVarient(10);
+    {
+        // 0x6F
+        // vmovdqa Vx,Wx (66) 
+        m_VEXTwoByteOpCodes[0x6F].m_pVarients[10]->Init(
+            /*szName         = */"vmovdqa",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x6F].InsertVarient(3);
+    {
+        // 0x6F
+        // vmovdqu Vx,Wx (F3) 
+        m_VEXTwoByteOpCodes[0x6F].m_pVarients[3]->Init(
+            /*szName         = */"vmovdqu",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x70
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x70].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x70,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x70].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x70].InsertVarient(10);
+    {
+        // 0x70
+        // vpshufd Vx,Wx,Ib (66),(v1) 
+        m_VEXTwoByteOpCodes[0x70].m_pVarients[10]->Init(
+            /*szName         = */"vpshufd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x70,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x70].InsertVarient(3);
+    {
+        // 0x70
+        // vpshufhw Vx,Wx,Ib (F3),(v1) 
+        m_VEXTwoByteOpCodes[0x70].m_pVarients[3]->Init(
+            /*szName         = */"vpshufhw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x70,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x70].InsertVarient(2);
+    {
+        // 0x70
+        // vpshuflw Vx,Wx,Ib (F2),(v1)
+        m_VEXTwoByteOpCodes[0x70].m_pVarients[2]->Init(
+            /*szName         = */"vpshuflw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x70,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x71
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x71].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x71,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x72
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x72].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x72,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x73
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x73].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x73,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x74
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x74].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x74,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x74].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x74].InsertVarient(10);
+    {
+        // 0x74
+        // vpcmpeqb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x74].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpeqb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x74,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x75
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x75].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x75,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x75].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x75].InsertVarient(10);
+    {
+        // 0x75
+        // vpcmpeqw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x75].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpeqw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x75,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x76
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x76].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x76,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x76].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x76].InsertVarient(10);
+    {
+        // 0x76
+        // vpcmpeqd Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0x76].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpeqd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x76,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x77
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x77].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x77,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x77].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x77].InsertVarient(0);
+    {
+        // 0x77
+        // vzeroupper 
+        m_VEXTwoByteOpCodes[0x77].m_pVarients[0]->Init(
+            /*szName         = */"vzeroupper",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x77,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x77].InsertVarient(0);
+    {
+        // 0x77
+        // vzeroall
+        m_VEXTwoByteOpCodes[0x77].m_pVarients[0]->Init(
+            /*szName         = */"vzeroall",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x77,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x78
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x78].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x78,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x79
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x79].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x79,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x7A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x7B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x7C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x7C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x7C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x7C].InsertVarient(10);
+    {
+        // 0x7C
+        // vhaddpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x7C].m_pVarients[10]->Init(
+            /*szName         = */"vhaddpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x7C].InsertVarient(2);
+    {
+        // 0x7C
+        // vhaddps Vps,Hps,Wps (F2)
+        m_VEXTwoByteOpCodes[0x7C].m_pVarients[2]->Init(
+            /*szName         = */"vhaddps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x7D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x7D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x7D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x7D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x7D].InsertVarient(10);
+    {
+        // 0x7D
+        // vhsubpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0x7D].m_pVarients[10]->Init(
+            /*szName         = */"vhsubpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x7D].InsertVarient(2);
+    {
+        // 0x7D
+        // vhsubps Vps,Hps,Wps (F2)
+        m_VEXTwoByteOpCodes[0x7D].m_pVarients[2]->Init(
+            /*szName         = */"vhsubps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x7E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x7E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x7E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x7E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x7E].InsertVarient(10);
+    {
+        // 0x7E
+        // vmovd/q Ey,Vy (66),(v1) 
+        m_VEXTwoByteOpCodes[0x7E].m_pVarients[10]->Init(
+            /*szName         = */"vmovd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x7E].InsertVarient(3);
+    {
+        // 0x7E
+        // vmovq Vq,Wq (F3),(v1)
+        m_VEXTwoByteOpCodes[0x7E].m_pVarients[3]->Init(
+            /*szName         = */"vmovq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x7F
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x7F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x7F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x7F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x7F].InsertVarient(10);
+    {
+        // 0x7F
+        // vmovdqa Wx,Vx (66) 
+        m_VEXTwoByteOpCodes[0x7F].m_pVarients[10]->Init(
+            /*szName         = */"vmovdqa",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x7F].InsertVarient(3);
+    {
+        // 0x7F
+        // vmovdqu Wx,Vx (F3) 
+        m_VEXTwoByteOpCodes[0x7F].m_pVarients[3]->Init(
+            /*szName         = */"vmovdqu",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7F,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x80
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x80].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x80,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x81
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x81].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x81,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x82
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x82].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x82,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x83
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x83].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x83,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x84
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x84].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x84,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x85
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x85].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x85,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x86
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x86].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x86,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x87
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x87].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x87,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x88
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x88].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x88,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x89
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x89].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x89,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x8A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x8B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x8C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x8D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x8E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x8F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x90
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x90].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x90,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x90].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x90].InsertVarient(0);
+    {
+        // 0x90
+        // kmovw/q Vk,Wk 
+        m_VEXTwoByteOpCodes[0x90].m_pVarients[0]->Init(
+            /*szName         = */"kmovw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x90,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x90].InsertVarient(10);
+    {
+        // 0x90
+        // kmovb/d Vk,Wk (66)
+        m_VEXTwoByteOpCodes[0x90].m_pVarients[10]->Init(
+            /*szName         = */"kmovb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x90,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x91
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x91].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x91,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x91].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x91].InsertVarient(0);
+    {
+        // 0x91
+        // kmovw/q Mv,Vk 
+        m_VEXTwoByteOpCodes[0x91].m_pVarients[0]->Init(
+            /*szName         = */"kmovw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x91,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_vqp),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x91].InsertVarient(10);
+    {
+        // 0x91
+        // kmovb/d Mv,Vk (66)
+        m_VEXTwoByteOpCodes[0x91].m_pVarients[10]->Init(
+            /*szName         = */"kmovb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x91,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_vqp),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x92
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x92].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x92,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x92].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x92].InsertVarient(0);
+    {
+        // 0x92
+        // kmovw Vk,Rv 
+        m_VEXTwoByteOpCodes[0x92].m_pVarients[0]->Init(
+            /*szName         = */"kmovw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x92,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_R, OperandType_vqp),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x92].InsertVarient(10);
+    {
+        // 0x92
+        // kmovb Vk,Rv (66) 
+        m_VEXTwoByteOpCodes[0x92].m_pVarients[10]->Init(
+            /*szName         = */"kmovb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x92,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_R, OperandType_vqp),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x92].InsertVarient(2);
+    {
+        // 0x92
+        // kmovq/d Vk,Rv (F2)
+        m_VEXTwoByteOpCodes[0x92].m_pVarients[2]->Init(
+            /*szName         = */"kmovq/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x92,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_R, OperandType_vqp),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x93
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x93].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x93,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x93].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x93].InsertVarient(0);
+    {
+        // 0x93
+        // kmovw Gv,Uk 
+        m_VEXTwoByteOpCodes[0x93].m_pVarients[0]->Init(
+            /*szName         = */"kmovw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x93,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x93].InsertVarient(10);
+    {
+        // 0x93
+        // kmovb Gv,Uk (66) 
+        m_VEXTwoByteOpCodes[0x93].m_pVarients[10]->Init(
+            /*szName         = */"kmovb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x93,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x93].InsertVarient(2);
+    {
+        // 0x93
+        // kmovq/d Gv,Uk (F2)
+        m_VEXTwoByteOpCodes[0x93].m_pVarients[2]->Init(
+            /*szName         = */"kmovq/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x93,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_vqp),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x94
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x94].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x94,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x95
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x95].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x95,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x96
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x96].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x96,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x97
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x97].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x97,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x98
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x98].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x98,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x98].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x98].InsertVarient(0);
+    {
+        // 0x98
+        // kortestw/q Vk,Uk 
+        m_VEXTwoByteOpCodes[0x98].m_pVarients[0]->Init(
+            /*szName         = */"kortestw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x98,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x98].InsertVarient(10);
+    {
+        // 0x98
+        // kortestb/d Vk,Uk (66)
+        m_VEXTwoByteOpCodes[0x98].m_pVarients[10]->Init(
+            /*szName         = */"kortestb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x98,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x99
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0x99].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x99,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0x99].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0x99].InsertVarient(0);
+    {
+        // 0x99
+        // ktestw/q Vk,Uk 
+        m_VEXTwoByteOpCodes[0x99].m_pVarients[0]->Init(
+            /*szName         = */"ktestw/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x99,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0x99].InsertVarient(10);
+    {
+        // 0x99
+        // ktestb/d Vk,Uk (66)
+        m_VEXTwoByteOpCodes[0x99].m_pVarients[10]->Init(
+            /*szName         = */"ktestb/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x99,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x9A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x9B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x9C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x9D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x9E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0x9F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xA9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xAA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xAB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xAC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xAD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xAE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAF
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xAF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xB9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xBA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xBB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xBC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xBD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xBE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBF
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xBF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xC0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xC1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xC2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xC2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xC2].InsertVarient(0);
+    {
+        // 0xC2
+        // vcmpps Vps,Hps,Wps,Ib 
+        m_VEXTwoByteOpCodes[0xC2].m_pVarients[0]->Init(
+            /*szName         = */"vcmpps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+    m_VEXTwoByteOpCodes[0xC2].InsertVarient(10);
+    {
+        // 0xC2
+        // vcmppd Vpd,Hpd,Wpd,Ib (66) 
+        m_VEXTwoByteOpCodes[0xC2].m_pVarients[10]->Init(
+            /*szName         = */"vcmppd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+    m_VEXTwoByteOpCodes[0xC2].InsertVarient(3);
+    {
+        // 0xC2
+        // vcmpss Vss,Hss,Wss,Ib (F3),(v1) 
+        m_VEXTwoByteOpCodes[0xC2].m_pVarients[3]->Init(
+            /*szName         = */"vcmpss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+    m_VEXTwoByteOpCodes[0xC2].InsertVarient(2);
+    {
+        // 0xC2
+        // vcmpsd Vsd,Hsd,Wsd,Ib (F2),(v1)
+        m_VEXTwoByteOpCodes[0xC2].m_pVarients[2]->Init(
+            /*szName         = */"vcmpsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC2,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0xC3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xC3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xC4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xC4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xC4].InsertVarient(10);
+    {
+        // 0xC4
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC4,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0xC4
+            // vpinsrw Vdq,Hdq,Ry/Mw,Ib (66),(v1)
+            m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpinsrw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xC4,
+                /*nOperands      = */4,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_R, OperandType_dqp),
+                /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+                
+        }
+        m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->InsertVarient(0);
+        m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->m_pVarients[1] = m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->m_pVarients[0];
+        m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->m_pVarients[2] = m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0xC4
+            // vpinsrw Vdq,Hdq,Ry/Mw,Ib (66),(v1)
+            m_VEXTwoByteOpCodes[0xC4].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpinsrw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0xC4,
+                /*nOperands      = */4,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_M, OperandType_w),
+                /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+                
+        }
+
+    }
+
+    // 0xC5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xC5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xC5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xC5].InsertVarient(10);
+    {
+        // 0xC5
+        // vpextrw Gd,Udq,Ib (66),(v1)
+        m_VEXTwoByteOpCodes[0xC5].m_pVarients[10]->Init(
+            /*szName         = */"vpextrw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_d),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xC6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xC6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xC6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xC6].InsertVarient(0);
+    {
+        // 0xC6
+        // vshufps Vps,Hps,Wps,Ib 
+        m_VEXTwoByteOpCodes[0xC6].m_pVarients[0]->Init(
+            /*szName         = */"vshufps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC6,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+    m_VEXTwoByteOpCodes[0xC6].InsertVarient(10);
+    {
+        // 0xC6
+        // vshufpd Vpd,Hpd,Wpd,Ib (66)
+        m_VEXTwoByteOpCodes[0xC6].m_pVarients[10]->Init(
+            /*szName         = */"vshufpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC6,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0xC7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xC7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xC8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xC9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xCA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xCB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xCC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xCD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xCE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCF
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXTwoByteOpCodes[0xCF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD0].InsertVarient(10);
+    {
+        // 0xD0
+        // vaddsubpd Vpd,Hpd,Wpd (66) 
+        m_VEXTwoByteOpCodes[0xD0].m_pVarients[10]->Init(
+            /*szName         = */"vaddsubpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_pd),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0xD0].InsertVarient(2);
+    {
+        // 0xD0
+        // vaddsubps Vps,Hps,Wps (F2)
+        m_VEXTwoByteOpCodes[0xD0].m_pVarients[2]->Init(
+            /*szName         = */"vaddsubps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD0,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ps),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_ps),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_ps),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD1
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD1].InsertVarient(10);
+    {
+        // 0xD1
+        // vpsrlw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xD1].m_pVarients[10]->Init(
+            /*szName         = */"vpsrlw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD1,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD2].InsertVarient(10);
+    {
+        // 0xD2
+        // vpsrld Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xD2].m_pVarients[10]->Init(
+            /*szName         = */"vpsrld",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD3
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD3].InsertVarient(10);
+    {
+        // 0xD3
+        // vpsrlq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xD3].m_pVarients[10]->Init(
+            /*szName         = */"vpsrlq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD4].InsertVarient(10);
+    {
+        // 0xD4
+        // vpaddq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xD4].m_pVarients[10]->Init(
+            /*szName         = */"vpaddq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD5].InsertVarient(10);
+    {
+        // 0xD5
+        // vpmullw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xD5].m_pVarients[10]->Init(
+            /*szName         = */"vpmullw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD6].InsertVarient(10);
+    {
+        // 0xD6
+        // vmovq Wq,Vq (66),(v1) 
+        m_VEXTwoByteOpCodes[0xD6].m_pVarients[10]->Init(
+            /*szName         = */"vmovq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_q),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD7].InsertVarient(10);
+    {
+        // 0xD7
+        // vpmovmskb Gd,Ux (66),(v1)
+        m_VEXTwoByteOpCodes[0xD7].m_pVarients[10]->Init(
+            /*szName         = */"vpmovmskb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_d),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD8].InsertVarient(10);
+    {
+        // 0xD8
+        // vpsubusb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xD8].m_pVarients[10]->Init(
+            /*szName         = */"vpsubusb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xD9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xD9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xD9].InsertVarient(10);
+    {
+        // 0xD9
+        // vpsubusw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xD9].m_pVarients[10]->Init(
+            /*szName         = */"vpsubusw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xDA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xDA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xDA].InsertVarient(10);
+    {
+        // 0xDA
+        // vpminub Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xDA].m_pVarients[10]->Init(
+            /*szName         = */"vpminub",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xDB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xDB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xDB].InsertVarient(10);
+    {
+        // 0xDB
+        // vpand Vx,Hx,Wx (66),(v1) 
+        m_VEXTwoByteOpCodes[0xDB].m_pVarients[10]->Init(
+            /*szName         = */"vpand",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xDC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xDC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xDC].InsertVarient(10);
+    {
+        // 0xDC
+        // vpaddusb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xDC].m_pVarients[10]->Init(
+            /*szName         = */"vpaddusb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xDD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xDD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xDD].InsertVarient(10);
+    {
+        // 0xDD
+        // vpaddusw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xDD].m_pVarients[10]->Init(
+            /*szName         = */"vpaddusw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDD,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xDE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xDE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xDE].InsertVarient(10);
+    {
+        // 0xDE
+        // vpmaxub Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xDE].m_pVarients[10]->Init(
+            /*szName         = */"vpmaxub",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xDF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xDF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xDF].InsertVarient(10);
+    {
+        // 0xDF
+        // vpandn Vx,Hx,Wx (66),(v1) 
+        m_VEXTwoByteOpCodes[0xDF].m_pVarients[10]->Init(
+            /*szName         = */"vpandn",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE0].InsertVarient(10);
+    {
+        // 0xE0
+        // vpavgb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE0].m_pVarients[10]->Init(
+            /*szName         = */"vpavgb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE0,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE1
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE1].InsertVarient(10);
+    {
+        // 0xE1
+        // vpsraw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE1].m_pVarients[10]->Init(
+            /*szName         = */"vpsraw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE1,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE2].InsertVarient(10);
+    {
+        // 0xE2
+        // vpsrad Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE2].m_pVarients[10]->Init(
+            /*szName         = */"vpsrad",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE3
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE3].InsertVarient(10);
+    {
+        // 0xE3
+        // vpavgw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE3].m_pVarients[10]->Init(
+            /*szName         = */"vpavgw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE4].InsertVarient(10);
+    {
+        // 0xE4
+        // vpmulhuw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE4].m_pVarients[10]->Init(
+            /*szName         = */"vpmulhuw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE5].InsertVarient(10);
+    {
+        // 0xE5
+        // vpmulhw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE5].m_pVarients[10]->Init(
+            /*szName         = */"vpmulhw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE6].InsertVarient(10);
+    {
+        // 0xE6
+        // vcvttpd2dq Vx,Wpd (66) 
+        m_VEXTwoByteOpCodes[0xE6].m_pVarients[10]->Init(
+            /*szName         = */"vcvttpd2dq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0xE6].InsertVarient(3);
+    {
+        // 0xE6
+        // vcvtdq2pd Vx,Wdq (F3) 
+        m_VEXTwoByteOpCodes[0xE6].m_pVarients[3]->Init(
+            /*szName         = */"vcvtdq2pd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXTwoByteOpCodes[0xE6].InsertVarient(2);
+    {
+        // 0xE6
+        // vcvtpd2dq Vx,Wpd (F2)
+        m_VEXTwoByteOpCodes[0xE6].m_pVarients[2]->Init(
+            /*szName         = */"vcvtpd2dq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE6,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_pd),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE7].InsertVarient(10);
+    {
+        // 0xE7
+        // vmovntdq Mx,Vx (66)
+        m_VEXTwoByteOpCodes[0xE7].m_pVarients[10]->Init(
+            /*szName         = */"vmovntdq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE8].InsertVarient(10);
+    {
+        // 0xE8
+        // vpsubsb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE8].m_pVarients[10]->Init(
+            /*szName         = */"vpsubsb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xE9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xE9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xE9].InsertVarient(10);
+    {
+        // 0xE9
+        // vpsubsw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xE9].m_pVarients[10]->Init(
+            /*szName         = */"vpsubsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xEA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xEA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xEA].InsertVarient(10);
+    {
+        // 0xEA
+        // vpminsw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xEA].m_pVarients[10]->Init(
+            /*szName         = */"vpminsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xEB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xEB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xEB].InsertVarient(10);
+    {
+        // 0xEB
+        // vpor Vx,Hx,Wx (66),(v1) 
+        m_VEXTwoByteOpCodes[0xEB].m_pVarients[10]->Init(
+            /*szName         = */"vpor",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xEC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xEC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xEC].InsertVarient(10);
+    {
+        // 0xEC
+        // vpaddsb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xEC].m_pVarients[10]->Init(
+            /*szName         = */"vpaddsb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xED
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xED].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xED,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xED].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xED].InsertVarient(10);
+    {
+        // 0xED
+        // vpaddsw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xED].m_pVarients[10]->Init(
+            /*szName         = */"vpaddsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xED,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xEE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xEE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xEE].InsertVarient(10);
+    {
+        // 0xEE
+        // vpmaxsw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xEE].m_pVarients[10]->Init(
+            /*szName         = */"vpmaxsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xEF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xEF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xEF].InsertVarient(10);
+    {
+        // 0xEF
+        // vpxor Vx,Hx,Wx (66),(v1) 
+        m_VEXTwoByteOpCodes[0xEF].m_pVarients[10]->Init(
+            /*szName         = */"vpxor",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF0].InsertVarient(2);
+    {
+        // 0xF0
+        // vlddqu Vx,Mx (F2)
+        m_VEXTwoByteOpCodes[0xF0].m_pVarients[2]->Init(
+            /*szName         = */"vlddqu",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF1
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF1].InsertVarient(10);
+    {
+        // 0xF1
+        // vpsllw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF1].m_pVarients[10]->Init(
+            /*szName         = */"vpsllw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF1,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF2].InsertVarient(10);
+    {
+        // 0xF2
+        // vpslld Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF2].m_pVarients[10]->Init(
+            /*szName         = */"vpslld",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF3
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF3].InsertVarient(10);
+    {
+        // 0xF3
+        // vpsllq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF3].m_pVarients[10]->Init(
+            /*szName         = */"vpsllq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF4].InsertVarient(10);
+    {
+        // 0xF4
+        // vpmuludq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF4].m_pVarients[10]->Init(
+            /*szName         = */"vpmuludq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF5].InsertVarient(10);
+    {
+        // 0xF5
+        // vpmaddwd Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF5].m_pVarients[10]->Init(
+            /*szName         = */"vpmaddwd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF6].InsertVarient(10);
+    {
+        // 0xF6
+        // vpsadbw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF6].m_pVarients[10]->Init(
+            /*szName         = */"vpsadbw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF7].InsertVarient(10);
+    {
+        // 0xF7
+        // vmaskmovdqu Vx,Ux (66),(v1)
+        m_VEXTwoByteOpCodes[0xF7].m_pVarients[10]->Init(
+            /*szName         = */"vmaskmovdqu",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF8].InsertVarient(10);
+    {
+        // 0xF8
+        // vpsubb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF8].m_pVarients[10]->Init(
+            /*szName         = */"vpsubb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xF9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xF9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xF9].InsertVarient(10);
+    {
+        // 0xF9
+        // vpsubw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xF9].m_pVarients[10]->Init(
+            /*szName         = */"vpsubw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xFA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xFA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xFA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xFA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xFA].InsertVarient(10);
+    {
+        // 0xFA
+        // vpsubd Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xFA].m_pVarients[10]->Init(
+            /*szName         = */"vpsubd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xFB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xFB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xFB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xFB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xFB].InsertVarient(10);
+    {
+        // 0xFB
+        // vpsubq Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xFB].m_pVarients[10]->Init(
+            /*szName         = */"vpsubq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xFC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xFC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xFC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xFC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xFC].InsertVarient(10);
+    {
+        // 0xFC
+        // vpaddb Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xFC].m_pVarients[10]->Init(
+            /*szName         = */"vpaddb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xFD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xFD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xFD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xFD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xFD].InsertVarient(10);
+    {
+        // 0xFD
+        // vpaddw Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xFD].m_pVarients[10]->Init(
+            /*szName         = */"vpaddw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFD,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xFE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXTwoByteOpCodes[0xFE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xFE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXTwoByteOpCodes[0xFE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXTwoByteOpCodes[0xFE].InsertVarient(10);
+    {
+        // 0xFE
+        // vpaddd Vx,Hx,Wx (66),(v1)
+        m_VEXTwoByteOpCodes[0xFE].m_pVarients[10]->Init(
+            /*szName         = */"vpaddd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xFE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
 
 }
 
@@ -26599,6 +34079,7251 @@ void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXTwoByteOpCodes()
 ///////////////////////////////////////////////////////////////////////////
 void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXThreeByteOpCodes_38()
 {
+    // 0x0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x0].InsertVarient(10);
+    {
+        // 0x0
+        // vpshufb Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x0].m_pVarients[10]->Init(
+            /*szName         = */"vpshufb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x1].InsertVarient(10);
+    {
+        // 0x1
+        // vphaddw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x1].m_pVarients[10]->Init(
+            /*szName         = */"vphaddw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x2].InsertVarient(10);
+    {
+        // 0x2
+        // vphaddd Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x2].m_pVarients[10]->Init(
+            /*szName         = */"vphaddd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x3].InsertVarient(10);
+    {
+        // 0x3
+        // vphaddsw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x3].m_pVarients[10]->Init(
+            /*szName         = */"vphaddsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x4].InsertVarient(10);
+    {
+        // 0x4
+        // vpmaddubsw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x4].m_pVarients[10]->Init(
+            /*szName         = */"vpmaddubsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x5].InsertVarient(10);
+    {
+        // 0x5
+        // vphsubw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x5].m_pVarients[10]->Init(
+            /*szName         = */"vphsubw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x6].InsertVarient(10);
+    {
+        // 0x6
+        // vphsubd Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x6].m_pVarients[10]->Init(
+            /*szName         = */"vphsubd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x7].InsertVarient(10);
+    {
+        // 0x7
+        // vphsubsw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x7].m_pVarients[10]->Init(
+            /*szName         = */"vphsubsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x8].InsertVarient(10);
+    {
+        // 0x8
+        // vpsignb Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x8].m_pVarients[10]->Init(
+            /*szName         = */"vpsignb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x9].InsertVarient(10);
+    {
+        // 0x9
+        // vpsignw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x9].m_pVarients[10]->Init(
+            /*szName         = */"vpsignw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xA].InsertVarient(10);
+    {
+        // 0xA
+        // vpsignd Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0xA].m_pVarients[10]->Init(
+            /*szName         = */"vpsignd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB].InsertVarient(10);
+    {
+        // 0xB
+        // vpmulhrsw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0xB].m_pVarients[10]->Init(
+            /*szName         = */"vpmulhrsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xC].InsertVarient(10);
+    {
+        // 0xC
+        // vpermilps Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xC].m_pVarients[10]->Init(
+            /*szName         = */"vpermilps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xD].InsertVarient(10);
+    {
+        // 0xD
+        // vpermilpd Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xD].m_pVarients[10]->Init(
+            /*szName         = */"vpermilpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE].InsertVarient(10);
+    {
+        // 0xE
+        // vtestps Vx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xE].m_pVarients[10]->Init(
+            /*szName         = */"vtestps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xF].InsertVarient(10);
+    {
+        // 0xF
+        // vtestpd Vx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xF].m_pVarients[10]->Init(
+            /*szName         = */"vtestpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x10
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x10].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x10,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x11
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x11].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x11,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x12
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x12].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x12,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x13
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x13].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x13,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x13].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x13].InsertVarient(10);
+    {
+        // 0x13
+        // vcvtph2ps Vx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x13].m_pVarients[10]->Init(
+            /*szName         = */"vcvtph2ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x13,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x14
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x14].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x14,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x15
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x15].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x15,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x16
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x16].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x16,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x16].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x16].InsertVarient(10);
+    {
+        // 0x16
+        // vpermps Vqq,Hqq,Wqq (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x16].m_pVarients[10]->Init(
+            /*szName         = */"vpermps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x17
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x17].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x17,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x17].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x17].InsertVarient(10);
+    {
+        // 0x17
+        // vptest Vx,Wx (66)
+        m_VEXThreeByteOpCodes_38[0x17].m_pVarients[10]->Init(
+            /*szName         = */"vptest",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x17,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x18
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x18].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x18,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x18].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x18].InsertVarient(10);
+    {
+        // 0x18
+        // vbroadcastss Vx,Wd (66),(v)
+        m_VEXThreeByteOpCodes_38[0x18].m_pVarients[10]->Init(
+            /*szName         = */"vbroadcastss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_d),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x19
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x19].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x19,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x19].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x19].InsertVarient(10);
+    {
+        // 0x19
+        // vbroadcastsd Vqq,Wq (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x19].m_pVarients[10]->Init(
+            /*szName         = */"vbroadcastsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x19,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_q),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x1A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x1A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x1A].InsertVarient(10);
+    {
+        // 0x1A
+        // vbroadcastf128 Vqq,Mdq (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x1A].m_pVarients[10]->Init(
+            /*szName         = */"vbroadcastf128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x1B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x1C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x1C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x1C].InsertVarient(10);
+    {
+        // 0x1C
+        // vpabsb Vx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x1C].m_pVarients[10]->Init(
+            /*szName         = */"vpabsb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1C,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x1D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x1D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x1D].InsertVarient(10);
+    {
+        // 0x1D
+        // vpabsw Vx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x1D].m_pVarients[10]->Init(
+            /*szName         = */"vpabsw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1D,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x1E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x1E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x1E].InsertVarient(10);
+    {
+        // 0x1E
+        // vpabsd Vx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x1E].m_pVarients[10]->Init(
+            /*szName         = */"vpabsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1E,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x1F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x20
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x20].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x20,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x20].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x20].InsertVarient(10);
+    {
+        // 0x20
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x20,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x20
+            // vpmovsxbw Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovsxbw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x20,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x20
+            // vpmovsxbw Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x20].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovsxbw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x20,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x21
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x21].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x21,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x21].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x21].InsertVarient(10);
+    {
+        // 0x21
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x21,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x21
+            // vpmovsxbd Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovsxbd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x21,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x21
+            // vpmovsxbd Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x21].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovsxbd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x21,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_d),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x22
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x22].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x22,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x22].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x22].InsertVarient(10);
+    {
+        // 0x22
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x22,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x22
+            // vpmovsxbq Vx,Ux/Mw (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovsxbq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x22,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x22
+            // vpmovsxbq Vx,Ux/Mw (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x22].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovsxbq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x22,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_w),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x23
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x23].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x23,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x23].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x23].InsertVarient(10);
+    {
+        // 0x23
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x23,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x23
+            // vpmovsxwd Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovsxwd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x23,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x23
+            // vpmovsxwd Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x23].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovsxwd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x23,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x24
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x24].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x24,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x24].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x24].InsertVarient(10);
+    {
+        // 0x24
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x24,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x24
+            // vpmovsxwq Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovsxwq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x24,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x24
+            // vpmovsxwq Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x24].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovsxwq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x24,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_d),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x25
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x25].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x25,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x25].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x25].InsertVarient(10);
+    {
+        // 0x25
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x25,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x25
+            // vpmovsxdq Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovsxdq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x25,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x25
+            // vpmovsxdq Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x25].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovsxdq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x25,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x26
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x26].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x26,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x27
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x27].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x27,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x28
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x28].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x28,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x28].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x28].InsertVarient(10);
+    {
+        // 0x28
+        // vpmuldq Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x28].m_pVarients[10]->Init(
+            /*szName         = */"vpmuldq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x28,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x29
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x29].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x29,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x29].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x29].InsertVarient(10);
+    {
+        // 0x29
+        // vpcmpeqq Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x29].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpeqq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x29,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x2A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x2A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x2A].InsertVarient(10);
+    {
+        // 0x2A
+        // vmovntdqa Vx,Mx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x2A].m_pVarients[10]->Init(
+            /*szName         = */"vmovntdqa",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x2B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x2B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x2B].InsertVarient(10);
+    {
+        // 0x2B
+        // vpackusdw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x2B].m_pVarients[10]->Init(
+            /*szName         = */"vpackusdw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2B,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x2C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x2C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x2C].InsertVarient(10);
+    {
+        // 0x2C
+        // vmaskmovps Vx,Hx,Mx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x2C].m_pVarients[10]->Init(
+            /*szName         = */"vmaskmovps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x2D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x2D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x2D].InsertVarient(10);
+    {
+        // 0x2D
+        // vmaskmovpd Vx,Hx,Mx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x2D].m_pVarients[10]->Init(
+            /*szName         = */"vmaskmovpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x2E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x2E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x2E].InsertVarient(10);
+    {
+        // 0x2E
+        // vmaskmovps Mx,Hx,Vx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x2E].m_pVarients[10]->Init(
+            /*szName         = */"vmaskmovps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2F
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x2F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x2F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x2F].InsertVarient(10);
+    {
+        // 0x2F
+        // vmaskmovpd Mx,Hx,Vx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x2F].m_pVarients[10]->Init(
+            /*szName         = */"vmaskmovpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2F,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x30
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x30].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x30,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x30].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x30].InsertVarient(10);
+    {
+        // 0x30
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x30,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x30
+            // vpmovzxbw Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovzxbw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x30,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x30
+            // vpmovzxbw Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x30].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovzxbw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x30,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x31
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x31].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x31,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x31].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x31].InsertVarient(10);
+    {
+        // 0x31
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x31,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x31
+            // vpmovzxbd Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovzxbd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x31,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x31
+            // vpmovzxbd Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x31].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovzxbd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x31,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_d),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x32
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x32].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x32,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x32].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x32].InsertVarient(10);
+    {
+        // 0x32
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x32,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x32
+            // vpmovzxbq Vx,Ux/Mw (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovzxbq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x32,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x32
+            // vpmovzxbq Vx,Ux/Mw (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x32].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovzxbq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x32,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_w),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x33
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x33].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x33,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x33].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x33].InsertVarient(10);
+    {
+        // 0x33
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x33,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x33
+            // vpmovzxwd Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovzxwd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x33,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x33
+            // vpmovzxwd Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x33].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovzxwd",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x33,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x34
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x34].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x34,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x34].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x34].InsertVarient(10);
+    {
+        // 0x34
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x34,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x34
+            // vpmovzxwq Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovzxwq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x34,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x34
+            // vpmovzxwq Vx,Ux/Md (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x34].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovzxwq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x34,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_d),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x35
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x35].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x35,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x35].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x35].InsertVarient(10);
+    {
+        // 0x35
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x35,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x35
+            // vpmovzxdq Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpmovzxdq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x35,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_U, OperandType_x),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x35
+            // vpmovzxdq Vx,Ux/Mq (66),(v1) 
+            m_VEXThreeByteOpCodes_38[0x35].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpmovzxdq",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x35,
+                /*nOperands      = */2,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+                /*operand2       = */Operand_t( OperandMode_M, OperandType_q),
+                /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x36
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x36].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x36,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x36].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x36].InsertVarient(10);
+    {
+        // 0x36
+        // vpermd Vqq,Hqq,Wqq (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x36].m_pVarients[10]->Init(
+            /*szName         = */"vpermd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x36,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x37
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x37].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x37,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x37].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x37].InsertVarient(10);
+    {
+        // 0x37
+        // vpcmpgtq Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x37].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpgtq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x37,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x38
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x38].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x38,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x38].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x38].InsertVarient(10);
+    {
+        // 0x38
+        // vpminsb Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x38].m_pVarients[10]->Init(
+            /*szName         = */"vpminsb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x38,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x39
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x39].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x39,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x39].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x39].InsertVarient(10);
+    {
+        // 0x39
+        // vpminsd Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x39].m_pVarients[10]->Init(
+            /*szName         = */"vpminsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x39,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x3A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x3A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x3A].InsertVarient(10);
+    {
+        // 0x3A
+        // vpminuw Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x3A].m_pVarients[10]->Init(
+            /*szName         = */"vpminuw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x3B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x3B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x3B].InsertVarient(10);
+    {
+        // 0x3B
+        // vpminud Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x3B].m_pVarients[10]->Init(
+            /*szName         = */"vpminud",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3B,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x3C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x3C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x3C].InsertVarient(10);
+    {
+        // 0x3C
+        // vpmaxsb Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x3C].m_pVarients[10]->Init(
+            /*szName         = */"vpmaxsb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x3D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x3D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x3D].InsertVarient(10);
+    {
+        // 0x3D
+        // vpmaxsd Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x3D].m_pVarients[10]->Init(
+            /*szName         = */"vpmaxsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x3E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x3E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x3E].InsertVarient(10);
+    {
+        // 0x3E
+        // vpmaxuw Vx,Hx,Wx (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x3E].m_pVarients[10]->Init(
+            /*szName         = */"vpmaxuw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3F
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x3F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x3F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x3F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x3F].InsertVarient(10);
+    {
+        // 0x3F
+        // vpmaxud Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x3F].m_pVarients[10]->Init(
+            /*szName         = */"vpmaxud",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x3F,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x40
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x40].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x40,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x40].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x40].InsertVarient(10);
+    {
+        // 0x40
+        // vpmulld Vx,Hx,Wx (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x40].m_pVarients[10]->Init(
+            /*szName         = */"vpmulld",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x40,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x41
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x41].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x41,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x41].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x41].InsertVarient(10);
+    {
+        // 0x41
+        // vphminposuw Vdq,Wdq (66),(v1)
+        m_VEXThreeByteOpCodes_38[0x41].m_pVarients[10]->Init(
+            /*szName         = */"vphminposuw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x41,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x42
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x42].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x42,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x43
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x43].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x43,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x44
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x44].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x44,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x45
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x45].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x45,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x45].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x45].InsertVarient(10);
+    {
+        // 0x45
+        // vpsrlvd/q Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x45].m_pVarients[10]->Init(
+            /*szName         = */"vpsrlvd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x45,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x46
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x46].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x46,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x46].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x46].InsertVarient(10);
+    {
+        // 0x46
+        // vpsravd Vx,Hx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x46].m_pVarients[10]->Init(
+            /*szName         = */"vpsravd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x46,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x47
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x47].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x47,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x47].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x47].InsertVarient(10);
+    {
+        // 0x47
+        // vpsllvd/q Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x47].m_pVarients[10]->Init(
+            /*szName         = */"vpsllvd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x47,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x48
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x48].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x48,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x49
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x49].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x49,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x49].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x49].InsertVarient(0);
+    {
+        // 0x49
+        // TILERELEASE (v1),(000),(11B) 
+        m_VEXThreeByteOpCodes_38[0x49].m_pVarients[0]->Init(
+            /*szName         = */"TILERELEASE",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x49,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x49].InsertVarient(0);
+    {
+        // 0x49
+        // LDTILECFG Mtc (v1)(000) 
+        m_VEXThreeByteOpCodes_38[0x49].m_pVarients[0]->Init(
+            /*szName         = */"LDTILECFG",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x49,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_tc),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x49].InsertVarient(10);
+    {
+        // 0x49
+        // STTILECFG Mtc (66),(v1),(000) 
+        m_VEXThreeByteOpCodes_38[0x49].m_pVarients[10]->Init(
+            /*szName         = */"STTILECFG",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x49,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_tc),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x49].InsertVarient(2);
+    {
+        // 0x49
+        // TILEZERO Vt (F2),(v1),(11B)
+        m_VEXThreeByteOpCodes_38[0x49].m_pVarients[2]->Init(
+            /*szName         = */"TILEZERO",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x49,
+            /*nOperands      = */1,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x4A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x4A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x4B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x4B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x4B].InsertVarient(2);
+    {
+        // 0x4B
+        // TILELOADD Vt,Wsm (F2),(v1) 
+        m_VEXThreeByteOpCodes_38[0x4B].m_pVarients[2]->Init(
+            /*szName         = */"TILELOADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sm),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x4B].InsertVarient(10);
+    {
+        // 0x4B
+        // TILELOADDT1 Vt,Wsm (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x4B].m_pVarients[10]->Init(
+            /*szName         = */"TILELOADDT1",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sm),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x4B].InsertVarient(3);
+    {
+        // 0x4B
+        // TILESTORED Wsm,Vt (F3),(v)
+        m_VEXThreeByteOpCodes_38[0x4B].m_pVarients[3]->Init(
+            /*szName         = */"TILESTORED",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4B,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_sm),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x4C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x4C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x4D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x4E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x4F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x50
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x50].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x50,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x50].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x50].InsertVarient(10);
+    {
+        // 0x50
+        // vpdpbusd Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0x50].m_pVarients[10]->Init(
+            /*szName         = */"vpdpbusd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x50].InsertVarient(2);
+    {
+        // 0x50
+        // vpdpbssd Vx,Hx,Wx (F2),(v) 
+        m_VEXThreeByteOpCodes_38[0x50].m_pVarients[2]->Init(
+            /*szName         = */"vpdpbssd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x50].InsertVarient(3);
+    {
+        // 0x50
+        // vpdpbsud Vx,Hx,Wx (F3),(v) 
+        m_VEXThreeByteOpCodes_38[0x50].m_pVarients[3]->Init(
+            /*szName         = */"vpdpbsud",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x50].InsertVarient(0);
+    {
+        // 0x50
+        // vpdpbuud Vx,Hx,Wx (v)
+        m_VEXThreeByteOpCodes_38[0x50].m_pVarients[0]->Init(
+            /*szName         = */"vpdpbuud",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x50,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x51
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x51].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x51,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x51].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x51].InsertVarient(10);
+    {
+        // 0x51
+        // vpdpbusds Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0x51].m_pVarients[10]->Init(
+            /*szName         = */"vpdpbusds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x51].InsertVarient(2);
+    {
+        // 0x51
+        // vpdpbssds Vx,Hx,Wx (F2),(v) 
+        m_VEXThreeByteOpCodes_38[0x51].m_pVarients[2]->Init(
+            /*szName         = */"vpdpbssds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x51].InsertVarient(3);
+    {
+        // 0x51
+        // vpdpbsuds Vx,Hx,Wx (F3),(v) 
+        m_VEXThreeByteOpCodes_38[0x51].m_pVarients[3]->Init(
+            /*szName         = */"vpdpbsuds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x51].InsertVarient(0);
+    {
+        // 0x51
+        // vpdpbuuds Vx,Hx,Wx (v)
+        m_VEXThreeByteOpCodes_38[0x51].m_pVarients[0]->Init(
+            /*szName         = */"vpdpbuuds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x51,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x52
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x52].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x52,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x52].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x52].InsertVarient(10);
+    {
+        // 0x52
+        // vpdpwssd Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0x52].m_pVarients[10]->Init(
+            /*szName         = */"vpdpwssd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x52,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x53
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x53].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x53,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x53].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x53].InsertVarient(10);
+    {
+        // 0x53
+        // vpdpwssds Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0x53].m_pVarients[10]->Init(
+            /*szName         = */"vpdpwssds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x53,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x54
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x54].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x54,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x55
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x55].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x55,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x56
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x56].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x56,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x57
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x57].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x57,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x58
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x58].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x58,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x58].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x58].InsertVarient(10);
+    {
+        // 0x58
+        // vpbroadcastd Vx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x58].m_pVarients[10]->Init(
+            /*szName         = */"vpbroadcastd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x58,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x59
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x59].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x59,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x59].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x59].InsertVarient(10);
+    {
+        // 0x59
+        // vpbroadcastq Vx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x59].m_pVarients[10]->Init(
+            /*szName         = */"vpbroadcastq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x59,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x5A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x5A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x5A].InsertVarient(10);
+    {
+        // 0x5A
+        // vbroadcasti128 Vqq,Mdq (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x5A].m_pVarients[10]->Init(
+            /*szName         = */"vbroadcasti128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5A,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x5B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x5C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x5C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x5C].InsertVarient(3);
+    {
+        // 0x5C
+        // TDPBF16PS Vt,Wt,Ht (F3),(v1) 
+        m_VEXThreeByteOpCodes_38[0x5C].m_pVarients[3]->Init(
+            /*szName         = */"TDPBF16PS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x5C].InsertVarient(2);
+    {
+        // 0x5C
+        // TDPFP16PS Vt,Wt,Ht (F2),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0x5C].m_pVarients[2]->Init(
+            /*szName         = */"TDPFP16PS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x5D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x5E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x5E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x5E].InsertVarient(2);
+    {
+        // 0x5E
+        // TDPBSSD Vt,Wt,Ht (F2),(v1) 
+        m_VEXThreeByteOpCodes_38[0x5E].m_pVarients[2]->Init(
+            /*szName         = */"TDPBSSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x5E].InsertVarient(3);
+    {
+        // 0x5E
+        // TDPBSUD Vt,Wt,Ht (F3),(v1) 
+        m_VEXThreeByteOpCodes_38[0x5E].m_pVarients[3]->Init(
+            /*szName         = */"TDPBSUD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x5E].InsertVarient(10);
+    {
+        // 0x5E
+        // TDPBUSD Vt,Wt,Ht (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0x5E].m_pVarients[10]->Init(
+            /*szName         = */"TDPBUSD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x5E].InsertVarient(0);
+    {
+        // 0x5E
+        // TDPBUUD Vt,Wt,Ht (v1)
+        m_VEXThreeByteOpCodes_38[0x5E].m_pVarients[0]->Init(
+            /*szName         = */"TDPBUUD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x5F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x60
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x60].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x60,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x61
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x61].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x61,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x62
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x62].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x62,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x63
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x63].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x63,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x64
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x64].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x64,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x65
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x65].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x65,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x66
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x66].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x66,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x67
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x67].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x67,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x68
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x68].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x68,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x69
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x69].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x69,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x6A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x6B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x6C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x6C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x6C].InsertVarient(10);
+    {
+        // 0x6C
+        // TCMMIMFP16PS Vt,Wt,Ht (66),(v1),(o64) 
+        m_VEXThreeByteOpCodes_38[0x6C].m_pVarients[10]->Init(
+            /*szName         = */"TCMMIMFP16PS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0x6C].InsertVarient(0);
+    {
+        // 0x6C
+        // TCMMRLFP16PS Vt,Wt,Ht (v1),(o64)
+        m_VEXThreeByteOpCodes_38[0x6C].m_pVarients[0]->Init(
+            /*szName         = */"TCMMRLFP16PS",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_t),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_t),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_t),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x6D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x6E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x6F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x70
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x70].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x70,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x71
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x71].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x71,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x72
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x72].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x72,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x72].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x72].InsertVarient(3);
+    {
+        // 0x72
+        // vcvtneps2bf16 Vx,Wx (F3) 
+        m_VEXThreeByteOpCodes_38[0x72].m_pVarients[3]->Init(
+            /*szName         = */"vcvtneps2bf16",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x72,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x73
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x73].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x73,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x74
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x74].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x74,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x75
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x75].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x75,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x76
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x76].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x76,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x77
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x77].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x77,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x78
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x78].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x78,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x78].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x78].InsertVarient(10);
+    {
+        // 0x78
+        // vpbroadcastb Vx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x78].m_pVarients[10]->Init(
+            /*szName         = */"vpbroadcastb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x78,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x79
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x79].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x79,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x79].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x79].InsertVarient(10);
+    {
+        // 0x79
+        // vpbroadcastw Vx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x79].m_pVarients[10]->Init(
+            /*szName         = */"vpbroadcastw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x79,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x7A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x7A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x7B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x7C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x7D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x7E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x7F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x80
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x80].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x80,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x81
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x81].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x81,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x82
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x82].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x82,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x83
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x83].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x83,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x84
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x84].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x84,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x85
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x85].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x85,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x86
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x86].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x86,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x87
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x87].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x87,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x88
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x88].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x88,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x89
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x89].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x89,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x8A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x8B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x8C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x8C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x8C].InsertVarient(10);
+    {
+        // 0x8C
+        // vpmaskmovd/q Vx,Hx,Mx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x8C].m_pVarients[10]->Init(
+            /*szName         = */"vpmaskmovd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x8C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x8D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x8D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x8E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x8E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x8E].InsertVarient(10);
+    {
+        // 0x8E
+        // vpmaskmovd/q Mx,Vx,Hx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x8E].m_pVarients[10]->Init(
+            /*szName         = */"vpmaskmovd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x8E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x8F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x8F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x90
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x90].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x90,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x90].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x90].InsertVarient(10);
+    {
+        // 0x90
+        // vgatherdd/q Vx,Hx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x90].m_pVarients[10]->Init(
+            /*szName         = */"vgatherdd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x90,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x91
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x91].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x91,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x91].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x91].InsertVarient(10);
+    {
+        // 0x91
+        // vgatherqd/q Vx,Hx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x91].m_pVarients[10]->Init(
+            /*szName         = */"vgatherqd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x91,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x92
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x92].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x92,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x92].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x92].InsertVarient(10);
+    {
+        // 0x92
+        // vgatherdps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x92].m_pVarients[10]->Init(
+            /*szName         = */"vgatherdps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x92,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x93
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x93].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x93,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x93].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x93].InsertVarient(10);
+    {
+        // 0x93
+        // vgatherqps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x93].m_pVarients[10]->Init(
+            /*szName         = */"vgatherqps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x93,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x94
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x94].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x94,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x95
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0x95].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x95,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x96
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x96].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x96,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x96].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x96].InsertVarient(10);
+    {
+        // 0x96
+        // vfmaddsub132ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x96].m_pVarients[10]->Init(
+            /*szName         = */"vfmaddsub132ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x96,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x97
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x97].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x97,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x97].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x97].InsertVarient(10);
+    {
+        // 0x97
+        // vfmsubadd132ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x97].m_pVarients[10]->Init(
+            /*szName         = */"vfmsubadd132ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x97,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x98
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x98].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x98,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x98].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x98].InsertVarient(10);
+    {
+        // 0x98
+        // vfmadd132ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x98].m_pVarients[10]->Init(
+            /*szName         = */"vfmadd132ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x98,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x99
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x99].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x99,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x99].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x99].InsertVarient(10);
+    {
+        // 0x99
+        // vfmadd132ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0x99].m_pVarients[10]->Init(
+            /*szName         = */"vfmadd132ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x99,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x9A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x9A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x9A].InsertVarient(10);
+    {
+        // 0x9A
+        // vfmsub132ps/d Vx,Hx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0x9A].m_pVarients[10]->Init(
+            /*szName         = */"vfmsub132ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9A,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x9B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x9B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x9B].InsertVarient(10);
+    {
+        // 0x9B
+        // vfmsub132ss/d Vx,Hx,Wx (66),(v),(v1) 
+        m_VEXThreeByteOpCodes_38[0x9B].m_pVarients[10]->Init(
+            /*szName         = */"vfmsub132ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9B,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x9C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x9C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x9C].InsertVarient(10);
+    {
+        // 0x9C
+        // vfnmadd132ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x9C].m_pVarients[10]->Init(
+            /*szName         = */"vfnmadd132ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9C,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x9D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x9D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x9D].InsertVarient(10);
+    {
+        // 0x9D
+        // vfnmadd132ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0x9D].m_pVarients[10]->Init(
+            /*szName         = */"vfnmadd132ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9E
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x9E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x9E].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x9E].InsertVarient(10);
+    {
+        // 0x9E
+        // vfnmsub132ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0x9E].m_pVarients[10]->Init(
+            /*szName         = */"vfnmsub132ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9E,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9F
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0x9F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0x9F].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0x9F].InsertVarient(10);
+    {
+        // 0x9F
+        // vfnmsub132ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0x9F].m_pVarients[10]->Init(
+            /*szName         = */"vfnmsub132ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9F,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xA0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xA0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xA1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xA2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xA3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xA4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xA5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xA6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xA6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xA6].InsertVarient(10);
+    {
+        // 0xA6
+        // vfmaddsub213ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xA6].m_pVarients[10]->Init(
+            /*szName         = */"vfmaddsub213ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA6,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xA7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xA7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xA7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xA7].InsertVarient(10);
+    {
+        // 0xA7
+        // vfmsubadd213ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xA7].m_pVarients[10]->Init(
+            /*szName         = */"vfmsubadd213ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xA8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xA8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xA8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xA8].InsertVarient(10);
+    {
+        // 0xA8
+        // vfmadd213ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xA8].m_pVarients[10]->Init(
+            /*szName         = */"vfmadd213ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xA9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xA9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xA9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xA9].InsertVarient(10);
+    {
+        // 0xA9
+        // vfmadd213ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0xA9].m_pVarients[10]->Init(
+            /*szName         = */"vfmadd213ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xAA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xAA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xAA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xAA].InsertVarient(10);
+    {
+        // 0xAA
+        // vfmsub213ps/d Vx,Hx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0xAA].m_pVarients[10]->Init(
+            /*szName         = */"vfmsub213ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xAB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xAB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xAB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xAB].InsertVarient(10);
+    {
+        // 0xAB
+        // vfmsub213ss/d Vx,Hx,Wx (66),(v),(v1) 
+        m_VEXThreeByteOpCodes_38[0xAB].m_pVarients[10]->Init(
+            /*szName         = */"vfmsub213ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xAC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xAC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xAC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xAC].InsertVarient(10);
+    {
+        // 0xAC
+        // vfnmadd213ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xAC].m_pVarients[10]->Init(
+            /*szName         = */"vfnmadd213ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xAD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xAD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xAD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xAD].InsertVarient(10);
+    {
+        // 0xAD
+        // vfnmadd213ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0xAD].m_pVarients[10]->Init(
+            /*szName         = */"vfnmadd213ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAD,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xAE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xAE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xAE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xAE].InsertVarient(10);
+    {
+        // 0xAE
+        // vfnmsub213ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xAE].m_pVarients[10]->Init(
+            /*szName         = */"vfnmsub213ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xAF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xAF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xAF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xAF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xAF].InsertVarient(10);
+    {
+        // 0xAF
+        // vfnmsub213ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0xAF].m_pVarients[10]->Init(
+            /*szName         = */"vfnmsub213ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xAF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB0].InsertVarient(3);
+    {
+        // 0xB0
+        // vcvtneebf162ps Vx,Mx (F3),(!11B),(v) 
+        m_VEXThreeByteOpCodes_38[0xB0].m_pVarients[3]->Init(
+            /*szName         = */"vcvtneebf162ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xB0].InsertVarient(10);
+    {
+        // 0xB0
+        // vcvtneeph2ps Vx,Mx (66),(!11B),(v) 
+        m_VEXThreeByteOpCodes_38[0xB0].m_pVarients[10]->Init(
+            /*szName         = */"vcvtneeph2ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xB0].InsertVarient(2);
+    {
+        // 0xB0
+        // vcvtneobf162ps Vx,Mx (F2),(!11B),(v) 
+        m_VEXThreeByteOpCodes_38[0xB0].m_pVarients[2]->Init(
+            /*szName         = */"vcvtneobf162ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xB0].InsertVarient(0);
+    {
+        // 0xB0
+        // vcvtneoph2ps Vx,Mx (!11B),(v)
+        m_VEXThreeByteOpCodes_38[0xB0].m_pVarients[0]->Init(
+            /*szName         = */"vcvtneoph2ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB0,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB1
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB1].InsertVarient(3);
+    {
+        // 0xB1
+        // vbcstnebf162ps Vx,Mw (F3),(!11B),(v) 
+        m_VEXThreeByteOpCodes_38[0xB1].m_pVarients[3]->Init(
+            /*szName         = */"vbcstnebf162ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_w),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xB1].InsertVarient(10);
+    {
+        // 0xB1
+        // vbcstnesh2ps Vx,Mw (66),(!11B),(v)
+        m_VEXThreeByteOpCodes_38[0xB1].m_pVarients[10]->Init(
+            /*szName         = */"vbcstnesh2ps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB1,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_M, OperandType_w),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xB2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xB3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB4].InsertVarient(10);
+    {
+        // 0xB4
+        // vpmadd52luq Vx,Hx,Wx (66)
+        m_VEXThreeByteOpCodes_38[0xB4].m_pVarients[10]->Init(
+            /*szName         = */"vpmadd52luq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB5].InsertVarient(10);
+    {
+        // 0xB5
+        // vpmadd52huq Vx,Hx,Wx (66)
+        m_VEXThreeByteOpCodes_38[0xB5].m_pVarients[10]->Init(
+            /*szName         = */"vpmadd52huq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB6].InsertVarient(10);
+    {
+        // 0xB6
+        // vfmaddsub231ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xB6].m_pVarients[10]->Init(
+            /*szName         = */"vfmaddsub231ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB6,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB7].InsertVarient(10);
+    {
+        // 0xB7
+        // vfmsubadd231ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xB7].m_pVarients[10]->Init(
+            /*szName         = */"vfmsubadd231ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB8].InsertVarient(10);
+    {
+        // 0xB8
+        // vfmadd231ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xB8].m_pVarients[10]->Init(
+            /*szName         = */"vfmadd231ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xB9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xB9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xB9].InsertVarient(10);
+    {
+        // 0xB9
+        // vfmadd231ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0xB9].m_pVarients[10]->Init(
+            /*szName         = */"vfmadd231ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xBA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xBA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xBA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xBA].InsertVarient(10);
+    {
+        // 0xBA
+        // vfmsub231ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xBA].m_pVarients[10]->Init(
+            /*szName         = */"vfmsub231ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xBB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xBB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xBB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xBB].InsertVarient(10);
+    {
+        // 0xBB
+        // vfmsub231ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0xBB].m_pVarients[10]->Init(
+            /*szName         = */"vfmsub231ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xBC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xBC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xBC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xBC].InsertVarient(10);
+    {
+        // 0xBC
+        // vfnmadd231ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xBC].m_pVarients[10]->Init(
+            /*szName         = */"vfnmadd231ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xBD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xBD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xBD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xBD].InsertVarient(10);
+    {
+        // 0xBD
+        // vfnmadd231ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0xBD].m_pVarients[10]->Init(
+            /*szName         = */"vfnmadd231ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBD,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xBE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xBE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xBE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xBE].InsertVarient(10);
+    {
+        // 0xBE
+        // vfnmsub231ps/d Vx,Hx,Wx (66),(v)
+        m_VEXThreeByteOpCodes_38[0xBE].m_pVarients[10]->Init(
+            /*szName         = */"vfnmsub231ps/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xBF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xBF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xBF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xBF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xBF].InsertVarient(10);
+    {
+        // 0xBF
+        // vfnmsub231ss/d Vx,Hx,Wx (66),(v),(v1)
+        m_VEXThreeByteOpCodes_38[0xBF].m_pVarients[10]->Init(
+            /*szName         = */"vfnmsub231ss/d",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xBF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xC0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xC9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xCA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xCB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xCB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xCB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xCB].InsertVarient(2);
+    {
+        // 0xCB
+        // vsha512rnds2 Vqq,Hqq,Udq (F2),(11B),(v)
+        m_VEXThreeByteOpCodes_38[0xCB].m_pVarients[2]->Init(
+            /*szName         = */"vsha512rnds2",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xCB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_dq),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xCC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xCC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xCC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xCC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xCC].InsertVarient(2);
+    {
+        // 0xCC
+        // vsha512msg1 Vqq,Udq (F2),(11B),(v)
+        m_VEXThreeByteOpCodes_38[0xCC].m_pVarients[2]->Init(
+            /*szName         = */"vsha512msg1",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xCC,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xCD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xCD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xCD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xCD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xCD].InsertVarient(2);
+    {
+        // 0xCD
+        // vsha512msg2 Vqq,Uqq (F2),(11B),(v)
+        m_VEXThreeByteOpCodes_38[0xCD].m_pVarients[2]->Init(
+            /*szName         = */"vsha512msg2",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xCD,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xCE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xCE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xCF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xCF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xCF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xCF].InsertVarient(10);
+    {
+        // 0xCF
+        // vgf2p8mulb Vx,Wx (66)
+        m_VEXThreeByteOpCodes_38[0xCF].m_pVarients[10]->Init(
+            /*szName         = */"vgf2p8mulb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xCF,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xD2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xD2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xD2].InsertVarient(3);
+    {
+        // 0xD2
+        // vpdpwsud Vx,Hx,Wx (F3),(v) 
+        m_VEXThreeByteOpCodes_38[0xD2].m_pVarients[3]->Init(
+            /*szName         = */"vpdpwsud",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xD2].InsertVarient(10);
+    {
+        // 0xD2
+        // vpdpwusd Vx,Hx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0xD2].m_pVarients[10]->Init(
+            /*szName         = */"vpdpwusd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xD2].InsertVarient(0);
+    {
+        // 0xD2
+        // vpdpwuud Vx,Hx,Wx (v)
+        m_VEXThreeByteOpCodes_38[0xD2].m_pVarients[0]->Init(
+            /*szName         = */"vpdpwuud",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD3
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xD3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xD3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xD3].InsertVarient(3);
+    {
+        // 0xD3
+        // vpdpwsuds Vx,Hx,Wx (F3),(v) 
+        m_VEXThreeByteOpCodes_38[0xD3].m_pVarients[3]->Init(
+            /*szName         = */"vpdpwsuds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xD3].InsertVarient(10);
+    {
+        // 0xD3
+        // vpdpwusds Vx,Hx,Wx (66),(v) 
+        m_VEXThreeByteOpCodes_38[0xD3].m_pVarients[10]->Init(
+            /*szName         = */"vpdpwusds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xD3].InsertVarient(0);
+    {
+        // 0xD3
+        // vpdpwuuds Vx,Hx,Wx (v)
+        m_VEXThreeByteOpCodes_38[0xD3].m_pVarients[0]->Init(
+            /*szName         = */"vpdpwuuds",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xD9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xDA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xDA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xDA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xDA].InsertVarient(0);
+    {
+        // 0xDA
+        // vsm3msg1 Vdq,Hdq,Udq (v1) 
+        m_VEXThreeByteOpCodes_38[0xDA].m_pVarients[0]->Init(
+            /*szName         = */"vsm3msg1",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_dq),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xDA].InsertVarient(10);
+    {
+        // 0xDA
+        // vsm3msg2 Vdq,Hdq,Udq (66),(v1) 
+        m_VEXThreeByteOpCodes_38[0xDA].m_pVarients[10]->Init(
+            /*szName         = */"vsm3msg2",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_U, OperandType_dq),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xDA].InsertVarient(3);
+    {
+        // 0xDA
+        // vsm4key4 Vx,Hx,Wx (F3),(v) 
+        m_VEXThreeByteOpCodes_38[0xDA].m_pVarients[3]->Init(
+            /*szName         = */"vsm4key4",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xDA].InsertVarient(2);
+    {
+        // 0xDA
+        // vsm4rnds4 Vx,Hx,Wx (F2),(v)
+        m_VEXThreeByteOpCodes_38[0xDA].m_pVarients[2]->Init(
+            /*szName         = */"vsm4rnds4",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xDB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xDB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xDB].InsertVarient(10);
+    {
+        // 0xDB
+        // VAESIMC Vdq,Wdq (66),(v1)
+        m_VEXThreeByteOpCodes_38[0xDB].m_pVarients[10]->Init(
+            /*szName         = */"VAESIMC",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDB,
+            /*nOperands      = */2,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xDC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xDC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xDC].InsertVarient(10);
+    {
+        // 0xDC
+        // vaesenc Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0xDC].m_pVarients[10]->Init(
+            /*szName         = */"vaesenc",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xDD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xDD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xDD].InsertVarient(10);
+    {
+        // 0xDD
+        // vaesenclast Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0xDD].m_pVarients[10]->Init(
+            /*szName         = */"vaesenclast",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDD,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xDE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xDE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xDE].InsertVarient(10);
+    {
+        // 0xDE
+        // vaesdec Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0xDE].m_pVarients[10]->Init(
+            /*szName         = */"vaesdec",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xDF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xDF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xDF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xDF].InsertVarient(10);
+    {
+        // 0xDF
+        // vaesdeclast Vx,Hx,Wx (66) 
+        m_VEXThreeByteOpCodes_38[0xDF].m_pVarients[10]->Init(
+            /*szName         = */"vaesdeclast",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE0].InsertVarient(10);
+    {
+        // 0xE0
+        // CMPOXADD   My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE0].m_pVarients[10]->Init(
+            /*szName         = */"CMPOXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE0,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE1
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE1].InsertVarient(10);
+    {
+        // 0xE1
+        // CMPNOXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE1].m_pVarients[10]->Init(
+            /*szName         = */"CMPNOXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE1,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE2].InsertVarient(10);
+    {
+        // 0xE2
+        // CMPBXADD   My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE2].m_pVarients[10]->Init(
+            /*szName         = */"CMPBXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE2,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE3
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE3].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE3].InsertVarient(10);
+    {
+        // 0xE3
+        // CMPNBXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE3].m_pVarients[10]->Init(
+            /*szName         = */"CMPNBXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE3,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE4].InsertVarient(10);
+    {
+        // 0xE4
+        // CMPZXADD   My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE4].m_pVarients[10]->Init(
+            /*szName         = */"CMPZXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE5].InsertVarient(10);
+    {
+        // 0xE5
+        // CMPNZXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE5].m_pVarients[10]->Init(
+            /*szName         = */"CMPNZXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE6].InsertVarient(10);
+    {
+        // 0xE6
+        // CMPBEXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE6].m_pVarients[10]->Init(
+            /*szName         = */"CMPBEXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE6,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE7].InsertVarient(10);
+    {
+        // 0xE7
+        // CMPNBEXADD My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE7].m_pVarients[10]->Init(
+            /*szName         = */"CMPNBEXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE8].InsertVarient(10);
+    {
+        // 0xE8
+        // CMPSXADD   My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE8].m_pVarients[10]->Init(
+            /*szName         = */"CMPSXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xE9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xE9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xE9].InsertVarient(10);
+    {
+        // 0xE9
+        // CMPNSXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xE9].m_pVarients[10]->Init(
+            /*szName         = */"CMPNSXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xEA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xEA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xEA].InsertVarient(10);
+    {
+        // 0xEA
+        // CMPPXADD   My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xEA].m_pVarients[10]->Init(
+            /*szName         = */"CMPPXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xEB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xEB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xEB].InsertVarient(10);
+    {
+        // 0xEB
+        // CMPNPXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xEB].m_pVarients[10]->Init(
+            /*szName         = */"CMPNPXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xEC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xEC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xEC].InsertVarient(10);
+    {
+        // 0xEC
+        // CMPLXADD   My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xEC].m_pVarients[10]->Init(
+            /*szName         = */"CMPLXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEC,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xED
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xED].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xED,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xED].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xED].InsertVarient(10);
+    {
+        // 0xED
+        // CMPNLXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xED].m_pVarients[10]->Init(
+            /*szName         = */"CMPNLXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xED,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xEE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xEE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xEE].InsertVarient(10);
+    {
+        // 0xEE
+        // CMPLEXADD  My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xEE].m_pVarients[10]->Init(
+            /*szName         = */"CMPLEXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xEF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xEF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xEF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xEF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xEF].InsertVarient(10);
+    {
+        // 0xEF
+        // CMPNLEXADD My,Gy,By (66),(v1),(o64)
+        m_VEXThreeByteOpCodes_38[0xEF].m_pVarients[10]->Init(
+            /*szName         = */"CMPNLEXADD",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xEF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_M, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xF0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xF1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xF1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xF2
+    // ANDN Gy,By,Ey (v)
+    m_VEXThreeByteOpCodes_38[0xF2].Init(
+        /*szName         = */"ANDN",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF2,
+        /*nOperands      = */3,
+        /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+        /*operand2       = */Operand_t( OperandMode_VG, OperandType_dqp),
+        /*operand3       = */Operand_t( OperandMode_E, OperandType_dqp),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xF3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xF3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xF4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_38[0xF4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xF4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xF5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xF5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xF5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xF5].InsertVarient(0);
+    {
+        // 0xF5
+        // BZHI Gy,Ey,By (v) 
+        m_VEXThreeByteOpCodes_38[0xF5].m_pVarients[0]->Init(
+            /*szName         = */"BZHI",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xF5].InsertVarient(3);
+    {
+        // 0xF5
+        // PEXT Gy,By,Ey (F3),(v) 
+        m_VEXThreeByteOpCodes_38[0xF5].m_pVarients[3]->Init(
+            /*szName         = */"PEXT",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xF5].InsertVarient(2);
+    {
+        // 0xF5
+        // PDEP Gy,By,Ey (F2),(v) 
+        m_VEXThreeByteOpCodes_38[0xF5].m_pVarients[2]->Init(
+            /*szName         = */"PDEP",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xF6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xF6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xF6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xF6].InsertVarient(2);
+    {
+        // 0xF6
+        // MULX By,Gy,rDX,Ey (F2),(v) 
+        m_VEXThreeByteOpCodes_38[0xF6].m_pVarients[2]->Init(
+            /*szName         = */"MULX",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF6,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand3       = */Operand_t( Register_t(Register_t::RegisterClass_GPR, 2, 8)),
+            /*operand4       = */Operand_t( OperandMode_E, OperandType_dqp));
+            
+    }
+
+    // 0xF7
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_38[0xF7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_38[0xF7].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_38[0xF7].InsertVarient(0);
+    {
+        // 0xF7
+        // BEXTR Gy,Ey,By (v) 
+        m_VEXThreeByteOpCodes_38[0xF7].m_pVarients[0]->Init(
+            /*szName         = */"BEXTR",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xF7].InsertVarient(10);
+    {
+        // 0xF7
+        // SHLX Gy,Ey,By (66),(v) 
+        m_VEXThreeByteOpCodes_38[0xF7].m_pVarients[10]->Init(
+            /*szName         = */"SHLX",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xF7].InsertVarient(3);
+    {
+        // 0xF7
+        // SARX Gy,Ey,By (F3),(v) 
+        m_VEXThreeByteOpCodes_38[0xF7].m_pVarients[3]->Init(
+            /*szName         = */"SARX",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+    m_VEXThreeByteOpCodes_38[0xF7].InsertVarient(2);
+    {
+        // 0xF7
+        // SHRX Gy,Ey,By (F2),(v)
+        m_VEXThreeByteOpCodes_38[0xF7].m_pVarients[2]->Init(
+            /*szName         = */"SHRX",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF7,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_VG, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
 
 }
 
@@ -26607,5 +41332,4423 @@ void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXThreeByteOpCodes_38()
 ///////////////////////////////////////////////////////////////////////////
 void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXThreeByteOpCodes_3A()
 {
+    // 0x0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x0].InsertVarient(10);
+    {
+        // 0x0
+        // vpermq Vqq,Wqq,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x0].m_pVarients[10]->Init(
+            /*szName         = */"vpermq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x0,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x1].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x1].InsertVarient(10);
+    {
+        // 0x1
+        // vpermpd Vqq,Wqq,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x1].m_pVarients[10]->Init(
+            /*szName         = */"vpermpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x2
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x2].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x2].InsertVarient(10);
+    {
+        // 0x2
+        // vpblendd Vx,Hx,Wx,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x2].m_pVarients[10]->Init(
+            /*szName         = */"vpblendd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x2,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x4].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x4].InsertVarient(10);
+    {
+        // 0x4
+        // vpermilps Vx,Wx,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x4].m_pVarients[10]->Init(
+            /*szName         = */"vpermilps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x5
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x5].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x5].InsertVarient(10);
+    {
+        // 0x5
+        // vpermilpd Vx,Wx,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x5].m_pVarients[10]->Init(
+            /*szName         = */"vpermilpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x5,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x6
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x6].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x6].InsertVarient(10);
+    {
+        // 0x6
+        // vperm2f128 Vqq,Hqq,Wqq,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x6].m_pVarients[10]->Init(
+            /*szName         = */"vperm2f128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x6,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x8].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x8].InsertVarient(10);
+    {
+        // 0x8
+        // vroundps Vx,Wx,Ib (66) 
+        m_VEXThreeByteOpCodes_3A[0x8].m_pVarients[10]->Init(
+            /*szName         = */"vroundps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x8,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x9
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x9].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x9].InsertVarient(10);
+    {
+        // 0x9
+        // vroundpd Vx,Wx,Ib (66) 
+        m_VEXThreeByteOpCodes_3A[0x9].m_pVarients[10]->Init(
+            /*szName         = */"vroundpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x9,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xA
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xA].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xA].InsertVarient(10);
+    {
+        // 0xA
+        // vroundss Vss,Wss,Ib (66),(v1) 
+        m_VEXThreeByteOpCodes_3A[0xA].m_pVarients[10]->Init(
+            /*szName         = */"vroundss",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xA,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_ss),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_ss),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xB
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xB].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xB].InsertVarient(10);
+    {
+        // 0xB
+        // vroundsd Vsd,Wsd,Ib (66),(v1) 
+        m_VEXThreeByteOpCodes_3A[0xB].m_pVarients[10]->Init(
+            /*szName         = */"vroundsd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xB,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_sd),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_sd),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xC
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xC].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xC].InsertVarient(10);
+    {
+        // 0xC
+        // vblendps Vx,Hx,Wx,Ib (66)
+        m_VEXThreeByteOpCodes_3A[0xC].m_pVarients[10]->Init(
+            /*szName         = */"vblendps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xC,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0xD
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xD].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xD].InsertVarient(10);
+    {
+        // 0xD
+        // vblendpd Vx,Hx,Wx,Ib (66)
+        m_VEXThreeByteOpCodes_3A[0xD].m_pVarients[10]->Init(
+            /*szName         = */"vblendpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xD,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0xE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xE].InsertVarient(10);
+    {
+        // 0xE
+        // vpblendw Vx,Hx,Wx,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0xE].m_pVarients[10]->Init(
+            /*szName         = */"vpblendw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xE,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0xF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xF].InsertVarient(10);
+    {
+        // 0xF
+        // vpalignr Vx,Hx,Wx,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0xF].m_pVarients[10]->Init(
+            /*szName         = */"vpalignr",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x10
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x10].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x10,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x11
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x11].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x11,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x12
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x12].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x12,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x13
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x13].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x13,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x14
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x14].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x14,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x14].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x14].InsertVarient(10);
+    {
+        // 0x14
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x14,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x14
+            // vpextrb Rd/Mb,Vdq,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpextrb",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x14,
+                /*nOperands      = */3,
+                /*operand1       = */Operand_t( OperandMode_R, OperandType_d),
+                /*operand2       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x14
+            // vpextrb Rd/Mb,Vdq,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x14].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpextrb",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x14,
+                /*nOperands      = */3,
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_b),
+                /*operand2       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x15
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x15].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x15,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x15].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x15].InsertVarient(10);
+    {
+        // 0x15
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x15,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x15
+            // vpextrw Rd/Mw,Vdq,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpextrw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x15,
+                /*nOperands      = */3,
+                /*operand1       = */Operand_t( OperandMode_R, OperandType_d),
+                /*operand2       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+        m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x15
+            // vpextrw Rd/Mw,Vdq,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x15].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpextrw",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x15,
+                /*nOperands      = */3,
+                /*operand1       = */Operand_t( OperandMode_M, OperandType_w),
+                /*operand2       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+                /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+                
+        }
+
+    }
+
+    // 0x16
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x16].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x16,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x16].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x16].InsertVarient(10);
+    {
+        // 0x16
+        // vpextrd/q Ey,Vdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x16].m_pVarients[10]->Init(
+            /*szName         = */"vpextrd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x16,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x17
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x17].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x17,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x17].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x17].InsertVarient(10);
+    {
+        // 0x17
+        // vextractps Ed,Vdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x17].m_pVarients[10]->Init(
+            /*szName         = */"vextractps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x17,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_E, OperandType_d),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x18
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x18].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x18,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x18].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x18].InsertVarient(10);
+    {
+        // 0x18
+        // vinsertf128 Vqq,Hqq,Wqq,Ib (66),(v) 
+        m_VEXThreeByteOpCodes_3A[0x18].m_pVarients[10]->Init(
+            /*szName         = */"vinsertf128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x18,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x19
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x19].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x19,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x19].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x19].InsertVarient(10);
+    {
+        // 0x19
+        // vextractf128 Wdq,Vqq,Ib (66),(v) 
+        m_VEXThreeByteOpCodes_3A[0x19].m_pVarients[10]->Init(
+            /*szName         = */"vextractf128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x19,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x1A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x1B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x1C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1D
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x1D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x1D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x1D].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x1D].InsertVarient(10);
+    {
+        // 0x1D
+        // vcvtps2ph Wx,Vx,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x1D].m_pVarients[10]->Init(
+            /*szName         = */"vcvtps2ph",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x1D,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x1E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x1E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x1F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x1F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x1F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x20
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x20].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x20,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x20].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x20].InsertVarient(10);
+    {
+        // 0x20
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x20,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x20
+            // vpinsrb Vdq,Hdq,Ry/Mb,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vpinsrb",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x20,
+                /*nOperands      = */4,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_R, OperandType_dqp),
+                /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+                
+        }
+        m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x20
+            // vpinsrb Vdq,Hdq,Ry/Mb,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x20].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vpinsrb",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x20,
+                /*nOperands      = */4,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_M, OperandType_b),
+                /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+                
+        }
+
+    }
+
+    // 0x21
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x21].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x21,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x21].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x21].InsertVarient(10);
+    {
+        // 0x21
+        // Parent instruction. Split type [ ModRM Split]
+        m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->Init(
+            /*szName         = */"xx_INVALID_xx",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x21,
+            /*nOperands      = */0,
+            /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+        m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_ModRM_MOD);
+        m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->InsertVarient(3);
+        {
+            // 0x21
+            // vinsertps Vdq,Hdq,Udq/Md,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->m_pVarients[3]->Init(
+                /*szName         = */"vinsertps",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x21,
+                /*nOperands      = */4,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_U, OperandType_dq),
+                /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+                
+        }
+        m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->InsertVarient(0);
+        m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->m_pVarients[1] = m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->m_pVarients[0];
+        m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->m_pVarients[2] = m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->m_pVarients[0];
+        {
+            // 0x21
+            // vinsertps Vdq,Hdq,Udq/Md,Ib (66),(v1)
+            m_VEXThreeByteOpCodes_3A[0x21].m_pVarients[10]->m_pVarients[0]->Init(
+                /*szName         = */"vinsertps",
+                /*bValidOpcd     = */true,
+                /*bEscapeOpcd    = */false,
+                /*bModrmRequired = */true,
+                /*iByte          = */0x21,
+                /*nOperands      = */4,
+                /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+                /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+                /*operand3       = */Operand_t( OperandMode_M, OperandType_d),
+                /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+                
+        }
+
+    }
+
+    // 0x22
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x22].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x22,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x22].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x22].InsertVarient(10);
+    {
+        // 0x22
+        // vpinsrd/q Vdq,Hdq,Ey,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x22].m_pVarients[10]->Init(
+            /*szName         = */"vpinsrd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x22,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x23
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x23].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x23,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x24
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x24].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x24,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x25
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x25].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x25,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x26
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x26].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x26,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x27
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x27].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x27,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x28
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x28].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x28,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x29
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x29].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x29,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x2A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x2A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x2B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x2B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x2C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x2C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x2D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x2D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x2E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x2E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x2F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x2F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x2F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x30
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x30].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x30,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x30].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x30].InsertVarient(10);
+    {
+        // 0x30
+        // kshiftrb/w Vk,Uk,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x30].m_pVarients[10]->Init(
+            /*szName         = */"kshiftrb/w",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x30,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x31
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x31].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x31,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x31].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x31].InsertVarient(10);
+    {
+        // 0x31
+        // kshiftrd/q Vk,Uk,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x31].m_pVarients[10]->Init(
+            /*szName         = */"kshiftrd/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x31,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x32
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x32].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x32,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x32].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x32].InsertVarient(10);
+    {
+        // 0x32
+        // kshiftlb/w Vk,Uk,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x32].m_pVarients[10]->Init(
+            /*szName         = */"kshiftlb/w",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x32,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x33
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x33].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x33,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x33].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x33].InsertVarient(10);
+    {
+        // 0x33
+        // kshiftld/q Vk,Uk,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x33].m_pVarients[10]->Init(
+            /*szName         = */"kshiftld/q",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x33,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_k),
+            /*operand2       = */Operand_t( OperandMode_U, OperandType_k),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x34
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x34].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x34,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x35
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x35].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x35,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x36
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x36].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x36,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x37
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x37].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x37,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x38
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x38].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x38,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x38].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x38].InsertVarient(10);
+    {
+        // 0x38
+        // vinserti128 Vqq,Hqq,Wqq,Ib (66),(v) 
+        m_VEXThreeByteOpCodes_3A[0x38].m_pVarients[10]->Init(
+            /*szName         = */"vinserti128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x38,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x39
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x39].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x39,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x39].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x39].InsertVarient(10);
+    {
+        // 0x39
+        // vextracti128 Wdq,Vqq,Ib (66),(v) 
+        m_VEXThreeByteOpCodes_3A[0x39].m_pVarients[10]->Init(
+            /*szName         = */"vextracti128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x39,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x3A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x3A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x3B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x3C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x3D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x3E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x3F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x3F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x3F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x40
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x40].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x40,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x40].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x40].InsertVarient(10);
+    {
+        // 0x40
+        // vdpps Vx,Hx,Wx,Ib (66)
+        m_VEXThreeByteOpCodes_3A[0x40].m_pVarients[10]->Init(
+            /*szName         = */"vdpps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x40,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x41
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x41].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x41,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x41].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x41].InsertVarient(10);
+    {
+        // 0x41
+        // vdppd Vdq,Hdq,Wdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x41].m_pVarients[10]->Init(
+            /*szName         = */"vdppd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x41,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x42
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x42].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x42,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x42].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x42].InsertVarient(10);
+    {
+        // 0x42
+        // vmpsadbw Vx,Hx,Wx,Ib (66),(v1) 
+        m_VEXThreeByteOpCodes_3A[0x42].m_pVarients[10]->Init(
+            /*szName         = */"vmpsadbw",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x42,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x43
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x43].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x43,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x44
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x44].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x44,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x44].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x44].InsertVarient(10);
+    {
+        // 0x44
+        // vpclmulqdq Vx,Hx,Wx,Ib (66)
+        m_VEXThreeByteOpCodes_3A[0x44].m_pVarients[10]->Init(
+            /*szName         = */"vpclmulqdq",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x44,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x45
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x45].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x45,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x46
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x46].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x46,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x46].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x46].InsertVarient(10);
+    {
+        // 0x46
+        // vperm2i128 Vqq,Hqq,Wqq,Ib (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x46].m_pVarients[10]->Init(
+            /*szName         = */"vperm2i128",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x46,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_qq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_qq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_qq),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0x47
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x47].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x47,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x48
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x48].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x48,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x49
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x49].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x49,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4A
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x4A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x4A].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x4A].InsertVarient(10);
+    {
+        // 0x4A
+        // vblendvps Vx,Hx,Wx,Lx (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x4A].m_pVarients[10]->Init(
+            /*szName         = */"vblendvps",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4A,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_IXY, OperandType_x));
+            
+    }
+
+    // 0x4B
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x4B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x4B].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x4B].InsertVarient(10);
+    {
+        // 0x4B
+        // vblendvpd Vx,Hx,Wx,Lx (66),(v)
+        m_VEXThreeByteOpCodes_3A[0x4B].m_pVarients[10]->Init(
+            /*szName         = */"vblendvpd",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4B,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_IXY, OperandType_x));
+            
+    }
+
+    // 0x4C
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x4C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x4C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x4C].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x4C].InsertVarient(10);
+    {
+        // 0x4C
+        // vpblendvb Vx,Hx,Wx,Lx (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x4C].m_pVarients[10]->Init(
+            /*szName         = */"vpblendvb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x4C,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand4       = */Operand_t( OperandMode_IXY, OperandType_x));
+            
+    }
+
+    // 0x4D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x4D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x4E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x4F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x4F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x4F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x50
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x50].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x50,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x51
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x51].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x51,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x52
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x52].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x52,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x53
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x53].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x53,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x54
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x54].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x54,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x55
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x55].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x55,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x56
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x56].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x56,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x57
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x57].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x57,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x58
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x58].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x58,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x59
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x59].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x59,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x5A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x5B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x5C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x5D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x5E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x5F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x5F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x5F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x60
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x60].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x60,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x60].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x60].InsertVarient(10);
+    {
+        // 0x60
+        // vpcmpestrm Vdq,Wdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x60].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpestrm",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x60,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x61
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x61].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x61,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x61].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x61].InsertVarient(10);
+    {
+        // 0x61
+        // vpcmpestri Vdq,Wdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x61].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpestri",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x61,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x62
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x62].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x62,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x62].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x62].InsertVarient(10);
+    {
+        // 0x62
+        // vpcmpistrm Vdq,Wdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x62].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpistrm",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x62,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x63
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0x63].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0x63,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0x63].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0x63].InsertVarient(10);
+    {
+        // 0x63
+        // vpcmpistri Vdq,Wdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0x63].m_pVarients[10]->Init(
+            /*szName         = */"vpcmpistri",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0x63,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0x64
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x64].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x64,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x65
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x65].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x65,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x66
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x66].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x66,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x67
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x67].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x67,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x68
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x68].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x68,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x69
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x69].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x69,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x6A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x6B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x6C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x6D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x6E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x6F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x6F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x6F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x70
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x70].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x70,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x71
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x71].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x71,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x72
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x72].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x72,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x73
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x73].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x73,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x74
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x74].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x74,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x75
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x75].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x75,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x76
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x76].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x76,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x77
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x77].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x77,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x78
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x78].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x78,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x79
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x79].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x79,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x7A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x7B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x7C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x7D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x7E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x7F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x7F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x7F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x80
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x80].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x80,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x81
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x81].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x81,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x82
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x82].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x82,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x83
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x83].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x83,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x84
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x84].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x84,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x85
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x85].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x85,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x86
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x86].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x86,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x87
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x87].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x87,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x88
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x88].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x88,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x89
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x89].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x89,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x8A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x8B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x8C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x8D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x8E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x8F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x8F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x8F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x90
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x90].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x90,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x91
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x91].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x91,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x92
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x92].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x92,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x93
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x93].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x93,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x94
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x94].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x94,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x95
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x95].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x95,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x96
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x96].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x96,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x97
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x97].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x97,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x98
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x98].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x98,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x99
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x99].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x99,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9A
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x9A].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9A,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9B
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x9B].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9B,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9C
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x9C].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9C,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9D
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x9D].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9D,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9E
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x9E].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9E,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0x9F
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0x9F].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0x9F,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xA9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xA9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xA9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xAA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xAB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xAC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xAD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xAE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xAF
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xAF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xAF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xB9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xB9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xB9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xBA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xBB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xBC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xBD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xBE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xBF
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xBF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xBF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xC9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xC9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xC9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xCA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xCB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xCC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xCD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xCD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xCE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xCE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xCE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xCE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xCE].InsertVarient(10);
+    {
+        // 0xCE
+        // vgf2p8affineqb Vx,Wx,Ib (66)
+        m_VEXThreeByteOpCodes_3A[0xCE].m_pVarients[10]->Init(
+            /*szName         = */"vgf2p8affineqb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xCE,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xCF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xCF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xCF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xCF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xCF].InsertVarient(10);
+    {
+        // 0xCF
+        // vgf2p8affineinvqb Vx,Wx,Ib (66)
+        m_VEXThreeByteOpCodes_3A[0xCF].m_pVarients[10]->Init(
+            /*szName         = */"vgf2p8affineinvqb",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xCF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_x),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_x),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xD0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xD9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xD9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xD9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xDA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xDA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xDB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xDB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xDC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xDC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xDD
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xDD].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xDD,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xDE
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xDE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xDE].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xDE].InsertVarient(10);
+    {
+        // 0xDE
+        // vsm3rnds2 Vdq,Hdq,Wdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0xDE].m_pVarients[10]->Init(
+            /*szName         = */"vsm3rnds2",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDE,
+            /*nOperands      = */4,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_VXY, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand4       = */Operand_t( OperandMode_I, OperandType_b));
+            
+    }
+
+    // 0xDF
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xDF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xDF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xDF].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xDF].InsertVarient(10);
+    {
+        // 0xDF
+        // VAESKEYGEN Vdq,Wdq,Ib (66),(v1)
+        m_VEXThreeByteOpCodes_3A[0xDF].m_pVarients[10]->Init(
+            /*szName         = */"VAESKEYGEN",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xDF,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_V, OperandType_dq),
+            /*operand2       = */Operand_t( OperandMode_W, OperandType_dq),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
+
+    // 0xE0
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE1
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE1].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE1,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE2
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE2].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE2,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE3
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE3].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE3,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE4
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE4].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE4,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE5
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE5].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE5,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE6
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE6].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE6,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE7
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE7].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE7,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE8
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE8].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE8,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xE9
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xE9].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xE9,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xEA
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xEA].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEA,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xEB
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xEB].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEB,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xEC
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xEC].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEC,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xED
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xED].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xED,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xEE
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xEE].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEE,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xEF
+    // This opcode does not repesent a valid VEX encodable intruction.
+    m_VEXThreeByteOpCodes_3A[0xEF].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */false,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */false,
+        /*iByte          = */0xEF,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    // 0xF0
+    // Parent instruction. Split type [ Prefix Split]
+    m_VEXThreeByteOpCodes_3A[0xF0].Init(
+        /*szName         = */"xx_INVALID_xx",
+        /*bValidOpcd     = */true,
+        /*bEscapeOpcd    = */false,
+        /*bModrmRequired = */true,
+        /*iByte          = */0xF0,
+        /*nOperands      = */0,
+        /*operand1       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand2       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),
+        /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+        
+    m_VEXThreeByteOpCodes_3A[0xF0].InitVarientType(OpCodeDesc_t::VarientType_t::VarientKey_LegacyPrefix);
+    m_VEXThreeByteOpCodes_3A[0xF0].InsertVarient(2);
+    {
+        // 0xF0
+        // RORX Gy,Ey,Ib (F2),(v) 
+        m_VEXThreeByteOpCodes_3A[0xF0].m_pVarients[2]->Init(
+            /*szName         = */"RORX",
+            /*bValidOpcd     = */true,
+            /*bEscapeOpcd    = */false,
+            /*bModrmRequired = */true,
+            /*iByte          = */0xF0,
+            /*nOperands      = */3,
+            /*operand1       = */Operand_t( OperandMode_G, OperandType_dqp),
+            /*operand2       = */Operand_t( OperandMode_E, OperandType_dqp),
+            /*operand3       = */Operand_t( OperandMode_I, OperandType_b),
+            /*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));
+            
+    }
 
 }

@@ -637,10 +637,10 @@ void DumpInstInvalid(const char* szTableName, std::ofstream& hFile, int iIndenta
     Indent(hFile, iIndentation + 1);
     hFile << "/*operand3       = */Operand_t( OperandMode_Invalid, OperandType_Invalid),\n";
     Indent(hFile, iIndentation + 1);
-    hFile << "/*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid)\n";
+    hFile << "/*operand4       = */Operand_t( OperandMode_Invalid, OperandType_Invalid));\n";
 
     Indent(hFile, iIndentation + 1);
-    hFile << ");\n\n";
+    hFile << "\n";
 
 }
 
@@ -681,17 +681,27 @@ void DumpInst(const Inst_t* pInst, const char* szTableName, std::ofstream& hFile
 
         if(i < pInst->m_vecOperands.size())
         {
-            std::string szAdrsMode; szAdrsMode.reserve(5); szAdrsMode[0] = pInst->m_vecOperands[i][0]; szAdrsMode[1] = '\0'; 
-            if(g_mapCustomOpAddressingModes.find(szAdrsMode[0]) != g_mapCustomOpAddressingModes.end())
-                szAdrsMode = g_mapCustomOpAddressingModes.find(szAdrsMode[0])->second;
+            char adrsMode = pInst->m_vecOperands[i][0];
+            if(adrsMode >= 'A' && adrsMode <= 'Z')
+            {
+                // Handling bizzare operand addressing modes.
+                std::string szAdrsMode("~"); szAdrsMode[0] = pInst->m_vecOperands[i][0];
+                if(g_mapCustomOpAddressingModes.find(szAdrsMode[0]) != g_mapCustomOpAddressingModes.end())
+                    szAdrsMode = g_mapCustomOpAddressingModes.find(szAdrsMode[0])->second;
 
-            std::string szOperandType = pInst->m_vecOperands[i].substr(1);
-            if(szOperandType == "y")
-                szOperandType = "dqp";
-            else if(szOperandType == "v")
-                szOperandType = "vqp";
+                // Handling bizzare operand types.
+                std::string szOperandType = pInst->m_vecOperands[i].substr(1);
+                if(szOperandType == "y")
+                    szOperandType = "dqp";
+                else if(szOperandType == "v")
+                    szOperandType = "vqp";
 
-            hFile << "/*operand" << i + 1 << "       = */Operand_t( OperandMode_" << szAdrsMode << ", OperandType_" << szOperandType << ")";
+                hFile << "/*operand" << i + 1 << "       = */Operand_t( OperandMode_" << szAdrsMode << ", OperandType_" << szOperandType << ")";
+            }
+            else // It must be a registe if first letter is lowercase.
+            {
+                hFile << "/*operand" << i + 1 << "       = */Operand_t( Register_t(" << pInst->m_vecOperands[i] << "))";
+            }
         }
         else 
         {
@@ -701,12 +711,14 @@ void DumpInst(const Inst_t* pInst, const char* szTableName, std::ofstream& hFile
         // So we don't put comman on the last argument of this fn.
         if(i < 3)
             hFile << ",";
+        else 
+            hFile << ");";
 
         hFile << '\n';
     }
 
     Indent(hFile, iIndentation + 1);
-    hFile << ");\n\n";
+    hFile << "\n";
 }
 
 
@@ -746,6 +758,14 @@ void DumpInstRecurse(Inst_t* pInst, std::ofstream& hFile, const char* szFileName
     }
     else 
     {
+        // Write the parent as well.
+        pInst->m_szStructure = 
+            std::string("Parent instruction. Split type [ ") + 
+            std::string(pInst->m_iSplitMethod == Inst_t::SplitMethod_Prefix ? "Prefix Split" : "ModRM Split") + 
+            std::string("]");
+        DumpInst(pInst, szTableName.c_str(), hFile, iIndentation, iByte);
+
+
         if(pInst->m_iSplitMethod == Inst_t::SplitMethod_Prefix)
         {
             Indent(hFile, iIndentation);
@@ -812,6 +832,8 @@ void DumpInstRecurse(Inst_t* pInst, std::ofstream& hFile, const char* szFileName
             DumpInstRecurse(pChild, hFile, szFileName, szTableNameChild, iIndentation + 1, iByte);
             Indent(hFile, iIndentation); hFile << "}\n";
         }
+
+        hFile << std::endl;
     }
 }
 

@@ -203,3 +203,33 @@ std::vector<Byte> INSANE_DASM64_NAMESPACE::TestCases::g_vecBubbleSortAsm =
     0x00, 0x00, 0x00, 0xE8, 0x00, 0x00, 0x00, 0x00, 0x48, 
     0x83, 0xC4, 0x28, 0x48, 0x83, 0xC4, 0x20
 };
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+std::vector<Byte> INSANE_DASM64_NAMESPACE::TestCases::g_vecVEXTestCase_001 = 
+{
+    // --- Test 1: VZEROALL (3 bytes) ---
+    // Expected: vzeroall
+    0xC5, 0xFC, 0x77,
+
+    // --- Test 2: VZEROUPPER (3 bytes) ---
+    // Expected: vzeroupper
+    0xC5, 0xF8, 0x77,
+
+    // --- Test 3: VADDPS xmm1, xmm2, xmm3 (128-bit reg-reg) (4 bytes) ---
+    // Expected: vaddps xmm1, xmm2, xmm3
+    0xC5, 0xED, 0x58, 0xCB,
+
+    // --- Test 4: VADDPS ymm1, ymm2, ymm3 (256-bit reg-reg) (4 bytes) ---
+    // Expected: vaddps ymm1, ymm2, ymm3
+    0xC5, 0xEC, 0x58, 0xCB,
+
+    // --- Test 5: VPADDD xmm1, xmm2, [rax] (128-bit reg-mem) (5 bytes) ---
+    // Expected: vpaddd xmm1, xmm2, xmmword ptr [rax]
+    0xC4, 0xE2, 0x69, 0xFE, 0x08,
+
+    // --- Test 6: VBLENDPS xmm1, xmm2, xmm3, 0xFF (with imm8) (5 bytes) ---
+    // Expected: vblendps xmm1, xmm2, xmm3, 0xff
+    0xC5, 0xE9, 0x0C, 0xCB, 0xFF
+};

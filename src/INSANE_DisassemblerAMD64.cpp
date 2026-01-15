@@ -11,7 +11,6 @@
 #include <vector>
 #include <assert.h>
 #include "Tables/Tables.h"
-#include "Tables/TableValidation/TableValidation.h"
 #include "Math/SafeBitWiseOps.h"
 #include "ObjectNomenclature.h"
 #include "Util/Terminal/Terminal.h"
@@ -153,16 +152,6 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Initialize()
         IDASMErrorCode_t iErrorCode = G::g_tables.Initialize();
         if (iErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
             return iErrorCode;
-    }
-
-
-    // Validate tables.
-    {
-        if(CheckTables() == false)
-        {
-            FAIL_LOG("Tables failed validation check");
-            return IDASMErrorCode_FailedInit;
-        }
     }
 
 
@@ -708,7 +697,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
         pInst->m_vex[iVEXIndex - iIterator] = vecInput[iVEXIndex];
     }
     pInst->m_nVEXBytes = nVEXBytes;
-    iIterator         += nVEXBytes;
+    iIterator += nVEXBytes;
 
     if(iIterator >= nBytes)
         return IDASMErrorCode_InvalidVEXInst;
@@ -716,6 +705,25 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
 
     // Capture opcode.
     pInst->m_opcode = vecInput[iIterator]; iIterator++;
+
+    // Checking opcode validity.
+    {
+        Byte iPrefix = 0x0F;
+        if(pInst->m_nVEXBytes == 2)
+        {
+            int m_mmmm = pInst->m_vex[0] & 0b11111;
+            if(m_mmmm == 0 || m_mmmm > 3) return IDASMErrorCode_InvalidVEXInst;
+
+            static Byte s_iEscapeArr[] = { 0x0F, 0x38, 0x3A };
+            iPrefix = s_iEscapeArr[m_mmmm - 1];
+        }
+        OpCodeDesc_t* opCodeTable = G::g_tables.GetVEXOpCodeTable(iPrefix);
+        assert(opCodeTable != nullptr && "Nullptr table received.");
+
+        // OpCode doesn't repesent a valid VEX encodable instruction.
+        if(opCodeTable[pInst->m_opcode].m_bIsValidCode == false)
+            return IDASMErrorCode_t::IDASMErrorCode_InvalidVEXInst;
+    }
 
     if(iIterator >= nBytes)
         return IDASMErrorCode_InvalidVEXInst;
@@ -774,7 +782,8 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
         return IDASMErrorCode_InvalidVEXInst;
 
 
-    // Immediate?
+    // Does this intruction need immediate.
+
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;

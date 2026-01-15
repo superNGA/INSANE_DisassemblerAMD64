@@ -34,7 +34,7 @@ namespace InsaneDASM64::Rules
     constexpr size_t MAX_OPBYTES            = 3llu;
     constexpr size_t MAX_DISPLACEMENT_BYTES = 4llu;
     constexpr size_t MAX_IMMEDIATE_BYTES    = 8llu;
-    constexpr size_t MAX_INST_NAME_SIZE     = 0x10llu;
+    constexpr size_t MAX_INST_NAME_SIZE     = 0x18llu;
     constexpr size_t MAX_VEX_PREFIX_BYTES   = 2llu; // Excluding the prefix byte ( 0xC4 0xC5 )
 
     constexpr size_t MIN_VEX_INST_BYTES     = 4llu;
@@ -316,6 +316,16 @@ namespace InsaneDASM64
         // Custom Operand Types.
         OperandType_qq,    // NOTE : Quad-Quadword (256-bits), regardless of operand-size attribute.
         OperandType_x,     // NOTE : dq or qq based on the operand-size attribute.
+
+        // These operand types are not present in the intel's architecture software developer manual
+        // ( or maybe they IDGAF. ) but are present in the linux's x86 opcode map. I have been told that
+        // these are very "niche" operand types and are used on rare occasions only. So I won't be using
+        // much brain pow-a on disassembling these.
+        OperandType_k,     // NOTE : AVX-512 mask register (k0-k7). Bitmask controlling conditional vector lane execution, merging, or zeroing in masked operations.
+        OperandType_tr,    // NOTE : AMX tile register (tmm0-tmm7). Large dedicated matrix register for Intel Advanced Matrix Extensions, holding configurable tile data for AI/ML.
+        OperandType_tc,    // NOTE : Tile configuration memory operand (64-byte block). Memory structure loaded/stored to define AMX tile palette, rows, and data formats.
+        OperandType_sm,    // NOTE : Supervisor state memory operand. Privileged memory area for saving/restoring kernel/extended CPU state in XSAVE/XRSTOR supervisor variants.
+
 
         OperandType_Count,
     };

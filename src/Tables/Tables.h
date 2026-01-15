@@ -125,6 +125,7 @@ namespace INSANE_DASM64_NAMESPACE
         bool          IsInitialized() const;
         uint16_t      GetInstType(Byte iOpCode) const;
         OpCodeDesc_t* GetOpCodeTable(int iTableIndex, Byte iEscapeByte);
+        OpCodeDesc_t* GetVEXOpCodeTable(Byte iEscapeByte);
 
 
         // To associate all leagacy prefix with simple consecutive numbers.

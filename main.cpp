@@ -15,17 +15,6 @@ int main(void)
     vecOutput.clear();
 
 
-    /*
-
-    PLAN : 
-        parse the opcode map from linux kernel.
-        Compare agsinst our tables for each type.
-        Check existing legacy entries.
-        Add entries from other encodings.
-    */
-
-
-
     // Initialize disassembler.
     {
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::Initialize();
@@ -36,22 +25,20 @@ int main(void)
         }
     }
 
-    // TODO remove this once the table validation is done.
-    return 0;
-
     
     std::vector<InsaneDASM64::Byte> vecInput = { 0x48, 0x89, 0xC8, 0x48, 0x21, 0xD0, 0xC3 };
     // Disassemble...
     {
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success;
 
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(vecInput, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_001, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_002, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecTwoByteOpCodes_001, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_38, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_3A, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecVEXTestCase_001, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(vecInput, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_001, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_002, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecTwoByteOpCodes_001, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_38, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_3A, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
 
         if (iErrorCode != InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success)
         {
