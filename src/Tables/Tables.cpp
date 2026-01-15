@@ -1112,10 +1112,10 @@ IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
     }
 
 
-    InitOneByteOpCodeTable();
-    InitTwoByteOpCodeTable();
-    InitThreeByteOpCodeTable_38();
-    InitThreeByteOpCodeTable_3A();
+    _InitOneByteOpCodeTable();
+    _InitTwoByteOpCodeTable();
+    _InitThreeByteOpCodeTable_38();
+    _InitThreeByteOpCodeTable_3A();
 
         
     // Setting Escape characters...
@@ -1133,7 +1133,7 @@ IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void Tables_t::InitOneByteOpCodeTable()
+void Tables_t::_InitOneByteOpCodeTable()
 {
     // 0x0
     // Brief : Add
@@ -11171,7 +11171,7 @@ void Tables_t::InitOneByteOpCodeTable()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void Tables_t::InitTwoByteOpCodeTable()
+void Tables_t::_InitTwoByteOpCodeTable()
 {
     // 0x0
     // Brief : Invalid Instruction in 64-Bit Mode
@@ -20979,7 +20979,7 @@ void Tables_t::InitTwoByteOpCodeTable()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void Tables_t::InitThreeByteOpCodeTable_38()
+void Tables_t::_InitThreeByteOpCodeTable_38()
 {
     // 0x0
     // Brief : Invalid Instruction in 64-Bit Mode
@@ -25040,7 +25040,7 @@ void Tables_t::InitThreeByteOpCodeTable_38()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void Tables_t::InitThreeByteOpCodeTable_3A()
+void Tables_t::_InitThreeByteOpCodeTable_3A()
 {
     // 0x0
     //? Brief : Invalid instruction in 64-bit mode.
@@ -26582,5 +26582,30 @@ void Tables_t::InitThreeByteOpCodeTable_3A()
             /*operand4       = */Operand_t());
     }
 
+
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXTwoByteOpCodes()
+{
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXThreeByteOpCodes_38()
+{
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void INSANE_DASM64_NAMESPACE::Tables_t::_InitVEXThreeByteOpCodes_3A()
+{
 
 }

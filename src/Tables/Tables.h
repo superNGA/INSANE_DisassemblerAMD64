@@ -121,12 +121,11 @@ namespace INSANE_DASM64_NAMESPACE
     public:
         Tables_t();
 
-        InsaneDASM64::IDASMErrorCode_t Initialize();
-        bool                      IsInitialized() const;
-
-        uint16_t                  GetInstType(Byte iOpCode) const;
-
+        INSANE_DASM64_NAMESPACE::IDASMErrorCode_t Initialize();
+        bool          IsInitialized() const;
+        uint16_t      GetInstType(Byte iOpCode) const;
         OpCodeDesc_t* GetOpCodeTable(int iTableIndex, Byte iEscapeByte);
+
 
         // To associate all leagacy prefix with simple consecutive numbers.
         // Returns 0 on default case.
@@ -139,21 +138,35 @@ namespace INSANE_DASM64_NAMESPACE
         bool                           m_bInstTypeLUTInit = false;
 
 
+        // Tables... ( Legacy encoded instructions. )
         InsaneDASM64::IDASMErrorCode_t _InitializeOpCodeTable();
-        void                           InitOneByteOpCodeTable();
-        void                           InitTwoByteOpCodeTable();
-        void                           InitThreeByteOpCodeTable_38();
-        void                           InitThreeByteOpCodeTable_3A();
+        bool                           m_bOpCodeTableInit = false;
 
-
-        // Tables...
+        void                           _InitOneByteOpCodeTable();
         OpCodeDesc_t                   m_opCodeTable1   [0x100llu];
+
+        void                           _InitTwoByteOpCodeTable();
         OpCodeDesc_t                   m_opCodeTable2   [0x100llu];
+
+        void                           _InitThreeByteOpCodeTable_38();
         OpCodeDesc_t                   m_opCodeTable3_38[0x100llu];
+
+        void                           _InitThreeByteOpCodeTable_3A();
         OpCodeDesc_t                   m_opCodeTable3_3A[0x100llu];
 
 
-        bool                      m_bOpCodeTableInit = false;
+        // Tables... ( VEX encoded instuctions. )
+        INSANE_DASM64_NAMESPACE::IDASMErrorCode_t _InitializeVEXOpCodeTables();
+        bool                           m_bVEXOpCodeTables = false;
+
+        void                           _InitVEXTwoByteOpCodes();
+        OpCodeDesc_t                   m_VEXTwoByteOpCodes[0x100llu];
+
+        void                           _InitVEXThreeByteOpCodes_38();
+        OpCodeDesc_t                   m_VEXThreeByteOpCodes_38[0x100llu];
+
+        void                           _InitVEXThreeByteOpCodes_3A();
+        OpCodeDesc_t                   m_VEXThreeByteOpCodes_3A[0x100llu];
     };
     DEFINE_GLOBAL_OBJECT(g_tables, Tables_t)
 

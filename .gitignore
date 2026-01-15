@@ -14,3 +14,9 @@ Tools/ValidAVXInst/*
 !Tools/ValidAVXInst/ValidAVXInst.cpp
 !Tools/ValidAVXInst/build.bat
 !Tools/ValidAVXInst/run.bat
+
+# Ignoring VEX encodable instruction map dump tool.
+Tools/VEXInstTableGen/*
+!Tools/VEXInstTableGen/
+!Tools/VEXInstTableGen/TableValidation.cpp
+!Tools/VEXInstTableGen/x86-opcode-map.cpp

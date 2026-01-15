@@ -11,6 +11,7 @@
 #include <vector>
 #include <assert.h>
 #include "Tables/Tables.h"
+#include "Tables/TableValidation/TableValidation.h"
 #include "Math/SafeBitWiseOps.h"
 #include "ObjectNomenclature.h"
 #include "Util/Terminal/Terminal.h"
@@ -25,12 +26,12 @@ using namespace INSANE_DASM64_NAMESPACE;
 ///////////////////////////////////////////////////////////////////////////
 namespace INSANE_DASM64_NAMESPACE
 {
-    // Local functions, for decoding different encodings. To be used only in the main InsaneDASM64::decode function.
+    // Local functions, for decoding different encodings. To be used only in the main InsaneDASM64::Decode function.
     // NOTE : These functions update the iterator ( index in the byteStream ) according to the bytes they consume.
     static IDASMErrorCode_t DecodeLegacyEncoding     (const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator);
     static IDASMErrorCode_t DecodeVEXEncoding        (const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator);
 
-    // Local functions, for decoding different encodings. To be used only in the main InsaneDASM64::decode function.
+    // Local functions, for disassembling different encodings. To be used only in the main InsaneDASM64::Disassemble function.
     static IDASMErrorCode_t DisassembleLegacyEncoding(const LegacyInst_t* inst, std::string& szOutput);
     static IDASMErrorCode_t DisassembleVEXEncoding   (const VEXInst_t* inst,    std::string& szOutput);
 };
@@ -152,6 +153,16 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Initialize()
         IDASMErrorCode_t iErrorCode = G::g_tables.Initialize();
         if (iErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
             return iErrorCode;
+    }
+
+
+    // Validate tables.
+    {
+        if(CheckTables() == false)
+        {
+            FAIL_LOG("Tables failed validation check");
+            return IDASMErrorCode_FailedInit;
+        }
     }
 
 
@@ -664,7 +675,107 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInp
 ///////////////////////////////////////////////////////////////////////////
 static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator)
 {
-    assert(false && "VEX decoder is not implemented yet.");
+    assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
+    assert(pInstOut->m_iInstEncodingType == Instruction_t::InstEncodingType_VEX && "Instruction passed to DecodeVEXEncoding() is not initialized to correct type.");
+
+
+    // We must have atleast 4 bytes left in input. Thats the minimum for a VEX encoded instruction.
+    if(vecInput.empty() == true || vecInput.size() - iIterator < Rules::MIN_VEX_INST_BYTES)
+        return IDASMErrorCode_InvalidVEXInst;
+
+
+    size_t     nBytes = vecInput.size();
+    VEXInst_t* pInst  = reinterpret_cast<VEXInst_t*>(pInstOut->m_pInst);
+    pInst->Clear();
+
+
+    pInst->m_prefix = vecInput[iIterator]; iIterator++;
+
+    size_t nVEXBytes = 0;
+
+    // Determine VEX byte count.
+    if     (pInst->m_prefix == SpecialChars::VEX_PREFIX_C4) nVEXBytes = 2llu;
+    else if(pInst->m_prefix == SpecialChars::VEX_PREFIX_C5) nVEXBytes = 1llu;
+
+    // Invalid VEX Prefix check.
+    if(nVEXBytes == 0)
+        return IDASMErrorCode_InvalidVEXPrefix;
+
+
+    // Store VEX bytes & move iterator.
+    for(size_t iVEXIndex = iIterator; iVEXIndex - iIterator < nVEXBytes; iVEXIndex++)
+    {
+        pInst->m_vex[iVEXIndex - iIterator] = vecInput[iVEXIndex];
+    }
+    pInst->m_nVEXBytes = nVEXBytes;
+    iIterator         += nVEXBytes;
+
+    if(iIterator >= nBytes)
+        return IDASMErrorCode_InvalidVEXInst;
+
+
+    // Capture opcode.
+    pInst->m_opcode = vecInput[iIterator]; iIterator++;
+
+    if(iIterator >= nBytes)
+        return IDASMErrorCode_InvalidVEXInst;
+
+
+    // Capture modrm.
+    pInst->m_modrm.Store(vecInput[iIterator]); iIterator++;
+
+    if(iIterator >= nBytes)
+        return IDASMErrorCode_InvalidVEXInst;
+
+
+    // We need SIB??
+    pInst->m_bHasSIB = pInst->m_modrm.ModValueAbs() != 0b11 && pInst->m_modrm.RMValueAbs() == 0b100;
+    if(pInst->m_bHasSIB == true)
+    {
+        pInst->m_SIB.Store(vecInput[iIterator]); iIterator++;
+    }
+
+    if(iIterator >= nBytes)
+        return IDASMErrorCode_InvalidVEXInst;
+
+
+    // Store displacement if required.
+    // calc. size of displacement here.
+    int      iDisplacementSize = 0;
+    uint64_t iMod              = pInst->m_modrm.ModValueAbs();
+
+    if (iMod == 0b01)
+    {
+        iDisplacementSize = 1;
+    }
+    else if (iMod == 0b10 || (iMod == 0b00 && pInst->m_modrm.RMValueAbs() == 0b101))
+    {
+        iDisplacementSize = 4;
+    }
+    else if (iMod == 0b00 && pInst->m_SIB.BaseValueAbs() == 0b101) // base == 101 ?
+    {
+        iDisplacementSize = 4;
+    }
+
+    // Invalid quantity of Displacement bytes.
+    if (iDisplacementSize > Rules::MAX_DISPLACEMENT_BYTES)
+        return IDASMErrorCode_t::IDASMErrorCode_InvalidDispSize;
+
+
+    // Capture Displacement bytes.
+    for (size_t iDispIndex = iIterator; iDispIndex < nBytes && iDispIndex - iIterator < iDisplacementSize; iDispIndex++)
+    {
+        pInst->m_disp.PushByte(vecInput[iDispIndex]);
+    }
+    iIterator += pInst->m_disp.ByteCount();
+
+
+    if(iIterator >= nBytes)
+        return IDASMErrorCode_InvalidVEXInst;
+
+
+    // Immediate?
+
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
@@ -675,6 +786,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
 static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator)
 {
     assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
+    assert(pInstOut->m_iInstEncodingType == Instruction_t::InstEncodingType_Legacy && "Instruction passed to DecodeVEXEncoding() is not initialized to correct type.");
 
 
     // Valid Iterator??
@@ -967,6 +1079,8 @@ const char* InsaneDASM64::GetErrorMessage(IDASMErrorCode_t iErrorCode)
     case InsaneDASM64::IDASMErrorCode_InvalidDispSize:       return "[ Insane Disassembler AMD64 ] Determined displacement size is invalid.";
     case InsaneDASM64::IDASMErrorCode_NoImmediateFound:      return "[ Insane Disassembler AMD64 ] An Immediate was expected, but was not found.";
     case InsaneDASM64::IDASMErrorCode_InvalidImmediateSize:  return "[ Insane Disassembler AMD64 ] Failed to determine immediate size for some instruction.";
+    case InsaneDASM64::IDASMErrorCode_InvalidVEXPrefix:      return "[ Insane Disassembler AMD64 ] Invalid VEX prefix byte found. VEX prefix must be either 0xC4 or 0xC5";
+    case InsaneDASM64::IDASMErrorCode_InvalidVEXInst:        return "[ Insane Disassembler AMD64 ] Provided VEX encoded instruction is invalid.";
     
     default: break;
     }
@@ -1789,4 +1903,25 @@ bool INSANE_DASM64_NAMESPACE::Instruction_t::InitEncodingType(InstEncodingTypes_
     // If we don't clear it, bad things will happen.
     memset(m_pInst, 0, iInstSize);
     return true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+INSANE_DASM64_NAMESPACE::VEXInst_t::VEXInst_t()
+{
+    Clear();
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void INSANE_DASM64_NAMESPACE::VEXInst_t::Clear()
+{
+    m_prefix        = 0x00;
+    m_nVEXBytes     = -1;
+    m_opcode        = 0x00;
+    m_bHasSIB       = false;
+    m_disp.Clear();
+    m_bHasImmediate = false;
 }

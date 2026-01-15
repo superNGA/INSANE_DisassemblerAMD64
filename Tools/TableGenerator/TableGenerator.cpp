@@ -106,31 +106,47 @@ std::unordered_map<std::string, std::string> g_mapAddressingModeLinker =
 ///////////////////////////////////////////////////////////////////////////
 std::unordered_map<std::string, std::string> g_mapOperandTypeLinker = 
 {
-    {"a", "16or32_twice"},
-    {"b", "8"}, {"bcd", "80dec"}, {"bs", "8"}, {"bsq", "Invalid"}, {"bss", "8"},
-    {"c", "Invalid"},
-    {"d", "32"}, {"di", "32int"}, {"dqp", "32_64"}, {"ds", "32"},
-    {"dq", "128"},
-    {"dr", "64real"}, // No equivalent in intel's manual.
-    {"e", "14_28"}, {"er", "80real"}, // Not equivalent in intel's manual.
-    {"p", "p"}, 
-    {"pi", "64mmx"}, 
-    {"pd", "Invalid"}, 
-    {"ps", "128pf"},
-    {"psq", "64"},
-    {"pt", "Invalid"},
-    {"ptp", "ptp"},
-    {"q", "64"},
-    {"qi", "64int"},
-    {"qp", "64"},
+    {"a",   "16or32_twice"},
+    {"b",   "8"           },
+    {"bcd", "80dec"       },
+    {"bs",  "8"           },
+    {"bsq", "Invalid"     },
+    {"bss", "8"           },
+    {"c",   "Invalid"     },
+    {"d",   "32"          },
+    {"di",  "32int"       },
+    {"dqp", "32_64"       },
+    {"ds",  "32"          },
+    {"dq",  "128"         },
+    {"dr",  "64real"      }, // No equivalent in intel's manual.
+    {"e",   "14_28"       },
+    {"er",  "80real"      }, // Not equivalent in intel's manual.
+    {"p",   "p"           },
+    {"pi",  "64mmx"       },
+    {"pd",  "Invalid"     },
+    {"ps",  "128pf"       },
+    {"psq", "64"          },
+    {"pt",  "Invalid"     },
+    {"ptp", "ptp"         },
+    {"q",   "64"          },
+    {"qi",  "64int"       },
+    {"qp",  "64"          },
     // Note : Nothing seems to be connecting to the qq operandtype ( 256 bits ).
-    {"s", "Invalid"}, {"sd", "Invalid"}, {"si", "Invalid"},
-    {"ss", "Invalid"},
-    {"sr", "32real"}, {"st", "94_108"}, {"stx", "512"},
-    {"t", "Invalid"},
-    {"v", "16_32"}, {"vds", "16_32"}, {"vs", "16_32"}, {"vqp", "16_32_64"},
-    {"vq", "64_16"},
-    {"w", "16"}, {"wi", "16int"}
+    {"s",   "Invalid"     },
+    {"sd",  "Invalid"     },
+    {"si",  "Invalid"     },
+    {"ss",  "Invalid"     },
+    {"sr",  "32real"      },
+    {"st",  "94_108"      },
+    {"stx", "512"         },
+    {"t",   "Invalid"     },
+    {"v",   "16_32"       },
+    {"vds", "16_32"       },
+    {"vs",  "16_32"       },
+    {"vqp", "16_32_64"    },
+    {"vq",  "64_16"       },
+    {"w",   "16"          },
+    {"wi",  "16int"       }
 };
 
 

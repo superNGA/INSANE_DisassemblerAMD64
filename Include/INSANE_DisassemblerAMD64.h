@@ -35,6 +35,9 @@ namespace InsaneDASM64::Rules
     constexpr size_t MAX_DISPLACEMENT_BYTES = 4llu;
     constexpr size_t MAX_IMMEDIATE_BYTES    = 8llu;
     constexpr size_t MAX_INST_NAME_SIZE     = 0x10llu;
+    constexpr size_t MAX_VEX_PREFIX_BYTES   = 2llu; // Excluding the prefix byte ( 0xC4 0xC5 )
+
+    constexpr size_t MIN_VEX_INST_BYTES     = 4llu;
 
     inline const char* OPCODE_NAME_SENTINAL   = "xx_INVALID_xx";
     inline const char* REGISTER_NAME_SENTINAL = "xx_INVALID_REG_xx";
@@ -215,6 +218,12 @@ namespace InsaneDASM64
         OperandMode_Y,
         OperandMode_Z,
 
+        // Custom ones. Added.
+        OperandMode_VG,  // The VEX.vvvv field of the VEX prefix selects a general purpose register.
+        OperandMode_VXY, // The VEX.vvvv field of the VEX prefix selects a 128-bit XMM register or a 256-bit YMM register
+        OperandMode_IXY, // The upper 4 bits of the 8-bit immediate selects a 128-bit XMM register or a 256-bit YMM register.
+        
+
         OperandMode_Count,
     };
 
@@ -304,6 +313,10 @@ namespace InsaneDASM64
         OperandType_w,     // NOTE : Word, regardless of operand-size attribute
         OperandType_wi,    // NOTE : Word-integer. Only x87 FPU instructions
 
+        // Custom Operand Types.
+        OperandType_qq,    // NOTE : Quad-Quadword (256-bits), regardless of operand-size attribute.
+        OperandType_x,     // NOTE : dq or qq based on the operand-size attribute.
+
         OperandType_Count,
     };
 
@@ -373,7 +386,6 @@ namespace InsaneDASM64
 
         // Catagory & visibility of the operand.
         OperandCatagory_t m_iOperandCatagory = OperandCatagory_Undefined;
-        // bool              m_bHidden          = false; // Some operands are hidden.
 
         
         // In case of a literal operand. This will hold the literal ( int ).
@@ -386,7 +398,7 @@ namespace InsaneDASM64
 
         // In case of a OG / normal / legacy operand ( addressing mode + operand type ).
         // These will hold it.
-        OperandModes_t     m_iOperandMode     = OperandMode_Invalid;
+        OperandModes_t    m_iOperandMode     = OperandMode_Invalid;
         OperandTypes_t    m_iOperandType     = OperandType_Invalid;
     };
 
@@ -565,7 +577,19 @@ namespace InsaneDASM64
     ///////////////////////////////////////////////////////////////////////////
     struct VEXInst_t
     {
+        VEXInst_t();
+        void Clear();
 
+        Byte    m_prefix         = 0x00;
+        Byte    m_vex[Rules::MAX_VEX_PREFIX_BYTES];
+        int     m_nVEXBytes      = -1;
+        Byte    m_opcode         = 0x00;
+        ModRM_t m_modrm;
+        SIB_t   m_SIB;
+        bool    m_bHasSIB        = false;
+        Displacement_t m_disp;
+        Byte    m_immediate      = 0x00;
+        bool    m_bHasImmediate  = false;
     };
 
 
@@ -584,6 +608,8 @@ namespace InsaneDASM64
         IDASMErrorCode_InvalidDispSize,
         IDASMErrorCode_NoImmediateFound,
         IDASMErrorCode_InvalidImmediateSize,
+        IDASMErrorCode_InvalidVEXPrefix,
+        IDASMErrorCode_InvalidVEXInst,
         IDASMErrorCode_Count
     };
 

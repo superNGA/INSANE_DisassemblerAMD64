@@ -15,6 +15,16 @@ int main(void)
     vecOutput.clear();
 
 
+    /*
+
+    PLAN : 
+        parse the opcode map from linux kernel.
+        Compare agsinst our tables for each type.
+        Check existing legacy entries.
+        Add entries from other encodings.
+    */
+
+
 
     // Initialize disassembler.
     {
@@ -26,6 +36,10 @@ int main(void)
         }
     }
 
+    // TODO remove this once the table validation is done.
+    return 0;
+
+    
     std::vector<InsaneDASM64::Byte> vecInput = { 0x48, 0x89, 0xC8, 0x48, 0x21, 0xD0, 0xC3 };
     // Disassemble...
     {
