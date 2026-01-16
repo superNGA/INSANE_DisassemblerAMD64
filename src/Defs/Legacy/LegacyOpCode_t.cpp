@@ -10,6 +10,7 @@
 #include "../../../Include/Legacy/LegacyPrefix.h"
 #include <assert.h>
 #include "../../Tables/Tables.h"
+#include "../../../Include/Standard/OpCodeDesc_t.h"
 
 
 using namespace InsaneDASM64;
@@ -34,9 +35,9 @@ bool Legacy::LegacyOpCode_t::ModRMRequired(const LegacyPrefix_t* pPrefix) const
 
 
     // In case split type is any of these. We will need modRM 100%
-    if (m_pRootOpCodeDesc->m_iVarientType == OpCodeDesc_t::VarientKey_ModRM_MOD ||
-        m_pRootOpCodeDesc->m_iVarientType == OpCodeDesc_t::VarientKey_ModRM_REG ||
-        m_pRootOpCodeDesc->m_iVarientType == OpCodeDesc_t::VarientKey_ModRM_RM)
+    if (m_pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_ModRM_MOD ||
+        m_pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_ModRM_REG ||
+        m_pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_ModRM_RM)
     {
         return true;
     }
@@ -44,10 +45,10 @@ bool Legacy::LegacyOpCode_t::ModRMRequired(const LegacyPrefix_t* pPrefix) const
 
     // In case we have a legacy prefix split, we need to check if we need a
     // modrm or not, according to child OpCodeDesc.
-    if (m_pRootOpCodeDesc->m_iVarientType == OpCodeDesc_t::VarientKey_LegacyPrefix)
+    if (m_pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_LegacyPrefix)
     {
         // Every legacy prefix split has default entry ( no prefix ) @ index 0.
-        OpCodeDesc_t* pBestDesc = m_pRootOpCodeDesc->m_pVarients[0];
+        Standard::OpCodeDesc_t* pBestDesc = m_pRootOpCodeDesc->m_pVarients[0];
         assert(pBestDesc != nullptr && "Some opcode entry with legacy prefix split has default entry ( index 0 ) as default.");
 
 

@@ -26,8 +26,8 @@ void VEX::VEXInst_t::Clear()
 {
     m_prefix        = 0x00;
     m_nVEXBytes     = -1;
-    m_opcode        = 0x00;
+    m_opcode.Clear();
     m_bHasSIB       = false;
     m_disp.Clear();
-    m_bHasImmediate = false;
+    m_immediate.Clear();
 }

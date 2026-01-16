@@ -8,11 +8,11 @@
 //-------------------------------------------------------------------------
 #pragma once
 #include <vector>
-#include "../../ObjectNomenclature.h"
 #include "../../../Include/INSANE_DisassemblerAMD64.h"
+#include "../../../Include/Aliases.h"
 
 
-namespace INSANE_DASM64_NAMESPACE
+namespace InsaneDASM64
 {
     namespace TestCases
     {
@@ -33,6 +33,8 @@ namespace INSANE_DASM64_NAMESPACE
 
 
         // VEX encoded intructions.
-        extern std::vector<Byte> g_vecVEXTestCase_001;
+        extern std::vector<Byte> g_vecVEXTestCase_001; // Contains invalid instructions.
+        extern std::vector<Byte> g_vecVEXTestCase_002;
+        extern std::vector<Byte> g_vecVEXTestCase_003;
     }
 }

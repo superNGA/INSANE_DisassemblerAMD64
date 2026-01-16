@@ -24,7 +24,7 @@ namespace INSANE_DASM64_NAMESPACE::Rules
     constexpr size_t MAX_INST_NAME_SIZE     = 0x18llu;
     constexpr size_t MAX_VEX_PREFIX_BYTES   = 2llu; // Excluding the prefix byte ( 0xC4 0xC5 )
 
-    constexpr size_t MIN_VEX_INST_BYTES     = 4llu;
+    constexpr size_t MIN_VEX_INST_BYTES     = 3llu;
 
     inline const char* OPCODE_NAME_SENTINAL   = "xx_INVALID_xx";
     inline const char* REGISTER_NAME_SENTINAL = "xx_INVALID_REG_xx";

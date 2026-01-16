@@ -7,16 +7,16 @@
 // purpose : Holds operand information.
 //-------------------------------------------------------------------------
 #pragma once
-#include "../Aliases.h"
+#include "../../Aliases.h"
 #include "OperandModes.h"
 #include "OperandTypes.h"
 #include "CEOperandModes.h"
 #include "CEOperandTypes.h"
-#include "../Standard/Register_t.h"
+#include "../../Standard/Register_t.h"
 
 
 
-namespace INSANE_DASM64_NAMESPACE
+namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
 {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////

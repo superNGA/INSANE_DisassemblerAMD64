@@ -10,14 +10,23 @@
 
 #include <vector>
 #include <assert.h>
+
+// Util
 #include "Tables/Tables.h"
 #include "Math/SafeBitWiseOps.h"
 #include "../Include/Aliases.h"
 #include "Util/Terminal/Terminal.h"
 
+// Instructions.
+#include "../Include/Instruction_t.h"
+#include "../Include/Legacy/LegacyInst_t.h"
+#include "../Include/VEX/VEXInst_t.h"
+
+#include "../Include/Standard/OpCodeDesc_t.h"
+
 
 // NOTE : Mind this.
-using namespace INSANE_DASM64_NAMESPACE;
+using namespace InsaneDASM64;
 
 
 
@@ -31,8 +40,8 @@ namespace INSANE_DASM64_NAMESPACE
     static IDASMErrorCode_t DecodeVEXEncoding        (const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator);
 
     // Local functions, for disassembling different encodings. To be used only in the main InsaneDASM64::Disassemble function.
-    static IDASMErrorCode_t DisassembleLegacyEncoding(const LegacyInst_t* inst, std::string& szOutput);
-    static IDASMErrorCode_t DisassembleVEXEncoding   (const VEXInst_t* inst,    std::string& szOutput);
+    static IDASMErrorCode_t DisassembleLegacyEncoding(const Legacy::LegacyInst_t* inst, std::string& szOutput);
+    static IDASMErrorCode_t DisassembleVEXEncoding   (const VEX::VEXInst_t* inst,       std::string& szOutput);
 };
 
 
@@ -42,7 +51,7 @@ static inline void PrintInstBytes(const std::vector<Instruction_t>& vecInput)
 {
     for (const Instruction_t& instO : vecInput)
     {
-        const LegacyInst_t& inst = *reinterpret_cast<LegacyInst_t*>(instO.m_pInst);
+        const Legacy::LegacyInst_t& inst = *reinterpret_cast<Legacy::LegacyInst_t*>(instO.m_pInst);
 
         if (inst.m_opCode.OpByteCount() == 0)
         {
@@ -169,7 +178,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeAndDisassemble(const std::vector
     // Parse input...
     std::vector<Instruction_t> vecParsedInst; vecParsedInst.clear();
 
-    IDASMErrorCode_t iDecoderErrorCode = Decode(vecInput, vecParsedInst); /* Delete this */ PrintInstBytes(vecParsedInst);
+    IDASMErrorCode_t iDecoderErrorCode = Decode(vecInput, vecParsedInst);
     if (iDecoderErrorCode != IDASMErrorCode_Success)
         return iDecoderErrorCode;
 
@@ -191,43 +200,44 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeAndDisassemble(const std::vector
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int OperandTypeToAddressSizeInByte(CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
+static int OperandTypeToAddressSizeInByte(Standard::CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
 {
+    using namespace Standard;
     assert((iAddressSizeInByte == 2 || iAddressSizeInByte == 4 || iAddressSizeInByte == 8) && "Invalid operand size!!");
 
     switch (iCEOperandType)
     {
-    case InsaneDASM64::CEOperandType_8:            return 1;
-    case InsaneDASM64::CEOpearndType_16or32_twice: return iAddressSizeInByte == 2 ? 4 : 8;
-    case InsaneDASM64::CEOperandType_16_32:        return iAddressSizeInByte == 2 ? 2 : 4;
-    case InsaneDASM64::CEOperandType_16_32_64:     return iAddressSizeInByte;
+    case CEOperandType_8:            return 1;
+    case CEOpearndType_16or32_twice: return iAddressSizeInByte == 2 ? 4 : 8;
+    case CEOperandType_16_32:        return iAddressSizeInByte == 2 ? 2 : 4;
+    case CEOperandType_16_32_64:     return iAddressSizeInByte;
 
-    case InsaneDASM64::CEOperandType_16:
-    case InsaneDASM64::CEOperandType_16int:        return 2;
+    case CEOperandType_16:
+    case CEOperandType_16int:        return 2;
 
-    case InsaneDASM64::CEOperandType_32:
-    case InsaneDASM64::CEOperandType_32real:
-    case InsaneDASM64::CEOperandType_32int:        return 4;
+    case CEOperandType_32:
+    case CEOperandType_32real:
+    case CEOperandType_32int:        return 4;
 
-    case InsaneDASM64::CEOperandType_32_64:        return iAddressSizeInByte == 8 ? 8 : 4;
+    case CEOperandType_32_64:        return iAddressSizeInByte == 8 ? 8 : 4;
 
-    case InsaneDASM64::CEOperandType_64mmx:
-    case InsaneDASM64::CEOperandType_64:
-    case InsaneDASM64::CEOperandType_64int:
-    case InsaneDASM64::CEOperandType_64real:       return 8;
+    case CEOperandType_64mmx:
+    case CEOperandType_64:
+    case CEOperandType_64int:
+    case CEOperandType_64real:       return 8;
 
-    case InsaneDASM64::CEOperandType_64_16:        return iAddressSizeInByte == 2 ? 2 : 8;
+    case CEOperandType_64_16:        return iAddressSizeInByte == 2 ? 2 : 8;
 
 
-    case InsaneDASM64::CEOperandType_128pf:
-    case InsaneDASM64::CEOperandType_80dec:
-    case InsaneDASM64::CEOperandType_128:
-    case InsaneDASM64::CEOperandType_14_28:
-    case InsaneDASM64::CEOperandType_80real:
-    case InsaneDASM64::CEOperandType_p:
-    case InsaneDASM64::CEOperandType_ptp:
-    case InsaneDASM64::CEOperandType_94_108:
-    case InsaneDASM64::CEOperandType_512:
+    case CEOperandType_128pf:
+    case CEOperandType_80dec:
+    case CEOperandType_128:
+    case CEOperandType_14_28:
+    case CEOperandType_80real:
+    case CEOperandType_p:
+    case CEOperandType_ptp:
+    case CEOperandType_94_108:
+    case CEOperandType_512:
         break;
 
     default: break;
@@ -241,7 +251,7 @@ static int OperandTypeToAddressSizeInByte(CEOperandTypes_t iCEOperandType, int i
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int OperandTypeToAddressSizeInBits(CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
+static int OperandTypeToAddressSizeInBits(Standard::CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
 {
     int iSize = OperandTypeToAddressSizeInByte(iCEOperandType, iAddressSizeInByte);
     
@@ -252,47 +262,48 @@ static int OperandTypeToAddressSizeInBits(CEOperandTypes_t iCEOperandType, int i
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int OperandTypeToOperandSizeInBytes(CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
+static int OperandTypeToOperandSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
 {
     // This function is used to determine width of register used when we have to use the modrm byte
     // to determine which register we have to use. Because the operand size is not always the correct
     // and some operand types don't give a fuck about what the operand size is.
 
+    using namespace Standard;
     assert((iOperandSizeInBytes == 2 || iOperandSizeInBytes == 4 || iOperandSizeInBytes == 8) && "Invalid operand size!!");
 
     switch (iCEOperandType)
     {
-    case InsaneDASM64::CEOperandType_8:            return 1;
-    case InsaneDASM64::CEOpearndType_16or32_twice: return iOperandSizeInBytes == 2 ? 4 : 8;
-    case InsaneDASM64::CEOperandType_16_32:        return iOperandSizeInBytes == 2 ? 2 : 4;
-    case InsaneDASM64::CEOperandType_16_32_64:     return iOperandSizeInBytes;
+    case CEOperandType_8:            return 1;
+    case CEOpearndType_16or32_twice: return iOperandSizeInBytes == 2 ? 4 : 8;
+    case CEOperandType_16_32:        return iOperandSizeInBytes == 2 ? 2 : 4;
+    case CEOperandType_16_32_64:     return iOperandSizeInBytes;
 
-    case InsaneDASM64::CEOperandType_16:
-    case InsaneDASM64::CEOperandType_16int:        return 2;
+    case CEOperandType_16:
+    case CEOperandType_16int:        return 2;
 
-    case InsaneDASM64::CEOperandType_32:
-    case InsaneDASM64::CEOperandType_32real:
-    case InsaneDASM64::CEOperandType_32int:        return 4;
+    case CEOperandType_32:
+    case CEOperandType_32real:
+    case CEOperandType_32int:        return 4;
 
-    case InsaneDASM64::CEOperandType_32_64:        return iOperandSizeInBytes == 8 ? 8 : 4;
+    case CEOperandType_32_64:        return iOperandSizeInBytes == 8 ? 8 : 4;
 
-    case InsaneDASM64::CEOperandType_64mmx:
-    case InsaneDASM64::CEOperandType_64:
-    case InsaneDASM64::CEOperandType_64int:
-    case InsaneDASM64::CEOperandType_64real:       return 8;
+    case CEOperandType_64mmx:
+    case CEOperandType_64:
+    case CEOperandType_64int:
+    case CEOperandType_64real:       return 8;
 
-    case InsaneDASM64::CEOperandType_64_16:        return iOperandSizeInBytes == 2 ? 2 : 8;
+    case CEOperandType_64_16:        return iOperandSizeInBytes == 2 ? 2 : 8;
 
         
-    case InsaneDASM64::CEOperandType_128pf:
-    case InsaneDASM64::CEOperandType_80dec:
-    case InsaneDASM64::CEOperandType_128:
-    case InsaneDASM64::CEOperandType_14_28:
-    case InsaneDASM64::CEOperandType_80real:
-    case InsaneDASM64::CEOperandType_p:
-    case InsaneDASM64::CEOperandType_ptp:
-    case InsaneDASM64::CEOperandType_94_108:
-    case InsaneDASM64::CEOperandType_512:
+    case CEOperandType_128pf:
+    case CEOperandType_80dec:
+    case CEOperandType_128:
+    case CEOperandType_14_28:
+    case CEOperandType_80real:
+    case CEOperandType_p:
+    case CEOperandType_ptp:
+    case CEOperandType_94_108:
+    case CEOperandType_512:
         break;
 
     default: break;
@@ -304,7 +315,7 @@ static int OperandTypeToOperandSizeInBytes(CEOperandTypes_t iCEOperandType, int 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int OperandTypeToOperandSizeInBits(CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
+static int OperandTypeToOperandSizeInBits(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
 {
     int iSize = OperandTypeToOperandSizeInBytes(iCEOperandType, iOperandSizeInBytes);
     
@@ -325,11 +336,11 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<Instruct
         switch (inst.m_iInstEncodingType) 
         {
             case Instruction_t::InstEncodingType_Legacy:
-                DisassembleLegacyEncoding(reinterpret_cast<LegacyInst_t*>(inst.m_pInst), szInst);
+                DisassembleLegacyEncoding(reinterpret_cast<Legacy::LegacyInst_t*>(inst.m_pInst), szInst);
                 break;
 
             case Instruction_t::InstEncodingType_VEX:
-                DisassembleVEXEncoding(reinterpret_cast<VEXInst_t*>(inst.m_pInst), szInst);
+                DisassembleVEXEncoding(reinterpret_cast<VEX::VEXInst_t*>(inst.m_pInst), szInst);
                 break;
 
             case Instruction_t::InstEncodingType_EVEX:
@@ -350,9 +361,10 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<Instruct
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const LegacyInst_t* inst, std::string& szOutput)
+static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const Legacy::LegacyInst_t* inst, std::string& szOutput)
 {
-    const OpCodeDesc_t* pOpCodeDesc = inst->m_opCode.m_pOpCodeDesc;
+    using namespace Standard;
+    const Standard::OpCodeDesc_t* pOpCodeDesc = inst->m_opCode.m_pOpCodeDesc;
     assert(pOpCodeDesc != nullptr && "OpCodeDescription pointer was null");
 
 
@@ -363,12 +375,12 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
     // Iterate all operands and disassembler.
     for (int iOperandIndex = 0; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
     {
-        const Operand_t* pOperand = &pOpCodeDesc->m_operands[iOperandIndex];
+        const Standard::Operand_t* pOperand = &pOpCodeDesc->m_operands[iOperandIndex];
 
-        CEOperandModes_t iCEOperandMode = GeekToCoderOperandMode(pOperand->m_iOperandMode);
-        CEOperandTypes_t iCEOperandType = GeekToCoderOperandType(pOperand->m_iOperandType);
-        OperandModes_t   iOperandMode   = pOperand->m_iOperandMode;
-        OperandTypes_t   iOperandType   = pOperand->m_iOperandType;
+        Standard::CEOperandModes_t iCEOperandMode = GeekToCoderOperandMode(pOperand->m_iOperandMode);
+        Standard::CEOperandTypes_t iCEOperandType = GeekToCoderOperandType(pOperand->m_iOperandType);
+        Standard::OperandModes_t   iOperandMode   = pOperand->m_iOperandMode;
+        Standard::OperandTypes_t   iOperandType   = pOperand->m_iOperandType;
 
 
         switch (pOperand->m_iOperandCatagory)
@@ -393,11 +405,11 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                     switch(iCEOperandMode)
                     {
                         case CEOperandMode_CRn:
-                            printf("%s", Register_t(Register_t::RegisterClass_Control, inst->ModRM_Reg(), 0).ToString());
+                            printf("%s", Standard::Register_t(Standard::Register_t::RegisterClass_Control, inst->ModRM_Reg(), 0).ToString());
                             break;
 
                         case CEOperandMode_DRn:
-                            printf("%s", Register_t(Register_t::RegisterClass_Debug, inst->ModRM_Reg(), 0).ToString());
+                            printf("%s", Standard::Register_t(Standard::Register_t::RegisterClass_Debug, inst->ModRM_Reg(), 0).ToString());
                             break;
 
                         case CEOperandMode_ptr:
@@ -418,25 +430,25 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                         case CEOperandMode_mmm64:
                         case CEOperandMode_xmmm:
                             {
-                                Register_t::RegisterClass_t iRegisterClass = Register_t::RegisterClass_GPR;
+                                Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_GPR;
 
 
                                 // Overriding register class.
                                 if (iCEOperandMode == CEOperandModes_t::CEOperandMode_xmmm)
                                 {
-                                    iRegisterClass = Register_t::RegisterClass_SSE;
+                                    iRegisterClass = Standard::Register_t::RegisterClass_SSE;
                                 }
                                 else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_STim || iCEOperandMode == CEOperandModes_t::CEOperandMode_STi)
                                 {
-                                    iRegisterClass = Register_t::RegisterClass_FPU;
+                                    iRegisterClass = Standard::Register_t::RegisterClass_FPU;
                                 }
                                 else if (iCEOperandMode == CEOperandModes_t::CEOperandMode_mmm64)
                                 {
-                                    iRegisterClass = Register_t::RegisterClass_MMX;
+                                    iRegisterClass = Standard::Register_t::RegisterClass_MMX;
                                 }
 
 
-                                Register_t reg(iRegisterClass, inst->ModRM_RM(),
+                                Standard::Register_t reg(iRegisterClass, inst->ModRM_RM(),
                                         inst->ModRM_Mod() == 0b11 ? 
                                         OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)) :
                                         OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes()));
@@ -470,7 +482,11 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                                     bool bNoBaseReg = inst->ModRM_Mod() == 0 && inst->SIB_Base() == 0b101;
                                     if (bNoBaseReg == false)
                                     {
-                                        Register_t iBaseReg(Register_t::RegisterClass_GPR, inst->SIB_Base(), OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())); // * 8 : Bytes to bits.
+                                        Standard::Register_t iBaseReg(
+                                                Standard::Register_t::RegisterClass_GPR, 
+                                                inst->SIB_Base(), 
+                                                OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())); // * 8 : Bytes to bits.
+
                                         printf("%s", iBaseReg.ToString());
                                     }
 
@@ -478,7 +494,10 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                                     uint64_t iSIBIndex = inst->SIB_Index();
                                     if (iSIBIndex != 0b100)
                                     {
-                                        printf(" + %s", Register_t(Register_t::RegisterClass_GPR, iSIBIndex, OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())).ToString()); // * 8 : Bytes to bits.
+                                        printf(" + %s", Standard::Register_t(
+                                                    Standard::Register_t::RegisterClass_GPR, 
+                                                    iSIBIndex,
+                                                    OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())).ToString()); // * 8 : Bytes to bits.
 
                                         // Scale.
                                         uint64_t iScale = 1llu << inst->SIB_Scale();
@@ -505,14 +524,14 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
 
                         case CEOperandMode_STi:
                             {
-                                Register_t reg(Register_t::RegisterClass_FPU, inst->ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                Standard::Register_t reg(Standard::Register_t::RegisterClass_FPU, inst->ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
                                 printf("%s", reg.ToString());
                                 break;
                             }
 
                         case CEOperandMode_r:
                             {
-                                Register_t reg(Register_t::RegisterClass_GPR, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                Standard::Register_t reg(Standard::Register_t::RegisterClass_GPR, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
 
                                 if (iOperandMode == OperandMode_G)
                                 {
@@ -536,7 +555,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
 
                         case CEOperandMode_mm:
                             {
-                                Register_t reg(Register_t::RegisterClass_MMX, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                Standard::Register_t reg(Standard::Register_t::RegisterClass_MMX, -1, OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
 
                                 assert((iOperandMode == OperandModes_t::OperandMode_N || iOperandMode == OperandModes_t::OperandMode_P) && "Invalid operand mode with Coder's edition (mm)");
 
@@ -555,14 +574,14 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
 
                         case CEOperandMode_Sreg:
                             {
-                                Register_t reg(Register_t::RegisterClass_Segment, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                Standard::Register_t reg(Standard::Register_t::RegisterClass_Segment, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
                                 printf("%s", reg.ToString());
                                 break;
                             }
 
                         case CEOperandMode_TRn:
                             {
-                                Register_t reg(Register_t::RegisterClass_Test, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                Standard::Register_t reg(Standard::Register_t::RegisterClass_Test, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
                                 printf("%s", reg.ToString());
                                 break;
                             }
@@ -571,7 +590,10 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                             {
                                 assert((iOperandMode == OperandModes_t::OperandMode_U || iOperandMode == OperandModes_t::OperandMode_V) && "Invalid Operand Modes for Coder's edition operand type : xmm");
 
-                                Register_t reg(Register_t::RegisterClass_SSE, inst->ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+                                Standard::Register_t reg(
+                                        Standard::Register_t::RegisterClass_SSE, inst->ModRM_RM(), 
+                                        OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
+
                                 if (iOperandMode == OperandModes_t::OperandMode_V)
                                     reg.m_iRegisterIndex = inst->ModRM_Reg();
 
@@ -600,7 +622,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleVEXEncoding(const VEXInst_t* inst, std::string& szOutput)
+static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleVEXEncoding(const VEX::VEXInst_t* inst, std::string& szOutput)
 {
     assert(false && "VEX disassembler is not implemted yet.");
 
@@ -670,13 +692,15 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
 
     // We must have atleast 4 bytes left in input. Thats the minimum for a VEX encoded instruction.
     if(vecInput.empty() == true || vecInput.size() - iIterator < Rules::MIN_VEX_INST_BYTES)
+    {
+        FAIL_LOG("Not bytes left in byte stream");
         return IDASMErrorCode_InvalidVEXInst;
+    }
 
 
-    size_t     nBytes = vecInput.size();
-    VEXInst_t* pInst  = reinterpret_cast<VEXInst_t*>(pInstOut->m_pInst);
+    size_t          nBytes = vecInput.size();
+    VEX::VEXInst_t* pInst  = reinterpret_cast<VEX::VEXInst_t*>(pInstOut->m_pInst);
     pInst->Clear();
-
 
     pInst->m_prefix = vecInput[iIterator]; iIterator++;
 
@@ -700,11 +724,14 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
     iIterator += nVEXBytes;
 
     if(iIterator >= nBytes)
+    {
+        FAIL_LOG("No OpCode present");
         return IDASMErrorCode_InvalidVEXInst;
+    }
 
 
     // Capture opcode.
-    pInst->m_opcode = vecInput[iIterator]; iIterator++;
+    pInst->m_opcode.PushOpCode(vecInput[iIterator]);
 
     // Checking opcode validity.
     {
@@ -717,34 +744,63 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
             static Byte s_iEscapeArr[] = { 0x0F, 0x38, 0x3A };
             iPrefix = s_iEscapeArr[m_mmmm - 1];
         }
-        OpCodeDesc_t* opCodeTable = G::g_tables.GetVEXOpCodeTable(iPrefix);
+        Standard::OpCodeDesc_t* opCodeTable = G::g_tables.GetVEXOpCodeTable(iPrefix);
         assert(opCodeTable != nullptr && "Nullptr table received.");
 
         // OpCode doesn't repesent a valid VEX encodable instruction.
-        if(opCodeTable[pInst->m_opcode].m_bIsValidCode == false)
+        Standard::OpCodeDesc_t* pOpCodeDesc = &opCodeTable[pInst->m_opcode.GetMostSignificantOpCode()];
+        if(pOpCodeDesc->m_bIsValidCode == false)
+        {
+            FAIL_LOG("OpCode [ 0x%02X 0x%02X ] is marked as invalid in opcode map", iPrefix, pInst->m_opcode.GetMostSignificantOpCode());
             return IDASMErrorCode_t::IDASMErrorCode_InvalidVEXInst;
+        }
+
+
+        // Since the OpCode description pointer is valid, we can store it.
+        pInst->m_opcode.StoreOperatorDesc(pOpCodeDesc);
     }
 
-    if(iIterator >= nBytes)
-        return IDASMErrorCode_InvalidVEXInst;
+
+    // Determining prefix using VEX.pp
+    Byte iLegacyPrefix = 0x00;
+    {
+        static Byte s_prefixMap[] = { 0x00, 0x66, 0xF2, 0xF3 };
+        iLegacyPrefix = s_prefixMap[pInst->m_vex[pInst->m_nVEXBytes - 1] & 0b11];
+    }
+
+    // In case we have a prefix split, we can try to detrmine final varient without modrm byte.
+    // so we know if we need to get the modrm byte or not.
+    // so we can use the modrm to get the final varient?
+    if(pInst->m_opcode.m_pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_LegacyPrefix)
+        pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
 
 
-    // Capture modrm.
-    pInst->m_modrm.Store(vecInput[iIterator]); iIterator++;
+    // Capture modrm, if we got any operands.
+    if(pInst->m_opcode.m_pOpCodeDesc->m_nOperands > 0)
+    {
+        iIterator++;
+        if(iIterator >= nBytes)
+            return IDASMErrorCode_t::IDASMErrorCode_ModRMNotFound;
 
-    if(iIterator >= nBytes)
-        return IDASMErrorCode_InvalidVEXInst;
+        pInst->m_modrm.Store(vecInput[iIterator]); 
+    }
+
+    
+    // Using modrm and perfix, determine final varient.
+    pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
+
 
 
     // We need SIB??
     pInst->m_bHasSIB = pInst->m_modrm.ModValueAbs() != 0b11 && pInst->m_modrm.RMValueAbs() == 0b100;
     if(pInst->m_bHasSIB == true)
     {
-        pInst->m_SIB.Store(vecInput[iIterator]); iIterator++;
-    }
+        iIterator++;
+        if(iIterator >= nBytes)
+            return IDASMErrorCode_t::IDASMErrorCode_SIBNotFound;
 
-    if(iIterator >= nBytes)
-        return IDASMErrorCode_InvalidVEXInst;
+        pInst->m_SIB.Store(vecInput[iIterator]);
+    }
 
 
     // Store displacement if required.
@@ -769,21 +825,39 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::ve
     if (iDisplacementSize > Rules::MAX_DISPLACEMENT_BYTES)
         return IDASMErrorCode_t::IDASMErrorCode_InvalidDispSize;
 
+    // We got enough bytes for displacement in byte stream.
+    if(iIterator + iDisplacementSize >= nBytes)
+        return IDASMErrorCode_t::IDASMErrorCode_DisplacementNotFound;
 
     // Capture Displacement bytes.
-    for (size_t iDispIndex = iIterator; iDispIndex < nBytes && iDispIndex - iIterator < iDisplacementSize; iDispIndex++)
+    for (size_t iDispIndex = iIterator + 1; iDispIndex < nBytes && iDispIndex - (iIterator + 1llu) < iDisplacementSize; iDispIndex++)
     {
         pInst->m_disp.PushByte(vecInput[iDispIndex]);
     }
     iIterator += pInst->m_disp.ByteCount();
 
 
-    if(iIterator >= nBytes)
-        return IDASMErrorCode_InvalidVEXInst;
-
-
     // Does this intruction need immediate.
-
+    Standard::OpCodeDesc_t* pOpCodeDesc = pInst->m_opcode.m_pOpCodeDesc;
+    assert(pOpCodeDesc != nullptr && "Invalid final opcode description");
+    for(int iOperandIndex = 0; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
+    {
+        Standard::Operand_t& operand = pOpCodeDesc->m_operands[iOperandIndex];
+        if(operand.m_iOperandCatagory == Standard::Operand_t::OperandCatagory_Legacy)
+        {
+                Standard::OperandModes_t iOperandMode = operand.m_iOperandMode;
+                if (iOperandMode == Standard::OperandModes_t::OperandMode_I || 
+                    iOperandMode == Standard::OperandModes_t::OperandMode_J ||
+                    iOperandMode == Standard::OperandModes_t::OperandMode_O ||
+                    iOperandMode == Standard::OperandModes_t::OperandMode_A || 
+                    iOperandMode == Standard::OperandModes_t::OperandMode_IXY)
+                {
+                    iIterator++;
+                    pInst->m_immediate.PushByte(vecInput[iIterator]);
+                    break;
+                }
+        }
+    }
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -807,7 +881,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std:
         return IDASMErrorCode_t::IDASMErrorCode_Success;
 
 
-    LegacyInst_t* pInst = reinterpret_cast<LegacyInst_t*>(pInstOut->m_pInst);
+    Legacy::LegacyInst_t* pInst = reinterpret_cast<Legacy::LegacyInst_t*>(pInstOut->m_pInst);
     pInst->Clear();
 
 
@@ -881,7 +955,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std:
 
                 // NOTE : Last byte / escape byte is only used for 3 byte opcodes. so 0x00 is fine for first 2 iterations...
                 int iTableIndex = static_cast<int>(iOpCodeIndex - iByteIndex + 1llu);
-                OpCodeDesc_t* pOpCodeTable = G::g_tables.GetOpCodeTable(iTableIndex, iLastByte);
+                Standard::OpCodeDesc_t* pOpCodeTable = G::g_tables.GetOpCodeTable(iTableIndex, iLastByte);
                 if (pOpCodeTable == nullptr)
                 {
                     FAIL_LOG("nullptr table\n");
@@ -890,7 +964,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std:
 
 
                 // Pull OpCode description from table.
-                OpCodeDesc_t* pOpCodeDesc = &pOpCodeTable[iOpCodeByte];
+                Standard::OpCodeDesc_t* pOpCodeDesc = &pOpCodeTable[iOpCodeByte];
                 if (pOpCodeDesc == nullptr || pOpCodeDesc->m_bIsValidCode == false)
                 {
                     FAIL_LOG("OpCode description is invalid or is nullptr.\n");
@@ -995,19 +1069,19 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std:
 
 
             // Store immediate if required.
-            CEOperandTypes_t iImmOperandType = CEOperandTypes_t::CEOperandType_Invalid;
-            OperandModes_t   iImmOperandMode = OperandModes_t::OperandMode_Invalid;
+            Standard::CEOperandTypes_t iImmOperandType = Standard::CEOperandTypes_t::CEOperandType_Invalid;
+            Standard::OperandModes_t   iImmOperandMode = Standard::OperandModes_t::OperandMode_Invalid;
             for (int iOperandIndex = 0; iOperandIndex < pInst->m_opCode.m_pOpCodeDesc->m_nOperands; iOperandIndex++)
             {
-                const Operand_t* pOperand = &pInst->m_opCode.m_pOpCodeDesc->m_operands[iOperandIndex];
+                const Standard::Operand_t* pOperand = &pInst->m_opCode.m_pOpCodeDesc->m_operands[iOperandIndex];
 
                 // If we found an operand with addresing method that requires immediate, store its operand type, and 
                 // break out.
-                OperandModes_t iOperandMode = pOperand->m_iOperandMode;
-                if (iOperandMode == OperandModes_t::OperandMode_I || 
-                    iOperandMode == OperandModes_t::OperandMode_J ||
-                    iOperandMode == OperandModes_t::OperandMode_O ||
-                    iOperandMode == OperandModes_t::OperandMode_A)
+                Standard::OperandModes_t iOperandMode = pOperand->m_iOperandMode;
+                if (iOperandMode == Standard::OperandModes_t::OperandMode_I || 
+                    iOperandMode == Standard::OperandModes_t::OperandMode_J ||
+                    iOperandMode == Standard::OperandModes_t::OperandMode_O ||
+                    iOperandMode == Standard::OperandModes_t::OperandMode_A)
                 {
                     iImmOperandMode = iOperandMode;
                     iImmOperandType = GeekToCoderOperandType(pOperand->m_iOperandType);
@@ -1017,10 +1091,10 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std:
 
 
             // Store immediate bytes according to operand type
-            if (iImmOperandType != CEOperandTypes_t::CEOperandType_Invalid)
+            if (iImmOperandType != Standard::CEOperandTypes_t::CEOperandType_Invalid)
             {
                 int iImmediateSize = 0;
-                if (iImmOperandMode == OperandMode_O)
+                if (iImmOperandMode == Standard::OperandMode_O)
                 {
                     iImmediateSize = pInst->GetAddressSizeInBytes();
                 }
@@ -1028,12 +1102,12 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std:
                 {
                     switch (iImmOperandType)
                     {
-                    case CEOperandType_8:        iImmediateSize = 1;            break;
-                    case CEOperandType_16:       iImmediateSize = 2;            break;
-                    case CEOperandType_32:       iImmediateSize = 4;            break;
-                    case CEOperandType_64:       iImmediateSize = 8;            break;
-                    case CEOperandType_16_32:    iImmediateSize = pInst->GetOperandSizeInBytes(true);  break;
-                    case CEOperandType_16_32_64: iImmediateSize = pInst->GetOperandSizeInBytes(false); break; // Promoted to qword by REX.W ?
+                    case Standard::CEOperandType_8:        iImmediateSize = 1;            break;
+                    case Standard::CEOperandType_16:       iImmediateSize = 2;            break;
+                    case Standard::CEOperandType_32:       iImmediateSize = 4;            break;
+                    case Standard::CEOperandType_64:       iImmediateSize = 8;            break;
+                    case Standard::CEOperandType_16_32:    iImmediateSize = pInst->GetOperandSizeInBytes(true);  break;
+                    case Standard::CEOperandType_16_32_64: iImmediateSize = pInst->GetOperandSizeInBytes(false); break; // Promoted to qword by REX.W ?
 
                     default: break;
                     }
@@ -1086,6 +1160,7 @@ const char* InsaneDASM64::GetErrorMessage(IDASMErrorCode_t iErrorCode)
     case InsaneDASM64::IDASMErrorCode_ModRMNotFound:         return "[ Insane Disassembler AMD64 ] A ModR/M byte was expected but was not found.";
     case InsaneDASM64::IDASMErrorCode_SIBNotFound:           return "[ Insane Disassembler AMD64 ] A SID byte was expected but was not found.";
     case InsaneDASM64::IDASMErrorCode_InvalidDispSize:       return "[ Insane Disassembler AMD64 ] Determined displacement size is invalid.";
+    case InsaneDASM64::IDASMErrorCode_DisplacementNotFound:  return "[ Insane Disassembler AMD64 ] Not enough displacement bytes in byte stream.";
     case InsaneDASM64::IDASMErrorCode_NoImmediateFound:      return "[ Insane Disassembler AMD64 ] An Immediate was expected, but was not found.";
     case InsaneDASM64::IDASMErrorCode_InvalidImmediateSize:  return "[ Insane Disassembler AMD64 ] Failed to determine immediate size for some instruction.";
     case InsaneDASM64::IDASMErrorCode_InvalidVEXPrefix:      return "[ Insane Disassembler AMD64 ] Invalid VEX prefix byte found. VEX prefix must be either 0xC4 or 0xC5";
@@ -1102,96 +1177,96 @@ const char* InsaneDASM64::GetErrorMessage(IDASMErrorCode_t iErrorCode)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-CEOperandModes_t INSANE_DASM64_NAMESPACE::GeekToCoderOperandMode(OperandModes_t iOperandMode)
+Standard::CEOperandModes_t INSANE_DASM64_NAMESPACE::GeekToCoderOperandMode(Standard::OperandModes_t iOperandMode)
 {
     switch (iOperandMode)
     {
-    case OperandMode_A: return CEOperandMode_ptr;
-    case OperandMode_BA: return CEOperandMode_m;
-    case OperandMode_BB: return CEOperandMode_m;
-    case OperandMode_BD: return CEOperandMode_m;
-    case OperandMode_C: return CEOperandMode_CRn;
-    case OperandMode_D: return CEOperandMode_DRn;
-    case OperandMode_E: return CEOperandMode_rm;
-    case OperandMode_ES: return CEOperandMode_STim;
-    case OperandMode_EST: return CEOperandMode_STi;
+    case Standard::OperandMode_A:   return Standard::CEOperandMode_ptr;
+    case Standard::OperandMode_BA:  return Standard::CEOperandMode_m;
+    case Standard::OperandMode_BB:  return Standard::CEOperandMode_m;
+    case Standard::OperandMode_BD:  return Standard::CEOperandMode_m;
+    case Standard::OperandMode_C:   return Standard::CEOperandMode_CRn;
+    case Standard::OperandMode_D:   return Standard::CEOperandMode_DRn;
+    case Standard::OperandMode_E:   return Standard::CEOperandMode_rm;
+    case Standard::OperandMode_ES:  return Standard::CEOperandMode_STim;
+    case Standard::OperandMode_EST: return Standard::CEOperandMode_STi;
     // case OperandMode_F: return [ no equivalent operand mode in coder's edition ]
-    case OperandMode_G: return CEOperandMode_r;
-    case OperandMode_H: return CEOperandMode_r;
-    case OperandMode_I: return CEOperandMode_imm;
-    case OperandMode_J: return CEOperandMode_rel;
-    case OperandMode_M: return CEOperandMode_m;
-    case OperandMode_N: return CEOperandMode_mm;
-    case OperandMode_O: return CEOperandMode_moffs;
-    case OperandMode_P: return CEOperandMode_mm;
-    case OperandMode_Q: return CEOperandMode_mmm64;
-    case OperandMode_R: return CEOperandMode_r;
-    case OperandMode_S: return CEOperandMode_Sreg;
+    case Standard::OperandMode_G: return Standard::CEOperandMode_r;
+    case Standard::OperandMode_H: return Standard::CEOperandMode_r;
+    case Standard::OperandMode_I: return Standard::CEOperandMode_imm;
+    case Standard::OperandMode_J: return Standard::CEOperandMode_rel;
+    case Standard::OperandMode_M: return Standard::CEOperandMode_m;
+    case Standard::OperandMode_N: return Standard::CEOperandMode_mm;
+    case Standard::OperandMode_O: return Standard::CEOperandMode_moffs;
+    case Standard::OperandMode_P: return Standard::CEOperandMode_mm;
+    case Standard::OperandMode_Q: return Standard::CEOperandMode_mmm64;
+    case Standard::OperandMode_R: return Standard::CEOperandMode_r;
+    case Standard::OperandMode_S: return Standard::CEOperandMode_Sreg;
     // case OperandMode_SC: return [ no equivalent operand mode in coder's edition ]
-    case OperandMode_T: return CEOperandMode_TRn;
-    case OperandMode_U: return CEOperandMode_xmm;
-    case OperandMode_V: return CEOperandMode_xmm;
-    case OperandMode_W: return CEOperandMode_xmmm;
-    case OperandMode_X: return CEOperandMode_m;
-    case OperandMode_Y: return CEOperandMode_m;
-    case OperandMode_Z: return CEOperandMode_r;
+    case Standard::OperandMode_T: return Standard::CEOperandMode_TRn;
+    case Standard::OperandMode_U: return Standard::CEOperandMode_xmm;
+    case Standard::OperandMode_V: return Standard::CEOperandMode_xmm;
+    case Standard::OperandMode_W: return Standard::CEOperandMode_xmmm;
+    case Standard::OperandMode_X: return Standard::CEOperandMode_m;
+    case Standard::OperandMode_Y: return Standard::CEOperandMode_m;
+    case Standard::OperandMode_Z: return Standard::CEOperandMode_r;
 
     default: break;
     }
 
-    return CEOperandModes_t::CEOperandMode_Invalid;
+    return Standard::CEOperandModes_t::CEOperandMode_Invalid;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-CEOperandTypes_t INSANE_DASM64_NAMESPACE::GeekToCoderOperandType(OperandTypes_t iOperandType)
+Standard::CEOperandTypes_t INSANE_DASM64_NAMESPACE::GeekToCoderOperandType(Standard::OperandTypes_t iOperandType)
 {
     switch (iOperandType)
     {
-    case OperandType_a:   return CEOpearndType_16or32_twice;
-    case OperandType_b:   return CEOperandType_8;
-    case OperandType_bs:  return CEOperandType_8;
-    case OperandType_bss: return CEOperandType_8;
-    case OperandType_bcd: return CEOperandType_80dec;
+    case Standard::OperandType_a:   return Standard::CEOpearndType_16or32_twice;
+    case Standard::OperandType_b:   return Standard::CEOperandType_8;
+    case Standard::OperandType_bs:  return Standard::CEOperandType_8;
+    case Standard::OperandType_bss: return Standard::CEOperandType_8;
+    case Standard::OperandType_bcd: return Standard::CEOperandType_80dec;
     // case OperandType_bsq: return [ no equivalent in coder's edition. ]
     // case OperandType_c: return [ no equivalent in coder's edition. ]
-    case OperandType_d:   return CEOperandType_32;
-    case OperandType_ds:  return CEOperandType_32;
-    case OperandType_di:  return CEOperandType_32int;
-    case OperandType_dq:  return CEOperandType_128;
-    case OperandType_dqp: return CEOperandType_32_64;
-    case OperandType_dr:  return CEOperandType_64real;
-    case OperandType_e:   return CEOperandType_14_28;
-    case OperandType_er:  return CEOperandType_80real;
-    case OperandType_p:   return CEOperandType_p;
-    case OperandType_pi:  return CEOperandType_64mmx;
+    case Standard::OperandType_d:   return Standard::CEOperandType_32;
+    case Standard::OperandType_ds:  return Standard::CEOperandType_32;
+    case Standard::OperandType_di:  return Standard::CEOperandType_32int;
+    case Standard::OperandType_dq:  return Standard::CEOperandType_128;
+    case Standard::OperandType_dqp: return Standard::CEOperandType_32_64;
+    case Standard::OperandType_dr:  return Standard::CEOperandType_64real;
+    case Standard::OperandType_e:   return Standard::CEOperandType_14_28;
+    case Standard::OperandType_er:  return Standard::CEOperandType_80real;
+    case Standard::OperandType_p:   return Standard::CEOperandType_p;
+    case Standard::OperandType_pi:  return Standard::CEOperandType_64mmx;
     // case OperandType_pd: return [ no equivalent in coder's edition. ]
-    case OperandType_ps:  return CEOperandType_128pf;
-    case OperandType_psq: return CEOperandType_64;
+    case Standard::OperandType_ps:  return Standard::CEOperandType_128pf;
+    case Standard::OperandType_psq: return Standard::CEOperandType_64;
     // case OperandType_pt: return [ no equivalent in coder's edition. ]
-    case OperandType_ptp: return CEOperandType_ptp;
-    case OperandType_q:   return CEOperandType_64;
-    case OperandType_qi:  return CEOperandType_64int;
-    case OperandType_qp:  return CEOperandType_64;
+    case Standard::OperandType_ptp: return Standard::CEOperandType_ptp;
+    case Standard::OperandType_q:   return Standard::CEOperandType_64;
+    case Standard::OperandType_qi:  return Standard::CEOperandType_64int;
+    case Standard::OperandType_qp:  return Standard::CEOperandType_64;
     // case OperandType_s: return [ no equivalent in coder's edition. ]
     // case OperandType_sd: return [ no equivalent in coder's edition. ]
     // case OperandType_si: return [ no equivalent in coder's edition. ]
-    case OperandType_sr:  return CEOperandType_32real;
+    case Standard::OperandType_sr:  return Standard::CEOperandType_32real;
     // case OperandType_ss: return [ no equivalent in coder's edition. ]
-    case OperandType_st:  return CEOperandType_94_108;
-    case OperandType_stx: return CEOperandType_512;
+    case Standard::OperandType_st:  return Standard::CEOperandType_94_108;
+    case Standard::OperandType_stx: return Standard::CEOperandType_512;
     // case OperandType_t: return [ no equivalent in coder's edition. ]
-    case OperandType_v:   return CEOperandType_16_32;
-    case OperandType_vds: return CEOperandType_16_32;
-    case OperandType_vq:  return CEOperandType_64_16;
-    case OperandType_vqp: return CEOperandType_16_32_64;
-    case OperandType_vs:  return CEOperandType_16_32;
-    case OperandType_w:   return CEOperandType_16;
-    case OperandType_wi:  return CEOperandType_16int;
+    case Standard::OperandType_v:   return Standard::CEOperandType_16_32;
+    case Standard::OperandType_vds: return Standard::CEOperandType_16_32;
+    case Standard::OperandType_vq:  return Standard::CEOperandType_64_16;
+    case Standard::OperandType_vqp: return Standard::CEOperandType_16_32_64;
+    case Standard::OperandType_vs:  return Standard::CEOperandType_16_32;
+    case Standard::OperandType_w:   return Standard::CEOperandType_16;
+    case Standard::OperandType_wi:  return Standard::CEOperandType_16int;
 
     default: break;
     }
 
-    return CEOperandType_Invalid;
+    return Standard::CEOperandType_Invalid;
 }

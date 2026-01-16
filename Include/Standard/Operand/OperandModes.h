@@ -7,12 +7,12 @@
 // purpose : Operand addressing methods ( ref.x86asm.net + linux's x86 opcode map )
 //-------------------------------------------------------------------------
 #pragma once
-#include "../Aliases.h"
+#include "../../Aliases.h"
 #include <cstdint>
 
 
 
-namespace INSANE_DASM64_NAMESPACE
+namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
 {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////

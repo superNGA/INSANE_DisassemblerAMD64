@@ -6,13 +6,12 @@
 //
 // purpose : Holds operand information.
 //-------------------------------------------------------------------------
-#include "../../../Include/Operand/Operand_t.h"
-
+#include "../../../../Include/Standard/Operand/Operand_t.h"
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-InsaneDASM64::Operand_t::Operand_t()
+InsaneDASM64::Standard::Operand_t::Operand_t()
 {
     Reset();
 }
@@ -20,7 +19,7 @@ InsaneDASM64::Operand_t::Operand_t()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-InsaneDASM64::Operand_t::Operand_t(int iLiteral)
+InsaneDASM64::Standard::Operand_t::Operand_t(int iLiteral)
 {
     m_iOperandCatagory = OperandCatagory_Literal;
     m_iOperandLiteral  = iLiteral;
@@ -29,7 +28,7 @@ InsaneDASM64::Operand_t::Operand_t(int iLiteral)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-InsaneDASM64::Operand_t::Operand_t(Standard::Register_t iRegister)
+InsaneDASM64::Standard::Operand_t::Operand_t(Standard::Register_t iRegister)
 {
     m_iOperandCatagory = OperandCatagory_Register;
     m_iOperandRegister = iRegister;
@@ -38,7 +37,7 @@ InsaneDASM64::Operand_t::Operand_t(Standard::Register_t iRegister)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-InsaneDASM64::Operand_t::Operand_t(OperandModes_t iOperandMode, OperandTypes_t iOperandType)
+InsaneDASM64::Standard::Operand_t::Operand_t(OperandModes_t iOperandMode, OperandTypes_t iOperandType)
 {
     m_iOperandCatagory = OperandCatagory_Legacy;
     m_iOperandMode     = iOperandMode;
@@ -48,7 +47,7 @@ InsaneDASM64::Operand_t::Operand_t(OperandModes_t iOperandMode, OperandTypes_t i
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-void InsaneDASM64::Operand_t::Reset()
+void InsaneDASM64::Standard::Operand_t::Reset()
 {
     m_iOperandCatagory = OperandCatagory_Undefined;
     m_iOperandRegister = Standard::Register_t(Standard::Register_t::RegisterClass_Invalid, -1, -1);

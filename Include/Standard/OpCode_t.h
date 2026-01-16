@@ -12,8 +12,8 @@
 
 
 // Forward declerations.
-namespace INSANE_DASM64_NAMESPACE                  { struct OpCodeDesc_t;   }
-namespace INSANE_DASM64_NAMESPACE::LEGACY_NAMESPACE{ struct LegacyPrefix_t; }
+namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE{ struct OpCodeDesc_t;   }
+namespace INSANE_DASM64_NAMESPACE::LEGACY_NAMESPACE  { struct LegacyPrefix_t; }
 
 
 namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
@@ -35,7 +35,7 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
         bool InitChildVarient(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM);
 
         // To manually send in prefix?
-        bool InitChildVarient(Byte iModRM, int nPrefixCount, int* prefixies);
+        bool InitChildVarient(Byte iModRM, int nPrefixCount, Byte* prefixies);
 
 
         // NOTE : One OpCode_t will hold all the OpCodes that are present in one

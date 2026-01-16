@@ -10,12 +10,13 @@
 #include <assert.h>
 #include "../../Tables/Tables.h"
 #include "../../../Include/Legacy/LegacyPrefix.h"
+#include "../../../Include/Standard/OpCodeDesc_t.h"
 
 
 using namespace InsaneDASM64;
 
 
-static OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, OpCodeDesc_t* pRootOpCodeDesc);
+static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, Standard::OpCodeDesc_t* pRootOpCodeDesc);
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -105,7 +106,7 @@ bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(const Legacy::LegacyPref
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(Byte iModRM, int nPrefixCount, int* prefixies)
+bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(Byte iModRM, int nPrefixCount, Byte* prefixies)
 {
     // Construct the legacy prefix, to pass into the original InitChildVarient function.
     Legacy::LegacyPrefix_t prefix; prefix.Clear();
@@ -118,9 +119,9 @@ bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(Byte iModRM, int nPrefix
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, OpCodeDesc_t* pRootOpCodeDesc)
+static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, Standard::OpCodeDesc_t* pRootOpCodeDesc)
 {
-    if (pRootOpCodeDesc->m_iVarientType == OpCodeDesc_t::VarientKey_None)
+    if (pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_None)
         return pRootOpCodeDesc;
 
     assert(pRootOpCodeDesc->m_pVarients != nullptr && "Varient array is nullptr, when expected a varient array!.");
@@ -128,24 +129,24 @@ static OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, B
 
     switch (pRootOpCodeDesc->m_iVarientType)
     {
-    case OpCodeDesc_t::VarientKey_ModRM_MOD:
+        case Standard::OpCodeDesc_t::VarientKey_ModRM_MOD:
         return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 6) & 0b11]);
 
-    case OpCodeDesc_t::VarientKey_ModRM_REG:
+        case Standard::OpCodeDesc_t::VarientKey_ModRM_REG:
         return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 3) & 0b111]);
 
-    case OpCodeDesc_t::VarientKey_ModRM_RM:
+        case Standard::OpCodeDesc_t::VarientKey_ModRM_RM:
         return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[iModRM & 0b111]);
 
-    case OpCodeDesc_t::VarientKey_LegacyPrefix:
+        case Standard::OpCodeDesc_t::VarientKey_LegacyPrefix:
     {
-        OpCodeDesc_t* pOpCodeDesc = pRootOpCodeDesc->m_pVarients[0];
+        Standard::OpCodeDesc_t* pOpCodeDesc = pRootOpCodeDesc->m_pVarients[0];
 
         for (int i = 0; i < pPrefix->PrefixCount(); i++)
         {
             Byte          iPrefix            = pPrefix->m_legacyPrefix[i];
             int           iPrefixIndex       = G::g_tables.GetLegacyPrefixIndex(iPrefix);
-            OpCodeDesc_t* pPrefixOpCodeDesc  = pRootOpCodeDesc->m_pVarients[iPrefixIndex];
+            Standard::OpCodeDesc_t* pPrefixOpCodeDesc  = pRootOpCodeDesc->m_pVarients[iPrefixIndex];
                 
             // Check if we have any prefix such that there exists a opcode varient for that
             // prefix. Else we can always use the default entry.

@@ -8,149 +8,17 @@
 //-------------------------------------------------------------------------
 #include "Tables.h"
 #include "assert.h"
-#include "../Util/Terminal/Terminal.h"
+#include "../../Include/Standard/OpCodeDesc_t.h"
 
 
 // NOTE : Mind this.
-using namespace INSANE_DASM64_NAMESPACE;
+using namespace InsaneDASM64;
+using namespace Standard;
 
 
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-void OpCodeDesc_t::Init(
-    const char* szName, bool bValidOpcd, bool bEscapeOpcd, bool bModrmRequired, Byte iByte, 
-    int nOperands, Operand_t operand1, Operand_t operand2, Operand_t operand3, Operand_t operand4)
-{
-    strcpy_s(m_szName, sizeof(m_szName), szName);
-    m_bIsValidCode   = bValidOpcd;
-    m_bIsEscapeCode  = bEscapeOpcd;
-    m_bModrmRequired = bModrmRequired;
-    m_iByte          = iByte;
-    m_nOperands      = nOperands;
-    m_operands[0]    = operand1;
-    m_operands[1]    = operand2;
-    m_operands[2]    = operand3;
-    m_operands[3]    = operand4;
-
-    // At init, these default to "No varients"
-    m_iVarientType   = VarientKey_None;
-    m_nVarients      = 0;
-    m_pVarients      = nullptr;
-
-
-    //? Delete this
-    // printf("Initialized 0x%02X { %s }\n", m_iByte, m_szName);
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-bool OpCodeDesc_t::InsertVarient(int iIndex)
-{
-    //? Delete this
-    // printf("Inserting varient @ [ %d ] index for byte [ 0x%02X ]\n", iIndex, m_iByte);
-
-    assert(m_pVarients != nullptr && "Varient array is not initialized");
-    if (m_pVarients == nullptr)
-        return false;
-
-
-    assert(m_iVarientType != VarientType_t::VarientKey_None && "Varient type can't be null if we are inserting varient");
-    if (m_iVarientType == VarientType_t::VarientKey_None)
-        return false;
-
-
-    //? Delete this
-    // Invalid child index?
-    //printf("Varient : %d, iIndex = %d, Min : %d, Max : %zu\n", m_iVarientType, iIndex, 0, GetMaxVarients(m_iVarientType));
-
-
-    assert(iIndex >= 0 && iIndex < GetMaxVarients(m_iVarientType) && "Invalid index while inserting varient.");
-    if (iIndex < 0 || iIndex >= GetMaxVarients(m_iVarientType))
-        return false;
-
-
-    // prevent mem leak.
-    // assert(m_pVarients[iIndex] == nullptr && "Element already inserted @ this index!");
-    if(m_pVarients[iIndex] != nullptr)
-    {
-        //? Delete this
-        // printf(RED "Trying to insert varient @ index [ %d ], varinent { %s } already inserted @ this index." RESET, iIndex, m_pVarients[iIndex]->m_szName);
-        return true;
-    }
-
-
-    m_pVarients[iIndex] = new OpCodeDesc_t();
-
-
-    // Failed memory allocation ?
-    if (m_pVarients[iIndex] == nullptr)
-        return false;
-
-
-    return true;
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-size_t OpCodeDesc_t::GetMaxVarients(VarientType_t iVarientType)
-{
-    switch (iVarientType)
-    {
-    case OpCodeDesc_t::VarientKey_ModRM_REG:    return MAX_REG_VARIENTS;
-    case OpCodeDesc_t::VarientKey_ModRM_RM:     return MAX_RM_VARIENTS;
-    case OpCodeDesc_t::VarientKey_ModRM_MOD:    return MAX_MOD_VARIENTS;
-    case OpCodeDesc_t::VarientKey_LegacyPrefix: return MAX_LEGACY_PREFIX_VARIENTS;
-    
-    default: break;
-    }
-
-    return 0llu;
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-bool OpCodeDesc_t::InitVarientType(VarientType_t iVarientType)
-{
-    // Already initialized as this varient type.
-    if (m_iVarientType == iVarientType)
-        return true;
-
-
-    // Must be set to "No varient", else mem leak
-    assert(m_iVarientType == VarientType_t::VarientKey_None && m_pVarients == nullptr && "Varient type is already set to some something!");
-    if (m_iVarientType != VarientType_t::VarientKey_None || m_pVarients != nullptr)
-    {
-        printf("Object is already initialized for varient type [ %d ]\n", m_iVarientType);
-        return false;
-    }
-
-
-    size_t iVarientArraySize = GetMaxVarients(iVarientType) * sizeof(void*);
-    m_pVarients              = reinterpret_cast<OpCodeDesc_t**>(malloc(iVarientArraySize));
-    m_iVarientType           = iVarientType;
-    
-
-    // Just in case malloc fails.
-    if(m_pVarients == nullptr)
-    {
-        assert(m_pVarients != nullptr && "Failed memory allocation to varient array!");
-        std::cout << "Failed memory allocation to varient array!\n";
-        return false;
-    }
-
-
-    // Set all entries to nullptr.
-    memset(m_pVarients, 0, iVarientArraySize);
-
-    //? Delete this
-    // printf("Inititalized varient type : %d, Varient Array : %p\n", m_iVarientType, m_pVarients);
-
-    return true;
-}
+// All OpCode tables declared must me manually allocated this much memory. 
+// This accounts for exactly 256 entries ( instances of Standard::OpCodeDesc_t), from index 0 to index 255 ( 0xFF )
+constexpr uint64_t STD_OPCODE_TABLE_SIZE = sizeof(Standard::OpCodeDesc_t) * 0x100llu;
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1113,10 +981,17 @@ IDASMErrorCode_t Tables_t::_InitializeInstTypeLUT()
 ///////////////////////////////////////////////////////////////////////////
 IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
 {
-    memset(m_opCodeTable1,    0, sizeof(m_opCodeTable1));
-    memset(m_opCodeTable2,    0, sizeof(m_opCodeTable2));
-    memset(m_opCodeTable3_38, 0, sizeof(m_opCodeTable3_38));
-    memset(m_opCodeTable3_3A, 0, sizeof(m_opCodeTable3_3A));
+    m_opCodeTable1    = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_opCodeTable2    = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_opCodeTable3_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_opCodeTable3_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    assert(m_opCodeTable1 != nullptr && m_opCodeTable2 != nullptr && m_opCodeTable3_38 != nullptr && m_opCodeTable3_3A != nullptr && 
+            "Memory allocation to opcode tables failed!");
+
+    memset(m_opCodeTable1,    0, STD_OPCODE_TABLE_SIZE);
+    memset(m_opCodeTable2,    0, STD_OPCODE_TABLE_SIZE);
+    memset(m_opCodeTable3_38, 0, STD_OPCODE_TABLE_SIZE);
+    memset(m_opCodeTable3_3A, 0, STD_OPCODE_TABLE_SIZE);
 
 
     for (int i = 0; i <= 0xFF; i++)
@@ -1151,9 +1026,15 @@ IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
 ///////////////////////////////////////////////////////////////////////////
 IDASMErrorCode_t Tables_t::_InitializeVEXOpCodeTables()
 {
-    memset(m_VEXTwoByteOpCodes,      0, sizeof(m_VEXTwoByteOpCodes));
-    memset(m_VEXThreeByteOpCodes_38, 0, sizeof(m_VEXThreeByteOpCodes_38));
-    memset(m_VEXThreeByteOpCodes_3A, 0, sizeof(m_VEXThreeByteOpCodes_3A));
+    m_VEXTwoByteOpCodes      = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_VEXThreeByteOpCodes_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_VEXThreeByteOpCodes_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    assert(m_VEXTwoByteOpCodes != nullptr && m_VEXThreeByteOpCodes_38 != nullptr && m_VEXThreeByteOpCodes_3A != nullptr && 
+            "Memory allocation to opcode tables failed!");
+
+    memset(m_VEXTwoByteOpCodes,      0, STD_OPCODE_TABLE_SIZE);
+    memset(m_VEXThreeByteOpCodes_38, 0, STD_OPCODE_TABLE_SIZE);
+    memset(m_VEXThreeByteOpCodes_3A, 0, STD_OPCODE_TABLE_SIZE);
 
 
     for(int i = 0; i < 0xFF; i++)

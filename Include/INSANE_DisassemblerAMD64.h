@@ -12,10 +12,10 @@
 
 #include "Aliases.h"
 #include "Rules.h"
-#include "Operand/CEOperandModes.h"
-#include "Operand/CEOperandTypes.h"
-#include "Operand/OperandModes.h"
-#include "Operand/OperandTypes.h"
+#include "Standard/Operand/CEOperandModes.h"
+#include "Standard/Operand/CEOperandTypes.h"
+#include "Standard/Operand/OperandModes.h"
+#include "Standard/Operand/OperandTypes.h"
 
 #include "Instruction_t.h"
 
@@ -44,6 +44,7 @@ namespace INSANE_DASM64_NAMESPACE
         IDASMErrorCode_ModRMNotFound,
         IDASMErrorCode_SIBNotFound,
         IDASMErrorCode_InvalidDispSize,
+        IDASMErrorCode_DisplacementNotFound,
         IDASMErrorCode_NoImmediateFound,
         IDASMErrorCode_InvalidImmediateSize,
         IDASMErrorCode_InvalidVEXPrefix,
@@ -60,6 +61,6 @@ namespace INSANE_DASM64_NAMESPACE
     IDASMErrorCode_t Decode              (const std::vector<Byte>&          vecInput, std::vector<Instruction_t>& vecOutput);
 
     const char*      GetErrorMessage       (IDASMErrorCode_t iErrorCode);
-    CEOperandTypes_t GeekToCoderOperandType(OperandTypes_t iOperandType);
-    CEOperandModes_t GeekToCoderOperandMode(OperandModes_t iOperandMode);
+    Standard::CEOperandTypes_t GeekToCoderOperandType(Standard::OperandTypes_t iOperandType);
+    Standard::CEOperandModes_t GeekToCoderOperandMode(Standard::OperandModes_t iOperandMode);
 }

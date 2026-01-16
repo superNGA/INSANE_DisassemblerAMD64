@@ -227,9 +227,70 @@ std::vector<Byte> INSANE_DASM64_NAMESPACE::TestCases::g_vecVEXTestCase_001 =
 
     // --- Test 5: VPADDD xmm1, xmm2, [rax] (128-bit reg-mem) (5 bytes) ---
     // Expected: vpaddd xmm1, xmm2, xmmword ptr [rax]
-    0xC4, 0xE2, 0x69, 0xFE, 0x08,
+    0xC4, 0xE1, 0x69, 0xFE, 0x08, // this had second byte as 0xE2, which made it invalid cause no instruction for 0xFE in that table.
 
     // --- Test 6: VBLENDPS xmm1, xmm2, xmm3, 0xFF (with imm8) (5 bytes) ---
     // Expected: vblendps xmm1, xmm2, xmm3, 0xff
     0xC5, 0xE9, 0x0C, 0xCB, 0xFF
+};
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+std::vector<Byte> INSANE_DASM64_NAMESPACE::TestCases::g_vecVEXTestCase_002 = 
+{
+    // 1. VADDPS xmm0, xmm1, xmm2
+    // 2-byte VEX, Map 1 (0F), vvvv=1 (xmm1), L=0 (128-bit)
+    0xC5, 0xF0, 0x58, 0xC2,
+
+    // 2. VADDPS ymm3, ymm4, ymm5
+    // 2-byte VEX, Map 1 (0F), vvvv=4 (ymm4), L=1 (256-bit)
+    0xC5, 0xD4, 0x58, 0xDD,
+
+    // 3. VPBROADCASTB xmm0, xmm1
+    // 3-byte VEX, Map 2 (0F 38), pp=01 (66h), vvvv=none
+    0xC4, 0xE2, 0x79, 0x18, 0xC1,
+
+    // 4. VPERMILPS xmm0, xmm1, 0x55
+    // 3-byte VEX, Map 3 (0F 3A), pp=01 (66h), Imm8=0x55
+    0xC4, 0xE3, 0x79, 0x04, 0xC1, 0x55,
+
+    // 5. VFMADD213PS ymm0, ymm1, ymm2
+    // 3-byte VEX, Map 2 (0F 38), W=0, pp=01 (66h), L=1 (256-bit)
+    0xC4, 0xE2, 0x75, 0xA8, 0xC2
+};
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+std::vector<Byte> InsaneDASM64::TestCases::g_vecVEXTestCase_003 = 
+{
+    // 1. VADDPS ymm8, ymm9, ymm10
+    // Stress: High-register bank (R8-R15). 
+    // Requires correct inversion of R, X, B and vvvv bits.
+    // C4 81 34 58 C2
+    0xC4, 0x81, 0x34, 0x58, 0xC2,
+
+    // 2. VADDPD xmm0, xmm1, [r12 + r15*8 + 0x12]
+    // Stress: 3-byte VEX + SIB byte + Displacement.
+    // Tests if your decoder correctly transitions from VEX to ModR/M + SIB.
+    // C4 61 71 58 44 FC 12
+    0xC4, 0x61, 0x71, 0x58, 0x44, 0xFC, 0x12,
+
+    // 3. VBLENDVPD ymm1, ymm2, ymm3, ymm4
+    // Stress: The "4-operand" case. 
+    // In VEX, the 4th operand (ymm4) is encoded in the top 4 bits of the immediate byte.
+    // C4 E3 6D 4B CB 40
+    0xC4, 0xE3, 0x6D, 0x4B, 0xCB, 0x40,
+
+    // 4. VPEXTRQ r8, xmm0, 0x01
+    // Stress: The W-bit. 
+    // In Map 3, W=1 often promotes a GPR to 64-bit (VPEXTRQ vs VPEXTRD).
+    // C4 83 F9 16 C0 01
+    0xC4, 0x83, 0xF9, 0x16, 0xC0, 0x01,
+
+    // 5. VFMADD231PS xmm0, xmm1, [rip + 0x12345678]
+    // Stress: FMA3 (Map 2) + RIP-relative addressing.
+    // C4 E2 71 B8 05 78 56 34 12
+    0xC4, 0xE2, 0x71, 0xB8, 0x05, 0x78, 0x56, 0x34, 0x12
 };

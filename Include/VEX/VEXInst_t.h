@@ -12,6 +12,8 @@
 #include "../Standard/ModRM_t.h"
 #include "../Standard/Displacement_t.h"
 #include "../Standard/SIB_t.h"
+#include "../Standard/Immediate_t.h"
+#include "../Standard/OpCode_t.h"
 
 
 
@@ -27,12 +29,11 @@ namespace INSANE_DASM64_NAMESPACE::VEX_NAMESPACE
         Byte                     m_prefix         = 0x00;
         Byte                     m_vex[Rules::MAX_VEX_PREFIX_BYTES];
         int                      m_nVEXBytes      = -1;
-        Byte                     m_opcode         = 0x00;
+        Standard::OpCode_t       m_opcode;
         Standard::ModRM_t        m_modrm;
         Standard::SIB_t          m_SIB;
         bool                     m_bHasSIB        = false;
         Standard::Displacement_t m_disp;
-        Byte                     m_immediate      = 0x00;
-        bool                     m_bHasImmediate  = false;
+        Standard::Immediate_t    m_immediate;
     };
 }

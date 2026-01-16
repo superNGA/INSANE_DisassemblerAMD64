@@ -11,8 +11,10 @@
 
 #include "../../Include/INSANE_DisassemblerAMD64.h"
 #include "../../Include/Aliases.h"
-#include "../../Include/Operand/Operand_t.h"
+#include "../../Include/Standard/Operand/Operand_t.h"
 
+
+namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE{ struct OpCodeDesc_t; }
 
 namespace INSANE_DASM64_NAMESPACE
 {
@@ -43,80 +45,6 @@ namespace INSANE_DASM64_NAMESPACE
 
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    struct OpCodeDesc_t
-    {
-        OpCodeDesc_t() { Reset(); }
-
-        inline void Reset()
-        {
-
-            m_iVarientType   = VarientKey_None;
-            m_nVarients      = 0;
-            m_pVarients      = nullptr;
-            strcpy_s(m_szName, sizeof(m_szName), Rules::OPCODE_NAME_SENTINAL);
-            m_bIsValidCode   = false;
-            m_bIsEscapeCode  = false;
-            m_bModrmRequired = false;
-            m_iByte          = 0x00;
-            m_nOperands      = 0;
-        }
-
-
-        // NOTE :
-        //      VarientKey tells us, if this operands has others varients or not ( as in the case with 0x0f 0x00, 0x0f 0x01, etc... ).
-        // And how to access the other varients. Pointer to all varients are stored inside the m_pVarients ( array ).
-        // 
-        //      Ex. VarientKey_ModRM_REG, means m_pVarients[modrm.REG] will gives us all different 
-        // varients of this instruction.
-        enum VarientType_t
-        {
-            VarientKey_None = -1,
-            VarientKey_ModRM_REG = 0,
-            VarientKey_ModRM_RM,
-            VarientKey_ModRM_MOD,
-            VarientKey_LegacyPrefix, // NOTE : Run legacy prefix through "the" look-up-table before using as index in m_pVarients.
-        };
-
-
-        // Max varients that can be stored in each of the varient types...
-        static const size_t MAX_REG_VARIENTS           = 8llu;
-        static const size_t MAX_MOD_VARIENTS           = 4llu;
-        static const size_t MAX_RM_VARIENTS            = 8llu;
-        static const size_t MAX_LEGACY_PREFIX_VARIENTS = 12llu;
-
-        size_t GetMaxVarients(VarientType_t iVarientType);
-
-
-        void Init(
-            const char* szName, bool bValidOpcd, bool bEscapeOpcd, bool bModrmRequired, Byte iByte, 
-            int nOperands, Operand_t operand1, Operand_t operand2, Operand_t operand3, Operand_t operand4);
-
-        bool InsertVarient(int iIndex);
-
-        // Initialize struct for one varient type ( now it doesn't hold any instruction info by itself, just varient array. )
-        bool InitVarientType(VarientType_t iVarientType);
-
-
-        // Braching info, to reach varients of this opcode.
-        VarientType_t  m_iVarientType   = VarientKey_None;
-        int            m_nVarients      = 0;
-        OpCodeDesc_t** m_pVarients      = nullptr;
-
-        // OpCode's info...
-        char           m_szName[Rules::MAX_INST_NAME_SIZE];
-        bool           m_bIsValidCode   = false;
-        bool           m_bIsEscapeCode  = false;
-        bool           m_bModrmRequired = false;
-        Byte           m_iByte          = 0x00;
-
-        // Operands...
-        Operand_t      m_operands[Rules::MAX_OPERANDS];
-        int            m_nOperands      = 0;
-    };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////
     class Tables_t
     {
     public:
@@ -125,8 +53,8 @@ namespace INSANE_DASM64_NAMESPACE
         INSANE_DASM64_NAMESPACE::IDASMErrorCode_t Initialize();
         bool          IsInitialized() const;
         uint16_t      GetInstType(Byte iOpCode) const;
-        OpCodeDesc_t* GetOpCodeTable(int iTableIndex, Byte iEscapeByte);
-        OpCodeDesc_t* GetVEXOpCodeTable(Byte iEscapeByte);
+        Standard::OpCodeDesc_t* GetOpCodeTable(int iTableIndex, Byte iEscapeByte);
+        Standard::OpCodeDesc_t* GetVEXOpCodeTable(Byte iEscapeByte);
 
 
         // To associate all leagacy prefix with simple consecutive numbers.
@@ -145,16 +73,16 @@ namespace INSANE_DASM64_NAMESPACE
         bool                           m_bOpCodeTableInit = false;
 
         void                           _InitOneByteOpCodeTable();
-        OpCodeDesc_t                   m_opCodeTable1   [0x100llu];
+        Standard::OpCodeDesc_t*         m_opCodeTable1;
 
         void                           _InitTwoByteOpCodeTable();
-        OpCodeDesc_t                   m_opCodeTable2   [0x100llu];
+        Standard::OpCodeDesc_t*         m_opCodeTable2;
 
         void                           _InitThreeByteOpCodeTable_38();
-        OpCodeDesc_t                   m_opCodeTable3_38[0x100llu];
+        Standard::OpCodeDesc_t*         m_opCodeTable3_38;
 
         void                           _InitThreeByteOpCodeTable_3A();
-        OpCodeDesc_t                   m_opCodeTable3_3A[0x100llu];
+        Standard::OpCodeDesc_t*         m_opCodeTable3_3A;
 
 
         // Tables... ( VEX encoded instuctions. )
@@ -162,13 +90,13 @@ namespace INSANE_DASM64_NAMESPACE
         bool                           m_bVEXOpCodeTables = false;
 
         void                           _InitVEXTwoByteOpCodes();
-        OpCodeDesc_t                   m_VEXTwoByteOpCodes[0x100llu];
+        Standard::OpCodeDesc_t*        m_VEXTwoByteOpCodes;
 
         void                           _InitVEXThreeByteOpCodes_38();
-        OpCodeDesc_t                   m_VEXThreeByteOpCodes_38[0x100llu];
+        Standard::OpCodeDesc_t*        m_VEXThreeByteOpCodes_38;
 
         void                           _InitVEXThreeByteOpCodes_3A();
-        OpCodeDesc_t                   m_VEXThreeByteOpCodes_3A[0x100llu];
+        Standard::OpCodeDesc_t*        m_VEXThreeByteOpCodes_3A;
     };
     DEFINE_GLOBAL_OBJECT(g_tables, Tables_t)
 
