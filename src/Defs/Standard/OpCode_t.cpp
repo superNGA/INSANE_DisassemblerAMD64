@@ -1,0 +1,169 @@
+//=========================================================================
+//                      OpCode
+//=========================================================================
+// by      : INSANE
+// created : 15/01/2026
+//
+// purpose : Holds basic opcode information along with opcode description
+//-------------------------------------------------------------------------
+#include "../../../Include/Standard/OpCode_t.h"
+#include <assert.h>
+#include "../../Tables/Tables.h"
+#include "../../../Include/Legacy/LegacyPrefix.h"
+
+
+using namespace InsaneDASM64;
+
+
+static OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, OpCodeDesc_t* pRootOpCodeDesc);
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+InsaneDASM64::Standard::OpCode_t::OpCode_t()
+{
+    Clear();
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void InsaneDASM64::Standard::OpCode_t::Clear()
+{
+    m_nOpBytes        = 0;
+    m_pRootOpCodeDesc = nullptr;
+    m_pOpCodeDesc     = nullptr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+int InsaneDASM64::Standard::OpCode_t::OpByteCount() const
+{
+    return m_nOpBytes;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+int InsaneDASM64::Standard::OpCode_t::OperandCount() const
+{
+    assert(m_pOpCodeDesc != nullptr && "No OpCode description is stored for this OpCode_t");
+    return m_pOpCodeDesc == nullptr ? -1 : m_pOpCodeDesc->m_nOperands;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+Byte InsaneDASM64::Standard::OpCode_t::GetMostSignificantOpCode() const
+{
+    assert(m_nOpBytes > 0 && m_nOpBytes <= Rules::MAX_OPBYTES && "OpCode count is invalid!");
+    if (m_nOpBytes <= 0 || m_nOpBytes > Rules::MAX_OPBYTES)
+        return 0x00;
+
+    return m_opBytes[m_nOpBytes - 1];
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool InsaneDASM64::Standard::OpCode_t::PushOpCode(Byte iByte)
+{
+    assert(m_nOpBytes < Rules::MAX_OPBYTES && "MAX opbytes are already stored!");
+    if(m_nOpBytes >= Rules::MAX_OPBYTES)
+        return false;
+
+    m_opBytes[m_nOpBytes] = iByte;
+    m_nOpBytes++;
+    return true;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void InsaneDASM64::Standard::OpCode_t::StoreOperatorDesc(OpCodeDesc_t* pOperatorInfo)
+{
+    // Storing root & final opcode description.
+    m_pRootOpCodeDesc = pOperatorInfo;
+    m_pOpCodeDesc     = nullptr; // Determining final child opcode decription is specific to each encoding type. Inheriting OpCode classes handle that part.
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM)
+{
+    assert(m_pRootOpCodeDesc != nullptr && "We need a root opcode description pointer to init child varient!");
+    if (m_pRootOpCodeDesc == nullptr)
+        return false;
+
+
+    m_pOpCodeDesc = FindVarientRecurse(pPrefix, iModRM, m_pRootOpCodeDesc);
+    return m_pOpCodeDesc != nullptr;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(Byte iModRM, int nPrefixCount, int* prefixies)
+{
+    // Construct the legacy prefix, to pass into the original InitChildVarient function.
+    Legacy::LegacyPrefix_t prefix; prefix.Clear();
+    for(int iPrefixIndex = 0; iPrefixIndex < nPrefixCount; iPrefixIndex++)
+        prefix.PushPrefix(prefixies[iPrefixIndex]);
+
+    return InitChildVarient(&prefix, iModRM);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, OpCodeDesc_t* pRootOpCodeDesc)
+{
+    if (pRootOpCodeDesc->m_iVarientType == OpCodeDesc_t::VarientKey_None)
+        return pRootOpCodeDesc;
+
+    assert(pRootOpCodeDesc->m_pVarients != nullptr && "Varient array is nullptr, when expected a varient array!.");
+
+
+    switch (pRootOpCodeDesc->m_iVarientType)
+    {
+    case OpCodeDesc_t::VarientKey_ModRM_MOD:
+        return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 6) & 0b11]);
+
+    case OpCodeDesc_t::VarientKey_ModRM_REG:
+        return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 3) & 0b111]);
+
+    case OpCodeDesc_t::VarientKey_ModRM_RM:
+        return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[iModRM & 0b111]);
+
+    case OpCodeDesc_t::VarientKey_LegacyPrefix:
+    {
+        OpCodeDesc_t* pOpCodeDesc = pRootOpCodeDesc->m_pVarients[0];
+
+        for (int i = 0; i < pPrefix->PrefixCount(); i++)
+        {
+            Byte          iPrefix            = pPrefix->m_legacyPrefix[i];
+            int           iPrefixIndex       = G::g_tables.GetLegacyPrefixIndex(iPrefix);
+            OpCodeDesc_t* pPrefixOpCodeDesc  = pRootOpCodeDesc->m_pVarients[iPrefixIndex];
+                
+            // Check if we have any prefix such that there exists a opcode varient for that
+            // prefix. Else we can always use the default entry.
+            if (pPrefixOpCodeDesc != nullptr)
+            {
+                pOpCodeDesc = pPrefixOpCodeDesc;
+                break;
+            }
+        }
+
+        return FindVarientRecurse(pPrefix, iModRM, pOpCodeDesc);
+
+        break;
+    }
+    default: break;
+    }
+
+
+    assert(false && "Invalid opcode varient set!");
+    return nullptr;
+}

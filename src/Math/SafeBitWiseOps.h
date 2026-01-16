@@ -9,7 +9,7 @@
 #pragma once
 #include <cstdint>
 #include <string.h>
-#include "../ObjectNomenclature.h"
+#include "../../Include/Aliases.h"
 
 
 struct Bits64_t;

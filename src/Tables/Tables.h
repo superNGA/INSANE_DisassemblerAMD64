@@ -10,7 +10,8 @@
 #include <cstdint>
 
 #include "../../Include/INSANE_DisassemblerAMD64.h"
-#include "../ObjectNomenclature.h"
+#include "../../Include/Aliases.h"
+#include "../../Include/Operand/Operand_t.h"
 
 
 namespace INSANE_DASM64_NAMESPACE
