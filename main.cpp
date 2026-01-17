@@ -18,13 +18,14 @@ using namespace InsaneDASM64;
 static void PrintInst(std::vector<Instruction_t>& vecInst);
 static void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst);
 static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst);
+static void PrintOutput(std::vector<DASMInst_t>& vecInst);
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 int main(void)
 {
-    std::vector<std::string> vecOutput;
+    std::vector<DASMInst_t> vecOutput;
     vecOutput.clear();
 
 
@@ -45,7 +46,7 @@ int main(void)
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success;
 
         std::vector<Instruction_t> vecInstOutput;
-        iErrorCode = InsaneDASM64::Decode(TestCases::g_vecVEXTestCase_003, vecInstOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecVEXTestCase_004, vecOutput);
         // iErrorCode = InsaneDASM64::Decode(vecInput, vecInstOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecVEXTestCase_001, vecOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(vecInput, vecOutput);
@@ -54,10 +55,11 @@ int main(void)
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecTwoByteOpCodes_001, vecOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_38, vecOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_3A, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
         printf("Decoding done [ %zu ] instructions detected\n", vecInstOutput.size());
 
-        PrintInst(vecInstOutput);
+        PrintOutput(vecOutput);
+        // PrintInst(vecInstOutput);
 
         if (iErrorCode != InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success)
         {
@@ -222,4 +224,20 @@ static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst)
     printf(". ");
 
     printf("0x%02X", pInst->m_immediate.m_immediateByte[0]);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static void PrintOutput(std::vector<DASMInst_t>& vecInst)
+{
+    for(const DASMInst_t& inst : vecInst)
+    {
+        printf("%s ", inst.m_szMnemonic);
+
+        for(int i = 0; i < inst.m_nOperands; i++)
+            printf("%s ", inst.m_szOperands[i]);
+
+        printf("\n");
+    }
 }

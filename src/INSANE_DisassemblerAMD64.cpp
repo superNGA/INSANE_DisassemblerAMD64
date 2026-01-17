@@ -8,8 +8,10 @@
 //-------------------------------------------------------------------------
 #include "../Include/INSANE_DisassemblerAMD64.h"
 
+#include <iomanip>
 #include <vector>
 #include <assert.h>
+#include <sstream>
 
 // Util
 #include "Tables/Tables.h"
@@ -17,12 +19,13 @@
 #include "../Include/Aliases.h"
 #include "Util/Terminal/Terminal.h"
 
-// Instructions.
+// Instruction containers
 #include "../Include/Instruction_t.h"
 #include "../Include/Legacy/LegacyInst_t.h"
 #include "../Include/VEX/VEXInst_t.h"
 
 #include "../Include/Standard/OpCodeDesc_t.h"
+#include "../Include/DASMInst_t.h"
 
 
 // NOTE : Mind this.
@@ -40,116 +43,9 @@ namespace INSANE_DASM64_NAMESPACE
     static IDASMErrorCode_t DecodeVEXEncoding        (const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator);
 
     // Local functions, for disassembling different encodings. To be used only in the main InsaneDASM64::Disassemble function.
-    static IDASMErrorCode_t DisassembleLegacyEncoding(const Legacy::LegacyInst_t* inst, std::string& szOutput);
-    static IDASMErrorCode_t DisassembleVEXEncoding   (const VEX::VEXInst_t* inst,       std::string& szOutput);
+    static IDASMErrorCode_t DisassembleLegacyEncoding(const Legacy::LegacyInst_t* inst, DASMInst_t* pOutput);
+    static IDASMErrorCode_t DisassembleVEXEncoding   (const VEX::VEXInst_t*       inst, DASMInst_t* pOutput);
 };
-
-
-
-// Local Fn...
-static inline void PrintInstBytes(const std::vector<Instruction_t>& vecInput)
-{
-    for (const Instruction_t& instO : vecInput)
-    {
-        const Legacy::LegacyInst_t& inst = *reinterpret_cast<Legacy::LegacyInst_t*>(instO.m_pInst);
-
-        if (inst.m_opCode.OpByteCount() == 0)
-        {
-            printf("EMTPY INSTRUCTION!\n");
-            continue;
-        }
-
-
-        printf("[ %12s ]", inst.m_opCode.m_pOpCodeDesc->m_szName);
-
-        for (int i = 0; i < Rules::MAX_LEGACY_PREFIX; i++)
-        {
-            if (i < inst.m_legacyPrefix.m_nPrefix)
-                printf("0x%02X ", inst.m_legacyPrefix.m_legacyPrefix[i]);
-            else
-                printf("~~~~ ");
-        }
-        printf(" . ");
-
-
-        if(inst.m_bHasREX == true)
-        {
-            printf("0x%02X ", inst.m_iREX);
-        }
-        else
-        {
-            printf("~~~~ ");
-        }
-        printf(" . ");
-
-
-        for (int i = 0; i < Rules::MAX_OPBYTES; i++)
-        {
-            if(i < inst.m_opCode.OpByteCount())
-            {
-                printf("0x%02X ", inst.m_opCode.m_opBytes[i]);
-            }
-            else
-            {
-                printf("~~~~ ");
-            }
-        }
-        printf(" . ");
-
-
-        if (inst.m_bHasModRM == true)
-        {
-            printf("0x%02X ", inst.m_modrm.Get());
-        }
-        else
-        {
-            printf("~~~~ ");
-        }
-        printf(" . ");
-
-
-        if (inst.m_bHasSIB == true)
-        {
-            printf("0x%02X ", inst.m_SIB.Get());
-        }
-        else
-        {
-            printf("~~~~ ");
-        }
-        printf(" . ");
-
-
-        for (int i = 0; i < Rules::MAX_DISPLACEMENT_BYTES; i++)
-        {
-            if(i < inst.m_displacement.ByteCount())
-            {
-                printf("0x%02X ", inst.m_displacement.m_iDispBytes[i]);
-            }
-            else
-            {
-                printf("~~~~ ");
-            }
-        }
-        printf(" . ");
-
-
-        for (int i = 0; i < Rules::MAX_IMMEDIATE_BYTES; i++)
-        {
-            if (i < inst.m_immediate.ByteCount())
-            {
-                printf("0x%02X ", inst.m_immediate.m_immediateByte[i]);
-            }
-            else
-            {
-                printf("~~~~ ");
-            }
-        }
-        printf(" . ");
-
-
-        printf("\n");
-    }
-}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -157,11 +53,9 @@ static inline void PrintInstBytes(const std::vector<Instruction_t>& vecInput)
 IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Initialize()
 {
     // Tables...
-    {
-        IDASMErrorCode_t iErrorCode = G::g_tables.Initialize();
-        if (iErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
-            return iErrorCode;
-    }
+    IDASMErrorCode_t iErrorCode = G::g_tables.Initialize();
+    if (iErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+        return iErrorCode;
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -170,26 +64,25 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Initialize()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeAndDisassemble(const std::vector<Byte>& vecInput, std::vector<std::string>& vecOutput)
+IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeAndDisassemble(const std::vector<Byte>& vecInput, std::vector<DASMInst_t>& vecOutput)
 {
-    vecOutput.clear();
-
-
     // Parse input...
-    std::vector<Instruction_t> vecParsedInst; vecParsedInst.clear();
+    std::vector<Instruction_t> vecDecodedInst; vecDecodedInst.clear();
 
-    IDASMErrorCode_t iDecoderErrorCode = Decode(vecInput, vecParsedInst);
+    IDASMErrorCode_t iDecoderErrorCode = Decode(vecInput, vecDecodedInst);
     if (iDecoderErrorCode != IDASMErrorCode_Success)
         return iDecoderErrorCode;
 
 
+    vecOutput.clear();
+
     // Decoding didn't fail but its empty :(
-    if (vecParsedInst.empty() == true)
+    if (vecDecodedInst.empty() == true)
         return IDASMErrorCode_t::IDASMErrorCode_Success;
 
 
     // Disassemble decoded instruction.
-    IDASMErrorCode_t iDASMErrorCode = Disassemble(vecParsedInst, vecOutput);
+    IDASMErrorCode_t iDASMErrorCode = Disassemble(vecDecodedInst, vecOutput);
     if (iDASMErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
         return iDASMErrorCode;
 
@@ -326,21 +219,24 @@ static int OperandTypeToOperandSizeInBits(Standard::CEOperandTypes_t iCEOperandT
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<Instruction_t>& vecInput, std::vector<std::string>& vecOutput)
+IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Instruction_t>& vecInput, std::vector<DASMInst_t>& vecOutput)
 {
+    vecOutput.clear();
+    vecOutput.resize(vecInput.size());
+
     for(const Instruction_t& inst : vecInput)
     {
-        std::string szInst(Rules::OPCODE_NAME_SENTINAL);
-
+        vecOutput.emplace_back();
+        DASMInst_t* pInstOut = &vecOutput.back();
 
         switch (inst.m_iInstEncodingType) 
         {
             case Instruction_t::InstEncodingType_Legacy:
-                DisassembleLegacyEncoding(reinterpret_cast<Legacy::LegacyInst_t*>(inst.m_pInst), szInst);
+                DisassembleLegacyEncoding(reinterpret_cast<Legacy::LegacyInst_t*>(inst.m_pInst), pInstOut);
                 break;
 
             case Instruction_t::InstEncodingType_VEX:
-                DisassembleVEXEncoding(reinterpret_cast<VEX::VEXInst_t*>(inst.m_pInst), szInst);
+                DisassembleVEXEncoding(reinterpret_cast<VEX::VEXInst_t*>(inst.m_pInst), pInstOut);
                 break;
 
             case Instruction_t::InstEncodingType_EVEX:
@@ -350,9 +246,6 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<Instruct
                 assert(false && "Incompatible encoding type");
                 break;
         }
-
-
-        vecOutput.push_back(szInst);
     }
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -361,20 +254,28 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Disassemble(const std::vector<Instruct
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const Legacy::LegacyInst_t* inst, std::string& szOutput)
+static IDASMErrorCode_t InsaneDASM64::DisassembleLegacyEncoding(const Legacy::LegacyInst_t* inst, DASMInst_t* pOutput)
 {
     using namespace Standard;
     const Standard::OpCodeDesc_t* pOpCodeDesc = inst->m_opCode.m_pOpCodeDesc;
     assert(pOpCodeDesc != nullptr && "OpCodeDescription pointer was null");
 
 
-    // Dump our the operator name.
-    printf("%s ", pOpCodeDesc->m_szName);
+    // Purpose of this string is to help me construct memory address in SIB format easily.
+    // so I can write it to output at once.
+    std::stringstream szTemp;
+
+
+    // Store Mnemonic
+    strcpy_s(pOutput->m_szMnemonic, sizeof(pOutput->m_szMnemonic), pOpCodeDesc->m_szName);
+    // printf("%s ", pOpCodeDesc->m_szName);
 
 
     // Iterate all operands and disassembler.
     for (int iOperandIndex = 0; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
     {
+        szTemp.clear();
+
         const Standard::Operand_t* pOperand = &pOpCodeDesc->m_operands[iOperandIndex];
 
         Standard::CEOperandModes_t iCEOperandMode = GeekToCoderOperandMode(pOperand->m_iOperandMode);
@@ -387,13 +288,15 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
         {
             // Simple and easy, just print a fucking int.
             case Operand_t::OperandCatagory_Literal:
-                printf("%d", pOperand->m_iOperandLiteral);
+                pOutput->PushLiteralOperand(pOperand->m_iOperandLiteral);
+                // printf("%d", pOperand->m_iOperandLiteral);
                 break;
 
 
                 // Simple and easy, just print register name.
             case Operand_t::OperandCatagory_Register:
-                printf("%s", pOperand->m_iOperandRegister.ToString());
+                pOutput->PushBackOperand(pOperand->m_iOperandRegister.ToString());
+                // printf("%s", pOperand->m_iOperandRegister.ToString());
                 break;
 
 
@@ -405,11 +308,13 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                     switch(iCEOperandMode)
                     {
                         case CEOperandMode_CRn:
-                            printf("%s", Standard::Register_t(Standard::Register_t::RegisterClass_Control, inst->ModRM_Reg(), 0).ToString());
+                            pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Control, inst->ModRM_Reg(), 0).ToString());
+                            // printf("%s", Standard::Register_t(Standard::Register_t::RegisterClass_Control, inst->ModRM_Reg(), 0).ToString());
                             break;
 
                         case CEOperandMode_DRn:
-                            printf("%s", Standard::Register_t(Standard::Register_t::RegisterClass_Debug, inst->ModRM_Reg(), 0).ToString());
+                            pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Debug, inst->ModRM_Reg(), 0).ToString());
+                            // printf("%s", Standard::Register_t(Standard::Register_t::RegisterClass_Debug, inst->ModRM_Reg(), 0).ToString());
                             break;
 
                         case CEOperandMode_ptr:
@@ -417,11 +322,12 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                         case CEOperandMode_imm:
                         case CEOperandMode_moffs:
                             {
-                                printf("0x"); // Handling endian.
-                                for (int i = inst->m_immediate.ByteCount() - 1; i >= 0; i--)
-                                {
-                                    printf("%02X", inst->m_immediate.m_immediateByte[i]);
-                                }
+                                pOutput->PushLiteralFromString(inst->m_immediate.m_immediateByte, inst->m_immediate.ByteCount(), true);
+                                // printf("0x"); // Handling endian.
+                                // for (int i = inst->m_immediate.ByteCount() - 1; i >= 0; i--)
+                                // {
+                                //     printf("%02X", inst->m_immediate.m_immediateByte[i]);
+                                // }
                                 break;
                             }
 
@@ -456,28 +362,51 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
 
                                 if(inst->ModRM_Mod() == 0b11)
                                 {
-                                    printf("%s", reg.ToString());
+                                    pOutput->PushBackOperand(reg.ToString());
+                                    // printf("%s", reg.ToString());
                                     break;
                                 }
                                 else if (inst->m_bHasSIB == false)
                                 {
-                                    printf("[ %s ", reg.ToString());
+                                    szTemp << "[ " << reg.ToString() << ' ';
+                                    // printf("[ %s ", reg.ToString());
 
                                     // Printing displacement, if any.
                                     if(inst->m_displacement.ByteCount() > 0)
                                     {
-                                        printf("+ 0x");
+                                        szTemp << "+ 0x";
+                                        // printf("+ 0x");
+                                        bool bLeadingZeroEnded = false;
                                         for (int i = inst->m_displacement.ByteCount() - 1; i >= 0; i--)
                                         {
-                                            printf("%02X", inst->m_displacement.m_iDispBytes[i]);
+                                            int iByte = static_cast<int>(inst->m_displacement.m_iDispBytes[i]);
+                                            if(iByte != 0)
+                                                bLeadingZeroEnded = true;
+
+                                            if(bLeadingZeroEnded == false)
+                                                continue;
+
+                                            // Save old state
+                                            auto oldFlags = szTemp.flags();
+                                            auto oldFill  = szTemp.fill();
+
+                                            szTemp << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << iByte;
+
+                                            // Restore state
+                                            szTemp.flags(oldFlags);
+                                            szTemp.fill(oldFill);
+
+                                            // printf("%02X", inst->m_displacement.m_iDispBytes[i]);
                                         }
                                     }
 
-                                    printf("]");
+                                    szTemp << "]";
+                                    // printf("]");
                                 }
                                 else // Here are expecting memory address using SIB byte.
                                 {
-                                    printf("[ ");
+                                    szTemp << "[ ";
+                                    // printf("[ ");
 
                                     bool bNoBaseReg = inst->ModRM_Mod() == 0 && inst->SIB_Base() == 0b101;
                                     if (bNoBaseReg == false)
@@ -486,46 +415,70 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                                                 Standard::Register_t::RegisterClass_GPR, 
                                                 inst->SIB_Base(), 
                                                 OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())); // * 8 : Bytes to bits.
-
-                                        printf("%s", iBaseReg.ToString());
+ 
+                                        szTemp << iBaseReg.ToString();
+                                        // printf("%s", iBaseReg.ToString());
                                     }
 
                                     // Index register.
                                     uint64_t iSIBIndex = inst->SIB_Index();
                                     if (iSIBIndex != 0b100)
                                     {
-                                        printf(" + %s", Standard::Register_t(
-                                                    Standard::Register_t::RegisterClass_GPR, 
-                                                    iSIBIndex,
-                                                    OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes())).ToString()); // * 8 : Bytes to bits.
+                                        Standard::Register_t indexReg(Standard::Register_t::RegisterClass_GPR, iSIBIndex, 
+                                                OperandTypeToAddressSizeInBits(iCEOperandType, inst->GetAddressSizeInBytes()));
+                                        szTemp << " + " << indexReg.ToString();
+                                        // printf(" + %s", reg.ToString()); // * 8 : Bytes to bits.
 
                                         // Scale.
                                         uint64_t iScale = 1llu << inst->SIB_Scale();
                                         if (iScale > 1)
                                         {
-                                            printf(" * %llu", iScale);
+                                            szTemp << " * " << iScale;
+                                            // printf(" * %llu", iScale);
                                         }
                                     }
 
                                     // Displacement ( if any )
                                     if(inst->m_displacement.ByteCount() > 0)
                                     {
-                                        printf(" + 0x");
+                                        szTemp << " + 0x";
+                                        // printf(" + 0x");
+                                        bool bLeadingZeroEnded = false;
                                         for (int i = inst->m_displacement.ByteCount() - 1; i >= 0; i--)
                                         {
-                                            printf("%02X", inst->m_displacement.m_iDispBytes[i]);
+                                            int iByte = static_cast<int>(inst->m_displacement.m_iDispBytes[i]);
+                                            if(iByte != 0)
+                                                bLeadingZeroEnded = true;
+
+                                            if(bLeadingZeroEnded == false)
+                                                continue;
+
+                                            // Save old state
+                                            auto oldFlags = szTemp.flags();
+                                            auto oldFill  = szTemp.fill();
+
+                                            szTemp << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << iByte;
+
+                                            // Restore state
+                                            szTemp.flags(oldFlags);
+                                            szTemp.fill(oldFill);
+                                            // printf("%02X", inst->m_displacement.m_iDispBytes[i]);
                                         }
                                     }
 
-                                    printf(" ]");
+                                    szTemp << " ]";
+                                    // printf(" ]");
                                 }
+
+                                pOutput->PushBackOperand(szTemp.str().c_str());
                                 break;
                             }
 
                         case CEOperandMode_STi:
                             {
                                 Standard::Register_t reg(Standard::Register_t::RegisterClass_FPU, inst->ModRM_RM(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
-                                printf("%s", reg.ToString());
+                                pOutput->PushBackOperand(reg.ToString());
+                                // printf("%s", reg.ToString());
                                 break;
                             }
 
@@ -549,7 +502,8 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                                     reg.m_iRegisterIndex = inst->ModRM_RM();
                                 }
 
-                                printf("%s", reg.ToString());
+                                pOutput->PushBackOperand(reg.ToString());
+                                // printf("%s", reg.ToString());
                                 break;
                             }
 
@@ -568,21 +522,24 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                                     reg.m_iRegisterIndex = inst->ModRM_Reg();
                                 }
 
-                                printf("%s", reg.ToString());
+                                pOutput->PushBackOperand(reg.ToString());
+                                // printf("%s", reg.ToString());
                                 break;
                             }
 
                         case CEOperandMode_Sreg:
                             {
                                 Standard::Register_t reg(Standard::Register_t::RegisterClass_Segment, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
-                                printf("%s", reg.ToString());
+                                pOutput->PushBackOperand(reg.ToString());
+                                // printf("%s", reg.ToString());
                                 break;
                             }
 
                         case CEOperandMode_TRn:
                             {
                                 Standard::Register_t reg(Standard::Register_t::RegisterClass_Test, inst->ModRM_Reg(), OperandTypeToOperandSizeInBits(iCEOperandType, inst->GetOperandSizeInBytes(false)));
-                                printf("%s", reg.ToString());
+                                pOutput->PushBackOperand(reg.ToString());
+                                // printf("%s", reg.ToString());
                                 break;
                             }
 
@@ -597,7 +554,8 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
                                 if (iOperandMode == OperandModes_t::OperandMode_V)
                                     reg.m_iRegisterIndex = inst->ModRM_Reg();
 
-                                printf("%s", reg.ToString());
+                                pOutput->PushBackOperand(reg.ToString());
+                                // printf("%s", reg.ToString());
                                 break;
                             }
 
@@ -609,12 +567,8 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
 
             default: break;
         }
-
-        printf(", ");
     }
 
-    printf("\n");
-
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
@@ -622,9 +576,8 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleLegacyEncoding(const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleVEXEncoding(const VEX::VEXInst_t* inst, std::string& szOutput)
+static IDASMErrorCode_t InsaneDASM64::DisassembleVEXEncoding(const VEX::VEXInst_t* inst, DASMInst_t* pOutput)
 {
-    assert(false && "VEX disassembler is not implemted yet.");
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
@@ -632,7 +585,7 @@ static IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DisassembleVEXEncoding(const VE
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Decode(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput)
+IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput)
 {
     assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
     assert(vecOutput.empty()           == true && "Why is output not empty");

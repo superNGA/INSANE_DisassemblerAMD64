@@ -16,6 +16,7 @@ ${ASM_SOURCES}
 "Include/Instruction_t.h"
 "Include/Rules.h"
 "Include/Aliases.h"
+"Include/DASMInst_t.h"
 
 # Include/Standard
 "Include/Standard/Displacement_t.h"
@@ -46,6 +47,7 @@ ${ASM_SOURCES}
 "src/Tables/Tables.h" "src/Tables/Tables.cpp"  
 
 "src/Instruction_t.cpp"
+"src/DASMInst_t.cpp"
 
 # src/Defs/Operand
 "src/Defs/Standard/Operand/Operand_t.cpp"

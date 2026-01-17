@@ -17,15 +17,11 @@
 #include "Standard/Operand/OperandModes.h"
 #include "Standard/Operand/OperandTypes.h"
 
+// Standard instructon structure, decoder returns in this format.
 #include "Instruction_t.h"
 
-
-
-/*
-
-> Handle opcodedesc_t
-
-*/
+// Output format for disassembler
+#include "DASMInst_t.h"
 
 
 
@@ -56,11 +52,11 @@ namespace INSANE_DASM64_NAMESPACE
     // Functions...
     // NOTE : Each function will return 0 ( ErrorCode_Success ) on success, and a non-zero IDASMErrorCode_t on fail.
     IDASMErrorCode_t Initialize();
-    IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>&          vecInput, std::vector<std::string>&   vecOutput);
-    IDASMErrorCode_t Disassemble         (const std::vector<Instruction_t>& vecInput, std::vector<std::string>&   vecOutput);
+    IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>&          vecInput, std::vector<DASMInst_t>&    vecOutput);
+    IDASMErrorCode_t Disassemble         (const std::vector<Instruction_t>& vecInput, std::vector<DASMInst_t>&    vecOutput);
     IDASMErrorCode_t Decode              (const std::vector<Byte>&          vecInput, std::vector<Instruction_t>& vecOutput);
 
-    const char*      GetErrorMessage       (IDASMErrorCode_t iErrorCode);
+    const char* GetErrorMessage(IDASMErrorCode_t iErrorCode);
     Standard::CEOperandTypes_t GeekToCoderOperandType(Standard::OperandTypes_t iOperandType);
     Standard::CEOperandModes_t GeekToCoderOperandMode(Standard::OperandModes_t iOperandMode);
 }
