@@ -17,6 +17,7 @@ ${ASM_SOURCES}
 "Include/Rules.h"
 "Include/Aliases.h"
 "Include/DASMInst_t.h"
+"Include/Masks.h"
 
 # Include/Standard
 "Include/Standard/Displacement_t.h"
@@ -41,6 +42,7 @@ ${ASM_SOURCES}
 
 # Include/VEX
 "Include/VEX/VEXInst_t.h"
+"Include/VEX/VEXPrefix_t.h"
 
 "main.cpp"
 "src/INSANE_DisassemblerAMD64.cpp" 
@@ -68,6 +70,7 @@ ${ASM_SOURCES}
 
 # src/Defs/VEX
 "src/Defs/VEX/VEXInst_t.cpp"
+"src/Defs/VEX/VEXPrefix_t.cpp"
 
 # Math
 "src/Math/SafeBitWiseOps.h" 

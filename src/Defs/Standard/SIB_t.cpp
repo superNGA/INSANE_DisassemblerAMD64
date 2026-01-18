@@ -8,7 +8,7 @@
 //-------------------------------------------------------------------------
 #include "../../../Include/Standard/SIB_t.h"
 #include "../../Math/SafeBitWiseOps.h"
-#include "../../../Include/Rules.h"
+#include "../../../Include/Masks.h"
 
 
 using namespace InsaneDASM64;
@@ -35,7 +35,7 @@ Byte InsaneDASM64::Standard::SIB_t::Get() const
 ///////////////////////////////////////////////////////////////////////////
 uint64_t InsaneDASM64::Standard::SIB_t::ScaleValueAbs() const
 {
-    return Maths::SafeAnd(m_SIB, Masks::SIB_SCALE) >> 6;
+    return Maths::SafeAnd(m_SIB, Legacy::Masks::SIB_SCALE) >> 6;
 }
 
 
@@ -43,7 +43,7 @@ uint64_t InsaneDASM64::Standard::SIB_t::ScaleValueAbs() const
 ///////////////////////////////////////////////////////////////////////////
 uint64_t InsaneDASM64::Standard::SIB_t::IndexValueAbs() const
 {
-    return Maths::SafeAnd(m_SIB, Masks::SIB_INDEX) >> 3;
+    return Maths::SafeAnd(m_SIB, Legacy::Masks::SIB_INDEX) >> 3;
 }
 
 
@@ -51,6 +51,6 @@ uint64_t InsaneDASM64::Standard::SIB_t::IndexValueAbs() const
 ///////////////////////////////////////////////////////////////////////////
 uint64_t InsaneDASM64::Standard::SIB_t::BaseValueAbs() const
 {
-    return Maths::SafeAnd(m_SIB, Masks::SIB_BASE);
+    return Maths::SafeAnd(m_SIB, Legacy::Masks::SIB_BASE);
 }
 

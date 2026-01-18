@@ -7,6 +7,7 @@
 // purpose : Handles a single legacy encoded instruction and all of its components.
 //-------------------------------------------------------------------------
 #include "../../../Include/Legacy/LegacyInst_t.h"
+#include "../../../Include/Masks.h"
 #include "../../Math/SafeBitWiseOps.h"
 #include <assert.h>
 
@@ -90,9 +91,9 @@ uint64_t InsaneDASM64::Legacy::LegacyInst_t::ModRM_Reg() const
 
 
     uint64_t iReg = (Maths::SafeAnd(m_modrm.Get(), Masks::MODRM_REG) >> 3llu);
-    uint64_t iREX_W = m_bHasREX == false ? 0llu : Maths::SafeAnd(m_iREX, Masks::REX_R);
+    uint64_t iREX_R = m_bHasREX == false ? 0llu : Maths::SafeAnd(m_iREX, Masks::REX_R);
 
-    return Maths::SafeOr(iReg, (iREX_W << 1llu));
+    return Maths::SafeOr(iReg, (iREX_R << 1llu));
 }
 
 
@@ -125,9 +126,9 @@ uint64_t InsaneDASM64::Legacy::LegacyInst_t::ModRM_RM() const
     }
 
 
-    uint64_t iREX_W = m_bHasREX == false ? 0llu : Maths::SafeAnd(m_iREX, Masks::REX_B);
+    uint64_t iREX_B = m_bHasREX == false ? 0llu : Maths::SafeAnd(m_iREX, Masks::REX_B);
 
-    return Maths::SafeOr(Maths::SafeAnd(m_modrm.Get(), Masks::MODRM_RM), (iREX_W << 3llu));
+    return Maths::SafeOr(Maths::SafeAnd(m_modrm.Get(), Masks::MODRM_RM), (iREX_B << 3llu));
 }
 
 

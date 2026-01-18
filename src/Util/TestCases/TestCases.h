@@ -37,5 +37,6 @@ namespace InsaneDASM64
         extern std::vector<Byte> g_vecVEXTestCase_002;
         extern std::vector<Byte> g_vecVEXTestCase_003;
         extern std::vector<Byte> g_vecVEXTestCase_004; // Big one.
+        extern std::vector<Byte> g_vecVEXTestCase_005;
     }
 }

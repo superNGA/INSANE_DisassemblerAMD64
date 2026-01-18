@@ -8,7 +8,7 @@
 //-------------------------------------------------------------------------
 #include "../../../Include/Standard/ModRM_t.h"
 #include "../../Math/SafeBitWiseOps.h"
-#include "../../../Include/Rules.h"
+#include "../../../Include/Masks.h"
 
 
 using namespace InsaneDASM64;
@@ -34,7 +34,7 @@ Byte InsaneDASM64::Standard::ModRM_t::Get() const
 ///////////////////////////////////////////////////////////////////////////
 uint64_t InsaneDASM64::Standard::ModRM_t::ModValueAbs() const
 {
-    return Maths::SafeAnd(m_modrm, Masks::MODRM_MOD) >> 6;
+    return Maths::SafeAnd(m_modrm, Legacy::Masks::MODRM_MOD) >> 6;
 }
 
 
@@ -42,7 +42,7 @@ uint64_t InsaneDASM64::Standard::ModRM_t::ModValueAbs() const
 ///////////////////////////////////////////////////////////////////////////
 uint64_t InsaneDASM64::Standard::ModRM_t::RegValueAbs() const
 {
-    return Maths::SafeAnd(m_modrm, Masks::MODRM_REG) >> 3;
+    return Maths::SafeAnd(m_modrm, Legacy::Masks::MODRM_REG) >> 3;
 }
 
 
@@ -50,5 +50,5 @@ uint64_t InsaneDASM64::Standard::ModRM_t::RegValueAbs() const
 ///////////////////////////////////////////////////////////////////////////
 uint64_t InsaneDASM64::Standard::ModRM_t::RMValueAbs() const
 {
-    return Maths::SafeAnd(m_modrm, Masks::MODRM_RM);
+    return Maths::SafeAnd(m_modrm, Legacy::Masks::MODRM_RM);
 }

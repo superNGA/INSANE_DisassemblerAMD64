@@ -45,6 +45,7 @@ namespace INSANE_DASM64_NAMESPACE
         IDASMErrorCode_InvalidImmediateSize,
         IDASMErrorCode_InvalidVEXPrefix,
         IDASMErrorCode_InvalidVEXInst,
+        IDASMErrorCode_VEXDisassemblyFailed,
         IDASMErrorCode_Count
     };
 

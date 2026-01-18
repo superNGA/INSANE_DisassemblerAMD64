@@ -49,23 +49,9 @@ namespace INSANE_DASM64_NAMESPACE::SpecialChars
     // First byte for VEX encoded instructions.
     constexpr Byte VEX_PREFIX_C4                 = 0XC4;
     constexpr Byte VEX_PREFIX_C5                 = 0XC5;
-}
 
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-namespace InsaneDASM64::Masks
-{
-    constexpr size_t MODRM_MOD = 0b11000000llu;
-    constexpr size_t MODRM_REG = 0b111000llu;
-    constexpr size_t MODRM_RM  = 0b111llu;
-
-    constexpr size_t SIB_SCALE = 0b11000000llu;
-    constexpr size_t SIB_INDEX = 0b111000llu;
-    constexpr size_t SIB_BASE  = 0b111llu;
-
-    constexpr size_t REX_W     = 0b1000llu;
-    constexpr size_t REX_R     = 0b100llu;
-    constexpr size_t REX_X     = 0b10llu;
-    constexpr size_t REX_B     = 0b1llu;
+    // Prefix represented by vex.pp 
+    constexpr uint64_t VEX_PP_PREFIX_66 = 0b01;
+    constexpr uint64_t VEX_PP_PREFIX_F3 = 0b10;
+    constexpr uint64_t VEX_PP_PREFIX_F2 = 0b11;
 }

@@ -38,6 +38,7 @@ int main(void)
             return 1;
         }
     }
+    std::cout << "Disassembler Initialized!\n";
 
     
     std::vector<InsaneDASM64::Byte> vecInput = { 0xC5, 0xFC, 0x77 };
@@ -46,7 +47,7 @@ int main(void)
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success;
 
         std::vector<Instruction_t> vecInstOutput;
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecVEXTestCase_004, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecVEXTestCase_005, vecOutput);
         // iErrorCode = InsaneDASM64::Decode(vecInput, vecInstOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecVEXTestCase_001, vecOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(vecInput, vecOutput);
@@ -55,11 +56,11 @@ int main(void)
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecTwoByteOpCodes_001, vecOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_38, vecOutput);
         // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_3A, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
         printf("Decoding done [ %zu ] instructions detected\n", vecInstOutput.size());
 
         PrintOutput(vecOutput);
-        // PrintInst(vecInstOutput);
+        PrintInst(vecInstOutput);
 
         if (iErrorCode != InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success)
         {
@@ -200,11 +201,11 @@ static void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst)
 static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst)
 {
     printf("[ %16s ] ", pInst->m_opcode.m_pOpCodeDesc->m_szName);
-    printf("0x%02X", pInst->m_prefix);
+    printf("0x%02X", pInst->m_vexPrefix.GetPrefix());
     printf(" . ");
 
     for(int i = 0; i < 2; i++)
-        printf("0x%02X ", i < pInst->m_nVEXBytes ? pInst->m_vex[i] : 0);
+        printf("0x%02X ", i < pInst->m_vexPrefix.VEXByteCount() ? pInst->m_vexPrefix.m_iVEX[i] : 0);
     printf(". ");
 
     printf("0x%02X", pInst->m_opcode.GetMostSignificantOpCode());

@@ -27,11 +27,11 @@ InsaneDASM64::Standard::Register_t::Register_t()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-InsaneDASM64::Standard::Register_t::Register_t(RegisterClass_t iRegisterClass, int16_t iRegisterIndex, int16_t iRegisterSize)
+InsaneDASM64::Standard::Register_t::Register_t(RegisterClass_t iRegisterClass, int16_t iRegisterIndex, int16_t iRegisterSizeInBits)
 {
     m_iRegisterClass = iRegisterClass;
     m_iRegisterIndex = iRegisterIndex;
-    m_iRegisterSize  = iRegisterSize;
+    m_iRegisterSize  = iRegisterSizeInBits;
 }
 
 

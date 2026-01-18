@@ -88,6 +88,11 @@ void InsaneDASM64::DASMInst_t::PushLiteralOperand(uint8_t iLiteralOperand)
 ///////////////////////////////////////////////////////////////////////////
 void InsaneDASM64::DASMInst_t::PushLiteralOperand(int iLiteralOperand)
 {
+    /*
+    NOTE : Buffer size for each of the operand and mnemonic is set to more than 40 bytes.
+           and writting even an 8 byte interger will only consume 19 bytes ( including "0x" prefix and null terminator ).
+           So buffer overflow is no concern here.
+    */
     assert(m_nOperands >= 0 && m_nOperands < Rules::MAX_OPERANDS && "Too many operands");
 
     char* szBuffer  = &m_szOperands[m_nOperands][0];
@@ -145,6 +150,7 @@ void InsaneDASM64::DASMInst_t::PushLiteralFromString(const Byte* szOperand, int 
     assert(szOperand != nullptr && iSize > 0 && "Invalid input received!");
 
 
+    size_t iBufferSize = Rules::DASMINST_ARG_BUFFER_SIZE;
     char* szBuffer  = &m_szOperands[m_nOperands][0];
     int   iIterator = 0;
     szBuffer[iIterator] = '0'; iIterator++;
@@ -157,6 +163,8 @@ void InsaneDASM64::DASMInst_t::PushLiteralFromString(const Byte* szOperand, int 
         static const char s_intToHexCharTable[] = "0123456789ABCDEF";
         szBuffer[iIterator] = s_intToHexCharTable[szOperand[iIndex] / 0x10]; iIterator++;
         szBuffer[iIterator] = s_intToHexCharTable[szOperand[iIndex] % 0x10]; iIterator++;
+
+        assert(iIterator < iBufferSize - 1 && "BufferOverflow @ PushLiteralFromString");
     }
 
     szBuffer[iIterator] = '\0'; iIterator++;

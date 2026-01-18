@@ -35,7 +35,7 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
 
 
         Register_t(); // Sets register to invalid.
-        Register_t(RegisterClass_t iRegisterClass, int16_t iRegisterIndex, int16_t iRegisterSize);
+        Register_t(RegisterClass_t iRegisterClass, int16_t iRegisterIndex, int16_t iRegisterSizeInBits);
 
         const char* ToString() const;
 
