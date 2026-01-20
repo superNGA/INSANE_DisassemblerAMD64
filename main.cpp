@@ -41,22 +41,14 @@ int main(void)
     std::cout << "Disassembler Initialized!\n";
 
     
-    std::vector<InsaneDASM64::Byte> vecInput = { 0xC5, 0xFC, 0x77 };
+    std::vector<InsaneDASM64::Byte> vecInput = { 0x48, 0x89, 0x74, 0x24, 0x20 };
     // Disassemble...
     {
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success;
 
         std::vector<Instruction_t> vecInstOutput;
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecVEXTestCase_005, vecOutput);
-        // iErrorCode = InsaneDASM64::Decode(vecInput, vecInstOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecVEXTestCase_001, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(vecInput, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_001, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecOneByteOpCodes_002, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecTwoByteOpCodes_001, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_38, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecThreeByteOpCodes_3A, vecOutput);
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(InsaneDASM64::TestCases::g_vecBubbleSortAsm, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecTF2ClientDLL, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecOneByteOpCodes_001, vecOutput);
         printf("Decoding done [ %zu ] instructions detected\n", vecInstOutput.size());
 
         PrintOutput(vecOutput);

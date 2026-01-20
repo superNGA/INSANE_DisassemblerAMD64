@@ -45,7 +45,13 @@ namespace INSANE_DASM64_NAMESPACE
         IDASMErrorCode_InvalidImmediateSize,
         IDASMErrorCode_InvalidVEXPrefix,
         IDASMErrorCode_InvalidVEXInst,
-        IDASMErrorCode_VEXDisassemblyFailed,
+        IDASMErrorCode_VEXDisassemblyFailed, // Delete this.
+
+        // Disassembler specific.
+        IDASMErrorCode_InstComponentsNotFound,
+        IDASMErrorCode_OpCodeNotInitialized,
+
+
         IDASMErrorCode_Count
     };
 

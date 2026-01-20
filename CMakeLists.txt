@@ -68,6 +68,15 @@ ${ASM_SOURCES}
 "src/Defs/Standard/SIB_t.cpp"
 "src/Defs/Standard/OpCodeDesc_t.cpp"
 
+# src/Decoder
+"src/Decoder/Decoder.h"
+"src/Decoder/Decoder.cpp"
+
+# src/Disassembler
+"src/Disassembler/Disassembler.h"
+"src/Disassembler/Disassembler.cpp"
+"src/Disassembler/InstSummary_t.h"
+
 # src/Defs/VEX
 "src/Defs/VEX/VEXInst_t.cpp"
 "src/Defs/VEX/VEXPrefix_t.cpp"

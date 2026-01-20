@@ -128,11 +128,11 @@ uint64_t VEX::VEXInst_t::SIB_Base () const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-uint64_t VEX::VEXInst_t::GetOperandSizeInBytes() const
+int VEX::VEXInst_t::GetOperandSizeInBytes() const
 {
     if(m_vexPrefix.m_iPrefix == SpecialChars::VEX_PREFIX_C4)
         if(m_vexPrefix.W() != false)
-            return 8llu;
+            return 8;
 
-    return 4llu;
+    return 4;
 }

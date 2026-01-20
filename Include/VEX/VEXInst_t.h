@@ -38,7 +38,7 @@ namespace INSANE_DASM64_NAMESPACE::VEX_NAMESPACE
         uint64_t SIB_Index() const;
         uint64_t SIB_Base () const;
 
-        uint64_t GetOperandSizeInBytes() const;
+        int GetOperandSizeInBytes() const;
 
 
         VEXPrefix_t              m_vexPrefix;
