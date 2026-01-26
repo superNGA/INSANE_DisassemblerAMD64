@@ -9,6 +9,7 @@
 #include "Tables.h"
 #include "assert.h"
 #include "../../Include/Standard/OpCodeDesc_t.h"
+#include <cstring>
 
 
 // NOTE : Mind this.

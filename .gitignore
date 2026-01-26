@@ -1,6 +1,7 @@
 out/
 .vs/
 CMakePresets.json
+.Token
 
 # Ignoring Table Generators unnecessary stuff.
 Tools/TableGenerator/*

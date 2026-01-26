@@ -29,14 +29,9 @@
 
 #ifdef ENABLE_CONSOLE_LOGS
 
-#define INITIALIZE_CONSOLE()    EXPAND(CONS_INITIALIZE())
-#define UNINITIALIZE_CONSOLE()  EXPAND(CONS_UNINITIALIZE())
-#define WIN_LOG(msg, ...)       EXPAND(CONS_FASTLOG(FG_GREEN, msg, ##__VA_ARGS__))
-#define FAIL_LOG(msg, ...)      EXPAND(CONS_FASTLOG(FG_RED,   msg, ##__VA_ARGS__))
-#define LOG(msg, ...)           EXPAND(CONS_FASTLOG(FG_CYAN,  msg, ##__VA_ARGS__))
-#define LOG_VEC4(Vector)        EXPAND(CONS_FASTLOG_FLOAT_ARR_CUSTOM(Vector, sizeof(float) * 4))
-#define LOG_VEC3(Vector)        EXPAND(CONS_FASTLOG_FLOAT_ARR_CUSTOM(Vector, sizeof(float) * 3))
-#define LOG_VEC2(Vector)        EXPAND(CONS_FASTLOG_FLOAT_ARR_CUSTOM(Vector, sizeof(float) * 2))
+#define WIN_LOG(msg, ...)       EXPAND(Console::PrintToConsole(__func__, Console::FG_BRIGHT_GREEN, "", msg, ##__VA_ARGS__))
+#define FAIL_LOG(msg, ...)      EXPAND(Console::PrintToConsole(__func__, Console::FG_BRIGHT_RED,   "", msg, ##__VA_ARGS__))
+#define LOG(msg, ...)           EXPAND(Console::PrintToConsole(__func__, Console::FG_BRIGHT_CYAN,  "", msg, ##__VA_ARGS__))
 
 
 #else 
@@ -44,10 +39,5 @@
 #define WIN_LOG(msg, ...)       (void)0
 #define FAIL_LOG(msg, ...)      (void)0
 #define LOG(msg, ...)           (void)0
-#define INITIALIZE_CONSOLE()    (void)0
-#define UNINITIALIZE_CONSOLE()  (void)0
-#define LOG_VEC4(Vector)        (void)0
-#define LOG_VEC3(Vector)        (void)0
-#define LOG_VEC2(Vector)        (void)0
 
 #endif // _DEBUG

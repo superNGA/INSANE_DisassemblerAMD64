@@ -42,7 +42,7 @@ void InsaneDASM64::DASMInst_t::PushLiteralOperand(uint64_t iLiteralOperand)
 {
     assert(m_nOperands >= 0 && m_nOperands < Rules::MAX_OPERANDS && "Too many operands");
 
-    sprintf_s(&m_szOperands[m_nOperands][0], sizeof(m_szOperands[m_nOperands]), "0x" PRIX64, iLiteralOperand);
+    sprintf(&m_szOperands[m_nOperands][0], "0x" PRIX64, iLiteralOperand);
 
     m_nOperands++;
 }
@@ -54,7 +54,7 @@ void InsaneDASM64::DASMInst_t::PushLiteralOperand(uint32_t iLiteralOperand)
 {
     assert(m_nOperands >= 0 && m_nOperands < Rules::MAX_OPERANDS && "Too many operands");
 
-    sprintf_s(&m_szOperands[m_nOperands][0], sizeof(m_szOperands[m_nOperands]), "0x" PRIX32, iLiteralOperand);
+    sprintf(&m_szOperands[m_nOperands][0], "0x" PRIX32, iLiteralOperand);
 
     m_nOperands++;
 }
@@ -66,7 +66,7 @@ void InsaneDASM64::DASMInst_t::PushLiteralOperand(uint16_t iLiteralOperand)
 {
     assert(m_nOperands >= 0 && m_nOperands < Rules::MAX_OPERANDS && "Too many operands");
 
-    sprintf_s(&m_szOperands[m_nOperands][0], sizeof(m_szOperands[m_nOperands]), "0x" PRIX16, iLiteralOperand);
+    sprintf(&m_szOperands[m_nOperands][0], "0x" PRIX16, iLiteralOperand);
 
     m_nOperands++;
 }
@@ -78,7 +78,7 @@ void InsaneDASM64::DASMInst_t::PushLiteralOperand(uint8_t iLiteralOperand)
 {
     assert(m_nOperands >= 0 && m_nOperands < Rules::MAX_OPERANDS && "Too many operands");
 
-    sprintf_s(&m_szOperands[m_nOperands][0], sizeof(m_szOperands[m_nOperands]), "0x" PRIX8, iLiteralOperand);
+    sprintf(&m_szOperands[m_nOperands][0], "0x" PRIX8, iLiteralOperand);
 
     m_nOperands++;
 }
@@ -180,7 +180,7 @@ void InsaneDASM64::DASMInst_t::PushBackOperand(const char* szOperand)
 {
     assert(m_nOperands >= 0 && m_nOperands < Rules::MAX_OPERANDS && "Too many operands");
 
-    sprintf_s(&m_szOperands[m_nOperands][0], sizeof(m_szOperands[m_nOperands]), "%s", szOperand);
+    sprintf(&m_szOperands[m_nOperands][0], "%s", szOperand);
 
     m_nOperands++;
 }

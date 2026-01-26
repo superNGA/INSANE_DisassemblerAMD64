@@ -270,7 +270,7 @@ static IDASMErrorCode_t InsaneDASM64::DisassembleLegacyEncoding(const Legacy::Le
 
 
     // Store Mnemonic
-    strcpy_s(pOutput->m_szMnemonic, sizeof(pOutput->m_szMnemonic), pOpCodeDesc->m_szName);
+    strcpy(pOutput->m_szMnemonic, pOpCodeDesc->m_szName);
     // printf("%s ", pOpCodeDesc->m_szName);
 
 
@@ -641,7 +641,7 @@ static IDASMErrorCode_t InsaneDASM64::DisassembleVEXEncoding(const VEX::VEXInst_
 
 
     // Store Mnemoic name.
-    strcpy_s(pOutput->m_szMnemonic, sizeof(pOutput->m_szMnemonic), pOpCodeDesc->m_szName);
+    strcpy(pOutput->m_szMnemonic, pOpCodeDesc->m_szName);
 
 
     // Iterate all operands for this opcode description and turm em to string.
@@ -999,7 +999,7 @@ const char* InsaneDASM64::GetErrorMessage(IDASMErrorCode_t iErrorCode)
     }
 
     static char s_invalidCodeBuffer[128] = "";
-    sprintf_s(s_invalidCodeBuffer, "[ Insane Disassembler AMD64 ] Invalid Error Code { %d }", iErrorCode);
+    sprintf(s_invalidCodeBuffer, "[ Insane Disassembler AMD64 ] Invalid Error Code { %d }", iErrorCode);
     return s_invalidCodeBuffer;
 }
 

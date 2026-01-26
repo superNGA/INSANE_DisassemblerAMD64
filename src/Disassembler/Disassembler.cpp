@@ -178,7 +178,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
 
 
     // Copy the name upfront.
-    strcpy_s(pOutput->m_szMnemonic, sizeof(pOutput->m_szMnemonic), pOpCode->m_pOpCodeDesc->m_szName);
+    strcpy(pOutput->m_szMnemonic, pOpCode->m_pOpCodeDesc->m_szName);
 
 
     // We shall journey through the operands all, refining them such that common man may readeth and know their truth.

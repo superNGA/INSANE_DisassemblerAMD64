@@ -43,12 +43,12 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
 
 
         // Max varients that can be stored in each of the varient types...
-        static const size_t MAX_REG_VARIENTS           = 8llu;
-        static const size_t MAX_MOD_VARIENTS           = 4llu;
-        static const size_t MAX_RM_VARIENTS            = 8llu;
-        static const size_t MAX_LEGACY_PREFIX_VARIENTS = 12llu;
+        static const std::size_t MAX_REG_VARIENTS           = 8llu;
+        static const std::size_t MAX_MOD_VARIENTS           = 4llu;
+        static const std::size_t MAX_RM_VARIENTS            = 8llu;
+        static const std::size_t MAX_LEGACY_PREFIX_VARIENTS = 12llu;
 
-        size_t GetMaxVarients(VarientType_t iVarientType);
+        std::size_t GetMaxVarients(VarientType_t iVarientType);
 
 
         void Init(

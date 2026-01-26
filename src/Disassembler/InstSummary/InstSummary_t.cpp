@@ -75,3 +75,27 @@ void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacy
 
     m_iREX_B = pLegacyInst->m_bHasREX == false ? 0llu : Maths::SafeAnd(pLegacyInst->m_iREX, Legacy::Masks::REX_B);
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
+{
+    m_pOpCode       = &pVEXInst->m_opcode; // NOTE : This is just a standard::opCode_t object.
+    m_pModRM        = &pVEXInst->m_modrm; m_bHasModRM = true;
+    m_pSIB          = &pVEXInst->m_SIB;   m_bHasSIB   = pVEXInst->m_bHasSIB;
+    m_pVEXPrefix    = &pVEXInst->m_vexPrefix;
+    m_pDisplacement = &pVEXInst->m_disp;
+    m_pImmediate    = &pVEXInst->m_immediate;
+
+    m_iModRM_Mod = pVEXInst->ModRM_Mod(); m_iModRM_Reg = pVEXInst->ModRM_Reg(); m_iModRM_RM = pVEXInst->ModRM_RM();
+    m_iSIB_Scale = pVEXInst->SIB_Scale(); m_iSIB_Index = pVEXInst->SIB_Index(); m_iSIB_Base = pVEXInst->SIB_Base();
+
+    m_iOperandSize = pVEXInst->GetOperandSizeInBytes();
+    m_iAddressSize = 8llu;
+
+    m_iImmRegisterIndex = pVEXInst->m_immediate.ByteCount() == 1 ? pVEXInst->GetImmRegister() : 0llu;
+
+    m_iREX_B = pVEXInst->m_vexPrefix.B();
+}
+

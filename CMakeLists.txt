@@ -75,7 +75,8 @@ ${ASM_SOURCES}
 # src/Disassembler
 "src/Disassembler/Disassembler.h"
 "src/Disassembler/Disassembler.cpp"
-"src/Disassembler/InstSummary_t.h"
+"src/Disassembler/InstSummary/InstSummary_t.h"
+"src/Disassembler/InstSummary/InstSummary_t.cpp"
 
 # src/Defs/VEX
 "src/Defs/VEX/VEXInst_t.cpp"

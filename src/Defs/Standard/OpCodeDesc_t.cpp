@@ -9,6 +9,7 @@
 //          split method.
 //-------------------------------------------------------------------------
 #include "../../../Include/Standard/OpCodeDesc_t.h"
+#include <cstdlib>
 #include <string.h>
 #include <assert.h>
 #include "../../Util/Terminal/Terminal.h"
@@ -33,7 +34,7 @@ void InsaneDASM64::Standard::OpCodeDesc_t::Reset()
     m_iVarientType   = VarientKey_None;
     m_nVarients      = 0;
     m_pVarients      = nullptr;
-    strcpy_s(m_szName, sizeof(m_szName), Rules::OPCODE_NAME_SENTINAL);
+    strcpy(m_szName, Rules::OPCODE_NAME_SENTINAL);
     m_bIsValidCode   = false;
     m_bIsEscapeCode  = false;
     m_bModrmRequired = false;
@@ -48,7 +49,7 @@ void InsaneDASM64::Standard::OpCodeDesc_t::Init(
     const char* szName, bool bValidOpcd, bool bEscapeOpcd, bool bModrmRequired, Byte iByte, 
     int nOperands, Operand_t operand1, Operand_t operand2, Operand_t operand3, Operand_t operand4)
 {
-    strcpy_s(m_szName, sizeof(m_szName), szName);
+    strcpy(m_szName, szName);
     m_bIsValidCode   = bValidOpcd;
     m_bIsEscapeCode  = bEscapeOpcd;
     m_bModrmRequired = bModrmRequired;
