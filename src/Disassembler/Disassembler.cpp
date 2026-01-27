@@ -194,14 +194,6 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
     } // for(uint64_t iOperandIndex = 0llu; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
 
 
-    printf("%s ", pOutput->m_szMnemonic);
-
-    for(int i = 0; i < pOutput->m_nOperands; i++)
-        printf("%s ", pOutput->m_szOperands[i]);
-
-    printf("\n");
-
-
     return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
 
@@ -462,10 +454,11 @@ static inline void InsaneDASM64::HandleOperandMode_Z(DASMInst_t* pOutput, InstSu
     // REX.B bit extends the "Lower 3 bits of the opcode". How bizzare is that?
     uint64_t iRegisterIndex = Maths::SafeOr(Maths::SafeAnd(pInst->m_pOpCode->m_pOpCodeDesc->m_iByte, 0b111), pInst->m_iREX_B << 3llu);
     
-    const char* szRegisterName = Standard::Register_t(Standard::Register_t::RegisterClass_GPR, iRegisterIndex, 
-            CEOperandTypeToSizeInBytes(iCEOperandType, pInst->m_iOperandSize)).ToString();
 
-    pOutput->PushBackOperand(szRegisterName);
+    pOutput->PushBackOperand(Standard::Register_t(
+                Standard::Register_t::RegisterClass_GPR, 
+                iRegisterIndex, 
+                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
 }
 
 
