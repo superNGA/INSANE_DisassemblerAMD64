@@ -36,6 +36,8 @@ namespace INSANE_DASM64_NAMESPACE
         void Initialize(const Legacy::LegacyInst_t* pLeagcyInst);
         void Initialize(const VEX::VEXInst_t*       pVEXInst);
 
+        bool IsValid() const;
+
 
 
         const Standard::OpCode_t*       m_pOpCode           = nullptr;

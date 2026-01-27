@@ -11,6 +11,9 @@
 // For testing purposes.
 #include "src/Util/TestCases/TestCases.h"
 
+// Delete this.
+#include "src/Math/SafeBitWiseOps.h"
+
 
 using namespace InsaneDASM64;
 
@@ -25,6 +28,10 @@ static void PrintOutput(std::vector<DASMInst_t>& vecInst);
 ///////////////////////////////////////////////////////////////////////////
 int main(void)
 {
+    std::cout << Maths::SafeOr(0b1100, 0b11) << std::endl;
+    std::cout << Maths::SafeAnd(0b1100, 0b1111) << std::endl;
+
+
     std::vector<DASMInst_t> vecOutput;
     vecOutput.clear();
 
@@ -47,9 +54,8 @@ int main(void)
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success;
 
         std::vector<Instruction_t> vecInstOutput;
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecTF2ClientDLL, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecOneByteOpCodes_001, vecOutput);
-        printf("Decoding done [ %zu ] instructions detected\n", vecInstOutput.size());
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecOneByteOpCodes_002, vecOutput);
+        printf("Decoding done [ %zu ] instructions detected\n", vecOutput.size());
 
         PrintOutput(vecOutput);
         PrintInst(vecInstOutput);
@@ -68,7 +74,7 @@ int main(void)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static void PrintInst(std::vector<Instruction_t>& vecInst)
+void PrintInst(std::vector<Instruction_t>& vecInst)
 {
     for(Instruction_t& inst : vecInst)
     {

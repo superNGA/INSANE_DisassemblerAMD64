@@ -44,7 +44,7 @@ uint64_t VEX::VEXInst_t::GetImmRegister() const
     if(m_immediate.ByteCount() != 1)
         return UINT64_MAX;
 
-    return  Maths::SafeAnd(m_immediate.m_immediateByte[0], Masks::IMM_REGISTER) >> 4llu;
+    return Maths::SafeAnd(m_immediate.m_immediateByte[0], Masks::IMM_REGISTER) >> 4llu;
 }
 
 

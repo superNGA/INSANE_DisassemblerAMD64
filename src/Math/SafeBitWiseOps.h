@@ -26,9 +26,21 @@ namespace INSANE_DASM64_NAMESPACE
 
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
-        extern "C" uint64_t SafeBitWiseOps_And(Bits64_t left, Bits64_t right);
-        extern "C" uint64_t SafeBitWiseOps_Or (Bits64_t left, Bits64_t right);
+#if defined __WIN32
 
+        extern "C" uint64_t SafeBitWiseOps_And_Windows(Bits64_t left, Bits64_t right);
+        extern "C" uint64_t SafeBitWiseOps_Or_Windows (Bits64_t left, Bits64_t right);
+        #define SafeBitWiseOps_And SafeSafeBitWiseOps_And_Windows
+        #define SafeBitWiseOps_Or  SafeBitWiseOps_Or_Windows
+
+#elif defined __linux__
+
+        extern "C" uint64_t SafeBitWiseOps_And_Linux(Bits64_t left, Bits64_t right);
+        extern "C" uint64_t SafeBitWiseOps_Or_Linux (Bits64_t left, Bits64_t right);
+        #define SafeBitWiseOps_And SafeBitWiseOps_And_Linux
+        #define SafeBitWiseOps_Or  SafeBitWiseOps_Or_Linux
+
+#endif
 
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////

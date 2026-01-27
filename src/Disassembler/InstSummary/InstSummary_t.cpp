@@ -45,6 +45,11 @@ void InsaneDASM64::InstSummary_t::Clear()
     m_iSIB_Scale    = 0llu;
     m_iSIB_Index    = 0llu;
     m_iSIB_Base     = 0llu;
+
+    m_iOperandSize  = 0;
+    m_iAddressSize  = 0;
+    m_iImmRegisterIndex = 0llu;
+    m_iREX_B        = 0llu;
 }
 
 
@@ -65,7 +70,13 @@ void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacy
         m_iModRM_Reg = pLegacyInst->ModRM_Reg(); 
         m_iModRM_RM  = pLegacyInst->ModRM_RM();
     }
-    m_iSIB_Scale = pLegacyInst->SIB_Scale(); m_iSIB_Index = pLegacyInst->SIB_Index(); m_iSIB_Base = pLegacyInst->SIB_Base();
+
+    if(m_bHasSIB == true)
+    {
+        m_iSIB_Scale = pLegacyInst->SIB_Scale(); 
+        m_iSIB_Index = pLegacyInst->SIB_Index(); 
+        m_iSIB_Base  = pLegacyInst->SIB_Base();
+    }
 
     // Operand size & Address size for this instruction in bytes.
     m_iOperandSize = pLegacyInst->GetOperandSizeInBytes(false);
@@ -88,8 +99,16 @@ void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
     m_pDisplacement = &pVEXInst->m_disp;
     m_pImmediate    = &pVEXInst->m_immediate;
 
+
+    // All VEX encoded instructions must have a ModRM byte.
     m_iModRM_Mod = pVEXInst->ModRM_Mod(); m_iModRM_Reg = pVEXInst->ModRM_Reg(); m_iModRM_RM = pVEXInst->ModRM_RM();
-    m_iSIB_Scale = pVEXInst->SIB_Scale(); m_iSIB_Index = pVEXInst->SIB_Index(); m_iSIB_Base = pVEXInst->SIB_Base();
+
+    if(m_bHasSIB == true)
+    {
+        m_iSIB_Scale = pVEXInst->SIB_Scale(); 
+        m_iSIB_Index = pVEXInst->SIB_Index(); 
+        m_iSIB_Base  = pVEXInst->SIB_Base();
+    }
 
     m_iOperandSize = pVEXInst->GetOperandSizeInBytes();
     m_iAddressSize = 8llu;
@@ -99,3 +118,18 @@ void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
     m_iREX_B = pVEXInst->m_vexPrefix.B();
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool InsaneDASM64::InstSummary_t::IsValid() const
+{
+    // All encodings have these objects of these classes,
+    // so atleast the pointer to them must be initialized, even if the 
+    // instruction itself doesn't initialized those objects.
+    return 
+        m_pOpCode       != nullptr && 
+        m_pModRM        != nullptr && 
+        m_pSIB          != nullptr && 
+        m_pDisplacement != nullptr && 
+        m_pImmediate    != nullptr;
+}

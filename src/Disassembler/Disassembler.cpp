@@ -18,6 +18,7 @@
 #include "../../Include/Legacy/LegacyInst_t.h"
 #include "../../Include/VEX/VEXInst_t.h"
 #include "../../Include/Masks.h"
+#include "InstSummary/InstSummary_t.h"
 
 
 
@@ -26,38 +27,38 @@ using namespace InsaneDASM64;
 
 namespace InsaneDASM64
 {
-    static inline void HandleOperandMode_A  (DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate);
-    static inline void HandleOperandMode_BA (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_BB (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_BD (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_C  (DASMInst_t* pOutput, uint64_t iModRM_Reg);
-    static inline void HandleOperandMode_D  (DASMInst_t* pOutput, uint64_t iModRM_Reg);
-    static inline void HandleOperandMode_E  (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_ES (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_EST(DASMInst_t* pOutput, uint64_t iModRM_RM);
-    static inline void HandleOperandMode_F  (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_G  (DASMInst_t* pOutput, uint64_t iModRM_Reg, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize);
-    static inline void HandleOperandMode_H  (DASMInst_t* pOutput, uint64_t iModRM_RM, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize);
-    static inline void HandleOperandMode_I  (DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate);
-    static inline void HandleOperandMode_J  (DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate);
-    static inline void HandleOperandMode_M  (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_N  (DASMInst_t* pOutput, uint64_t iModRM_RM);
-    static inline void HandleOperandMode_O  (DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate);
-    static inline void HandleOperandMode_P  (DASMInst_t* pOutput, uint64_t iModRM_Reg);
-    static inline void HandleOperandMode_Q  (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_R  (DASMInst_t* pOutput, uint64_t iModRM_RM, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize);
-    static inline void HandleOperandMode_S  (DASMInst_t* pOutput, uint64_t iModRM_Reg);
-    static inline void HandleOperandMode_SC (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_T  (DASMInst_t* pOutput, uint64_t iModRM_Reg);
-    static inline void HandleOperandMode_U  (DASMInst_t* pOutput, uint64_t iModRM_RM, const VEX::VEXPrefix_t* pVEXPrefix);
-    static inline void HandleOperandMode_V  (DASMInst_t* pOutput, uint64_t iModRM_Reg, const VEX::VEXPrefix_t* pVEXPrefix);
-    static inline void HandleOperandMode_W  (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_X  (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_Y  (DASMInst_t* pOutput);
-    static inline void HandleOperandMode_Z  (DASMInst_t* pOutput, Byte iOpCodeByte, uint64_t iREX_B, Standard::CEOperandTypes_t iCEOpeandType, int iOperandSize);
-    static inline void HandleOperandMode_VG (DASMInst_t* pOutput, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize, const VEX::VEXPrefix_t* pVEXPrefix);
-    static inline void HandleOperandMode_VXY(DASMInst_t* pOutput, const VEX::VEXPrefix_t* pVEXPrefix);
-    static inline void HandleOperandMode_IXY(DASMInst_t* pOutput, uint64_t iImmRegisterIndex, const Standard::Immediate_t* pImmediate, const VEX::VEXPrefix_t* pVEXPrefix);
+    static inline void HandleOperandMode_A  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_BA (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_BB (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_BD (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_C  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_D  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_E  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_ES (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_EST(DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_F  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_G  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_H  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_I  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_J  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_M  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_N  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_O  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_P  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_Q  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_R  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_S  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_SC (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_T  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_U  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_V  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_W  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_X  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_Y  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_Z  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_VG (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_VXY(DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_IXY(DASMInst_t* pOutput, InstSummary_t* pInst);
 
 
     static int CEOperandTypeToSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes);
@@ -70,78 +71,18 @@ namespace InsaneDASM64
 ///////////////////////////////////////////////////////////////////////////
 IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_t* pOutput)
 {
-    // All important components of an instruction that we need to disassemble the instrution.
-    const Standard::OpCode_t*       pOpCode       = nullptr;
-    const Standard::ModRM_t*        pModRM        = nullptr; bool bHasModRM = false;
-    const Standard::SIB_t*          pSIB          = nullptr; bool bHasSIB   = false;
-    const VEX::VEXPrefix_t*         pVEXPrefix    = nullptr;
-    const Standard::Immediate_t*    pImmediate    = nullptr;
-    const Standard::Displacement_t* pDisplacement = nullptr;
-
-    // ModRM & SIB components, with bit extension.
-    uint64_t iModRM_Mod = 0llu, iModRM_Reg = 0llu, iModRM_RM = 0llu;
-    uint64_t iSIB_Scale = 0llu, iSIB_Index = 0llu, iSIB_Base = 0llu;
-
-    int iOperandSize = 0, iAddressSize = 0;
-
-    // Only for Operand types IXY
-    uint64_t iImmRegisterIndex = 0llu;
-
-    // Used for Operand Addressing Method Z.
-    uint64_t iREX_B = 0llu; 
-
+    // NOTE : Ran once for each instruction.
+    InstSummary_t inst;
 
     // Extracting all required components from instruction according to the instruction encoding type. 
     switch(pInst->m_iInstEncodingType)
     {
         case Instruction_t::InstEncodingType_Legacy:
-            {
-                const Legacy::LegacyInst_t* pLegacyInst = reinterpret_cast<const Legacy::LegacyInst_t*>(pInst->m_pInst);
-                pOpCode       = &pLegacyInst->m_opCode; // NOTE : pLegacyInst->m_opCode is of type LegacyOpCode_t which inherits from opCode_t. They are pretty much the same.
-                pModRM        = &pLegacyInst->m_modrm; bHasModRM = pLegacyInst->m_bHasModRM;
-                pSIB          = &pLegacyInst->m_SIB;   bHasSIB   = pLegacyInst->m_bHasSIB;
-                pVEXPrefix    = nullptr;
-                pDisplacement = &pLegacyInst->m_displacement;
-                pImmediate    = &pLegacyInst->m_immediate;
-
-                if(bHasModRM == true)
-                {
-                    iModRM_Mod = pLegacyInst->ModRM_Mod(); 
-                    iModRM_Reg = pLegacyInst->ModRM_Reg(); 
-                    iModRM_RM  = pLegacyInst->ModRM_RM();
-                }
-                iSIB_Scale = pLegacyInst->SIB_Scale(); iSIB_Index = pLegacyInst->SIB_Index(); iSIB_Base = pLegacyInst->SIB_Base();
-
-                // Operand size & Address size for this instruction in bytes.
-                iOperandSize = pLegacyInst->GetOperandSizeInBytes(false);
-                iAddressSize = pLegacyInst->GetAddressSizeInBytes();
-
-                iImmRegisterIndex = 0llu;
-
-                iREX_B = pLegacyInst->m_bHasREX == false ? 0llu : Maths::SafeAnd(pLegacyInst->m_iREX, Legacy::Masks::REX_B);
-            }
+            inst.Initialize(reinterpret_cast<const Legacy::LegacyInst_t*>(pInst->m_pInst));
             break;
 
         case Instruction_t::InstEncodingType_VEX:
-            {
-                const VEX::VEXInst_t* pVEXInst = reinterpret_cast<const VEX::VEXInst_t*>(pInst->m_pInst);
-                pOpCode       = &pVEXInst->m_opcode; // NOTE : This is just a standard::opCode_t object.
-                pModRM        = &pVEXInst->m_modrm; bHasModRM = true;
-                pSIB          = &pVEXInst->m_SIB;   bHasSIB   = pVEXInst->m_bHasSIB;
-                pVEXPrefix    = &pVEXInst->m_vexPrefix;
-                pDisplacement = &pVEXInst->m_disp;
-                pImmediate    = &pVEXInst->m_immediate;
-
-                iModRM_Mod = pVEXInst->ModRM_Mod(); iModRM_Reg = pVEXInst->ModRM_Reg(); iModRM_RM = pVEXInst->ModRM_RM();
-                iSIB_Scale = pVEXInst->SIB_Scale(); iSIB_Index = pVEXInst->SIB_Index(); iSIB_Base = pVEXInst->SIB_Base();
-
-                iOperandSize = pVEXInst->GetOperandSizeInBytes();
-                iAddressSize = 8llu;
-
-                iImmRegisterIndex = pVEXInst->m_immediate.ByteCount() == 1 ? pVEXInst->GetImmRegister() : 0llu;
-
-                iREX_B = pVEXInst->m_vexPrefix.B();
-            }
+            inst.Initialize(reinterpret_cast<const VEX::VEXInst_t*>(pInst->m_pInst));
             break;
 
         case Instruction_t::InstEncodingType_EVEX:
@@ -154,31 +95,31 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
 
 
     // Did we successfully acquire all required objects??
-    bool bInstComponentAcquired = pOpCode != nullptr && pModRM != nullptr && pSIB != nullptr &&
-        pDisplacement != nullptr && pImmediate != nullptr;
+    bool bInstComponentAcquired = inst.IsValid();
 
     if(bInstComponentAcquired == false)
     {
-        FAIL_LOG("Failed to acquire necessary instruction compnents.");
+        FAIL_LOG("Failed to acquire necessary instruction components.");
         assert(bInstComponentAcquired == true && "Failed to acquire instruction components.");
         return IDASMErrorCode_t::IDASMErrorCode_InstComponentsNotFound;
     }
 
 
-    const Standard::OpCodeDesc_t* pOpCodeDesc = pOpCode->m_pOpCodeDesc;
+    // Description to the final opcode varient.
+    const Standard::OpCodeDesc_t* pOpCodeDesc = inst.m_pOpCode->m_pOpCodeDesc;
 
 
     // OpCode initialized completely.
     if(pOpCodeDesc == nullptr)
     {
         FAIL_LOG("OpCode's final varient not initialized.");
-        assert(pOpCode->m_pOpCodeDesc != nullptr && "OpCode's final varient not initialized.");
+        assert(pOpCodeDesc != nullptr && "OpCode's final varient not initialized.");
         return IDASMErrorCode_t::IDASMErrorCode_OpCodeNotInitialized;
     }
 
 
     // Copy the name upfront.
-    strcpy(pOutput->m_szMnemonic, pOpCode->m_pOpCodeDesc->m_szName);
+    strcpy(pOutput->m_szMnemonic, pOpCodeDesc->m_szName);
 
 
     // We shall journey through the operands all, refining them such that common man may readeth and know their truth.
@@ -193,41 +134,41 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
 
         switch (pOperand->m_iOperandCatagory) 
         {
-            case Standard::Operand_t::OperandCatagory_Literal:
+            case Standard::Operand_t::OperandCatagory_Legacy:
                 switch (iOperandMode) 
                 {
-                    case Standard::OperandMode_A:   HandleOperandMode_A  (pOutput, pImmediate); break;
-                    case Standard::OperandMode_BA:  HandleOperandMode_BA (pOutput); break;
-                    case Standard::OperandMode_BB:  HandleOperandMode_BB (pOutput); break;
-                    case Standard::OperandMode_BD:  HandleOperandMode_BD (pOutput); break;
-                    case Standard::OperandMode_C:   HandleOperandMode_C  (pOutput, iModRM_Reg); break;
-                    case Standard::OperandMode_D:   HandleOperandMode_D  (pOutput, iModRM_Reg); break;
-                    case Standard::OperandMode_E:   HandleOperandMode_E  (pOutput); break;
-                    case Standard::OperandMode_ES:  HandleOperandMode_ES (pOutput); break;
-                    case Standard::OperandMode_EST: HandleOperandMode_EST(pOutput, iModRM_RM); break;
-                    case Standard::OperandMode_F:   HandleOperandMode_F  (pOutput); break;
-                    case Standard::OperandMode_G:   HandleOperandMode_G  (pOutput, iModRM_Reg, iCEOperandType, iOperandSize); break;
-                    case Standard::OperandMode_H:   HandleOperandMode_H  (pOutput, iModRM_RM,  iCEOperandType, iOperandSize); break;
-                    case Standard::OperandMode_I:   HandleOperandMode_I  (pOutput, pImmediate); break;
-                    case Standard::OperandMode_J:   HandleOperandMode_J  (pOutput, pImmediate); break;
-                    case Standard::OperandMode_M:   HandleOperandMode_M  (pOutput); break;
-                    case Standard::OperandMode_N:   HandleOperandMode_N  (pOutput, iModRM_RM); break;
-                    case Standard::OperandMode_O:   HandleOperandMode_O  (pOutput, pImmediate); break;
-                    case Standard::OperandMode_P:   HandleOperandMode_P  (pOutput, iModRM_Reg); break;
-                    case Standard::OperandMode_Q:   HandleOperandMode_Q  (pOutput); break;
-                    case Standard::OperandMode_R:   HandleOperandMode_R  (pOutput, iModRM_RM, iCEOperandType, iOperandSize); break;
-                    case Standard::OperandMode_S:   HandleOperandMode_S  (pOutput, iModRM_Reg); break;
-                    case Standard::OperandMode_SC:  HandleOperandMode_SC (pOutput); break;
-                    case Standard::OperandMode_T:   HandleOperandMode_T  (pOutput, iModRM_Reg); break;
-                    case Standard::OperandMode_U:   HandleOperandMode_U  (pOutput, iModRM_RM, pVEXPrefix); break;
-                    case Standard::OperandMode_V:   HandleOperandMode_V  (pOutput, iModRM_Reg, pVEXPrefix); break;
-                    case Standard::OperandMode_W:   HandleOperandMode_W  (pOutput); break;
-                    case Standard::OperandMode_X:   HandleOperandMode_X  (pOutput); break;
-                    case Standard::OperandMode_Y:   HandleOperandMode_Y  (pOutput); break;
-                    case Standard::OperandMode_Z:   HandleOperandMode_Z  (pOutput, pOpCodeDesc->m_iByte, iREX_B, iCEOperandType, iOperandSize); break;
-                    case Standard::OperandMode_VG:  HandleOperandMode_VG (pOutput, iCEOperandType, iOperandSize, pVEXPrefix); break;
-                    case Standard::OperandMode_VXY: HandleOperandMode_VXY(pOutput, pVEXPrefix); break;
-                    case Standard::OperandMode_IXY: HandleOperandMode_IXY(pOutput, iImmRegisterIndex, pImmediate, pVEXPrefix); break;
+                    case Standard::OperandMode_A:   HandleOperandMode_A  (pOutput, &inst); break;
+                    case Standard::OperandMode_BA:  HandleOperandMode_BA (pOutput, &inst); break;
+                    case Standard::OperandMode_BB:  HandleOperandMode_BB (pOutput, &inst); break;
+                    case Standard::OperandMode_BD:  HandleOperandMode_BD (pOutput, &inst); break;
+                    case Standard::OperandMode_C:   HandleOperandMode_C  (pOutput, &inst); break;
+                    case Standard::OperandMode_D:   HandleOperandMode_D  (pOutput, &inst); break;
+                    case Standard::OperandMode_E:   HandleOperandMode_E  (pOutput, &inst); break;
+                    case Standard::OperandMode_ES:  HandleOperandMode_ES (pOutput, &inst); break;
+                    case Standard::OperandMode_EST: HandleOperandMode_EST(pOutput, &inst); break;
+                    case Standard::OperandMode_F:   HandleOperandMode_F  (pOutput, &inst); break;
+                    case Standard::OperandMode_G:   HandleOperandMode_G  (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_H:   HandleOperandMode_H  (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_I:   HandleOperandMode_I  (pOutput, &inst); break;
+                    case Standard::OperandMode_J:   HandleOperandMode_J  (pOutput, &inst); break;
+                    case Standard::OperandMode_M:   HandleOperandMode_M  (pOutput, &inst); break;
+                    case Standard::OperandMode_N:   HandleOperandMode_N  (pOutput, &inst); break;
+                    case Standard::OperandMode_O:   HandleOperandMode_O  (pOutput, &inst); break;
+                    case Standard::OperandMode_P:   HandleOperandMode_P  (pOutput, &inst); break;
+                    case Standard::OperandMode_Q:   HandleOperandMode_Q  (pOutput, &inst); break;
+                    case Standard::OperandMode_R:   HandleOperandMode_R  (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_S:   HandleOperandMode_S  (pOutput, &inst); break;
+                    case Standard::OperandMode_SC:  HandleOperandMode_SC (pOutput, &inst); break;
+                    case Standard::OperandMode_T:   HandleOperandMode_T  (pOutput, &inst); break;
+                    case Standard::OperandMode_U:   HandleOperandMode_U  (pOutput, &inst); break;
+                    case Standard::OperandMode_V:   HandleOperandMode_V  (pOutput, &inst); break;
+                    case Standard::OperandMode_W:   HandleOperandMode_W  (pOutput, &inst); break;
+                    case Standard::OperandMode_X:   HandleOperandMode_X  (pOutput, &inst); break;
+                    case Standard::OperandMode_Y:   HandleOperandMode_Y  (pOutput, &inst); break;
+                    case Standard::OperandMode_Z:   HandleOperandMode_Z  (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_VG:  HandleOperandMode_VG (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_VXY: HandleOperandMode_VXY(pOutput, &inst); break;
+                    case Standard::OperandMode_IXY: HandleOperandMode_IXY(pOutput, &inst); break;
 
                     default:
                         FAIL_LOG("Invalid Operand Addressing Mode!");
@@ -240,7 +181,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
                 pOutput->PushBackOperand(pOperand->m_iOperandRegister.ToString());
                 break;
 
-            case Standard::Operand_t::OperandCatagory_Legacy:
+            case Standard::Operand_t::OperandCatagory_Literal:
                 pOutput->PushLiteralOperand(pOperand->m_iOperandLiteral);
                 break;
 
@@ -253,21 +194,29 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
     } // for(uint64_t iOperandIndex = 0llu; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
 
 
+    printf("%s ", pOutput->m_szMnemonic);
+
+    for(int i = 0; i < pOutput->m_nOperands; i++)
+        printf("%s ", pOutput->m_szOperands[i]);
+
+    printf("\n");
+
+
     return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_A(DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate)
+static inline void InsaneDASM64::HandleOperandMode_A(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    pOutput->PushLiteralFromString(pImmediate->m_immediateByte, pImmediate->ByteCount(), true);
+    pOutput->PushLiteralFromString(pInst->m_pImmediate->m_immediateByte, pInst->m_pImmediate->ByteCount(), true);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_BA(DASMInst_t* pOutput)
+static inline void InsaneDASM64::HandleOperandMode_BA(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : Memory addressed by DS:EAX, or by rAX in 64-bit mode (only 0F01C8 MONITOR).
     return;
@@ -276,7 +225,7 @@ static inline void InsaneDASM64::HandleOperandMode_BA(DASMInst_t* pOutput)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_BB(DASMInst_t* pOutput)
+static inline void InsaneDASM64::HandleOperandMode_BB(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : Memory addressed by DS:eBX+AL, or by rBX+AL in 64-bit mode (only XLAT 0xD7).
     return;
@@ -285,7 +234,7 @@ static inline void InsaneDASM64::HandleOperandMode_BB(DASMInst_t* pOutput)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_BD(DASMInst_t* pOutput)
+static inline void InsaneDASM64::HandleOperandMode_BD(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : Memory addressed by DS:eDI or by RDI (only 0FF7 MASKMOVQ and 660FF7 MASKMOVDQU).
     return;
@@ -294,37 +243,39 @@ static inline void InsaneDASM64::HandleOperandMode_BD(DASMInst_t* pOutput)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_C(DASMInst_t* pOutput, uint64_t iModRM_Reg)
+static inline void InsaneDASM64::HandleOperandMode_C(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Control, iModRM_Reg, 0).ToString());
+    assert(pInst->m_bHasModRM == true && "Instruction doesn't have a ModRM byte but has operand addressing mode C");
+
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Control, pInst->m_iModRM_Reg, 0).ToString());
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_D(DASMInst_t* pOutput, uint64_t iModRM_Reg)
+static inline void InsaneDASM64::HandleOperandMode_D(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Control, iModRM_Reg, 0).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Debug, pInst->m_iModRM_Reg, 0).ToString());
 }
 
-static inline void InsaneDASM64::HandleOperandMode_E(DASMInst_t* pOutput) { return; }
-static inline void InsaneDASM64::HandleOperandMode_ES(DASMInst_t* pOutput) { return; }
+static inline void InsaneDASM64::HandleOperandMode_E(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
+static inline void InsaneDASM64::HandleOperandMode_ES(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_EST(DASMInst_t* pOutput, uint64_t iModRM_RM)
+static inline void InsaneDASM64::HandleOperandMode_EST(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : (Implies original E). A ModR/M byte follows the opcode and specifies the x87 FPU stack register.
 
     // Register width is constant for all x87 FPU stack registers. so size doesn't matter here.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_FPU, iModRM_RM, 64).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_FPU, pInst->m_iModRM_RM, 64).ToString());
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_F(DASMInst_t* pOutput)
+static inline void InsaneDASM64::HandleOperandMode_F(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : rFLAGS register.
     return;
@@ -333,93 +284,105 @@ static inline void InsaneDASM64::HandleOperandMode_F(DASMInst_t* pOutput)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_G(DASMInst_t* pOutput, uint64_t iModRM_Reg, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize)
+static inline void InsaneDASM64::HandleOperandMode_G(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : The reg field of the ModR/M byte selects a general register.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_GPR, iModRM_Reg, CEOperandTypeToSizeInBits(iCEOperandType, iOperandSize)).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(
+                Standard::Register_t::RegisterClass_GPR, 
+                pInst->m_iModRM_Reg, 
+                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_H(DASMInst_t* pOutput, uint64_t iModRM_RM, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize)
+static inline void InsaneDASM64::HandleOperandMode_H(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : The r/m field of the ModR/M byte always selects a general register, regardless of the mod field.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_GPR, iModRM_RM, CEOperandTypeToSizeInBits(iCEOperandType, iOperandSize)).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(
+                Standard::Register_t::RegisterClass_GPR, 
+                pInst->m_iModRM_RM,
+                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_I(DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate)
+static inline void InsaneDASM64::HandleOperandMode_I(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : Immediate data. The operand value is encoded in subsequent bytes of the instruction.
-    pOutput->PushLiteralFromString(pImmediate->m_immediateByte, pImmediate->ByteCount(), true);
+    pOutput->PushLiteralFromString(pInst->m_pImmediate->m_immediateByte, pInst->m_pImmediate->ByteCount(), true);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_J(DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate)
+static inline void InsaneDASM64::HandleOperandMode_J(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The instruction contains a relative offset to be added to the instruction pointer register.
-    pOutput->PushLiteralFromString(pImmediate->m_immediateByte, pImmediate->ByteCount(), true);
+    pOutput->PushLiteralFromString(pInst->m_pImmediate->m_immediateByte, pInst->m_pImmediate->ByteCount(), true);
 }
 
 
-static inline void InsaneDASM64::HandleOperandMode_M(DASMInst_t* pOutput) { return; }
+static inline void InsaneDASM64::HandleOperandMode_M(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_N(DASMInst_t* pOutput, uint64_t iModRM_RM)
+static inline void InsaneDASM64::HandleOperandMode_N(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The R/M field of the ModR/M byte selects a packed quadword MMX technology register.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, iModRM_RM, 64).ToString()); // MMX reigsters have fixed width.
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, pInst->m_iModRM_RM, 64).ToString()); // MMX reigsters have fixed width.
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_O(DASMInst_t* pOutput, const Standard::Immediate_t* pImmediate)
+static inline void InsaneDASM64::HandleOperandMode_O(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    pOutput->PushLiteralFromString(pImmediate->m_immediateByte, pImmediate->ByteCount(), true);
+    assert(pInst->m_bHasModRM == false && "Instruction with Operand Addressing Method must not have ModRM byte.");
+
+    // Brief : The instruction has no ModR/M byte; the offset of the operand is coded as a word, double word or quad word.
+    pOutput->PushLiteralFromString(pInst->m_pImmediate->m_immediateByte, pInst->m_pImmediate->ByteCount(), true);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_P(DASMInst_t* pOutput, uint64_t iModRM_Reg)
+static inline void InsaneDASM64::HandleOperandMode_P(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a packed quadword MMX technology register.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, iModRM_Reg, 64).ToString()); // MMX reigsters have fixed width.
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, pInst->m_iModRM_Reg, 64).ToString()); // MMX reigsters have fixed width.
 }
 
 
-static inline void InsaneDASM64::HandleOperandMode_Q(DASMInst_t* pOutput) { return; }
+static inline void InsaneDASM64::HandleOperandMode_Q(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_R(DASMInst_t* pOutput, uint64_t iModRM_RM, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize)
+static inline void InsaneDASM64::HandleOperandMode_R(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : The mod field of the ModR/M byte may refer only to a general register
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_GPR, iModRM_RM, CEOperandTypeToSizeInBits(iCEOperandType, iOperandSize)).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(
+                Standard::Register_t::RegisterClass_GPR, 
+                pInst->m_iModRM_RM, 
+                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_S(DASMInst_t* pOutput, uint64_t iModRM_Reg)
+static inline void InsaneDASM64::HandleOperandMode_S(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a segment register.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Segment, iModRM_Reg, 64).ToString()); // Segment registers have fixed width.
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Segment, pInst->m_iModRM_Reg, 64).ToString()); // Segment registers have fixed width.
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_SC(DASMInst_t* pOutput)
+static inline void InsaneDASM64::HandleOperandMode_SC(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : Stack operand, used by instructions which either push an operand to the stack or pop an operand from the stack.
     return;
@@ -428,109 +391,113 @@ static inline void InsaneDASM64::HandleOperandMode_SC(DASMInst_t* pOutput)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_T(DASMInst_t* pOutput, uint64_t iModRM_Reg)
+static inline void InsaneDASM64::HandleOperandMode_T(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a test register
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Test, iModRM_Reg, 64).ToString()); // Test registers have fixed width.
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Test, pInst->m_iModRM_Reg, 64).ToString()); // Test registers have fixed width.
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, uint64_t iModRM_RM, const VEX::VEXPrefix_t* pVEXPrefix)
+static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The R/M field of the ModR/M byte selects a 128-bit XMM register.
     
     // Some encodings like Legacy encoding won't have VEXPrefix, so they will pass nullptr.
     // But they also should never have a operand mode that requires a VEX prefix.
-    assert(pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
-    if(pVEXPrefix == nullptr)
+    assert(pInst->m_pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
+    if(pInst->m_pVEXPrefix == nullptr)
     {
         FAIL_LOG("NULL VEXPrefix received for handling operand mode U");
         return;
     }
 
     // Register width.
-    int16_t iRegisterWidth = pVEXPrefix->L() == false ? 128 : 256;
+    int16_t iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
 
     // Register class.
-    Standard::Register_t::RegisterClass_t iRegisterClass = pVEXPrefix->L() == false ? 
+    Standard::Register_t::RegisterClass_t iRegisterClass = pInst->m_pVEXPrefix->L() == false ? 
         Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
 
-    pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, iModRM_RM, iRegisterWidth).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, pInst->m_iModRM_RM, iRegisterWidth).ToString());
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_V(DASMInst_t* pOutput, uint64_t iModRM_Reg, const VEX::VEXPrefix_t* pVEXPrefix)
+static inline void InsaneDASM64::HandleOperandMode_V(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a 128-bit XMM register.
     
     // Some encodings like Legacy encoding won't have VEXPrefix, so they will pass nullptr.
     // But they also should never have a operand mode that requires a VEX prefix.
-    assert(pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
-    if(pVEXPrefix == nullptr)
+    assert(pInst->m_pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
+    if(pInst->m_pVEXPrefix == nullptr)
     {
         FAIL_LOG("NULL VEXPrefix received for handling operand mode U");
         return;
     }
 
     // Register width.
-    int16_t iRegisterWidth = pVEXPrefix->L() == false ? 128 : 256;
+    int16_t iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
 
     // Register class.
-    Standard::Register_t::RegisterClass_t iRegisterClass = pVEXPrefix->L() == false ? 
+    Standard::Register_t::RegisterClass_t iRegisterClass = pInst->m_pVEXPrefix->L() == false ? 
         Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
 
-    pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, iModRM_Reg, iRegisterWidth).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, pInst->m_iModRM_Reg, iRegisterWidth).ToString());
 }
 
 
-static inline void InsaneDASM64::HandleOperandMode_W(DASMInst_t* pOutput) { return; }
-static inline void InsaneDASM64::HandleOperandMode_X(DASMInst_t* pOutput) { return; }
-static inline void InsaneDASM64::HandleOperandMode_Y(DASMInst_t* pOutput) { return; }
+static inline void InsaneDASM64::HandleOperandMode_W(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
+static inline void InsaneDASM64::HandleOperandMode_X(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
+static inline void InsaneDASM64::HandleOperandMode_Y(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_Z(DASMInst_t* pOutput, Byte iOpCodeByte, uint64_t iREX_B, Standard::CEOperandTypes_t iCEOpeandType, int iOperandSize)
+static inline void InsaneDASM64::HandleOperandMode_Z(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // REX.B bit extends the "Lower 3 bits of the opcode". How bizzare is that?
-    int iRegisterIndex = Maths::SafeOr(Maths::SafeAnd(iOpCodeByte, 0b111), iREX_B << 3llu);
+    uint64_t iRegisterIndex = Maths::SafeOr(Maths::SafeAnd(pInst->m_pOpCode->m_pOpCodeDesc->m_iByte, 0b111), pInst->m_iREX_B << 3llu);
+    
+    const char* szRegisterName = Standard::Register_t(Standard::Register_t::RegisterClass_GPR, iRegisterIndex, 
+            CEOperandTypeToSizeInBytes(iCEOperandType, pInst->m_iOperandSize)).ToString();
 
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_GPR, iRegisterIndex, CEOperandTypeToSizeInBytes(iCEOpeandType, iOperandSize)).ToString());
+    pOutput->PushBackOperand(szRegisterName);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_VG(DASMInst_t* pOutput, Standard::CEOperandTypes_t iCEOperandType, int iOperandSize, const VEX::VEXPrefix_t* pVEXPrefix)
+static inline void InsaneDASM64::HandleOperandMode_VG(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
-    uint64_t iVVVV = pVEXPrefix->vvvv();
+    uint64_t iVVVV = pInst->m_pVEXPrefix->vvvv();
 
     // register index is one's compliment of vex.vvvv,
     iVVVV = ~iVVVV & VEX::Masks::VVVV;
 
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_GPR, iVVVV, CEOperandTypeToSizeInBits(iCEOperandType, iOperandSize)).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(
+                Standard::Register_t::RegisterClass_GPR, iVVVV, CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, const VEX::VEXPrefix_t* pVEXPrefix)
+static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    assert(pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
-    if(pVEXPrefix == nullptr)
+    assert(pInst->m_pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
+    if(pInst->m_pVEXPrefix == nullptr)
     {
         FAIL_LOG("NULL VEXPrefix received for handling operand mode U");
         return;
     }
 
     // Register index, size & class
-    uint64_t iVVVV         = pVEXPrefix->vvvv();
-    int      iRegisterSize = pVEXPrefix->L() == 0llu ? 128 : 256;
-    Standard::Register_t::RegisterClass_t iRegClass = pVEXPrefix->L() == 0llu ? 
+    uint64_t iVVVV         = pInst->m_pVEXPrefix->vvvv();
+    int      iRegisterSize = pInst->m_pVEXPrefix->L() == 0llu ? 128 : 256;
+    Standard::Register_t::RegisterClass_t iRegClass = pInst->m_pVEXPrefix->L() == 0llu ? 
         Standard::Register_t::RegisterClass_SSE : // XXM
         Standard::Register_t::RegisterClass_AVX;  // YMM
 
@@ -543,25 +510,25 @@ static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, cons
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_IXY(DASMInst_t* pOutput, uint64_t iImmRegisterIndex, const Standard::Immediate_t* pImmediate, const VEX::VEXPrefix_t* pVEXPrefix)
+static inline void InsaneDASM64::HandleOperandMode_IXY(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Oprand Addressing Method IXY must only be used by VEX encoding instructions
     // to extract register index from upper 4 bits of the immediate byte.
-    assert(pImmediate->ByteCount() == 1 && "Invalid byte count for operand type IXY");
-    if(pImmediate->ByteCount() != 1)
+    assert(pInst->m_pImmediate->ByteCount() == 1 && "Invalid byte count for operand type IXY");
+    if(pInst->m_pImmediate->ByteCount() != 1)
     {
         FAIL_LOG("Invalid byte count for operand type IXY");
         return;
     }
 
     // Register index, size & class
-    int      iRegisterSize = pVEXPrefix->L() == 0llu ? 128 : 256;
-    Standard::Register_t::RegisterClass_t iRegClass = pVEXPrefix->L() == 0llu ? 
+    int      iRegisterSize = pInst->m_pVEXPrefix->L() == 0llu ? 128 : 256;
+    Standard::Register_t::RegisterClass_t iRegClass = pInst->m_pVEXPrefix->L() == 0llu ? 
         Standard::Register_t::RegisterClass_SSE : // XXM
         Standard::Register_t::RegisterClass_AVX;  // YMM
 
 
-    pOutput->PushBackOperand(Standard::Register_t(iRegClass, iImmRegisterIndex, iRegisterSize).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(iRegClass, pInst->m_iImmRegisterIndex, iRegisterSize).ToString());
 }
 
 
