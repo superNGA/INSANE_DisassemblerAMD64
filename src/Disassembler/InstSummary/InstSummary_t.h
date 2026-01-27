@@ -56,8 +56,8 @@ namespace INSANE_DASM64_NAMESPACE
         uint64_t                        m_iSIB_Index        = 0llu;
         uint64_t                        m_iSIB_Base         = 0llu;
 
-        int                             m_iOperandSize      = 0;
-        int                             m_iAddressSize      = 0;
+        int                             m_iOperandSizeInByte= 0;
+        int                             m_iAddressSizeInByte= 0;
         uint64_t                        m_iImmRegisterIndex = 0llu;
         uint64_t                        m_iREX_B            = 0llu;
     };

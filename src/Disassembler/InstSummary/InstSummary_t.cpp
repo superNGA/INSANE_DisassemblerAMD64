@@ -46,8 +46,8 @@ void InsaneDASM64::InstSummary_t::Clear()
     m_iSIB_Index    = 0llu;
     m_iSIB_Base     = 0llu;
 
-    m_iOperandSize  = 0;
-    m_iAddressSize  = 0;
+    m_iOperandSizeInByte  = 0;
+    m_iAddressSizeInByte  = 0;
     m_iImmRegisterIndex = 0llu;
     m_iREX_B        = 0llu;
 }
@@ -79,8 +79,8 @@ void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacy
     }
 
     // Operand size & Address size for this instruction in bytes.
-    m_iOperandSize = pLegacyInst->GetOperandSizeInBytes(false);
-    m_iAddressSize = pLegacyInst->GetAddressSizeInBytes();
+    m_iOperandSizeInByte = pLegacyInst->GetOperandSizeInBytes(false);
+    m_iAddressSizeInByte = pLegacyInst->GetAddressSizeInBytes();
 
     m_iImmRegisterIndex = 0llu;
 
@@ -110,8 +110,8 @@ void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
         m_iSIB_Base  = pVEXInst->SIB_Base();
     }
 
-    m_iOperandSize = pVEXInst->GetOperandSizeInBytes();
-    m_iAddressSize = 8llu;
+    m_iOperandSizeInByte = pVEXInst->GetOperandSizeInBytes();
+    m_iAddressSizeInByte = 8llu;
 
     m_iImmRegisterIndex = pVEXInst->m_immediate.ByteCount() == 1 ? pVEXInst->GetImmRegister() : 0llu;
 

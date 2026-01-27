@@ -11,6 +11,8 @@
 //-------------------------------------------------------------------------
 #include "Disassembler.h"
 #include <assert.h>
+#include <iomanip>
+#include <sstream> // :(
 #include "../Util/Terminal/Terminal.h"
 #include "../Math/SafeBitWiseOps.h"
 
@@ -33,36 +35,46 @@ namespace InsaneDASM64
     static inline void HandleOperandMode_BD (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_C  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_D  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_E  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_ES (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_E  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_ES (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_EST(DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_F  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_G  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_H  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_I  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_J  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_M  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_M  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_N  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_O  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_P  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_Q  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_Q  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_R  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_S  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_SC (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_T  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_U  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_V  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_W  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_X  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_Y  (DASMInst_t* pOutput, InstSummary_t* pInst);
+    static inline void HandleOperandMode_U  (DASMInst_t* pOutput, InstSummary_t* pInst, Instruction_t::InstEncodingTypes_t iEncodingType);
+    static inline void HandleOperandMode_V  (DASMInst_t* pOutput, InstSummary_t* pInst, Instruction_t::InstEncodingTypes_t iEncodingType);
+    static inline void HandleOperandMode_W  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_X  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
+    static inline void HandleOperandMode_Y  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_Z  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_VG (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_VXY(DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_IXY(DASMInst_t* pOutput, InstSummary_t* pInst);
 
 
-    static int CEOperandTypeToSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes);
-    static int CEOperandTypeToSizeInBits (Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes);
+    // Since Operand Addressing Methods E, ES, M, Q, W, X and Y use the ModRM byte to determine either
+    // a register or memory address, they share same logic, and the only difference is the register class.
+    // So while handling above mentioned Operand Addressing Methods, we use this fuction with different 
+    // register classes.
+    static void RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary_t* pInst, 
+            Standard::CEOperandTypes_t iCEOperandType, Standard::Register_t::RegisterClass_t iRegisterClass);
+
+
+    static int CEOperandTypeToOperandSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes);
+    static int CEOperandTypeToOperandSizeInBits (Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes);
+    static int CEOperandTypeToAdrsSizeInBytes   (Standard::CEOperandTypes_t iCEOperandType, int iAddressSizeInByte);
+    static int CEOperandTypeToAdrsSizeInBits    (Standard::CEOperandTypes_t iCEOperandType, int iAddressSizeInByte);
 }
 
 
@@ -143,28 +155,28 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
                     case Standard::OperandMode_BD:  HandleOperandMode_BD (pOutput, &inst); break;
                     case Standard::OperandMode_C:   HandleOperandMode_C  (pOutput, &inst); break;
                     case Standard::OperandMode_D:   HandleOperandMode_D  (pOutput, &inst); break;
-                    case Standard::OperandMode_E:   HandleOperandMode_E  (pOutput, &inst); break;
-                    case Standard::OperandMode_ES:  HandleOperandMode_ES (pOutput, &inst); break;
+                    case Standard::OperandMode_E:   HandleOperandMode_E  (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_ES:  HandleOperandMode_ES (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_EST: HandleOperandMode_EST(pOutput, &inst); break;
                     case Standard::OperandMode_F:   HandleOperandMode_F  (pOutput, &inst); break;
                     case Standard::OperandMode_G:   HandleOperandMode_G  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_H:   HandleOperandMode_H  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_I:   HandleOperandMode_I  (pOutput, &inst); break;
                     case Standard::OperandMode_J:   HandleOperandMode_J  (pOutput, &inst); break;
-                    case Standard::OperandMode_M:   HandleOperandMode_M  (pOutput, &inst); break;
+                    case Standard::OperandMode_M:   HandleOperandMode_M  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_N:   HandleOperandMode_N  (pOutput, &inst); break;
                     case Standard::OperandMode_O:   HandleOperandMode_O  (pOutput, &inst); break;
                     case Standard::OperandMode_P:   HandleOperandMode_P  (pOutput, &inst); break;
-                    case Standard::OperandMode_Q:   HandleOperandMode_Q  (pOutput, &inst); break;
+                    case Standard::OperandMode_Q:   HandleOperandMode_Q  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_R:   HandleOperandMode_R  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_S:   HandleOperandMode_S  (pOutput, &inst); break;
                     case Standard::OperandMode_SC:  HandleOperandMode_SC (pOutput, &inst); break;
                     case Standard::OperandMode_T:   HandleOperandMode_T  (pOutput, &inst); break;
-                    case Standard::OperandMode_U:   HandleOperandMode_U  (pOutput, &inst); break;
-                    case Standard::OperandMode_V:   HandleOperandMode_V  (pOutput, &inst); break;
-                    case Standard::OperandMode_W:   HandleOperandMode_W  (pOutput, &inst); break;
-                    case Standard::OperandMode_X:   HandleOperandMode_X  (pOutput, &inst); break;
-                    case Standard::OperandMode_Y:   HandleOperandMode_Y  (pOutput, &inst); break;
+                    case Standard::OperandMode_U:   HandleOperandMode_U  (pOutput, &inst, pInst->m_iInstEncodingType); break;
+                    case Standard::OperandMode_V:   HandleOperandMode_V  (pOutput, &inst, pInst->m_iInstEncodingType); break;
+                    case Standard::OperandMode_W:   HandleOperandMode_W  (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_X:   HandleOperandMode_X  (pOutput, &inst, iCEOperandType); break;
+                    case Standard::OperandMode_Y:   HandleOperandMode_Y  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_Z:   HandleOperandMode_Z  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_VG:  HandleOperandMode_VG (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_VXY: HandleOperandMode_VXY(pOutput, &inst); break;
@@ -239,6 +251,7 @@ static inline void InsaneDASM64::HandleOperandMode_C(DASMInst_t* pOutput, InstSu
 {
     assert(pInst->m_bHasModRM == true && "Instruction doesn't have a ModRM byte but has operand addressing mode C");
 
+    // Brief : The reg field of the ModR/M byte selects a control register.
     pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Control, pInst->m_iModRM_Reg, 0).ToString());
 }
 
@@ -247,11 +260,27 @@ static inline void InsaneDASM64::HandleOperandMode_C(DASMInst_t* pOutput, InstSu
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_D(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
+    // Brief : The reg field of the ModR/M byte selects a debug register.
     pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Debug, pInst->m_iModRM_Reg, 0).ToString());
 }
 
-static inline void InsaneDASM64::HandleOperandMode_E(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
-static inline void InsaneDASM64::HandleOperandMode_ES(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void InsaneDASM64::HandleOperandMode_E(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
+{
+    // Brief : The operand is either a general-purpose register or a memory address.
+    RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, Standard::Register_t::RegisterClass_GPR);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void InsaneDASM64::HandleOperandMode_ES(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
+{
+    // Brief : The operand is either a x87 FPU stack register or a memory address.
+    RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, Standard::Register_t::RegisterClass_FPU);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -282,7 +311,7 @@ static inline void InsaneDASM64::HandleOperandMode_G(DASMInst_t* pOutput, InstSu
     pOutput->PushBackOperand(Standard::Register_t(
                 Standard::Register_t::RegisterClass_GPR, 
                 pInst->m_iModRM_Reg, 
-                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
+                CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
 }
 
 
@@ -294,7 +323,7 @@ static inline void InsaneDASM64::HandleOperandMode_H(DASMInst_t* pOutput, InstSu
     pOutput->PushBackOperand(Standard::Register_t(
                 Standard::Register_t::RegisterClass_GPR, 
                 pInst->m_iModRM_RM,
-                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
+                CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
 }
 
 
@@ -316,7 +345,13 @@ static inline void InsaneDASM64::HandleOperandMode_J(DASMInst_t* pOutput, InstSu
 }
 
 
-static inline void InsaneDASM64::HandleOperandMode_M(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void InsaneDASM64::HandleOperandMode_M(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
+{
+    // Brief : The ModR/M byte may refer only to memory: mod != 11bin.
+    RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, Standard::Register_t::RegisterClass_GPR);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -348,7 +383,13 @@ static inline void InsaneDASM64::HandleOperandMode_P(DASMInst_t* pOutput, InstSu
 }
 
 
-static inline void InsaneDASM64::HandleOperandMode_Q(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void InsaneDASM64::HandleOperandMode_Q(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
+{
+    // Brief : The operand is either an MMX technology register or a memory address.
+    RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, Standard::Register_t::RegisterClass_MMX);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -359,7 +400,7 @@ static inline void InsaneDASM64::HandleOperandMode_R(DASMInst_t* pOutput, InstSu
     pOutput->PushBackOperand(Standard::Register_t(
                 Standard::Register_t::RegisterClass_GPR, 
                 pInst->m_iModRM_RM, 
-                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
+                CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
 }
 
 
@@ -392,25 +433,21 @@ static inline void InsaneDASM64::HandleOperandMode_T(DASMInst_t* pOutput, InstSu
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, InstSummary_t* pInst)
+static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, InstSummary_t* pInst, Instruction_t::InstEncodingTypes_t iEncodingType)
 {
     // Brief : The R/M field of the ModR/M byte selects a 128-bit XMM register.
-    
-    // Some encodings like Legacy encoding won't have VEXPrefix, so they will pass nullptr.
-    // But they also should never have a operand mode that requires a VEX prefix.
-    assert(pInst->m_pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
-    if(pInst->m_pVEXPrefix == nullptr)
-    {
-        FAIL_LOG("NULL VEXPrefix received for handling operand mode U");
-        return;
-    }
 
     // Register width.
-    int16_t iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
+    int16_t iRegisterWidth = 128;
+
+    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
+        iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
 
     // Register class.
-    Standard::Register_t::RegisterClass_t iRegisterClass = pInst->m_pVEXPrefix->L() == false ? 
-        Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
+    Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_SSE;
+
+    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
+        iRegisterClass = pInst->m_pVEXPrefix->L() == false ? Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
 
     pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, pInst->m_iModRM_RM, iRegisterWidth).ToString());
 }
@@ -418,33 +455,81 @@ static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, InstSu
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_V(DASMInst_t* pOutput, InstSummary_t* pInst)
+static inline void InsaneDASM64::HandleOperandMode_V(DASMInst_t* pOutput, InstSummary_t* pInst, Instruction_t::InstEncodingTypes_t iEncodingType)
 {
     // Brief : The reg field of the ModR/M byte selects a 128-bit XMM register.
     
-    // Some encodings like Legacy encoding won't have VEXPrefix, so they will pass nullptr.
-    // But they also should never have a operand mode that requires a VEX prefix.
-    assert(pInst->m_pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
-    if(pInst->m_pVEXPrefix == nullptr)
-    {
-        FAIL_LOG("NULL VEXPrefix received for handling operand mode U");
-        return;
-    }
-
     // Register width.
-    int16_t iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
+    int16_t iRegisterWidth = 128;
+
+    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
+        iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
 
     // Register class.
-    Standard::Register_t::RegisterClass_t iRegisterClass = pInst->m_pVEXPrefix->L() == false ? 
-        Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
+    Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_SSE;
+
+    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
+        iRegisterClass = pInst->m_pVEXPrefix->L() == false ? Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
 
     pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, pInst->m_iModRM_Reg, iRegisterWidth).ToString());
 }
 
 
-static inline void InsaneDASM64::HandleOperandMode_W(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
-static inline void InsaneDASM64::HandleOperandMode_X(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
-static inline void InsaneDASM64::HandleOperandMode_Y(DASMInst_t* pOutput, InstSummary_t* pInst) { return; }
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void InsaneDASM64::HandleOperandMode_W(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
+{
+    // Brief : The operand is either a 128-bit XMM register or a memory address.
+    RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, Standard::Register_t::RegisterClass_SSE);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void InsaneDASM64::HandleOperandMode_X(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
+{
+    // Brief : Memory addressed by the DS:eSI or by RSI.
+    assert((pInst->m_iAddressSizeInByte == 4 || pInst->m_iAddressSizeInByte == 8) && "Invalid address size");
+
+
+    if(pInst->m_iAddressSizeInByte == 4)
+    {
+        pOutput->PushBackOperand("DS:eSI");
+    }
+    else if(pInst->m_iAddressSizeInByte == 8)
+    {
+        pOutput->PushBackOperand("DS:rSI");
+    }
+    else
+    {
+        FAIL_LOG("Invlaid address size.");
+        return;
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static inline void InsaneDASM64::HandleOperandMode_Y(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
+{
+    // Brief : Memory addressed by the ES:eDI or by RDI.
+    assert((pInst->m_iAddressSizeInByte == 4 || pInst->m_iAddressSizeInByte == 8) && "Invalid address size");
+
+
+    if(pInst->m_iAddressSizeInByte == 4)
+    {
+        pOutput->PushBackOperand("ES:eSI");
+    }
+    else if(pInst->m_iAddressSizeInByte == 8)
+    {
+        pOutput->PushBackOperand("ES:rSI");
+    }
+    else
+    {
+        FAIL_LOG("Invlaid address size.");
+        return;
+    }
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -458,7 +543,7 @@ static inline void InsaneDASM64::HandleOperandMode_Z(DASMInst_t* pOutput, InstSu
     pOutput->PushBackOperand(Standard::Register_t(
                 Standard::Register_t::RegisterClass_GPR, 
                 iRegisterIndex, 
-                CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
+                CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
 }
 
 
@@ -472,7 +557,7 @@ static inline void InsaneDASM64::HandleOperandMode_VG(DASMInst_t* pOutput, InstS
     iVVVV = ~iVVVV & VEX::Masks::VVVV;
 
     pOutput->PushBackOperand(Standard::Register_t(
-                Standard::Register_t::RegisterClass_GPR, iVVVV, CEOperandTypeToSizeInBits(iCEOperandType, pInst->m_iOperandSize)).ToString());
+                Standard::Register_t::RegisterClass_GPR, iVVVV, CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
 }
 
 
@@ -527,7 +612,146 @@ static inline void InsaneDASM64::HandleOperandMode_IXY(DASMInst_t* pOutput, Inst
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int InsaneDASM64::CEOperandTypeToSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
+static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType, Standard::Register_t::RegisterClass_t iRegisterClass)
+{
+    // Must have a ModRM byte.
+    assert(pInst->m_bHasModRM == true && "Instruction doesn't have a ModRM byte.");
+    if(pInst->m_bHasModRM == false)
+    {
+        FAIL_LOG("Instruction doesn't have a ModRM byte.");
+        return;
+    }
+
+    
+    // Register.
+    if(pInst->m_iModRM_Mod == 0b11)
+    {
+        pOutput->PushBackOperand(Standard::Register_t(
+                    iRegisterClass, 
+                    pInst->m_iModRM_RM,
+                    CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
+    }
+    else if(pInst->m_bHasSIB == false)
+    {
+        std::stringstream ssTemp;
+
+        // for modrm.rm == 101 && modrm.mod == 00, we only have to store displacement, and no register.
+        bool bDispOnly          = pInst->m_iModRM_RM == 0b101 && pInst->m_iModRM_Mod == 0;
+        int  iAddressSizeInBits = pInst->m_iAddressSizeInByte * 8;
+
+        ssTemp << "[";
+        if(bDispOnly == false)
+        {
+            ssTemp << Standard::Register_t(Standard::Register_t::RegisterClass_GPR, pInst->m_iModRM_RM, iAddressSizeInBits).ToString();
+        }
+
+        // Printing displacement, if any.
+        if(pInst->m_pDisplacement->ByteCount() > 0)
+        {
+            // if we have stored a register in front of it. store + sign
+            if(bDispOnly == false)
+                ssTemp << " + ";
+
+            ssTemp << "0x";
+
+            bool bLeadingZeroEnded = false;
+            for (int i = pInst->m_pDisplacement->ByteCount() - 1; i >= 0; i--)
+            {
+                int iByte = static_cast<int>(pInst->m_pDisplacement->m_iDispBytes[i]);
+                if(iByte != 0)
+                    bLeadingZeroEnded = true;
+
+                if(bLeadingZeroEnded == false)
+                    continue;
+
+                // Save old state
+                auto oldFlags = ssTemp.flags();
+                auto oldFill  = ssTemp.fill();
+
+                ssTemp << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << iByte;
+
+                // Restore state
+                ssTemp.flags(oldFlags);
+                ssTemp.fill(oldFill);
+            }
+        }
+
+        ssTemp << "]";
+
+        pOutput->PushBackOperand(ssTemp.str().c_str());
+    }
+    else 
+    {
+        std::stringstream ssTemp; ssTemp << "[";
+
+
+        // Base register...
+        bool bNoBaseReg = pInst->m_iModRM_Mod == 0 && pInst->m_iSIB_Base == 0b101;
+        if (bNoBaseReg == false)
+        {
+            Standard::Register_t iBaseReg(
+                    Standard::Register_t::RegisterClass_GPR, 
+                    pInst->m_iSIB_Base, 
+                    CEOperandTypeToAdrsSizeInBits(iCEOperandType, pInst->m_iAddressSizeInByte));
+
+            ssTemp << iBaseReg.ToString();
+        }
+
+
+        // Index register.
+        if (pInst->m_iSIB_Index != 0b100)
+        {
+            Standard::Register_t indexReg(Standard::Register_t::RegisterClass_GPR, pInst->m_iSIB_Index, 
+                    CEOperandTypeToAdrsSizeInBits(iCEOperandType, pInst->m_iAddressSizeInByte));
+
+            if(bNoBaseReg == false)
+                ssTemp << "+";
+
+            ssTemp << indexReg.ToString();
+
+            // Scale...
+            uint64_t iScale = 1llu << pInst->m_iSIB_Scale;
+            if (iScale > 1)
+                ssTemp << "*" << iScale;
+        }
+
+        // Displacement ( if any )
+        if(pInst->m_pDisplacement->ByteCount() > 0)
+        {
+            ssTemp << " + 0x";
+
+            bool bLeadingZeroEnded = false;
+            for (int i = pInst->m_pDisplacement->ByteCount() - 1; i >= 0; i--)
+            {
+                int iByte = static_cast<int>(pInst->m_pDisplacement->m_iDispBytes[i]);
+                if(iByte != 0)
+                    bLeadingZeroEnded = true;
+
+                if(bLeadingZeroEnded == false)
+                    continue;
+
+                // Save old state
+                auto oldFlags = ssTemp.flags();
+                auto oldFill  = ssTemp.fill();
+
+                ssTemp << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << iByte;
+
+                // Restore state
+                ssTemp.flags(oldFlags);
+                ssTemp.fill(oldFill);
+            }
+        }
+
+        ssTemp << "]";
+        pOutput->PushBackOperand(ssTemp.str().c_str());
+    }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static int InsaneDASM64::CEOperandTypeToOperandSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
 {
     // This function is used to determine width of register used when we have to use the modrm byte
     // to determine which register we have to use. Because the operand size is not always the correct
@@ -580,9 +804,71 @@ static int InsaneDASM64::CEOperandTypeToSizeInBytes(Standard::CEOperandTypes_t i
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static int InsaneDASM64::CEOperandTypeToSizeInBits(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
+static int InsaneDASM64::CEOperandTypeToOperandSizeInBits(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes)
 {
-    int iSize = CEOperandTypeToSizeInBytes(iCEOperandType, iOperandSizeInBytes);
+    int iSize = CEOperandTypeToOperandSizeInBytes(iCEOperandType, iOperandSizeInBytes);
 
+    return iSize <= 0 ? -1 : iSize * 8;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static int InsaneDASM64::CEOperandTypeToAdrsSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
+{
+    using namespace Standard;
+    assert((iAddressSizeInByte == 2 || iAddressSizeInByte == 4 || iAddressSizeInByte == 8) && "Invalid operand size!!");
+
+    switch (iCEOperandType)
+    {
+    case CEOperandType_8:            return 1;
+    case CEOpearndType_16or32_twice: return iAddressSizeInByte == 2 ? 4 : 8;
+    case CEOperandType_16_32:        return iAddressSizeInByte == 2 ? 2 : 4;
+    case CEOperandType_16_32_64:     return iAddressSizeInByte;
+
+    case CEOperandType_16:
+    case CEOperandType_16int:        return 2;
+
+    case CEOperandType_32:
+    case CEOperandType_32real:
+    case CEOperandType_32int:        return 4;
+
+    case CEOperandType_32_64:        return iAddressSizeInByte == 8 ? 8 : 4;
+
+    case CEOperandType_64mmx:
+    case CEOperandType_64:
+    case CEOperandType_64int:
+    case CEOperandType_64real:       return 8;
+
+    case CEOperandType_64_16:        return iAddressSizeInByte == 2 ? 2 : 8;
+
+
+    case CEOperandType_128pf:
+    case CEOperandType_80dec:
+    case CEOperandType_128:
+    case CEOperandType_14_28:
+    case CEOperandType_80real:
+    case CEOperandType_p:
+    case CEOperandType_ptp:
+    case CEOperandType_94_108:
+    case CEOperandType_512:
+        break;
+
+    default: break;
+    }
+
+    // If no operand type can override the address size
+    // we shall default to the address size ( 8 bytes in longmode, unless override by 0x67 address size override prefix, in which case it will be 4 bytes ) ?
+    return iAddressSizeInByte;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static int InsaneDASM64::CEOperandTypeToAdrsSizeInBits(Standard::CEOperandTypes_t iCEOperandType, int iAddressSizeInByte)
+{
+    int iSize = CEOperandTypeToAdrsSizeInBytes(iCEOperandType, iAddressSizeInByte);
+    
+    // Keep the invalid size invalid, and scale valid size.
     return iSize <= 0 ? -1 : iSize * 8;
 }

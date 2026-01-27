@@ -51,7 +51,8 @@ int main(void)
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success;
 
         std::vector<Instruction_t> vecInstOutput;
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecOneByteOpCodes_001, vecOutput);
+        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecOneByteOpCodes_001, vecOutput);
+        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecTF2ClientDLL, vecOutput);
         printf("Decoding done [ %zu ] instructions detected\n", vecOutput.size());
 
         PrintOutput(vecOutput);
@@ -229,10 +230,15 @@ static void PrintOutput(std::vector<DASMInst_t>& vecInst)
 {
     for(const DASMInst_t& inst : vecInst)
     {
-        printf("%s ", inst.m_szMnemonic);
+        printf("%10s ", inst.m_szMnemonic);
 
         for(int i = 0; i < inst.m_nOperands; i++)
-            printf("%s ", inst.m_szOperands[i]);
+        {
+            printf("%s", inst.m_szOperands[i]);
+
+            if(i != inst.m_nOperands - 1)
+                printf(", ");
+        }
 
         printf("\n");
     }
