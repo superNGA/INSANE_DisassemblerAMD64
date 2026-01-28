@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <sstream>
 
 #include "Include/INSANE_DisassemblerAMD64.h"
 #include "Include/Legacy/LegacyInst_t.h"
@@ -10,11 +11,8 @@
 
 // For testing purposes.
 #include "src/Util/TestCases/TestCases.h"
-
-// Delete this.
-#include "src/Math/SafeBitWiseOps.h"
-
 #include "src/Util/Terminal/Terminal.h"
+
 
 using namespace InsaneDASM64;
 
@@ -22,17 +20,13 @@ using namespace InsaneDASM64;
 static void PrintInst(std::vector<Instruction_t>& vecInst);
 static void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst);
 static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst);
-static void PrintOutput(std::vector<DASMInst_t>& vecInst);
+static void PrintOutput(std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMInst_t>& vecInst);
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 int main(void)
 {
-    std::vector<DASMInst_t> vecOutput;
-    vecOutput.clear();
-
-
     // Initialize disassembler.
     {
         InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::Initialize();
@@ -44,25 +38,34 @@ int main(void)
     }
     std::cout << "Disassembler Initialized!\n";
 
-    
-    std::vector<InsaneDASM64::Byte> vecInput = { 0x48, 0x89, 0x74, 0x24, 0x20 };
+
     // Disassemble...
     {
-        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success;
+        std::vector<Instruction_t> vecDecodedInst; vecDecodedInst.clear();
+        std::vector<DASMInst_t>    vecDasmInst;    vecDasmInst.clear();
 
-        std::vector<Instruction_t> vecInstOutput;
-        // iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecOneByteOpCodes_001, vecOutput);
-        iErrorCode = InsaneDASM64::DecodeAndDisassemble(TestCases::g_vecTF2ClientDLL, vecOutput);
-        printf("Decoding done [ %zu ] instructions detected\n", vecOutput.size());
 
-        PrintOutput(vecOutput);
-        PrintInst(vecInstOutput);
-
-        if (iErrorCode != InsaneDASM64::IDASMErrorCode_t::IDASMErrorCode_Success)
+        // Decoding...
+        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecTF2ClientDLL, vecDecodedInst);
+        if(iDecodingErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
         {
-            printf("%s\n", InsaneDASM64::GetErrorMessage(iErrorCode));
+            printf("%s", GetErrorMessage(iDecodingErrCode));
             return 1;
         }
+        WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
+
+
+        // Disassemlbing...
+        IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);
+        if(iDASMErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+        {
+            printf("%s", GetErrorMessage(iDASMErrCode));
+            return 1;
+        }
+        WIN_LOG("Disassembled [ %zu ] instructions.", vecDasmInst.size());
+
+
+        PrintOutput(vecDecodedInst, vecDasmInst);
     }
 
 
@@ -226,7 +229,7 @@ static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static void PrintOutput(std::vector<DASMInst_t>& vecInst)
+static void PrintOutput(std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMInst_t>& vecInst)
 {
     for(const DASMInst_t& inst : vecInst)
     {

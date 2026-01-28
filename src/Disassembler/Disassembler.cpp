@@ -637,12 +637,27 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
 
         // for modrm.rm == 101 && modrm.mod == 00, we only have to store displacement, and no register.
         bool bDispOnly          = pInst->m_iModRM_RM == 0b101 && pInst->m_iModRM_Mod == 0;
-        int  iAddressSizeInBits = pInst->m_iAddressSizeInByte * 8;
+        int  iAddressSizeInBits = CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte);
+        if(iAddressSizeInBits < 0)
+            iAddressSizeInBits = pInst->m_iOperandSizeInByte * 8;
+
+        // Adding address size out side bracket.
+        switch (iAddressSizeInBits) 
+        {
+            case 8:  ssTemp << "byte ptr";  break;
+            case 16: ssTemp << "word ptr";  break;
+            case 32: ssTemp << "dword ptr"; break;
+            case 64: ssTemp << "qword ptr"; break;
+
+            default: assert(false && "Invalid address size"); break;
+        }
 
         ssTemp << "[";
         if(bDispOnly == false)
-        {
-            ssTemp << Standard::Register_t(Standard::Register_t::RegisterClass_GPR, pInst->m_iModRM_RM, iAddressSizeInBits).ToString();
+        { 
+            // Since we will be writing operand's width seperately, we will hard set base reg size to 64 bits.
+            ssTemp << Standard::Register_t(Standard::Register_t::RegisterClass_GPR, pInst->m_iModRM_RM, 
+                    64/*iAddressSizeInBits*/).ToString();
         }
 
         // Printing displacement, if any.
@@ -651,6 +666,8 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
             // if we have stored a register in front of it. store + sign
             if(bDispOnly == false)
                 ssTemp << " + ";
+            else // RIP relative addess.
+                ssTemp << "rIP + ";
 
             ssTemp << "0x";
 
@@ -682,8 +699,24 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
     }
     else 
     {
-        std::stringstream ssTemp; ssTemp << "[";
+        std::stringstream ssTemp; 
+        
+        // Adding address size out side bracket.
+        int iAddressSizeInBits = CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte);
+        if(iAddressSizeInBits < 0)
+            iAddressSizeInBits = pInst->m_iOperandSizeInByte * 8;
 
+        switch (iAddressSizeInBits) 
+        {
+            case 8:  ssTemp << "byte ptr";  break;
+            case 16: ssTemp << "word ptr";  break;
+            case 32: ssTemp << "dword ptr"; break;
+            case 64: ssTemp << "qword ptr"; break;
+
+            default: assert(false && "Invalid address size"); break;
+        }
+
+        ssTemp << "[";
 
         // Base register...
         bool bNoBaseReg = pInst->m_iModRM_Mod == 0 && pInst->m_iSIB_Base == 0b101;
@@ -692,20 +725,21 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
             Standard::Register_t iBaseReg(
                     Standard::Register_t::RegisterClass_GPR, 
                     pInst->m_iSIB_Base, 
-                    CEOperandTypeToAdrsSizeInBits(iCEOperandType, pInst->m_iAddressSizeInByte));
+                    64); // We represent address size using seperate strings ( "size" ptr format ), so we set base reg to 64 bits wide.
 
             ssTemp << iBaseReg.ToString();
         }
 
 
         // Index register.
-        if (pInst->m_iSIB_Index != 0b100)
+        bool bIndexRegPresent = pInst->m_iSIB_Index != 0b100;
+        if (bIndexRegPresent == true)
         {
             Standard::Register_t indexReg(Standard::Register_t::RegisterClass_GPR, pInst->m_iSIB_Index, 
                     CEOperandTypeToAdrsSizeInBits(iCEOperandType, pInst->m_iAddressSizeInByte));
 
             if(bNoBaseReg == false)
-                ssTemp << "+";
+                ssTemp << " + ";
 
             ssTemp << indexReg.ToString();
 
@@ -718,7 +752,12 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
         // Displacement ( if any )
         if(pInst->m_pDisplacement->ByteCount() > 0)
         {
-            ssTemp << " + 0x";
+            if(bIndexRegPresent == true || bNoBaseReg == false)
+                ssTemp << " + ";
+            else // RIP relative adrs.
+                ssTemp << "rIP + ";
+
+            ssTemp << "0x";
 
             bool bLeadingZeroEnded = false;
             for (int i = pInst->m_pDisplacement->ByteCount() - 1; i >= 0; i--)
