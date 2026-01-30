@@ -245,6 +245,11 @@ IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::ve
         // First we determine which encoding does the instruction has.
         switch (iByte) 
         {
+            case SpecialChars::EVEX_PREFIX_62:
+                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_EVEX);
+                iErrorCode = DecodeEVEXEncoding(vecInput, &inst, iByteIndex);
+                break;
+
             case SpecialChars::VEX_PREFIX_C4:
             case SpecialChars::VEX_PREFIX_C5:
                 inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_VEX);
@@ -292,6 +297,10 @@ const char* InsaneDASM64::GetErrorMessage(IDASMErrorCode_t iErrorCode)
     case InsaneDASM64::IDASMErrorCode_InvalidVEXPrefix:      return "[ Insane Disassembler AMD64 ] Invalid VEX prefix byte found. VEX prefix must be either 0xC4 or 0xC5";
     case InsaneDASM64::IDASMErrorCode_InvalidVEXInst:        return "[ Insane Disassembler AMD64 ] Provided VEX encoded instruction is invalid.";
     case InsaneDASM64::IDASMErrorCode_VEXDisassemblyFailed:  return "[ Insane Disassembler AMD64 ] VEX disassembly failed.";
+    case InsaneDASM64::IDASMErrorCode_FaildToGetOpcdTable:   return "[ Insane Disassembler AMD64 ] Failed to get OpCode tables.";
+    case InsaneDASM64::IDASMErrorCode_InvalidEVEXInst:       return "[ Insane Disassembler AMD64 ] Invalid EVEX instruction.";
+    case InsaneDASM64::IDASMErrorCode_InvalidEVEXEscapeOpcdByte: return "[ Insane Disassembler AMD64 ] Invalid implied escape opcode byte by EVEX.mmm";
+    case InsaneDASM64::IDASMErrorCode_NoDispCompressionByte: return "[ Insane Disassembler AMD64 ] No Displacement Compression Byte found for EVEX encoded inst.";
     case InsaneDASM64::IDASMErrorCode_InstComponentsNotFound:return "[ Insane Disassembler AMD64 ] Instruction components were found to be null while disassembling.";
     case InsaneDASM64::IDASMErrorCode_OpCodeNotInitialized:  return "[ Insane Disassembler AMD64 ] OpCode's final varient was not initialized.";
     

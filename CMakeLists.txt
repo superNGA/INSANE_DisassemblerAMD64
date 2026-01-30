@@ -44,6 +44,10 @@ ${ASM_SOURCES}
 "Include/VEX/VEXInst_t.h"
 "Include/VEX/VEXPrefix_t.h"
 
+# Include/EVEX
+"Include/EVEX/EVEXInst_t.h"
+"Include/EVEX/EVEXPrefix_t.h"
+
 "main.cpp"
 "src/INSANE_DisassemblerAMD64.cpp" 
 "src/Tables/Tables.h" "src/Tables/Tables.cpp"  
@@ -81,6 +85,10 @@ ${ASM_SOURCES}
 # src/Defs/VEX
 "src/Defs/VEX/VEXInst_t.cpp"
 "src/Defs/VEX/VEXPrefix_t.cpp"
+
+# src/Defs/EVEX
+"src/Defs/EVEX/EVEXInst_t.cpp"
+"src/Defs/EVEX/EVEXPrefix_t.cpp"
 
 # Math
 "src/Math/SafeBitWiseOps.h" 

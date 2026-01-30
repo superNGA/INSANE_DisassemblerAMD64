@@ -115,7 +115,8 @@ void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
 
     m_iImmRegisterIndex = pVEXInst->m_immediate.ByteCount() == 1 ? pVEXInst->GetImmRegister() : 0llu;
 
-    m_iREX_B = pVEXInst->m_vexPrefix.B();
+    if(pVEXInst->m_vexPrefix.m_iPrefix == SpecialChars::VEX_PREFIX_C4)
+        m_iREX_B = pVEXInst->m_vexPrefix.B();
 }
 
 

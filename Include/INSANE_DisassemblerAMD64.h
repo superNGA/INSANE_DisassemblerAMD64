@@ -46,6 +46,12 @@ namespace INSANE_DASM64_NAMESPACE
         IDASMErrorCode_InvalidVEXPrefix,
         IDASMErrorCode_InvalidVEXInst,
         IDASMErrorCode_VEXDisassemblyFailed, // Delete this.
+        IDASMErrorCode_FaildToGetOpcdTable,
+                                             
+        // EVEX...
+        IDASMErrorCode_InvalidEVEXInst,
+        IDASMErrorCode_InvalidEVEXEscapeOpcdByte,
+        IDASMErrorCode_NoDispCompressionByte,
 
         // Disassembler specific.
         IDASMErrorCode_InstComponentsNotFound,

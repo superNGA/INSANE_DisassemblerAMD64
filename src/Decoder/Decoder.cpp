@@ -13,10 +13,13 @@
 #include "../../Include/Legacy/LegacyInst_t.h"
 #include "../../Include/VEX/VEXPrefix_t.h"
 #include "../../Include/VEX/VEXInst_t.h"
+#include "../../Include/EVEX/EVEXInst_t.h"
+#include "../../Include/EVEX/EVEXPrefix_t.h"
 
 // Util
 #include "../Tables/Tables.h"
 #include "../Util/Terminal/Terminal.h"
+#include "../Math/SafeBitWiseOps.h"
 
 
 
@@ -380,7 +383,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
     // Determining prefix using VEX.pp
     Byte iLegacyPrefix = 0x00;
     {
-        static Byte s_prefixMap[] = { 0x00, 0x66, 0xF2, 0xF3 };
+        static Byte s_prefixMap[] = { 0x00, 0x66, 0xF3, 0xF2 };
         iLegacyPrefix = s_prefixMap[pInst->m_vexPrefix.pp()];
     }
 
@@ -478,3 +481,232 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecInput, Instruction_t* pInstOut, size_t& iIterator)
+{
+    /*
+       README :
+    
+       I have proper and distinct EVEX instructions. But there are some VEX instructions that can also be encoded as EVEX.
+       But not all VEX instructions are EVEX encodable. There are no signs of what instructions are EVEX encodable in 
+       the linux kernel's x86 opcode map. Now my table is some what incomplete.
+
+       I can assume that all VEX instructions are EVEX encodable, but that would break while @ error checking for EVEX 
+       instructions.
+
+       Due to nature of how the intel's software developer's manual for iA-32 is written. I think assuming all VEX instructions 
+       as valid EVEX is somewhat of a valid options? I will still be able to error check against legacy only instructions.
+
+    */
+
+
+    assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
+    assert(pInstOut->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX && "Instruction passed to DecodeEVEXEncoding() is not initialized to correct type.");
+
+
+    // We must have atleast 4 bytes left in input. Thats the minimum for a VEX encoded instruction.
+    if(vecInput.empty() == true || vecInput.size() - iIterator < Rules::MIN_EVEX_INST_BYTES)
+    {
+        FAIL_LOG("Not bytes left in byte stream");
+        return IDASMErrorCode_InvalidEVEXInst;
+    }
+
+
+    // Invalid ?
+    if(vecInput[iIterator] != SpecialChars::EVEX_PREFIX_62)
+        return IDASMErrorCode_InvalidEVEXInst;
+
+
+    size_t            nBytes = vecInput.size();
+    EVEX::EVEXInst_t* pInst  = reinterpret_cast<EVEX::EVEXInst_t*>(pInstOut->m_pInst);
+    pInst->Clear();
+
+
+    // Store prefix.
+    pInst->m_evexPrefix.StorePrefix(vecInput[iIterator]); iIterator++;
+
+
+    // Store payloads.
+    pInst->m_evexPrefix.StorePayload(vecInput[iIterator], 0); iIterator++;
+    pInst->m_evexPrefix.StorePayload(vecInput[iIterator], 1); iIterator++;
+    pInst->m_evexPrefix.StorePayload(vecInput[iIterator], 2); iIterator++;
+
+
+    // Store OpCode.
+    Byte iOpCodeByte = vecInput[iIterator]; iIterator++;
+    pInst->m_opcode.PushOpCode(iOpCodeByte);
+
+
+    // Store ModRM...
+    pInst->m_modrm.Store(vecInput[iIterator]);
+
+
+    // Finding escape opcode byte.
+    Byte iEscapeByte = Maths::SafeAnd(pInst->m_evexPrefix.mmm(), 0b11);
+
+    bool bValidEscapeByte = (iEscapeByte >= 1 && iEscapeByte <= 3); 
+    assert(bValidEscapeByte == true && "Invalid Implied Escape OpCode Byte.");
+    if(bValidEscapeByte == false)
+        return InsaneDASM64::IDASMErrorCode_InvalidEVEXEscapeOpcdByte;
+
+
+    // Getting OpCode Table(s).
+    static Byte s_iEscapeOpcdTable[] = { 0x0F, 0x38, 0x3A };
+    Standard::OpCodeDesc_t* pOpcdTable    = G::g_tables.GetEVEXOpCodeTable(s_iEscapeOpcdTable[iEscapeByte - 1]);
+    Standard::OpCodeDesc_t* pOpcdTableAlt = G::g_tables.GetVEXOpCodeTable (s_iEscapeOpcdTable[iEscapeByte - 1]);
+
+
+    assert(pOpcdTable != nullptr && pOpcdTableAlt != nullptr && "Failed to get OpCode table.");
+    if(pOpcdTable == nullptr || pOpcdTableAlt == nullptr) 
+        return IDASMErrorCode_t::IDASMErrorCode_FaildToGetOpcdTable;
+
+
+    // Store OpCode description.
+    Standard::OpCodeDesc_t* pOpCodeDesc    = &pOpcdTable   [iOpCodeByte];
+    Standard::OpCodeDesc_t* pOpCodeDescAlt = &pOpcdTableAlt[iOpCodeByte];
+    if(pOpCodeDesc->m_bIsValidCode == false && pOpCodeDescAlt->m_bIsValidCode == false)
+    {
+        // Both of the tables have marked this instruction as invalid, hence this must be invalid AF.
+        FAIL_LOG("Invalid varient for byte 0x%02x 0x%02X", s_iEscapeOpcdTable[iEscapeByte - 1], iOpCodeByte);
+        return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
+    }
+
+
+    // Attempting to initialize opcode description using the first table.
+    bool bFinalVarientFound = false;
+    static Byte s_iLegacyPrefixTable[] = { 0x00, 0x66, 0xF3, 0xF2 };
+    if(pOpCodeDesc->m_bIsValidCode == true)
+    {
+        pInst->m_opcode.StoreOperatorDesc(pOpCodeDesc);
+
+        // Using modrm and perfix, determine final varient.
+        Byte iLegacyPrefix = s_iLegacyPrefixTable[pInst->m_evexPrefix.pp()];
+
+        bFinalVarientFound = pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
+    }
+
+    // If this instruction is not valid according to EVEX only talbe OR
+    // we failed to find the final varient using the Opcd Description from EVEX table.
+    // Try to initialize the final varient using VEX table.
+    if(bFinalVarientFound == false && pOpCodeDescAlt->m_bIsValidCode == true)
+    {
+        pInst->m_opcode.StoreOperatorDesc(pOpCodeDescAlt);
+        pInst->m_opcode.m_pOpCodeDesc = nullptr; // Make sure final varient is nulled out.
+
+        // Using modrm and perfix, determine final varient.
+        Byte iLegacyPrefix = s_iLegacyPrefixTable[pInst->m_evexPrefix.pp()];
+
+        bFinalVarientFound = pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
+    }
+
+
+    // we failed to find final varient from both tables?
+    if(pInst->m_opcode.m_pOpCodeDesc == nullptr || pInst->m_opcode.m_pRootOpCodeDesc == nullptr)
+    {
+        FAIL_LOG("Final varient for opcd 0x%02x 0x%02x couldn't be determined. Root : [ %p ], Final varient : [ %p ]", 
+                s_iEscapeOpcdTable[iEscapeByte - 1], iOpCodeByte, pInst->m_opcode.m_pRootOpCodeDesc, pInst->m_opcode.m_pOpCodeDesc);
+
+        return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
+    }
+
+
+    // store SIB...
+    pInst->m_bHasSIB = pInst->m_modrm.ModValueAbs() != 0b11 && pInst->m_modrm.RMValueAbs() == 0b100;
+    if(pInst->m_bHasSIB == true)
+    {
+        if(iIterator >= nBytes)
+            return IDASMErrorCode_t::IDASMErrorCode_SIBNotFound;
+
+        iIterator++;
+        pInst->m_SIB.Store(vecInput[iIterator]);
+    }
+
+
+    // Final varient valid ?
+    if(pInst->m_opcode.m_pOpCodeDesc->m_bIsValidCode == false)
+    {
+        FAIL_LOG("Invalid final varient for byte 0x%02X", iOpCodeByte);
+        return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
+    }
+
+
+    // Store displacement if required.
+    // calc. size of displacement here.
+    int      iDisplacementSize = 0;
+    uint64_t iMod              = pInst->m_modrm.ModValueAbs();
+
+    if (iMod == 0b01)
+    {
+        iDisplacementSize = 1;
+    }
+    else if (iMod == 0b10 || (iMod == 0b00 && pInst->m_modrm.RMValueAbs() == 0b101))
+    {
+        iDisplacementSize = 4;
+    }
+    else if (iMod == 0b00 && pInst->m_SIB.BaseValueAbs() == 0b101) // base == 101 ?
+    {
+        iDisplacementSize = 4;
+    }
+
+    // Invalid quantity of Displacement bytes.
+    if (iDisplacementSize > Rules::MAX_DISPLACEMENT_BYTES)
+        return IDASMErrorCode_t::IDASMErrorCode_InvalidDispSize;
+
+
+    // Got enough bytes for displacement in byte stream.
+    if(nBytes - iIterator > iDisplacementSize)
+        return IDASMErrorCode_t::IDASMErrorCode_DisplacementNotFound;
+
+
+    // Capture Displacement bytes.
+    for (size_t iDispIndex = iIterator + 1; iDispIndex < nBytes && iDispIndex - (iIterator + 1) < iDisplacementSize; iDispIndex++)
+    {
+        pInst->m_disp.PushByte(vecInput[iDispIndex]);
+    }
+    iIterator += pInst->m_disp.ByteCount();
+
+
+    // Got Bytes left for immedaite?
+    if(iIterator >= nBytes)
+        return IDASMErrorCode_t::IDASMErrorCode_NoImmediateFound;
+
+
+    // Store Immediate byte if required.
+    Standard::OpCodeDesc_t* pFinalOpCodeDesc = pInst->m_opcode.m_pOpCodeDesc;
+    for(int iOperandIndex = 0; iOperandIndex < pFinalOpCodeDesc->m_nOperands; iOperandIndex++)
+    {
+        Standard::Operand_t& operand = pFinalOpCodeDesc->m_operands[iOperandIndex];
+        if(operand.m_iOperandCatagory == Standard::Operand_t::OperandCatagory_Legacy)
+        {
+                Standard::OperandModes_t iOperandMode = operand.m_iOperandMode;
+                if (iOperandMode == Standard::OperandModes_t::OperandMode_I || 
+                    iOperandMode == Standard::OperandModes_t::OperandMode_J ||
+                    iOperandMode == Standard::OperandModes_t::OperandMode_O ||
+                    iOperandMode == Standard::OperandModes_t::OperandMode_A || 
+                    iOperandMode == Standard::OperandModes_t::OperandMode_IXY)
+                {
+                    iIterator++;
+                    pInst->m_immediate.PushByte(vecInput[iIterator]);
+                    break;
+                }
+        }
+    }
+
+
+    // Store displacement compression byte if required.
+    if(pInst->m_modrm.ModValueAbs() == 0b01) // Compressed displacement byte, only for disp8 addressing.
+    {
+        if(iIterator >= nBytes)
+            return IDASMErrorCode_t::IDASMErrorCode_NoDispCompressionByte;
+
+        iIterator++;
+        pInst->m_iCompressedDisp = vecInput[iIterator];
+    }
+
+
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+

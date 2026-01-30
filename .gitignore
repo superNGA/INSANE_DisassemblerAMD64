@@ -19,5 +19,10 @@ Tools/ValidAVXInst/*
 # Ignoring VEX encodable instruction map dump tool.
 Tools/VEXInstTableGen/*
 !Tools/VEXInstTableGen/
-!Tools/VEXInstTableGen/TableValidation.cpp
+!Tools/VEXInstTableGen/VEXTableGen.cpp
 !Tools/VEXInstTableGen/x86-opcode-map.cpp
+
+Tools/EVEXInstTableGen/*
+!Tools/EVEXInstTableGen/
+!Tools/EVEXInstTableGen/EVEXTableGen.cpp
+!Tools/EVEXInstTableGen/x86-opcode-map.cpp

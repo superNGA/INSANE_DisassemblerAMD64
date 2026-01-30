@@ -55,6 +55,7 @@ namespace INSANE_DASM64_NAMESPACE
         uint16_t      GetInstType(Byte iOpCode) const;
         Standard::OpCodeDesc_t* GetOpCodeTable(int iTableIndex, Byte iEscapeByte);
         Standard::OpCodeDesc_t* GetVEXOpCodeTable(Byte iEscapeByte);
+        Standard::OpCodeDesc_t* GetEVEXOpCodeTable(Byte iEscapeByte);
 
 
         // To associate all leagacy prefix with simple consecutive numbers.
@@ -97,6 +98,23 @@ namespace INSANE_DASM64_NAMESPACE
 
         void                           _InitVEXThreeByteOpCodes_3A();
         Standard::OpCodeDesc_t*        m_VEXThreeByteOpCodes_3A;
+        
+
+
+        // Tables... ( VEX encoded instuctions. )
+        // These tables are all the instructions from the linux kernel's x86 opcode map
+        // which either start with a 'v' and have no AVX superscript or have (evo), (ev), (es) AVX superscript
+        INSANE_DASM64_NAMESPACE::IDASMErrorCode_t _InitializeEVEXOpCodeTables();
+        bool                           m_bEVEXOpCodeTables = false;
+
+        void                           _InitEVEXTwoByteOpCodes();
+        Standard::OpCodeDesc_t*        m_EVEXTwoByteOpCodes;
+
+        void                           _InitEVEXThreeByteOpCodes_38();
+        Standard::OpCodeDesc_t*        m_EVEXThreeByteOpCodes_38;
+
+        void                           _InitEVEXThreeByteOpCodes_3A();
+        Standard::OpCodeDesc_t*        m_EVEXThreeByteOpCodes_3A;
     };
     DEFINE_GLOBAL_OBJECT(g_tables, Tables_t)
 

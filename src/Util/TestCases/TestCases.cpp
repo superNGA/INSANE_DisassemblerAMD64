@@ -452,6 +452,66 @@ std::vector<Byte> InsaneDASM64::TestCases::g_vecVEXTestCase_005 =
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
+std::vector<Byte> InsaneDASM64::TestCases::g_vecEVEXTestCase_001 = 
+{
+    // 1. VADDPS zmm0, zmm1, zmm2
+    // Standard 512-bit floating point add, no masking, no special bits.
+    0x62, 0xF1, 0x7C, 0x48, 0x58, 0xC2,
+
+    // 2. VADDPD xmm16, xmm17, xmm18
+    // Testing high registers (16-31) and 128-bit EVEX promotion.
+    // P1: R, X, B, R' bits are active to address higher banks.
+    0x62, 0x31, 0x75, 0x00, 0x58, 0xC2,
+
+    // 3. VPADDD zmm0 {k1}, zmm1, zmm2
+    // Testing Opmask (k1) usage. 
+    // The 'aaa' bits in P3 are set to 001.
+    0x62, 0xF1, 0x75, 0x49, 0xFE, 0xC2,
+
+    // 4. VMOVAPS zmm31 {k2}{z}, [rax]
+    // Testing memory displacement (0), high register zmm31, 
+    // and Zeroing-masking ({z} bit in P3).
+    0x62, 0x61, 0x7C, 0xCA, 0x28, 0x38,
+
+    // 5. VPCMPD k0, zmm1, zmm2, 0 (Equal)
+    // Testing an instruction that outputs to an opmask register 
+    // and includes an immediate byte (0x00) at the end.
+    // 0x62, 0xF1, 0x75, 0x48, 0x1F, 0xC2, 0x00, // INVALID!!! "AI will replace you" * clown emoji *
+
+    // 6. VADDPS zmm0, zmm1, [rax + 64]
+    // Testing Disp8 scaling. In EVEX, for 512-bit VADDPS, 
+    // the Disp8 byte is multiplied by 64. 
+    // So 0x01 in the displacement byte represents an offset of 64.
+    0x62, 0xF1, 0x7C, 0x48, 0x58, 0x40, 0x01
+};
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+std::vector<Byte> InsaneDASM64::TestCases::g_vecEVEXTestCase_002 = 
+{
+    // VPXORD zmm0 {z}, zmm0, zmm0   (common dependency-breaking zeroing idiom, 512-bit, masking with zeroing, low registers)
+    0x62, 0xf1, 0x7e, 0xc8, 0xef, 0xc0,
+
+    // VPXORD zmm31 {z}, zmm31, zmm31 (same zeroing idiom but using high register zmm31 to show extended register encoding)
+    0x62, 0x41, 0x06, 0xc0, 0xef, 0xff,
+
+    // VADDPS zmm0, zmm1, zmm2        (basic merge-masked add, 512-bit, no masking, floating-point, map 0F)
+    0x62, 0xf1, 0x74, 0x48, 0x58, 0xc2,
+
+    // VADDPS zmm0 {k1}, zmm1, zmm2    (same add but with writemask k1, shows non-zero mask register field)
+    0x62, 0xf1, 0x74, 0x49, 0x58, 0xc2,
+
+    // VADDPS ymm0, ymm1, ymm2        (same add but 256-bit length to vary L'L field)
+    0x62, 0xf1, 0x74, 0x28, 0x58, 0xc2,
+
+    // VPMULLD zmm0, zmm0, zmm0       (multiply low dwords, 512-bit, map 0F38, W=1, different pp and mmm)
+    0x62, 0xf2, 0xfd, 0x48, 0x40, 0xc0
+};
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 std::vector<Byte> InsaneDASM64::TestCases::g_vecTF2ClientDLL =
 {
     0x8B, 0xB4, 0x24, 0xC0, 0x01, 0x00, 0x00, 0x48, 0x81, 0xC4, 0xA8, 0x01, 0x00, 0x00, 0xC3, 0x48,

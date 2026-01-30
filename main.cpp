@@ -1,12 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
-#include <sstream>
 
 #include "Include/INSANE_DisassemblerAMD64.h"
 #include "Include/Legacy/LegacyInst_t.h"
 #include "Include/Standard/OpCodeDesc_t.h"
 #include "Include/VEX/VEXInst_t.h"
+#include "Include/EVEX/EVEXInst_t.h"
 #include "Include/Rules.h"
 
 // For testing purposes.
@@ -20,12 +20,13 @@ using namespace InsaneDASM64;
 static void PrintInst(std::vector<Instruction_t>& vecInst);
 static void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst);
 static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst);
+static void PrintEVEXInst(EVEX::EVEXInst_t* pInst);
 static void PrintOutput(std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMInst_t>& vecInst);
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-int main(void)
+int main(int nArgs, char** szArgs)
 {
     // Initialize disassembler.
     {
@@ -46,14 +47,17 @@ int main(void)
 
 
         // Decoding...
-        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecTF2ClientDLL, vecDecodedInst);
+        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecEVEXTestCase_001, vecDecodedInst);
+        WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
+        PrintInst(vecDecodedInst);
+
         if(iDecodingErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
         {
             printf("%s", GetErrorMessage(iDecodingErrCode));
             return 1;
         }
-        WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
 
+        return 0;
 
         // Disassemlbing...
         IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);
@@ -83,9 +87,9 @@ void PrintInst(std::vector<Instruction_t>& vecInst)
         {
             case Instruction_t::InstEncodingType_Legacy: PrintLegacyInst(reinterpret_cast<Legacy::LegacyInst_t*>(inst.m_pInst)); break;
             case Instruction_t::InstEncodingType_VEX:    PrintVEXInst(reinterpret_cast<VEX::VEXInst_t*>(inst.m_pInst));          break;
+            case Instruction_t::InstEncodingType_EVEX:   PrintEVEXInst(reinterpret_cast<EVEX::EVEXInst_t*>(inst.m_pInst));       break;
 
             // Not done yet.
-            case Instruction_t::InstEncodingType_EVEX:
             case Instruction_t::InstEncodingType_XOP:
             case Instruction_t::InstEncodingType_Invalid:
             default: assert(false && "Invalid encoding type!"); break;
@@ -205,6 +209,38 @@ static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst)
 
     for(int i = 0; i < 2; i++)
         printf("0x%02X ", i < pInst->m_vexPrefix.VEXByteCount() ? pInst->m_vexPrefix.m_iVEX[i] : 0);
+    printf(". ");
+
+    printf("0x%02X", pInst->m_opcode.GetMostSignificantOpCode());
+    printf(" . ");
+
+    printf("0x%02X", pInst->m_modrm.Get());
+    printf(" . ");
+
+    printf("0x%02X", pInst->m_SIB.Get());
+    printf(" . ");
+
+    for(int iDispIndex = 0; iDispIndex < Rules::MAX_DISPLACEMENT_BYTES ; iDispIndex++)
+        if(iDispIndex < pInst->m_disp.ByteCount())
+            printf("0x%02X ", pInst->m_disp.m_iDispBytes[iDispIndex]);
+        else 
+            printf("~~~~ ");
+    printf(". ");
+
+    printf("0x%02X", pInst->m_immediate.m_immediateByte[0]);
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static void PrintEVEXInst(EVEX::EVEXInst_t* pInst)
+{
+    printf("[ %16s ] ", pInst->m_opcode.m_pOpCodeDesc->m_szName);
+    printf("0x%02X", pInst->m_evexPrefix.m_iPrefix);
+    printf(" . ");
+
+    printf("0x%02X 0x%02X 0x%02X ", pInst->m_evexPrefix.m_iPayload1, pInst->m_evexPrefix.m_iPayload2, pInst->m_evexPrefix.m_iPayload3);
+
     printf(". ");
 
     printf("0x%02X", pInst->m_opcode.GetMostSignificantOpCode());

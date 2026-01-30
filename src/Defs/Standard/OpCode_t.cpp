@@ -139,32 +139,37 @@ static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* 
         return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[iModRM & 0b111]);
 
         case Standard::OpCodeDesc_t::VarientKey_LegacyPrefix:
-    {
-        Standard::OpCodeDesc_t* pOpCodeDesc = pRootOpCodeDesc->m_pVarients[0];
-
-        for (int i = 0; i < pPrefix->PrefixCount(); i++)
         {
-            Byte          iPrefix            = pPrefix->m_legacyPrefix[i];
-            int           iPrefixIndex       = G::g_tables.GetLegacyPrefixIndex(iPrefix);
-            Standard::OpCodeDesc_t* pPrefixOpCodeDesc  = pRootOpCodeDesc->m_pVarients[iPrefixIndex];
-                
-            // Check if we have any prefix such that there exists a opcode varient for that
-            // prefix. Else we can always use the default entry.
-            if (pPrefixOpCodeDesc != nullptr)
+            Standard::OpCodeDesc_t* pOpCodeDesc = pRootOpCodeDesc->m_pVarients[0];
+
+            for (int i = 0; i < pPrefix->PrefixCount(); i++)
             {
-                pOpCodeDesc = pPrefixOpCodeDesc;
-                break;
+                Byte          iPrefix            = pPrefix->m_legacyPrefix[i];
+                int           iPrefixIndex       = G::g_tables.GetLegacyPrefixIndex(iPrefix);
+                Standard::OpCodeDesc_t* pPrefixOpCodeDesc  = pRootOpCodeDesc->m_pVarients[iPrefixIndex];
+
+                // Check if we have any prefix such that there exists a opcode varient for that
+                // prefix. Else we can always use the default entry.
+                if (pPrefixOpCodeDesc != nullptr)
+                {
+                    pOpCodeDesc = pPrefixOpCodeDesc;
+                    break;
+                }
             }
+
+            // OpCode varient can't be nullptr.
+            // if its nullptr that means, this opcode only supports specific perfixies
+            // and we don't have that prefix.
+            // assert(pOpCodeDesc != nullptr && "Prefix not support by this opcode. Prefix split evaluation failed.");
+            if(pOpCodeDesc != nullptr)
+                return FindVarientRecurse(pPrefix, iModRM, pOpCodeDesc);
+
+            break;
         }
-
-        return FindVarientRecurse(pPrefix, iModRM, pOpCodeDesc);
-
-        break;
-    }
     default: break;
     }
 
 
-    assert(false && "Invalid opcode varient set!");
+    // assert(false && "Invalid opcode varient set!");
     return nullptr;
 }

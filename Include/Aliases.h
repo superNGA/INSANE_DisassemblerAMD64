@@ -37,6 +37,13 @@ VEX encoded instructions.
 #define VEX_NAMESPACE           VEX
 
 
+/*
+EVEX namespace holds all data strucutures and constants that are specific to and used with decoding and disassembling
+EVEX encoded instructions.
+*/
+#define EVEX_NAMESPACE           EVEX
+
+
 #define DEFINE_GLOBAL_OBJECT(objName, objType) namespace G { inline objType objName; }
 
 

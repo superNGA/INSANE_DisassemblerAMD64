@@ -42,6 +42,7 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
         CEOperandMode_TRn,     // [ GEEK : T          ]
         CEOperandMode_xmm,     // [ GEEK : U, V       ]
         CEOperandMode_xmmm,    // [ GEEK : W          ]
+        CEOperandMode_MRn,     // [ GEEK : K          ]
 
         CEOperandMode_Count
     };

@@ -55,6 +55,7 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
         OperandMode_Z,
 
         // Custom ones. Added.
+        OperandMode_K,   // Mask register for EVEX encoded instructions...
         OperandMode_VG,  // The VEX.vvvv field of the VEX prefix selects a general purpose register.
         OperandMode_VXY, // The VEX.vvvv field of the VEX prefix selects a 128-bit XMM register or a 256-bit YMM register
         OperandMode_IXY, // The upper 4 bits of the 8-bit immediate selects a 128-bit XMM register or a 256-bit YMM register.

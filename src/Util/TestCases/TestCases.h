@@ -38,6 +38,12 @@ namespace InsaneDASM64
         extern std::vector<Byte> g_vecVEXTestCase_003;
         extern std::vector<Byte> g_vecVEXTestCase_004; // Big one.
         extern std::vector<Byte> g_vecVEXTestCase_005;
+
+
+        // EVEX encoded instructions.
+        extern std::vector<Byte> g_vecEVEXTestCase_001; // Gemini
+        extern std::vector<Byte> g_vecEVEXTestCase_002; // Grok
+
         extern std::vector<Byte> g_vecTF2ClientDLL;
     }
 }

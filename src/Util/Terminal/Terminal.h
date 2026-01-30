@@ -27,6 +27,7 @@
 // Formatted console output helper macors. So we disable then quickly.
 #define ENABLE_CONSOLE_LOGS
 
+
 #ifdef ENABLE_CONSOLE_LOGS
 
 #define WIN_LOG(msg, ...)       EXPAND(Console::PrintToConsole(__FUNCTION__, Console::FG_BRIGHT_GREEN, "", msg, ##__VA_ARGS__))

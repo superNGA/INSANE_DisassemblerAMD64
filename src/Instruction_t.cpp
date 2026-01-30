@@ -16,6 +16,7 @@
 // Instruction data structures.
 #include "../Include/Legacy/LegacyInst_t.h"
 #include "../Include/VEX/VEXInst_t.h"
+#include "../Include/EVEX/EVEXInst_t.h"
 
 
 
@@ -48,6 +49,7 @@ bool InsaneDASM64::Instruction_t::InitEncodingType(InstEncodingTypes_t iEncoding
     {
         case InstEncodingType_Legacy: iInstSize = sizeof(Legacy::LegacyInst_t); break;
         case InstEncodingType_VEX:    iInstSize = sizeof(VEX::VEXInst_t);       break;
+        case InstEncodingType_EVEX:   iInstSize = sizeof(EVEX::EVEXInst_t);     break;
 
         default: assert(false && "Size of this instruction encoding type is not know. Not implemented yet!"); break;
     }
