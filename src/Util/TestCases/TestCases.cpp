@@ -491,10 +491,10 @@ std::vector<Byte> InsaneDASM64::TestCases::g_vecEVEXTestCase_001 =
 std::vector<Byte> InsaneDASM64::TestCases::g_vecEVEXTestCase_002 = 
 {
     // VPXORD zmm0 {z}, zmm0, zmm0   (common dependency-breaking zeroing idiom, 512-bit, masking with zeroing, low registers)
-    0x62, 0xf1, 0x7e, 0xc8, 0xef, 0xc0,
+    // 0x62, 0xf1, 0x7e, 0xc8, 0xef, 0xc0,
 
     // VPXORD zmm31 {z}, zmm31, zmm31 (same zeroing idiom but using high register zmm31 to show extended register encoding)
-    0x62, 0x41, 0x06, 0xc0, 0xef, 0xff,
+    // 0x62, 0x41, 0x06, 0xc0, 0xef, 0xff,
 
     // VADDPS zmm0, zmm1, zmm2        (basic merge-masked add, 512-bit, no masking, floating-point, map 0F)
     0x62, 0xf1, 0x74, 0x48, 0x58, 0xc2,

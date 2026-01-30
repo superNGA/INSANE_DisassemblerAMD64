@@ -657,7 +657,10 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
 
 
     // Got enough bytes for displacement in byte stream.
-    if(nBytes - iIterator > iDisplacementSize)
+    if(iIterator >= nBytes)
+        return IDASMErrorCode_t::IDASMErrorCode_DisplacementNotFound;
+
+    if(nBytes - (iIterator + 1) < iDisplacementSize)
         return IDASMErrorCode_t::IDASMErrorCode_DisplacementNotFound;
 
 
@@ -667,11 +670,6 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
         pInst->m_disp.PushByte(vecInput[iDispIndex]);
     }
     iIterator += pInst->m_disp.ByteCount();
-
-
-    // Got Bytes left for immedaite?
-    if(iIterator >= nBytes)
-        return IDASMErrorCode_t::IDASMErrorCode_NoImmediateFound;
 
 
     // Store Immediate byte if required.
@@ -697,14 +695,15 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
 
 
     // Store displacement compression byte if required.
-    if(pInst->m_modrm.ModValueAbs() == 0b01) // Compressed displacement byte, only for disp8 addressing.
-    {
-        if(iIterator >= nBytes)
-            return IDASMErrorCode_t::IDASMErrorCode_NoDispCompressionByte;
-
-        iIterator++;
-        pInst->m_iCompressedDisp = vecInput[iIterator];
-    }
+    // if(pInst->m_modrm.ModValueAbs() == 0b01) // Compressed displacement byte, only for disp8 addressing.
+    // {
+    //     if(iIterator >= nBytes)
+    //         return IDASMErrorCode_t::IDASMErrorCode_NoDispCompressionByte;
+    //
+    //     FAIL_LOG("Storing compression byte");
+    //     iIterator++;
+    //     pInst->m_iCompressedDisp = vecInput[iIterator];
+    // }
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;

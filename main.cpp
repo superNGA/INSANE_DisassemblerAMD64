@@ -47,7 +47,7 @@ int main(int nArgs, char** szArgs)
 
 
         // Decoding...
-        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecEVEXTestCase_001, vecDecodedInst);
+        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecEVEXTestCase_002, vecDecodedInst);
         WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
         PrintInst(vecDecodedInst);
 
