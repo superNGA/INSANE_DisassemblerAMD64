@@ -104,8 +104,18 @@ const char* InsaneDASM64::Standard::Register_t::ToString() const
     }
 
     case Register_t::RegisterClass_AVX512:
-        return Rules::REGISTER_NAME_SENTINAL;
+    {
+        static const char* s_szZMM[32] = {
+            "zmm0", "zmm1", "zmm2", "zmm3", "zmm4", "zmm5", "zmm6", "zmm7",
+            "zmm8", "zmm9", "zmm10", "zmm11", "zmm12", "zmm13", "zmm14", "zmm15",
+            "zmm16", "zmm17", "zmm18", "zmm19", "zmm20", "zmm21", "zmm22", "zmm23",
+            "zmm24", "zmm25", "zmm26", "zmm27", "zmm28", "zmm29", "zmm30", "zmm31"};
+
+        assert(m_iRegisterIndex >= 0 && m_iRegisterIndex < (sizeof(s_szZMM) / sizeof(char*)) && "Invalid register index.");
+
+        return s_szZMM[m_iRegisterIndex];
         break;
+    }
 
     case Register_t::RegisterClass_Segment:
     {

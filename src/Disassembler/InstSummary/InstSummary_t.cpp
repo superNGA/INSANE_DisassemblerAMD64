@@ -11,7 +11,9 @@
 #include "../../../Include/Masks.h"
 #include "../../../Include/Legacy/LegacyInst_t.h"
 #include "../../../Include/VEX/VEXInst_t.h"
+#include "../../../Include/EVEX/EVEXInst_t.h"
 #include "../../Math/SafeBitWiseOps.h"
+#include <cassert>
 
 
 
@@ -35,7 +37,10 @@ void InsaneDASM64::InstSummary_t::Clear()
     m_bHasModRM     = false;
     m_pSIB          = nullptr;
     m_bHasSIB       = false;
-    m_pVEXPrefix    = nullptr;
+
+    m_iVectorLength = 0llu;
+    m_iVvvvv        = 0llu;
+
     m_pImmediate    = nullptr;
     m_pDisplacement = nullptr;
 
@@ -57,10 +62,13 @@ void InsaneDASM64::InstSummary_t::Clear()
 ///////////////////////////////////////////////////////////////////////////
 void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacyInst)
 {
+    Clear();
+
+    m_iInstEncodingType = Instruction_t::InstEncodingType_Legacy;
+
     m_pOpCode       = &pLegacyInst->m_opCode; // NOTE : pLegacyInst->m_opCode is of type LegacyOpCode_t which inherits from opCode_t. They are pretty much the same.
     m_pModRM        = &pLegacyInst->m_modrm; m_bHasModRM = pLegacyInst->m_bHasModRM;
     m_pSIB          = &pLegacyInst->m_SIB;   m_bHasSIB   = pLegacyInst->m_bHasSIB;
-    m_pVEXPrefix    = nullptr;
     m_pDisplacement = &pLegacyInst->m_displacement;
     m_pImmediate    = &pLegacyInst->m_immediate;
 
@@ -92,10 +100,17 @@ void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacy
 ///////////////////////////////////////////////////////////////////////////
 void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
 {
+    Clear();
+
+    m_iInstEncodingType = Instruction_t::InstEncodingType_VEX;
+
     m_pOpCode       = &pVEXInst->m_opcode; // NOTE : This is just a standard::opCode_t object.
     m_pModRM        = &pVEXInst->m_modrm; m_bHasModRM = true;
     m_pSIB          = &pVEXInst->m_SIB;   m_bHasSIB   = pVEXInst->m_bHasSIB;
-    m_pVEXPrefix    = &pVEXInst->m_vexPrefix;
+
+    m_iVectorLength = pVEXInst->m_vexPrefix.L() == 0 ? 128llu : 256llu;
+    m_iVvvvv        = ~(pVEXInst->m_vexPrefix.vvvv()) & (VEX::Masks::VVVV >> 3llu);
+
     m_pDisplacement = &pVEXInst->m_disp;
     m_pImmediate    = &pVEXInst->m_immediate;
 
@@ -117,6 +132,57 @@ void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
 
     if(pVEXInst->m_vexPrefix.m_iPrefix == SpecialChars::VEX_PREFIX_C4)
         m_iREX_B = pVEXInst->m_vexPrefix.B();
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void InsaneDASM64::InstSummary_t::Initialize(const EVEX::EVEXInst_t* pInst)
+{
+    Clear();
+
+    m_iInstEncodingType = Instruction_t::InstEncodingType_EVEX;
+
+    m_pOpCode           = &pInst->m_opcode;
+    m_pModRM            = &pInst->m_modrm;
+    m_bHasModRM         = true;
+    m_pSIB              = &pInst->m_SIB;
+    m_bHasSIB           = pInst->m_bHasSIB;
+    
+    
+    // Vector Length for instruction.
+    switch(pInst->m_evexPrefix.LL())
+    {
+        case 0: m_iVectorLength = 128llu; break;
+        case 1: m_iVectorLength = 256llu; break;
+        case 2: m_iVectorLength = 512llu; break;
+
+        default: assert("Invalid LL value for instruction."); break;
+    }
+    m_iVvvvv = Maths::SafeAnd(~(pInst->m_evexPrefix.vvvv() | (pInst->m_evexPrefix.Vdash() << 4llu)), 0b11111);
+    
+
+    m_pImmediate        = &pInst->m_immediate;
+    m_pDisplacement     = &pInst->m_disp;
+
+    m_iModRM_Mod = pInst->ModRM_Mod(); 
+    m_iModRM_Reg = pInst->ModRM_Reg(); 
+    m_iModRM_RM  = pInst->ModRM_RM();
+
+    if(pInst->m_bHasSIB == true)
+    {
+        m_iSIB_Scale = pInst->SIB_Scale();
+        m_iSIB_Index = pInst->SIB_Index();
+        m_iSIB_Base  = pInst->SIB_Base();
+    }
+
+    m_iOperandSizeInByte = pInst->GetOperandSizeInBytes();
+    m_iAddressSizeInByte = 8llu;
+
+    m_iImmRegisterIndex = pInst->m_immediate.ByteCount() == 1 ? pInst->GetImmRegister() : 0llu;
+
+    if(pInst->m_evexPrefix.m_iPrefix == SpecialChars::EVEX_PREFIX_62)
+        m_iREX_B = pInst->m_evexPrefix.B();
 }
 
 

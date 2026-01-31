@@ -114,7 +114,7 @@ uint64_t EVEX::EVEXPrefix_t::W() const
 ///////////////////////////////////////////////////////////////////////////
 uint64_t EVEX::EVEXPrefix_t::vvvv() const
 {
-    return Maths::SafeAnd(m_iPayload2, EVEX::Masks::VVVV) >> 4llu;
+    return Maths::SafeAnd(m_iPayload2, EVEX::Masks::VVVV) >> 3llu;
 }
 
 

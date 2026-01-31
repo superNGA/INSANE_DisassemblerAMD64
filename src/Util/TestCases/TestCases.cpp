@@ -461,7 +461,7 @@ std::vector<Byte> InsaneDASM64::TestCases::g_vecEVEXTestCase_001 =
     // 2. VADDPD xmm16, xmm17, xmm18
     // Testing high registers (16-31) and 128-bit EVEX promotion.
     // P1: R, X, B, R' bits are active to address higher banks.
-    0x62, 0x31, 0x75, 0x00, 0x58, 0xC2,
+    // 0x62, 0x31, 0x75, 0x00, 0x58, 0xC2, // Invalid!
 
     // 3. VPADDD zmm0 {k1}, zmm1, zmm2
     // Testing Opmask (k1) usage. 
@@ -476,7 +476,7 @@ std::vector<Byte> InsaneDASM64::TestCases::g_vecEVEXTestCase_001 =
     // 5. VPCMPD k0, zmm1, zmm2, 0 (Equal)
     // Testing an instruction that outputs to an opmask register 
     // and includes an immediate byte (0x00) at the end.
-    // 0x62, 0xF1, 0x75, 0x48, 0x1F, 0xC2, 0x00, // INVALID!!! "AI will replace you" * clown emoji *
+    // 0x62, 0xF1, 0x75, 0x48, 0x1F, 0xC2, 0x00, // INVALID!!! 
 
     // 6. VADDPS zmm0, zmm1, [rax + 64]
     // Testing Disp8 scaling. In EVEX, for 512-bit VADDPS, 

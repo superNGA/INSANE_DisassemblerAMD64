@@ -47,9 +47,9 @@ int main(int nArgs, char** szArgs)
 
 
         // Decoding...
-        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecEVEXTestCase_002, vecDecodedInst);
+        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecEVEXTestCase_001, vecDecodedInst);
         WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
-        PrintInst(vecDecodedInst);
+        // PrintInst(vecDecodedInst);
 
         if(iDecodingErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
         {
@@ -57,7 +57,6 @@ int main(int nArgs, char** szArgs)
             return 1;
         }
 
-        return 0;
 
         // Disassemlbing...
         IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);

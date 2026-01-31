@@ -72,5 +72,6 @@ namespace INSANE_DASM64_NAMESPACE
         constexpr uint64_t b = 0b10000;
         constexpr uint64_t V = 0b1000;
         constexpr uint64_t AAA = 0b111;
+
     }
 }

@@ -10,6 +10,7 @@
 #pragma once
 #include "../../../Include/Aliases.h"
 #include <cstdint>
+#include "../../../Include/Instruction_t.h"
 
 
 
@@ -21,6 +22,7 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE { struct Displacement_t; }
 namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE { struct Immediate_t;    }
 namespace INSANE_DASM64_NAMESPACE::VEX_NAMESPACE      { struct VEXPrefix_t;    }
 namespace INSANE_DASM64_NAMESPACE::VEX_NAMESPACE      { struct VEXInst_t;      }
+namespace INSANE_DASM64_NAMESPACE::EVEX_NAMESPACE     { struct EVEXInst_t;     }
 namespace INSANE_DASM64_NAMESPACE::LEGACY_NAMESPACE   { struct LegacyInst_t;   }
 
 
@@ -35,9 +37,12 @@ namespace INSANE_DASM64_NAMESPACE
         void Clear();
         void Initialize(const Legacy::LegacyInst_t* pLeagcyInst);
         void Initialize(const VEX::VEXInst_t*       pVEXInst);
+        void Initialize(const EVEX::EVEXInst_t*     pInst);
 
         bool IsValid() const;
 
+
+        Instruction_t::InstEncodingTypes_t m_iInstEncodingType = Instruction_t::InstEncodingType_Invalid;
 
 
         const Standard::OpCode_t*       m_pOpCode           = nullptr;
@@ -45,7 +50,10 @@ namespace INSANE_DASM64_NAMESPACE
         bool                            m_bHasModRM         = false;
         const Standard::SIB_t*          m_pSIB              = nullptr;
         bool                            m_bHasSIB           = false;
-        const VEX::VEXPrefix_t*         m_pVEXPrefix        = nullptr;
+
+        uint64_t                        m_iVectorLength     = 0llu; // VEX & EVEX 's LL bits, that represent vector length.
+        uint64_t                        m_iVvvvv            = 0llu; // VEX & EVEX 's vvvv bits, extended by V' in case of EVEX.
+
         const Standard::Immediate_t*    m_pImmediate        = nullptr;
         const Standard::Displacement_t* m_pDisplacement     = nullptr;
 

@@ -26,6 +26,19 @@ namespace INSANE_DASM64_NAMESPACE::EVEX_NAMESPACE
         void Clear();
 
 
+        // These accessor functions account for R,X,B,W bits in 
+        // VEX prefix.
+        uint64_t ModRM_Mod() const;
+        uint64_t ModRM_Reg() const;
+        uint64_t ModRM_RM () const;
+        uint64_t SIB_Scale() const;
+        uint64_t SIB_Index() const;
+        uint64_t SIB_Base () const;
+
+
+        uint64_t GetImmRegister() const;
+        int GetOperandSizeInBytes() const;
+
         // Components...
         EVEXPrefix_t             m_evexPrefix;
         Standard::OpCode_t       m_opcode;

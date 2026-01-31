@@ -17,10 +17,12 @@
 #include "../Math/SafeBitWiseOps.h"
 
 #include "../../Include/Standard/OpCodeDesc_t.h"
+#include "InstSummary/InstSummary_t.h"
+
+// Instruction structures...
 #include "../../Include/Legacy/LegacyInst_t.h"
 #include "../../Include/VEX/VEXInst_t.h"
-#include "../../Include/Masks.h"
-#include "InstSummary/InstSummary_t.h"
+#include "../../Include/EVEX/EVEXInst_t.h"
 
 
 
@@ -52,7 +54,7 @@ namespace InsaneDASM64
     static inline void HandleOperandMode_S  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_SC (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_T  (DASMInst_t* pOutput, InstSummary_t* pInst);
-    static inline void HandleOperandMode_U  (DASMInst_t* pOutput, InstSummary_t* pInst, Instruction_t::InstEncodingTypes_t iEncodingType);
+    static inline void HandleOperandMode_U  (DASMInst_t* pOutput, InstSummary_t* pInst);
     static inline void HandleOperandMode_V  (DASMInst_t* pOutput, InstSummary_t* pInst, Instruction_t::InstEncodingTypes_t iEncodingType);
     static inline void HandleOperandMode_W  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
     static inline void HandleOperandMode_X  (DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType);
@@ -69,6 +71,11 @@ namespace InsaneDASM64
     // register classes.
     static void RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary_t* pInst, 
             Standard::CEOperandTypes_t iCEOperandType, Standard::Register_t::RegisterClass_t iRegisterClass);
+
+
+    // Incase we have a EVEX encoded instruction, we need to add the masking register and merging/zeroing bit
+    // along with the first operand.
+    static void HandleMaskingReg(DASMInst_t* pOutput, const Instruction_t* pInst);
 
 
     static int CEOperandTypeToOperandSizeInBytes(Standard::CEOperandTypes_t iCEOperandType, int iOperandSizeInBytes);
@@ -98,6 +105,9 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
             break;
 
         case Instruction_t::InstEncodingType_EVEX:
+            inst.Initialize(reinterpret_cast<const EVEX::EVEXInst_t*>(pInst->m_pInst));
+            break;
+
         case Instruction_t::InstEncodingType_XOP:
         default:
         FAIL_LOG("Invalid Instruction Encoding Type [ %d ]", pInst->m_iInstEncodingType);
@@ -132,6 +142,10 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
 
     // Copy the name upfront.
     strcpy(pOutput->m_szMnemonic, pOpCodeDesc->m_szName);
+
+
+    // For EVEX instructions only.
+    bool bMaskRegAdded = false;
 
 
     // We shall journey through the operands all, refining them such that common man may readeth and know their truth.
@@ -172,7 +186,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
                     case Standard::OperandMode_S:   HandleOperandMode_S  (pOutput, &inst); break;
                     case Standard::OperandMode_SC:  HandleOperandMode_SC (pOutput, &inst); break;
                     case Standard::OperandMode_T:   HandleOperandMode_T  (pOutput, &inst); break;
-                    case Standard::OperandMode_U:   HandleOperandMode_U  (pOutput, &inst, pInst->m_iInstEncodingType); break;
+                    case Standard::OperandMode_U:   HandleOperandMode_U  (pOutput, &inst); break;
                     case Standard::OperandMode_V:   HandleOperandMode_V  (pOutput, &inst, pInst->m_iInstEncodingType); break;
                     case Standard::OperandMode_W:   HandleOperandMode_W  (pOutput, &inst, iCEOperandType); break;
                     case Standard::OperandMode_X:   HandleOperandMode_X  (pOutput, &inst, iCEOperandType); break;
@@ -187,6 +201,13 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
                         assert("Invalid Operand Addressing Mode!");
                         break;
                 }
+
+                if(pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX && bMaskRegAdded == false)
+                {
+                    HandleMaskingReg(pOutput, pInst);
+                    bMaskRegAdded = true;
+                }
+
                 break;
 
             case Standard::Operand_t::OperandCatagory_Register:
@@ -433,21 +454,35 @@ static inline void InsaneDASM64::HandleOperandMode_T(DASMInst_t* pOutput, InstSu
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, InstSummary_t* pInst, Instruction_t::InstEncodingTypes_t iEncodingType)
+static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The R/M field of the ModR/M byte selects a 128-bit XMM register.
 
     // Register width.
     int16_t iRegisterWidth = 128;
 
-    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
-        iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
+    bool bVecExtEncoding = 
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_VEX || 
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_VEX;
+
+    if(bVecExtEncoding == true)
+        iRegisterWidth = static_cast<int16_t>(pInst->m_iVectorLength);
+
 
     // Register class.
     Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_SSE;
 
-    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
-        iRegisterClass = pInst->m_pVEXPrefix->L() == false ? Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
+    if(bVecExtEncoding == true)
+    {
+        switch(pInst->m_iVectorLength)
+        {
+            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
+            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+            case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
+
+            default: break;
+        }
+    }
 
     pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, pInst->m_iModRM_RM, iRegisterWidth).ToString());
 }
@@ -462,14 +497,28 @@ static inline void InsaneDASM64::HandleOperandMode_V(DASMInst_t* pOutput, InstSu
     // Register width.
     int16_t iRegisterWidth = 128;
 
-    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
-        iRegisterWidth = pInst->m_pVEXPrefix->L() == false ? 128 : 256;
+    bool bVecExtEncoding = 
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_VEX ||
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX;
+        
+    if(bVecExtEncoding == true)
+        iRegisterWidth = pInst->m_iVectorLength;
+
 
     // Register class.
     Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_SSE;
 
-    if(iEncodingType == Instruction_t::InstEncodingType_VEX)
-        iRegisterClass = pInst->m_pVEXPrefix->L() == false ? Standard::Register_t::RegisterClass_SSE : Standard::Register_t::RegisterClass_AVX;
+    if(bVecExtEncoding == true)
+    {
+        switch (pInst->m_iVectorLength) 
+        {
+            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
+            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+            case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
+
+            default: break; 
+        }
+    }
 
     pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, pInst->m_iModRM_Reg, iRegisterWidth).ToString());
 }
@@ -480,7 +529,26 @@ static inline void InsaneDASM64::HandleOperandMode_V(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_W(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : The operand is either a 128-bit XMM register or a memory address.
-    RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, Standard::Register_t::RegisterClass_SSE);
+
+    bool bVecExtEncoding = 
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_VEX ||
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX;
+
+
+    Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_Invalid;
+    if(bVecExtEncoding == true)
+    {
+        switch (pInst->m_iVectorLength) 
+        {
+            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
+            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+            case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
+
+            default: break; 
+        }
+    }
+
+    RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, iRegisterClass);
 }
 
 
@@ -551,13 +619,8 @@ static inline void InsaneDASM64::HandleOperandMode_Z(DASMInst_t* pOutput, InstSu
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_VG(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
-    uint64_t iVVVV = pInst->m_pVEXPrefix->vvvv();
-
-    // register index is one's compliment of vex.vvvv,
-    iVVVV = ~iVVVV & VEX::Masks::VVVV;
-
     pOutput->PushBackOperand(Standard::Register_t(
-                Standard::Register_t::RegisterClass_GPR, iVVVV, CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
+                Standard::Register_t::RegisterClass_GPR, pInst->m_iVvvvv, CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
 }
 
 
@@ -565,24 +628,35 @@ static inline void InsaneDASM64::HandleOperandMode_VG(DASMInst_t* pOutput, InstS
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    assert(pInst->m_pVEXPrefix != nullptr && "NULL VEXPrefix received for handling operand mode U");
-    if(pInst->m_pVEXPrefix == nullptr)
+    // Does this encoding type support this Operand Addressing Method.
+    bool bValidEncoding = 
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_VEX || 
+        pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX;
+
+    assert(bValidEncoding == true && "NULL VEXPrefix received for handling operand mode VXY");
+    if(bValidEncoding == false)
     {
-        FAIL_LOG("NULL VEXPrefix received for handling operand mode U");
+        FAIL_LOG("Invalid Encoding type { %d } for Operand Addressing Method VXY", pInst->m_iInstEncodingType);
         return;
     }
 
     // Register index, size & class
-    uint64_t iVVVV         = pInst->m_pVEXPrefix->vvvv();
-    int      iRegisterSize = pInst->m_pVEXPrefix->L() == 0llu ? 128 : 256;
-    Standard::Register_t::RegisterClass_t iRegClass = pInst->m_pVEXPrefix->L() == 0llu ? 
-        Standard::Register_t::RegisterClass_SSE : // XXM
-        Standard::Register_t::RegisterClass_AVX;  // YMM
+    Standard::Register_t::RegisterClass_t iRegClass = Standard::Register_t::RegisterClass_Invalid;// = pInst->m_pVEXPrefix->L() == 0llu ? 
+    switch (pInst->m_iVectorLength) 
+    {
+        case 128: iRegClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
+        case 256: iRegClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+        case 512: iRegClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
+     
+        default: break; 
+    }
 
-    //  register index is one's complimed of vex.vvvv,
-    iVVVV = ~iVVVV & (VEX::Masks::VVVV >> 3llu);
+    // Failed to determine register class?
+    assert(iRegClass != Standard::Register_t::RegisterClass_Invalid && "Invalid vector length. Failed to determine register class");
+    if(iRegClass == Standard::Register_t::RegisterClass_Invalid)
+        return;
 
-    pOutput->PushBackOperand(Standard::Register_t(iRegClass, iVVVV, iRegisterSize).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(iRegClass, pInst->m_iVvvvv, pInst->m_iVectorLength).ToString());
 }
 
 
@@ -600,13 +674,18 @@ static inline void InsaneDASM64::HandleOperandMode_IXY(DASMInst_t* pOutput, Inst
     }
 
     // Register index, size & class
-    int      iRegisterSize = pInst->m_pVEXPrefix->L() == 0llu ? 128 : 256;
-    Standard::Register_t::RegisterClass_t iRegClass = pInst->m_pVEXPrefix->L() == 0llu ? 
-        Standard::Register_t::RegisterClass_SSE : // XXM
-        Standard::Register_t::RegisterClass_AVX;  // YMM
+    Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_Invalid;
+    switch (pInst->m_iVectorLength) 
+    {
+        case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
+        case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+        case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
+
+        default: break; 
+    }
 
 
-    pOutput->PushBackOperand(Standard::Register_t(iRegClass, pInst->m_iImmRegisterIndex, iRegisterSize).ToString());
+    pOutput->PushBackOperand(Standard::Register_t(iRegisterClass, pInst->m_iImmRegisterIndex, pInst->m_iVectorLength).ToString());
 }
 
 
@@ -691,6 +770,8 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
                 ssTemp.flags(oldFlags);
                 ssTemp.fill(oldFill);
             }
+
+            ssTemp << "*N";
         }
 
         ssTemp << "]";
@@ -786,6 +867,59 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
     }
 }
 
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+static void InsaneDASM64::HandleMaskingReg(DASMInst_t* pOutput, const Instruction_t* pInst)
+{
+    // Make sure we have the valid instruction encoding type.
+    assert(pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX && "Invalid encoding for mask register.");
+    if(pInst->m_iInstEncodingType != Instruction_t::InstEncodingType_EVEX)
+        return;
+
+
+    // Make sure we have atleast one operand.
+    assert(pOutput->m_nOperands >= 1 && "Not enough operands to add masking register to this EVEX encoded instruction.");
+    if(pOutput->m_nOperands < 1)
+        return;
+
+
+    // Now, we are can safely add the making register & the fucking zeroing tag.
+    static const char* s_szMaskRegs[8] = { "k0", "k1", "k2", "k3", "k4", "k5", "k6", "k7" };
+    std::size_t iIterator = 0;
+    char* szOperand = &pOutput->m_szOperands[0][0];
+    while(iIterator < Rules::DASMINST_ARG_BUFFER_SIZE && szOperand[iIterator] != '\0')
+        iIterator++;
+
+
+    // This check is kinda sketchy but its works real good.
+    if(Rules::DASMINST_ARG_BUFFER_SIZE - iIterator <= 8) // Technically == 8 is safe, but its better to be saffer.
+    {
+        FAIL_LOG("Buffer overflow while adding mark register & merging tag. Iterator { %zu }", iIterator);
+        assert(false && "Buffer overflow while adding mark register & merging tag");
+        return;
+    }
+
+
+    // Now iIteator should be pointing at null terminator's index.
+    const char* szMaskRegister = s_szMaskRegs[reinterpret_cast<const EVEX::EVEXInst_t*>(pInst->m_pInst)->m_evexPrefix.aaa()];
+    szOperand[iIterator] = '{'; iIterator++;
+    szOperand[iIterator] = szMaskRegister[0]; iIterator++;
+    szOperand[iIterator] = szMaskRegister[1]; iIterator++;
+    szOperand[iIterator] = '}'; iIterator++;
+
+
+    // Do we need to add the {z} for merging/zeroing bit?
+    if(reinterpret_cast<const EVEX::EVEXInst_t*>(pInst->m_pInst)->m_evexPrefix.z() != false)
+    {
+        szOperand[iIterator] = '{'; iIterator++;
+        szOperand[iIterator] = 'z'; iIterator++;
+        szOperand[iIterator] = '}'; iIterator++;
+    }
+
+    // Null-terminator
+    szOperand[iIterator] = '\0'; iIterator++;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////

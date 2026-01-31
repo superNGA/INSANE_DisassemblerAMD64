@@ -176,7 +176,8 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector
             // and root opcode description. Now we can and we must find the child opcode varient
             // that is refered in this instruction.
             pInst->m_opCode.InitChildVarient(&pInst->m_legacyPrefix, pInst->m_modrm.Get());
-
+            if(pInst->m_opCode.m_pOpCodeDesc == nullptr)
+                return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
 
 
             // Store SIB if required. MOD == 11 && R/M == 100
@@ -407,7 +408,8 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
     
     // Using modrm and perfix, determine final varient.
     pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
-
+    if(pInst->m_opcode.m_pOpCodeDesc == nullptr)
+        return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
 
 
     // We need SIB??
@@ -490,14 +492,14 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
     /*
        README :
     
-       I have proper and distinct EVEX instructions. But there are some VEX instructions that can also be encoded as EVEX.
+       I have proper and distinct EVEX instruction table. But there are some VEX instructions that can also be encoded as EVEX.
        But not all VEX instructions are EVEX encodable. There are no signs of what instructions are EVEX encodable in 
        the linux kernel's x86 opcode map. Now my table is some what incomplete.
 
        I can assume that all VEX instructions are EVEX encodable, but that would break while @ error checking for EVEX 
        instructions.
 
-       Due to nature of how the intel's software developer's manual for iA-32 is written. I think assuming all VEX instructions 
+       Due to nature of how the intel's software developer's manual for IA-32 is written. I think assuming all VEX instructions 
        as valid EVEX is somewhat of a valid options? I will still be able to error check against legacy only instructions.
 
     */
