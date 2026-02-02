@@ -9,10 +9,10 @@
 //          split method.
 //-------------------------------------------------------------------------
 #pragma once
+#include <cstddef>
 #include "../Aliases.h"
 #include "../Rules.h"
 #include "Operand/Operand_t.h"
-
 
 
 namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE

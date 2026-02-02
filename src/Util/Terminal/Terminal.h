@@ -30,10 +30,9 @@
 
 #ifdef ENABLE_CONSOLE_LOGS
 
-#define WIN_LOG(msg, ...)       EXPAND(Console::PrintToConsole(__FUNCTION__, Console::FG_BRIGHT_GREEN, "", msg, ##__VA_ARGS__))
-#define FAIL_LOG(msg, ...)      EXPAND(Console::PrintToConsole(__FUNCTION__, Console::FG_BRIGHT_RED,   "", msg, ##__VA_ARGS__))
-#define LOG(msg, ...)           EXPAND(Console::PrintToConsole(__FUNCTION__, Console::FG_BRIGHT_CYAN,  "", msg, ##__VA_ARGS__))
-
+#define WIN_LOG(...)       Console::PrintToConsole(__FUNCTION__, Console::FG_BRIGHT_GREEN, "", __VA_ARGS__)
+#define FAIL_LOG(...)      Console::PrintToConsole(__FUNCTION__, Console::FG_BRIGHT_RED,   "", __VA_ARGS__)
+#define LOG(...)           Console::PrintToConsole(__FUNCTION__, Console::FG_BRIGHT_CYAN,  "", __VA_ARGS__)
 
 #else 
 

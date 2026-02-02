@@ -129,7 +129,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector
                 Standard::OpCodeDesc_t* pOpCodeDesc = &pOpCodeTable[iOpCodeByte];
                 if (pOpCodeDesc == nullptr || pOpCodeDesc->m_bIsValidCode == false)
                 {
-                    FAIL_LOG("OpCode description is invalid or is nullptr.\n");
+                    FAIL_LOG("OpCode description is invalid or is nullptr.");
                     return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
                 }
 
@@ -154,7 +154,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector
                 return IDASMErrorCode_t::IDASMErrorCode_NoOpByteFound;
 
 
-            // Incrementus iteratus.
+            // Incrementus iteratus...
             iByteIndex += pInst->m_opCode.OpByteCount();
 
 
@@ -175,9 +175,12 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector
             // At this point, we have modRM byte ( if any ), legacy prefix ( if any ) 
             // and root opcode description. Now we can and we must find the child opcode varient
             // that is refered in this instruction.
-            pInst->m_opCode.InitChildVarient(&pInst->m_legacyPrefix, pInst->m_modrm.Get());
+            pInst->m_opCode.InitChildVarient(&pInst->m_legacyPrefix, pInst->m_modrm.Get(), pInst->m_bHasModRM);
             if(pInst->m_opCode.m_pOpCodeDesc == nullptr)
+            {
+                FAIL_LOG("Failed to find final varient for opcode [ 0x%02X ]", pInst->m_opCode.GetMostSignificantOpCode());
                 return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
+            }
 
 
             // Store SIB if required. MOD == 11 && R/M == 100

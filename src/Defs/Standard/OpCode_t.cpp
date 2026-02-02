@@ -16,7 +16,7 @@
 using namespace InsaneDASM64;
 
 
-static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, Standard::OpCodeDesc_t* pRootOpCodeDesc);
+static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, Standard::OpCodeDesc_t* pRootOpCodeDesc, bool bHasModRM);
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -92,14 +92,14 @@ void InsaneDASM64::Standard::OpCode_t::StoreOperatorDesc(OpCodeDesc_t* pOperator
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM)
+bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, bool bHasModRM)
 {
     assert(m_pRootOpCodeDesc != nullptr && "We need a root opcode description pointer to init child varient!");
     if (m_pRootOpCodeDesc == nullptr)
         return false;
 
 
-    m_pOpCodeDesc = FindVarientRecurse(pPrefix, iModRM, m_pRootOpCodeDesc);
+    m_pOpCodeDesc = FindVarientRecurse(pPrefix, iModRM, m_pRootOpCodeDesc, bHasModRM);
     return m_pOpCodeDesc != nullptr;
 }
 
@@ -113,14 +113,22 @@ bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(Byte iModRM, int nPrefix
     for(int iPrefixIndex = 0; iPrefixIndex < nPrefixCount; iPrefixIndex++)
         prefix.PushPrefix(prefixies[iPrefixIndex]);
 
-    return InitChildVarient(&prefix, iModRM);
+    return InitChildVarient(&prefix, iModRM, true);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, Standard::OpCodeDesc_t* pRootOpCodeDesc)
+static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, Standard::OpCodeDesc_t* pRootOpCodeDesc, bool bHasModRM)
 {
+    // Since this is a recursive function, and invalid opcode varients are nullptrs, 
+    // incase there is no varient for current combination of ModRM bits / prefixies,
+    // this function will call itself with pRootOpCodeDesc as nullpts. But pRootOpCodeDesc
+    // will never be nullptr on the first call ( cause it wrote it like that. ).
+    if(pRootOpCodeDesc == nullptr)
+        return nullptr;
+
+
     if (pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_None)
         return pRootOpCodeDesc;
 
@@ -130,13 +138,28 @@ static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* 
     switch (pRootOpCodeDesc->m_iVarientType)
     {
         case Standard::OpCodeDesc_t::VarientKey_ModRM_MOD:
-        return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 6) & 0b11]);
+            if(bHasModRM == true)
+            {
+                return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 6) & 0b11], bHasModRM);
+            }
+            break;
+
 
         case Standard::OpCodeDesc_t::VarientKey_ModRM_REG:
-        return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 3) & 0b111]);
+            if(bHasModRM == true)
+            {
+                return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[(iModRM >> 3) & 0b111], bHasModRM);
+            }
+            break;
+
 
         case Standard::OpCodeDesc_t::VarientKey_ModRM_RM:
-        return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[iModRM & 0b111]);
+            if(bHasModRM == true)
+            {
+                return FindVarientRecurse(pPrefix, iModRM, pRootOpCodeDesc->m_pVarients[iModRM & 0b111], bHasModRM);
+            }
+            break;
+
 
         case Standard::OpCodeDesc_t::VarientKey_LegacyPrefix:
         {
@@ -162,7 +185,7 @@ static Standard::OpCodeDesc_t* FindVarientRecurse(const Legacy::LegacyPrefix_t* 
             // and we don't have that prefix.
             // assert(pOpCodeDesc != nullptr && "Prefix not support by this opcode. Prefix split evaluation failed.");
             if(pOpCodeDesc != nullptr)
-                return FindVarientRecurse(pPrefix, iModRM, pOpCodeDesc);
+                return FindVarientRecurse(pPrefix, iModRM, pOpCodeDesc, bHasModRM);
 
             break;
         }

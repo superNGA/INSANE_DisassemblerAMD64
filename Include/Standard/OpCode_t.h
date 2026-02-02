@@ -32,7 +32,7 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
         bool PushOpCode(Byte iByte);
         void StoreOperatorDesc(OpCodeDesc_t* pOperatorInfo);
 
-        bool InitChildVarient(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM);
+        bool InitChildVarient(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, bool bHasModRM);
 
         // To manually send in prefix?
         bool InitChildVarient(Byte iModRM, int nPrefixCount, Byte* prefixies);

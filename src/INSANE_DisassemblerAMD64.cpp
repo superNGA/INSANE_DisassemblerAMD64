@@ -14,6 +14,7 @@
 // Util
 #include "Tables/Tables.h"
 #include "../Include/Aliases.h"
+#include "Util/Terminal/Terminal.h"
 
 // Instruction containers
 #include "../Include/Instruction_t.h"
@@ -221,7 +222,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Instruction_t>& vec
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput)
+IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput, bool bStrictMode)
 {
     assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
     assert(vecOutput.empty()           == true && "Why is output not empty");
@@ -239,8 +240,8 @@ IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::ve
         Byte             iByte = vecInput[iByteIndex];
         Instruction_t    inst;
 
-        IDASMErrorCode_t iErrorCode = IDASMErrorCode_t::IDASMErrorCode_Success;
-
+        IDASMErrorCode_t iErrorCode   = IDASMErrorCode_t::IDASMErrorCode_Success;
+        size_t           iOldIterator = iByteIndex; // In case we fail, we wanna only move by one byte.
 
         // First we determine which encoding does the instruction has.
         switch (iByte) 
@@ -263,9 +264,19 @@ IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::ve
         }
 
 
-        // Did we fail the decode ?
+        // If strict mode is on, return @ failure.
         if(iErrorCode != IDASMErrorCode_t::IDASMErrorCode_Success)
-            return iErrorCode;
+        {
+            if(bStrictMode == true)
+            {
+                return iErrorCode;
+            }
+            else // Make sure invalid instruction is marked invalid if we are not failing. 
+            {
+                inst.m_iInstEncodingType = Instruction_t::InstEncodingType_Invalid;
+                iByteIndex               = iOldIterator; // Restore iterator to good value.
+            }
+        }
 
 
         vecOutput.push_back(inst);

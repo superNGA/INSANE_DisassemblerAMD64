@@ -108,6 +108,13 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
             inst.Initialize(reinterpret_cast<const EVEX::EVEXInst_t*>(pInst->m_pInst));
             break;
 
+        // Handling invalid instructions is easy?
+        case Instruction_t::InstEncodingType_Invalid:
+            strcpy(pOutput->m_szMnemonic, "{ bad }");
+            pOutput->m_nOperands = 0;
+            return IDASMErrorCode_t::IDASMErrorCode_Success;
+            break;
+
         case Instruction_t::InstEncodingType_XOP:
         default:
         FAIL_LOG("Invalid Instruction Encoding Type [ %d ]", pInst->m_iInstEncodingType);
@@ -771,7 +778,9 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
                 ssTemp.fill(oldFill);
             }
 
-            ssTemp << "*N";
+            // Only EVEX encoded instructions have displacement compression on 8 bit displacements.
+            if(pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX)
+                ssTemp << "*N";
         }
 
         ssTemp << "]";

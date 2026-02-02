@@ -1,6 +1,12 @@
 ﻿cmake_minimum_required(VERSION 3.10)
 
 project("INSANE_DisassemblerAMD64" LANGUAGES CXX ASM_NASM)
+
+message(STATUS "C compiler:   ${CMAKE_C_COMPILER}")
+message(STATUS "C++ compiler: ${CMAKE_CXX_COMPILER}")
+message(STATUS "Compiler ID:      ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "Compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
+
 enable_language(ASM_NASM)
 set(CMAKE_ASM_NASM_OBJECT_FORMAT win64)
 
@@ -99,3 +105,4 @@ ${ASM_SOURCES}
 "src/Util/Terminal/ConsoleSystem.cpp" "src/Util/Terminal/ConsoleSystem.h")
 
 target_compile_features(INSANE_DisassemblerAMD64 PRIVATE cxx_std_17)
+

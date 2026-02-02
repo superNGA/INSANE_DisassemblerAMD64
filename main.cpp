@@ -39,6 +39,20 @@ int main(int nArgs, char** szArgs)
     }
     std::cout << "Disassembler Initialized!\n";
 
+    // delete this...
+    FILE* pFile = fopen(szArgs[1], "rb");
+    if(pFile == nullptr)
+        return 1;
+
+    std::vector<Byte> vecFileInput; vecFileInput.clear();
+    int iChar = EOF;
+    while((iChar = getc(pFile)) != EOF)
+    {
+        vecFileInput.push_back(static_cast<Byte>(iChar & 0xFF));
+    }
+
+    LOG("%zu bytes from file %s", vecFileInput.size(), szArgs[1]);
+
 
     // Disassemble...
     {
@@ -47,19 +61,20 @@ int main(int nArgs, char** szArgs)
 
 
         // Decoding...
-        IDASMErrorCode_t iDecodingErrCode = Decode(TestCases::g_vecEVEXTestCase_001, vecDecodedInst);
+        IDASMErrorCode_t iDecodingErrCode = Decode(vecFileInput, vecDecodedInst, false);
         WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
-        // PrintInst(vecDecodedInst);
-
         if(iDecodingErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
         {
-            printf("%s", GetErrorMessage(iDecodingErrCode));
+            printf("%s\n", GetErrorMessage(iDecodingErrCode));
+            PrintInst(vecDecodedInst); // print whatever we got incase we fail.
             return 1;
         }
 
 
         // Disassemlbing...
         IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);
+        PrintOutput(vecDecodedInst, vecDasmInst);
+
         if(iDASMErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
         {
             printf("%s", GetErrorMessage(iDASMErrCode));
@@ -68,7 +83,6 @@ int main(int nArgs, char** szArgs)
         WIN_LOG("Disassembled [ %zu ] instructions.", vecDasmInst.size());
 
 
-        PrintOutput(vecDecodedInst, vecDasmInst);
     }
 
 

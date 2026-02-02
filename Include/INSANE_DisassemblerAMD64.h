@@ -67,7 +67,7 @@ namespace INSANE_DASM64_NAMESPACE
     IDASMErrorCode_t Initialize();
     IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>&          vecInput, std::vector<DASMInst_t>&    vecOutput);
     IDASMErrorCode_t Disassemble         (const std::vector<Instruction_t>& vecInput, std::vector<DASMInst_t>&    vecOutput);
-    IDASMErrorCode_t Decode              (const std::vector<Byte>&          vecInput, std::vector<Instruction_t>& vecOutput);
+    IDASMErrorCode_t Decode              (const std::vector<Byte>&          vecInput, std::vector<Instruction_t>& vecOutput, bool bStrictMode = false);
 
     const char* GetErrorMessage(IDASMErrorCode_t iErrorCode);
     Standard::CEOperandTypes_t GeekToCoderOperandType(Standard::OperandTypes_t iOperandType);
