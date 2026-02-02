@@ -45,7 +45,7 @@ namespace INSANE_DASM64_NAMESPACE::VEX_NAMESPACE
         Standard::OpCode_t       m_opcode;
         Standard::ModRM_t        m_modrm;
         Standard::SIB_t          m_SIB;
-        bool                     m_bHasSIB        = false;
+        bool                     m_bHasSIB = false;
         Standard::Displacement_t m_disp;
         Standard::Immediate_t    m_immediate;
     };

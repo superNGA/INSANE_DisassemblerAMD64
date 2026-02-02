@@ -17,11 +17,12 @@
 using namespace InsaneDASM64;
 
 
-static void PrintInst(std::vector<Instruction_t>& vecInst);
-static void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst);
-static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst);
-static void PrintEVEXInst(EVEX::EVEXInst_t* pInst);
-static void PrintOutput(std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMInst_t>& vecInst);
+void PrintInst      (std::vector<Instruction_t>& vecInst);
+void PrintInst      (const Instruction_t& inst);
+void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst);
+void PrintVEXInst   (InsaneDASM64::VEX::VEXInst_t* pInst);
+void PrintEVEXInst  (EVEX::EVEXInst_t* pInst);
+void PrintOutput    (std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMInst_t>& vecInst);
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -40,7 +41,8 @@ int main(int nArgs, char** szArgs)
     std::cout << "Disassembler Initialized!\n";
 
     // delete this...
-    FILE* pFile = fopen(szArgs[1], "rb");
+    // FILE* pFile = fopen(szArgs[1], "rb");
+    FILE* pFile = fopen("F:\\Test\\RSPAfterFnCall\\main.exe", "rb");
     if(pFile == nullptr)
         return 1;
 
@@ -96,18 +98,7 @@ void PrintInst(std::vector<Instruction_t>& vecInst)
 {
     for(Instruction_t& inst : vecInst)
     {
-        switch (inst.m_iInstEncodingType) 
-        {
-            case Instruction_t::InstEncodingType_Legacy: PrintLegacyInst(reinterpret_cast<Legacy::LegacyInst_t*>(inst.m_pInst)); break;
-            case Instruction_t::InstEncodingType_VEX:    PrintVEXInst(reinterpret_cast<VEX::VEXInst_t*>(inst.m_pInst));          break;
-            case Instruction_t::InstEncodingType_EVEX:   PrintEVEXInst(reinterpret_cast<EVEX::EVEXInst_t*>(inst.m_pInst));       break;
-
-            // Not done yet.
-            case Instruction_t::InstEncodingType_XOP:
-            case Instruction_t::InstEncodingType_Invalid:
-            default: assert(false && "Invalid encoding type!"); break;
-        }
-
+        PrintInst(inst);
         printf("\n");
     }
 }
@@ -115,7 +106,25 @@ void PrintInst(std::vector<Instruction_t>& vecInst)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst)
+void PrintInst(const Instruction_t& inst)
+{
+    switch (inst.m_iInstEncodingType) 
+    {
+        case Instruction_t::InstEncodingType_Legacy: PrintLegacyInst(reinterpret_cast<Legacy::LegacyInst_t*>(inst.m_pInst)); break;
+        case Instruction_t::InstEncodingType_VEX:    PrintVEXInst(reinterpret_cast<VEX::VEXInst_t*>(inst.m_pInst));          break;
+        case Instruction_t::InstEncodingType_EVEX:   PrintEVEXInst(reinterpret_cast<EVEX::EVEXInst_t*>(inst.m_pInst));       break;
+
+        // Not done yet.
+        case Instruction_t::InstEncodingType_XOP:
+        case Instruction_t::InstEncodingType_Invalid:
+        default: assert(false && "Invalid encoding type!"); break;
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst)
 {
     if (pInst->m_opCode.OpByteCount() == 0)
     {
@@ -214,7 +223,7 @@ static void PrintLegacyInst(InsaneDASM64::Legacy::LegacyInst_t* pInst)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst)
+void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst)
 {
     printf("[ %16s ] ", pInst->m_opcode.m_pOpCodeDesc->m_szName);
     printf("0x%02X", pInst->m_vexPrefix.GetPrefix());
@@ -246,7 +255,7 @@ static void PrintVEXInst(InsaneDASM64::VEX::VEXInst_t* pInst)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static void PrintEVEXInst(EVEX::EVEXInst_t* pInst)
+void PrintEVEXInst(EVEX::EVEXInst_t* pInst)
 {
     printf("[ %16s ] ", pInst->m_opcode.m_pOpCodeDesc->m_szName);
     printf("0x%02X", pInst->m_evexPrefix.m_iPrefix);
@@ -278,7 +287,7 @@ static void PrintEVEXInst(EVEX::EVEXInst_t* pInst)
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-static void PrintOutput(std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMInst_t>& vecInst)
+void PrintOutput(std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMInst_t>& vecInst)
 {
     for(const DASMInst_t& inst : vecInst)
     {

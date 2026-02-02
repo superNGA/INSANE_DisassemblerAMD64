@@ -159,7 +159,9 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector
 
 
             // Store ModRM byte if required.
-            if (pInst->m_opCode.ModRMRequired(&pInst->m_legacyPrefix) == true)
+            bool bModRmResolveNoFail = false;
+            bool bModRmNeeded        = pInst->m_opCode.TryResolveModRMNeed(&pInst->m_legacyPrefix, &bModRmResolveNoFail);
+            if (bModRmResolveNoFail == true && bModRmNeeded == true)
             {
                 // Bytes left in byte stream?
                 if (iByteIndex >= nBytes)
@@ -356,13 +358,14 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
     pInst->m_opcode.PushOpCode(vecInput[iIterator]);
 
     // Checking opcode validity.
+    Byte iPrefix = 0x0F;
     {
-        Byte iPrefix = 0x0F;
         if(pInst->m_vexPrefix.GetPrefix() == SpecialChars::VEX_PREFIX_C4)
         {
             // int m_mmmm = pInst->m_vex[0] & 0b11111;
             uint64_t m_mmmm = pInst->m_vexPrefix.m_mmmm();
-            if(m_mmmm == 0 || m_mmmm > 3) return IDASMErrorCode_InvalidVEXInst;
+            if(m_mmmm == 0 || m_mmmm > 3) 
+                return IDASMErrorCode_InvalidVEXInst;
 
             static Byte s_iEscapeArr[] = { 0x0F, 0x38, 0x3A };
             iPrefix = s_iEscapeArr[m_mmmm - 1];
@@ -370,7 +373,8 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
         Standard::OpCodeDesc_t* opCodeTable = G::g_tables.GetVEXOpCodeTable(iPrefix);
         assert(opCodeTable != nullptr && "Nullptr table received.");
 
-        // OpCode doesn't repesent a valid VEX encodable instruction.
+
+        // Does OpCode repesent a valid VEX encodable instruction.
         Standard::OpCodeDesc_t* pOpCodeDesc = &opCodeTable[pInst->m_opcode.GetMostSignificantOpCode()];
         if(pOpCodeDesc->m_bIsValidCode == false)
         {
@@ -388,18 +392,19 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
     Byte iLegacyPrefix = 0x00;
     {
         static Byte s_prefixMap[] = { 0x00, 0x66, 0xF3, 0xF2 };
-        iLegacyPrefix = s_prefixMap[pInst->m_vexPrefix.pp()];
+
+        uint64_t iVEXPP = pInst->m_vexPrefix.pp();
+
+        // Since we checked for VEX prefix validity above, this shouldn't trigger on bad input.
+        assert(iVEXPP >= 0llu && iVEXPP <= 3llu && "Invalid VEX.PP"); 
+
+        iLegacyPrefix = s_prefixMap[iVEXPP];
     }
 
-    // In case we have a prefix split, we can try to detrmine final varient without modrm byte.
-    // so we know if we need to get the modrm byte or not.
-    // so we can use the modrm to get the final varient?
-    if(pInst->m_opcode.m_pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_LegacyPrefix)
-        pInst->m_opcode.InitChildVarient(0x00, 1, &iLegacyPrefix);
 
-
-    // Capture modrm, if we got any operands.
-    if(pInst->m_opcode.m_pOpCodeDesc->m_nOperands > 0)
+    // All VEX intructions except VZEROALL & VZEROUPPER ( 0x0F 0x77 ) consume ModRM byte.
+    bool bModRMRequired = (iPrefix == 0x0F && pInst->m_opcode.m_pRootOpCodeDesc->m_iByte == 0x77) == false;
+    if(bModRMRequired == true) // iPrefix != 0x0F || pInst->m_opcode.m_pRootOpCodeDesc->m_iByte != 0x77
     {
         iIterator++;
         if(iIterator >= nBytes)
@@ -410,7 +415,7 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
 
     
     // Using modrm and perfix, determine final varient.
-    pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
+    pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix, true);
     if(pInst->m_opcode.m_pOpCodeDesc == nullptr)
         return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
 
@@ -463,7 +468,13 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeVEXEncoding(const std::vector<By
 
     // Does this intruction need immediate.
     Standard::OpCodeDesc_t* pOpCodeDesc = pInst->m_opcode.m_pOpCodeDesc;
-    assert(pOpCodeDesc != nullptr && "Invalid final opcode description");
+    // assert(pOpCodeDesc != nullptr && "Invalid final opcode description");
+    if(pOpCodeDesc == nullptr)
+    {
+        FAIL_LOG("Final Varient for VEX encoded instruction was nullptr");
+        return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
+    }
+
     for(int iOperandIndex = 0; iOperandIndex < pOpCodeDesc->m_nOperands; iOperandIndex++)
     {
         Standard::Operand_t& operand = pOpCodeDesc->m_operands[iOperandIndex];
@@ -553,9 +564,11 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
     Byte iEscapeByte = Maths::SafeAnd(pInst->m_evexPrefix.mmm(), 0b11);
 
     bool bValidEscapeByte = (iEscapeByte >= 1 && iEscapeByte <= 3); 
-    assert(bValidEscapeByte == true && "Invalid Implied Escape OpCode Byte.");
     if(bValidEscapeByte == false)
+    {
+        FAIL_LOG("Invalid Implied Escape OpCode Byte.");
         return InsaneDASM64::IDASMErrorCode_InvalidEVEXEscapeOpcdByte;
+    }
 
 
     // Getting OpCode Table(s).
@@ -590,7 +603,7 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
         // Using modrm and perfix, determine final varient.
         Byte iLegacyPrefix = s_iLegacyPrefixTable[pInst->m_evexPrefix.pp()];
 
-        bFinalVarientFound = pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
+        bFinalVarientFound = pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix, true);
     }
 
     // If this instruction is not valid according to EVEX only talbe OR
@@ -604,7 +617,7 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
         // Using modrm and perfix, determine final varient.
         Byte iLegacyPrefix = s_iLegacyPrefixTable[pInst->m_evexPrefix.pp()];
 
-        bFinalVarientFound = pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix);
+        bFinalVarientFound = pInst->m_opcode.InitChildVarient(pInst->m_modrm.Get(), 1, &iLegacyPrefix, true);
     }
 
 

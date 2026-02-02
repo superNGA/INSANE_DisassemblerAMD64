@@ -25,6 +25,22 @@
 #include "../../Include/EVEX/EVEXInst_t.h"
 
 
+/*
+
+TODO:
+    Add strict and non-strict modes to disassembler.
+
+DONE:
+    Check if ptp operand type is valid in long mode or not.
+    Check who's at fault here. ( segment register fault. )
+    Make disassembler not crash.
+
+*/
+
+// delete this.
+#include "../../Include/Instruction_t.h"
+extern void PrintInst(const InsaneDASM64::Instruction_t& vecInst);
+
 
 using namespace InsaneDASM64;
 
@@ -92,7 +108,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
 {
     // NOTE : Ran once for each instruction.
     InstSummary_t inst;
-
+   
     // Extracting all required components from instruction according to the instruction encoding type. 
     switch(pInst->m_iInstEncodingType)
     {
@@ -378,6 +394,12 @@ static inline void InsaneDASM64::HandleOperandMode_J(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_M(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : The ModR/M byte may refer only to memory: mod != 11bin.
+    if(pInst->m_iModRM_Mod == 0b11)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
     RegOrMemoryUsingModRM(pOutput, pInst, iCEOperandType, Standard::Register_t::RegisterClass_GPR);
 }
 
@@ -659,9 +681,13 @@ static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, Inst
     }
 
     // Failed to determine register class?
-    assert(iRegClass != Standard::Register_t::RegisterClass_Invalid && "Invalid vector length. Failed to determine register class");
     if(iRegClass == Standard::Register_t::RegisterClass_Invalid)
+    {
+        FAIL_LOG("Invalid Vector Length %llu for encoding %d", pInst->m_iVectorLength, pInst->m_iInstEncodingType);
+        // assert(iRegClass != Standard::Register_t::RegisterClass_Invalid && "Invalid vector length. Failed to determine register class");
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
         return;
+    }
 
     pOutput->PushBackOperand(Standard::Register_t(iRegClass, pInst->m_iVvvvv, pInst->m_iVectorLength).ToString());
 }
@@ -733,9 +759,14 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
             case 8:  ssTemp << "byte ptr";  break;
             case 16: ssTemp << "word ptr";  break;
             case 32: ssTemp << "dword ptr"; break;
+            case 48: break; // Incase of far-pointers.
             case 64: ssTemp << "qword ptr"; break;
+            case 80: break; // Incase of far-pointers.
 
-            default: assert(false && "Invalid address size"); break;
+            default: 
+                     FAIL_LOG("Invalid address size %d", iAddressSizeInBits);
+                     assert(false && "Invalid address size"); 
+                     break;
         }
 
         ssTemp << "[";
@@ -801,10 +832,16 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
             case 8:  ssTemp << "byte ptr";  break;
             case 16: ssTemp << "word ptr";  break;
             case 32: ssTemp << "dword ptr"; break;
+            case 48: break; // Incase of far-pointers.
             case 64: ssTemp << "qword ptr"; break;
+            case 80: break; // Incase of far-pointers.
 
-            default: assert(false && "Invalid address size"); break;
+            default: 
+                     FAIL_LOG("Invalid address size %d", iAddressSizeInBits);
+                     assert(false && "Invalid address size"); 
+                     break;
         }
+
 
         ssTemp << "[";
 
@@ -972,7 +1009,17 @@ static int InsaneDASM64::CEOperandTypeToOperandSizeInBytes(Standard::CEOperandTy
         case CEOperandType_14_28:
         case CEOperandType_80real:
         case CEOperandType_p:
-        case CEOperandType_ptp:
+        case CEOperandType_ptp:     
+        {
+            // if (iAddressSizeInByte == 2) return 4;
+            // if (iAddressSizeInByte == 4) return 6;
+            // if (iAddressSizeInByte == 8) return 10;
+            // break;
+            return 8; // NOTE : Sticking to the use case of this disassembler, we don't return the width of the far pointer.
+                      // Instead we return the width of the register that may be holding the adrs to the pointer pointer.
+                      // WTF am I even gonna do with the width of the fucking far pointer bro?
+        }
+
         case CEOperandType_94_108:
         case CEOperandType_512:
                                          break;
@@ -980,6 +1027,7 @@ static int InsaneDASM64::CEOperandTypeToOperandSizeInBytes(Standard::CEOperandTy
         default: break;
     }
 
+    // FAIL_LOG("Failed OperandType to OperandSize for [ %d ] CEOperandType", iCEOperandType);
     return -1;
 }
 
@@ -1029,9 +1077,18 @@ static int InsaneDASM64::CEOperandTypeToAdrsSizeInBytes(Standard::CEOperandTypes
     case CEOperandType_80dec:
     case CEOperandType_128:
     case CEOperandType_14_28:
-    case CEOperandType_80real:
+    case CEOperandType_80real: break;
     case CEOperandType_p:
-    case CEOperandType_ptp:
+    case CEOperandType_ptp:     
+        {
+            // if (iAddressSizeInByte == 2) return 4;
+            // if (iAddressSizeInByte == 4) return 6;
+            // if (iAddressSizeInByte == 8) return 10;
+            // break;
+            return 8; // NOTE : Sticking to the use case of this disassembler, we don't return the width of the far pointer.
+                      // Instead we return the width of the register that may be holding the adrs to the pointer pointer.
+                      // WTF am I even gonna do with the width of the fucking far pointer bro?
+        }
     case CEOperandType_94_108:
     case CEOperandType_512:
         break;

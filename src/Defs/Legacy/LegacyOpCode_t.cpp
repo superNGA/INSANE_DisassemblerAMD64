@@ -11,6 +11,7 @@
 #include <assert.h>
 #include "../../Tables/Tables.h"
 #include "../../../Include/Standard/OpCodeDesc_t.h"
+#include "../../Util/Terminal/Terminal.h"
 
 
 using namespace InsaneDASM64;
@@ -26,10 +27,14 @@ Legacy::LegacyOpCode_t::LegacyOpCode_t() : Standard::OpCode_t()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-bool Legacy::LegacyOpCode_t::ModRMRequired(const LegacyPrefix_t* pPrefix) const
+bool Legacy::LegacyOpCode_t::TryResolveModRMNeed(const LegacyPrefix_t* pPrefix, bool* bSucceded) const
 {
     assert(m_pRootOpCodeDesc != nullptr && "No root OpCode description is stored for this OpCode_t");
+
+
+    *bSucceded = true;
     
+
     if (m_pRootOpCodeDesc == nullptr)
         return false;
 
@@ -49,7 +54,6 @@ bool Legacy::LegacyOpCode_t::ModRMRequired(const LegacyPrefix_t* pPrefix) const
     {
         // Every legacy prefix split has default entry ( no prefix ) @ index 0.
         Standard::OpCodeDesc_t* pBestDesc = m_pRootOpCodeDesc->m_pVarients[0];
-        assert(pBestDesc != nullptr && "Some opcode entry with legacy prefix split has default entry ( index 0 ) as default.");
 
 
         for (int i = 0; i < pPrefix->m_nPrefix; i++)
@@ -61,6 +65,18 @@ bool Legacy::LegacyOpCode_t::ModRMRequired(const LegacyPrefix_t* pPrefix) const
                 pBestDesc = m_pRootOpCodeDesc->m_pVarients[iPrefixIndex];
                 break;
             }
+        }
+
+        // We must have some opcode desc. for our legacy prefixies. else #UD.
+        if(pBestDesc == nullptr)
+        {
+            // Default varient can be nullptr, but Let em know when it occurs just so I can cross-check.
+            FAIL_LOG("WARNING : Default opcode description for opcode [ 0x%02X ] is nullptr.", GetMostSignificantOpCode());
+            FAIL_LOG("Failed to resolve final varient for prefix split opcode. Invalid instruction most probably.");
+
+            *bSucceded = false; // Couldn't resolve ModRM Need.
+            // assert(pBestDesc != nullptr && "Some opcode entry with legacy prefix split has default entry ( index 0 ) as nullptr.");
+            return false;
         }
 
         return pBestDesc->m_bModrmRequired;

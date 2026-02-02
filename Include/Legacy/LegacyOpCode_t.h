@@ -21,6 +21,6 @@ namespace INSANE_DASM64_NAMESPACE::LEGACY_NAMESPACE
     {
         LegacyOpCode_t();
 
-        bool ModRMRequired(const LegacyPrefix_t* pPrefix) const;
+        bool TryResolveModRMNeed(const LegacyPrefix_t* pPrefix, bool* bSucceded) const;
     };
 }

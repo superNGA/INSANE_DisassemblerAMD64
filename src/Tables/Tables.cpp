@@ -6846,7 +6846,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6900,7 +6900,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -6954,7 +6954,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7008,7 +7008,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDA,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7200,7 +7200,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7254,7 +7254,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7308,7 +7308,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7362,7 +7362,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7566,7 +7566,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDB,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -7583,7 +7583,7 @@ void Tables_t::_InitOneByteOpCodeTable()
             /*bModrmRequired = */true,
             /*iByte          = */0xDB,
             /*nOperands      = */2,
-            /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+            /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
             /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
             /*operand3       = */Operand_t(),
             /*operand4       = */Operand_t());
@@ -7670,7 +7670,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -7724,7 +7724,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -7886,7 +7886,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -7940,7 +7940,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -7994,7 +7994,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -8048,7 +8048,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*iByte          = */0xDC,
                 /*nOperands      = */2,
                 /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
         }
@@ -8676,7 +8676,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8692,7 +8692,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8708,7 +8708,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8724,7 +8724,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8740,7 +8740,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8756,7 +8756,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8772,7 +8772,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8861,7 +8861,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8877,7 +8877,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8893,7 +8893,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8909,7 +8909,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8925,7 +8925,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8941,7 +8941,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -8957,7 +8957,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9173,7 +9173,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9189,7 +9189,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9205,7 +9205,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9221,7 +9221,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9237,7 +9237,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9253,7 +9253,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9269,7 +9269,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9358,7 +9358,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9374,7 +9374,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9390,7 +9390,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9406,7 +9406,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9422,7 +9422,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9438,7 +9438,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9454,7 +9454,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9543,7 +9543,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9559,7 +9559,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9575,7 +9575,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9591,7 +9591,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9607,7 +9607,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9623,7 +9623,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9639,7 +9639,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9728,7 +9728,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9744,7 +9744,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9760,7 +9760,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9776,7 +9776,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9792,7 +9792,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9808,7 +9808,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -9824,7 +9824,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                     /*iByte          = */0xDE,
                     /*nOperands      = */2,
                     /*operand1       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
-                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                    /*operand2       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                     /*operand3       = */Operand_t(),
                     /*operand4       = */Operand_t());
             }
@@ -10200,7 +10200,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());
@@ -10254,7 +10254,7 @@ void Tables_t::_InitOneByteOpCodeTable()
                 /*bModrmRequired = */true,
                 /*iByte          = */0xDF,
                 /*nOperands      = */2,
-                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, -1, 64 ) ),
+                /*operand1       = */Operand_t( Register_t( Register_t::RegisterClass_FPU, 0, 64 ) ),
                 /*operand2       = */Operand_t( OperandMode_EST, OperandType_Invalid ),
                 /*operand3       = */Operand_t(),
                 /*operand4       = */Operand_t());

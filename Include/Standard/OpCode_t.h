@@ -35,7 +35,7 @@ namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE
         bool InitChildVarient(const Legacy::LegacyPrefix_t* pPrefix, Byte iModRM, bool bHasModRM);
 
         // To manually send in prefix?
-        bool InitChildVarient(Byte iModRM, int nPrefixCount, Byte* prefixies);
+        bool InitChildVarient(Byte iModRM, int nPrefixCount, Byte* prefixies, bool bHasModRM);
 
 
         // NOTE : One OpCode_t will hold all the OpCodes that are present in one

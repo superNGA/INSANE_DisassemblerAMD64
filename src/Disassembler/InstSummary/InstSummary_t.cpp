@@ -13,6 +13,7 @@
 #include "../../../Include/VEX/VEXInst_t.h"
 #include "../../../Include/EVEX/EVEXInst_t.h"
 #include "../../Math/SafeBitWiseOps.h"
+#include "../../Util/Terminal/Terminal.h"
 #include <cassert>
 
 
@@ -157,7 +158,10 @@ void InsaneDASM64::InstSummary_t::Initialize(const EVEX::EVEXInst_t* pInst)
         case 1: m_iVectorLength = 256llu; break;
         case 2: m_iVectorLength = 512llu; break;
 
-        default: assert("Invalid LL value for instruction."); break;
+        default: 
+                FAIL_LOG("Invalid LL value : %llu", pInst->m_evexPrefix.LL()); 
+                // assert(false && "Invalid LL value for instruction."); 
+                break;
     }
     m_iVvvvv = Maths::SafeAnd(~(pInst->m_evexPrefix.vvvv() | (pInst->m_evexPrefix.Vdash() << 4llu)), 0b11111);
     
@@ -165,9 +169,9 @@ void InsaneDASM64::InstSummary_t::Initialize(const EVEX::EVEXInst_t* pInst)
     m_pImmediate        = &pInst->m_immediate;
     m_pDisplacement     = &pInst->m_disp;
 
-    m_iModRM_Mod = pInst->ModRM_Mod(); 
-    m_iModRM_Reg = pInst->ModRM_Reg(); 
-    m_iModRM_RM  = pInst->ModRM_RM();
+    m_iModRM_Mod        = pInst->ModRM_Mod();
+    m_iModRM_Reg        = pInst->ModRM_Reg();
+    m_iModRM_RM         = pInst->ModRM_RM();
 
     if(pInst->m_bHasSIB == true)
     {

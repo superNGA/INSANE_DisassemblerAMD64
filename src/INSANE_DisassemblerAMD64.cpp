@@ -208,12 +208,18 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Instruction_t>& vec
     vecOutput.clear();
     vecOutput.reserve(vecInput.size());
 
+    size_t nInstDone = 0;
+
     for(const Instruction_t& inst : vecInput)
     {
         vecOutput.emplace_back();
         DASMInst_t* pInstOut = &vecOutput.back();
 
         Disassemble(&inst, pInstOut);
+
+        nInstDone++;
+        if(nInstDone % 1000 == 0)
+            LOG("%zu instructions disassembled", nInstDone);
     }
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -275,6 +281,7 @@ IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::ve
             {
                 inst.m_iInstEncodingType = Instruction_t::InstEncodingType_Invalid;
                 iByteIndex               = iOldIterator; // Restore iterator to good value.
+                inst.Free(); // Free malloced memory.
             }
         }
 

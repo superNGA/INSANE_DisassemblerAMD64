@@ -36,6 +36,7 @@ namespace INSANE_DASM64_NAMESPACE
         }
 
         bool InitEncodingType(InstEncodingTypes_t iEncoding);
+        bool Free();
 
 
         void*               m_pInst             = nullptr;

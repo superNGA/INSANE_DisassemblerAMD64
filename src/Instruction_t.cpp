@@ -72,3 +72,18 @@ bool InsaneDASM64::Instruction_t::InitEncodingType(InstEncodingTypes_t iEncoding
     memset(m_pInst, 0, iInstSize);
     return true;
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+bool InsaneDASM64::Instruction_t::Free()
+{
+    m_iInstEncodingType = InstEncodingTypes_t::InstEncodingType_Invalid;
+
+    if(m_pInst != nullptr)
+        free(m_pInst);
+
+    m_pInst = nullptr;
+
+    return true;
+}

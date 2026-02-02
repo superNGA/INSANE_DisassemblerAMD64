@@ -28,7 +28,7 @@ namespace INSANE_DASM64_NAMESPACE
         void PushLiteralOperand(uint32_t iLiteralOperand);
         void PushLiteralOperand(uint16_t iLiteralOperand);
         void PushLiteralOperand(uint8_t  iLiteralOperand);
-        void PushLiteralOperand(int iLiteralOperand);
+        void PushLiteralOperand(int      iLiteralOperand);
 
         // Push a string representing representing a hex number as an operand ( with flipped endian if desired ).
         void PushLiteralFromString(const Byte* szOperand, int iSize, bool bFlipEndian);
@@ -38,7 +38,7 @@ namespace INSANE_DASM64_NAMESPACE
 
         char m_szMnemonic[Rules::DASMINST_ARG_BUFFER_SIZE];
 
-        int m_nOperands;
+        int  m_nOperands;
         char m_szOperands[Rules::MAX_OPERANDS][Rules::DASMINST_ARG_BUFFER_SIZE];
     };
 }

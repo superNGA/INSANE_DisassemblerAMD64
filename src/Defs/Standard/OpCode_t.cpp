@@ -106,14 +106,14 @@ bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(const Legacy::LegacyPref
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(Byte iModRM, int nPrefixCount, Byte* prefixies)
+bool InsaneDASM64::Standard::OpCode_t::InitChildVarient(Byte iModRM, int nPrefixCount, Byte* prefixies, bool bHasModRM)
 {
     // Construct the legacy prefix, to pass into the original InitChildVarient function.
     Legacy::LegacyPrefix_t prefix; prefix.Clear();
     for(int iPrefixIndex = 0; iPrefixIndex < nPrefixCount; iPrefixIndex++)
         prefix.PushPrefix(prefixies[iPrefixIndex]);
 
-    return InitChildVarient(&prefix, iModRM, true);
+    return InitChildVarient(&prefix, iModRM, bHasModRM);
 }
 
 
