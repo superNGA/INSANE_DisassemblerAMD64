@@ -25,24 +25,6 @@
 #include "../../Include/EVEX/EVEXInst_t.h"
 
 
-/*
-
-TODO:
-    Make absolute:
-        DONE. Summary init.
-        DONE. Operand mode handlers.
-        ModRM Handler.
-        Operand Type to Size fns.
-        ToString fn.
-
-    Test agaisnt cs2.
-
-*/
-
-// delete this.
-#include "../../Include/Instruction_t.h"
-extern void PrintInst(const InsaneDASM64::Instruction_t& vecInst);
-
 
 using namespace InsaneDASM64;
 
