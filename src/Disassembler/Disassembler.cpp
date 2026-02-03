@@ -28,12 +28,14 @@
 /*
 
 TODO:
-    Add strict and non-strict modes to disassembler.
+    Make absolute:
+        DONE. Summary init.
+        DONE. Operand mode handlers.
+        ModRM Handler.
+        Operand Type to Size fns.
+        ToString fn.
 
-DONE:
-    Check if ptp operand type is valid in long mode or not.
-    Check who's at fault here. ( segment register fault. )
-    Make disassembler not crash.
+    Test agaisnt cs2.
 
 */
 
@@ -258,6 +260,12 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_A(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
+    // Brief : Direct address. The instruction has no ModR/M byte.
+    // NOTE : I have observed that in my entier 60K lines of x86 opcode tables, not a single instruction
+    // has OperandMode_A.
+    if(pInst->m_bHasModRM == true)
+        return;
+
     pOutput->PushLiteralFromString(pInst->m_pImmediate->m_immediateByte, pInst->m_pImmediate->ByteCount(), true);
 }
 
@@ -293,9 +301,14 @@ static inline void InsaneDASM64::HandleOperandMode_BD(DASMInst_t* pOutput, InstS
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_C(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    assert(pInst->m_bHasModRM == true && "Instruction doesn't have a ModRM byte but has operand addressing mode C");
-
     // Brief : The reg field of the ModR/M byte selects a control register.
+
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
     pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Control, pInst->m_iModRM_Reg, 0).ToString());
 }
 
@@ -305,6 +318,12 @@ static inline void InsaneDASM64::HandleOperandMode_C(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_D(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a debug register.
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
     pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Debug, pInst->m_iModRM_Reg, 0).ToString());
 }
 
@@ -333,6 +352,12 @@ static inline void InsaneDASM64::HandleOperandMode_EST(DASMInst_t* pOutput, Inst
 {
     // Brief : (Implies original E). A ModR/M byte follows the opcode and specifies the x87 FPU stack register.
 
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
     // Register width is constant for all x87 FPU stack registers. so size doesn't matter here.
     pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_FPU, pInst->m_iModRM_RM, 64).ToString());
 }
@@ -352,6 +377,13 @@ static inline void InsaneDASM64::HandleOperandMode_F(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_G(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : The reg field of the ModR/M byte selects a general register.
+
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
     pOutput->PushBackOperand(Standard::Register_t(
                 Standard::Register_t::RegisterClass_GPR, 
                 pInst->m_iModRM_Reg, 
@@ -364,6 +396,13 @@ static inline void InsaneDASM64::HandleOperandMode_G(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_H(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : The r/m field of the ModR/M byte always selects a general register, regardless of the mod field.
+
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
     pOutput->PushBackOperand(Standard::Register_t(
                 Standard::Register_t::RegisterClass_GPR, 
                 pInst->m_iModRM_RM,
@@ -409,7 +448,7 @@ static inline void InsaneDASM64::HandleOperandMode_M(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_N(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The R/M field of the ModR/M byte selects a packed quadword MMX technology register.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, pInst->m_iModRM_RM, 64).ToString()); // MMX reigsters have fixed width.
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, pInst->m_iModRM_RM, 64 /* doesn't matter */).ToString()); 
 }
 
 
@@ -417,9 +456,10 @@ static inline void InsaneDASM64::HandleOperandMode_N(DASMInst_t* pOutput, InstSu
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_O(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    assert(pInst->m_bHasModRM == false && "Instruction with Operand Addressing Method must not have ModRM byte.");
-
     // Brief : The instruction has no ModR/M byte; the offset of the operand is coded as a word, double word or quad word.
+    if(pInst->m_bHasModRM == true)
+        return;
+
     pOutput->PushLiteralFromString(pInst->m_pImmediate->m_immediateByte, pInst->m_pImmediate->ByteCount(), true);
 }
 
@@ -429,7 +469,14 @@ static inline void InsaneDASM64::HandleOperandMode_O(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_P(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a packed quadword MMX technology register.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, pInst->m_iModRM_Reg, 64).ToString()); // MMX reigsters have fixed width.
+
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_MMX, pInst->m_iModRM_Reg, 64 /* doesn't matter */).ToString());
 }
 
 
@@ -446,7 +493,7 @@ static inline void InsaneDASM64::HandleOperandMode_Q(DASMInst_t* pOutput, InstSu
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_R(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
-    // Brief : The mod field of the ModR/M byte may refer only to a general register
+    // Brief : The mod field of the ModR/M byte may refer only to a general register.
     pOutput->PushBackOperand(Standard::Register_t(
                 Standard::Register_t::RegisterClass_GPR, 
                 pInst->m_iModRM_RM, 
@@ -459,7 +506,14 @@ static inline void InsaneDASM64::HandleOperandMode_R(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_S(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a segment register.
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Segment, pInst->m_iModRM_Reg, 64).ToString()); // Segment registers have fixed width.
+
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Segment, pInst->m_iModRM_Reg, 64).ToString());
 }
 
 
@@ -477,7 +531,14 @@ static inline void InsaneDASM64::HandleOperandMode_SC(DASMInst_t* pOutput, InstS
 static inline void InsaneDASM64::HandleOperandMode_T(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
     // Brief : The reg field of the ModR/M byte selects a test register
-    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Test, pInst->m_iModRM_Reg, 64).ToString()); // Test registers have fixed width.
+
+    if(pInst->m_bHasModRM == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
+    pOutput->PushBackOperand(Standard::Register_t(Standard::Register_t::RegisterClass_Test, pInst->m_iModRM_Reg, 64).ToString());
 }
 
 
@@ -505,11 +566,14 @@ static inline void InsaneDASM64::HandleOperandMode_U(DASMInst_t* pOutput, InstSu
     {
         switch(pInst->m_iVectorLength)
         {
-            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
-            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE;    break; // XXM
+            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX;    break; // YMM
             case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
 
-            default: break;
+            default:
+                FAIL_LOG("Invalid Vector Length [ %zu ]", pInst->m_iVectorLength);
+                pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+                return;
         }
     }
 
@@ -541,11 +605,14 @@ static inline void InsaneDASM64::HandleOperandMode_V(DASMInst_t* pOutput, InstSu
     {
         switch (pInst->m_iVectorLength) 
         {
-            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
-            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE;    break; // XXM
+            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX;    break; // YMM
             case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
 
-            default: break; 
+            default:
+                FAIL_LOG("Invalid Vector Length [ %zu ]", pInst->m_iVectorLength);
+                pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+                return;
         }
     }
 
@@ -569,11 +636,14 @@ static inline void InsaneDASM64::HandleOperandMode_W(DASMInst_t* pOutput, InstSu
     {
         switch (pInst->m_iVectorLength) 
         {
-            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
-            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+            case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE;    break; // XXM
+            case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX;    break; // YMM
             case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
 
-            default: break; 
+            default:
+                FAIL_LOG("Invalid Vector Length [ %zu ]", pInst->m_iVectorLength);
+                pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+                return;
         }
     }
 
@@ -586,8 +656,6 @@ static inline void InsaneDASM64::HandleOperandMode_W(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_X(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : Memory addressed by the DS:eSI or by RSI.
-    assert((pInst->m_iAddressSizeInByte == 4 || pInst->m_iAddressSizeInByte == 8) && "Invalid address size");
-
 
     if(pInst->m_iAddressSizeInByte == 4)
     {
@@ -600,6 +668,7 @@ static inline void InsaneDASM64::HandleOperandMode_X(DASMInst_t* pOutput, InstSu
     else
     {
         FAIL_LOG("Invlaid address size.");
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
         return;
     }
 }
@@ -610,8 +679,6 @@ static inline void InsaneDASM64::HandleOperandMode_X(DASMInst_t* pOutput, InstSu
 static inline void InsaneDASM64::HandleOperandMode_Y(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
     // Brief : Memory addressed by the ES:eDI or by RDI.
-    assert((pInst->m_iAddressSizeInByte == 4 || pInst->m_iAddressSizeInByte == 8) && "Invalid address size");
-
 
     if(pInst->m_iAddressSizeInByte == 4)
     {
@@ -624,6 +691,7 @@ static inline void InsaneDASM64::HandleOperandMode_Y(DASMInst_t* pOutput, InstSu
     else
     {
         FAIL_LOG("Invlaid address size.");
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
         return;
     }
 }
@@ -648,8 +716,17 @@ static inline void InsaneDASM64::HandleOperandMode_Z(DASMInst_t* pOutput, InstSu
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_VG(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType)
 {
+    // Brief : The VEX.vvvv field of the VEX prefix selects a general purpose register.
+    if(pInst->m_iInstEncodingType != Instruction_t::InstEncodingType_VEX && pInst->m_iInstEncodingType != Instruction_t::InstEncodingType_EVEX)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
+    }
+
     pOutput->PushBackOperand(Standard::Register_t(
-                Standard::Register_t::RegisterClass_GPR, pInst->m_iVvvvv, CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
+                Standard::Register_t::RegisterClass_GPR, 
+                pInst->m_iVvvvv, 
+                CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte)).ToString());
 }
 
 
@@ -657,10 +734,13 @@ static inline void InsaneDASM64::HandleOperandMode_VG(DASMInst_t* pOutput, InstS
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
+    // Brief : The VEX.vvvv field of the VEX prefix selects a 128-bit XMM register or a 256-bit YMM register
+
     // Does this encoding type support this Operand Addressing Method.
     bool bValidEncoding = 
         pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_VEX || 
         pInst->m_iInstEncodingType == Instruction_t::InstEncodingType_EVEX;
+
 
     assert(bValidEncoding == true && "NULL VEXPrefix received for handling operand mode VXY");
     if(bValidEncoding == false)
@@ -669,25 +749,21 @@ static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, Inst
         return;
     }
 
+
     // Register index, size & class
     Standard::Register_t::RegisterClass_t iRegClass = Standard::Register_t::RegisterClass_Invalid;// = pInst->m_pVEXPrefix->L() == 0llu ? 
     switch (pInst->m_iVectorLength) 
     {
-        case 128: iRegClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
-        case 256: iRegClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+        case 128: iRegClass = Standard::Register_t::RegisterClass_SSE;    break; // XXM
+        case 256: iRegClass = Standard::Register_t::RegisterClass_AVX;    break; // YMM
         case 512: iRegClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
      
-        default: break; 
+        default: 
+            FAIL_LOG("Invalid Vector Length [ %zu ]", pInst->m_iVectorLength);
+            pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+            return;
     }
 
-    // Failed to determine register class?
-    if(iRegClass == Standard::Register_t::RegisterClass_Invalid)
-    {
-        FAIL_LOG("Invalid Vector Length %llu for encoding %d", pInst->m_iVectorLength, pInst->m_iInstEncodingType);
-        // assert(iRegClass != Standard::Register_t::RegisterClass_Invalid && "Invalid vector length. Failed to determine register class");
-        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
-        return;
-    }
 
     pOutput->PushBackOperand(Standard::Register_t(iRegClass, pInst->m_iVvvvv, pInst->m_iVectorLength).ToString());
 }
@@ -697,24 +773,38 @@ static inline void InsaneDASM64::HandleOperandMode_VXY(DASMInst_t* pOutput, Inst
 ///////////////////////////////////////////////////////////////////////////
 static inline void InsaneDASM64::HandleOperandMode_IXY(DASMInst_t* pOutput, InstSummary_t* pInst)
 {
-    // Oprand Addressing Method IXY must only be used by VEX encoding instructions
-    // to extract register index from upper 4 bits of the immediate byte.
-    assert(pInst->m_pImmediate->ByteCount() == 1 && "Invalid byte count for operand type IXY");
+    // Brief : The upper 4 bits of the 8-bit immediate selects a 128-bit XMM register or a 256-bit YMM register.
+
+    bool bValidInst = true;
+
+    if(pInst->m_iInstEncodingType != Instruction_t::InstEncodingType_VEX && pInst->m_iInstEncodingType != Instruction_t::InstEncodingType_EVEX)
+    {
+        bValidInst = false;
+    }
+
     if(pInst->m_pImmediate->ByteCount() != 1)
     {
-        FAIL_LOG("Invalid byte count for operand type IXY");
-        return;
+        bValidInst = false;
     }
+
 
     // Register index, size & class
     Standard::Register_t::RegisterClass_t iRegisterClass = Standard::Register_t::RegisterClass_Invalid;
     switch (pInst->m_iVectorLength) 
     {
-        case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE; break; // XXM
-        case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX; break; // YMM
+        case 128: iRegisterClass = Standard::Register_t::RegisterClass_SSE;    break; // XXM
+        case 256: iRegisterClass = Standard::Register_t::RegisterClass_AVX;    break; // YMM
         case 512: iRegisterClass = Standard::Register_t::RegisterClass_AVX512; break; // ZMM
 
-        default: break; 
+        default: bValidInst = false; break; 
+    }
+
+
+    // If invalid instruction, set register to sentinal register and leave.
+    if(bValidInst == false)
+    {
+        pOutput->PushBackOperand(Rules::REGISTER_NAME_SENTINAL);
+        return;
     }
 
 
@@ -726,7 +816,7 @@ static inline void InsaneDASM64::HandleOperandMode_IXY(DASMInst_t* pOutput, Inst
 ///////////////////////////////////////////////////////////////////////////
 static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType, Standard::Register_t::RegisterClass_t iRegisterClass)
 {
-    // Must have a ModRM byte.
+    // Must have a ModRM byte. ( ModRM check must be done before calling. )
     assert(pInst->m_bHasModRM == true && "Instruction doesn't have a ModRM byte.");
     if(pInst->m_bHasModRM == false)
     {
@@ -753,15 +843,13 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
         if(iAddressSizeInBits < 0)
             iAddressSizeInBits = pInst->m_iOperandSizeInByte * 8;
 
-        // Adding address size out side bracket.
+        // Writing address size incase of "Memory using ModRM".
         switch (iAddressSizeInBits) 
         {
             case 8:  ssTemp << "byte ptr";  break;
             case 16: ssTemp << "word ptr";  break;
             case 32: ssTemp << "dword ptr"; break;
-            case 48: break; // Incase of far-pointers.
             case 64: ssTemp << "qword ptr"; break;
-            case 80: break; // Incase of far-pointers.
 
             default: 
                      FAIL_LOG("Invalid address size %d", iAddressSizeInBits);
@@ -821,20 +909,21 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
     else 
     {
         std::stringstream ssTemp; 
+
         
-        // Adding address size out side bracket.
+        // Size of the data we gonna get from this memory.
         int iAddressSizeInBits = CEOperandTypeToOperandSizeInBits(iCEOperandType, pInst->m_iOperandSizeInByte);
         if(iAddressSizeInBits < 0)
             iAddressSizeInBits = pInst->m_iOperandSizeInByte * 8;
 
+
+        // Writing address size incase of "Memory using ModRM".
         switch (iAddressSizeInBits) 
         {
             case 8:  ssTemp << "byte ptr";  break;
             case 16: ssTemp << "word ptr";  break;
             case 32: ssTemp << "dword ptr"; break;
-            case 48: break; // Incase of far-pointers.
             case 64: ssTemp << "qword ptr"; break;
-            case 80: break; // Incase of far-pointers.
 
             default: 
                      FAIL_LOG("Invalid address size %d", iAddressSizeInBits);
@@ -852,7 +941,7 @@ static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary
             Standard::Register_t iBaseReg(
                     Standard::Register_t::RegisterClass_GPR, 
                     pInst->m_iSIB_Base, 
-                    64); // We represent address size using seperate strings ( "size" ptr format ), so we set base reg to 64 bits wide.
+                    64); // Size is written explicitly. This must be 64 bits now.
 
             ssTemp << iBaseReg.ToString();
         }
@@ -976,6 +1065,11 @@ static int InsaneDASM64::CEOperandTypeToOperandSizeInBytes(Standard::CEOperandTy
     // to determine which register we have to use. Because the operand size is not always the correct
     // and some operand types don't give a fuck about what the operand size is.
 
+    // NOTE : All instructions that require a General Purpose Register as any of their operands, must also have a valid
+    // Operand Type. Keeping that in mind, I have written this function so it works fine for valid instructions and all 
+    // the instructions that I have encoutered in my test cases. Caller must be aware in case an instruction which
+    // demands a General Purpose Register but doesn't have a corrosponing valid operand type.
+
     using namespace Standard;
     assert((iOperandSizeInBytes == 2 || iOperandSizeInBytes == 4 || iOperandSizeInBytes == 8) && "Invalid operand size!!");
 
@@ -1007,7 +1101,7 @@ static int InsaneDASM64::CEOperandTypeToOperandSizeInBytes(Standard::CEOperandTy
         case CEOperandType_80dec:
         case CEOperandType_128:
         case CEOperandType_14_28:
-        case CEOperandType_80real:
+        case CEOperandType_80real:      break;
         case CEOperandType_p:
         case CEOperandType_ptp:     
         {
@@ -1077,7 +1171,7 @@ static int InsaneDASM64::CEOperandTypeToAdrsSizeInBytes(Standard::CEOperandTypes
     case CEOperandType_80dec:
     case CEOperandType_128:
     case CEOperandType_14_28:
-    case CEOperandType_80real: break;
+    case CEOperandType_80real:      break;
     case CEOperandType_p:
     case CEOperandType_ptp:     
         {

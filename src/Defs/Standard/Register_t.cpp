@@ -60,7 +60,7 @@ const char* InsaneDASM64::Standard::Register_t::ToString() const
         case 64: return s_szGPR64[m_iRegisterIndex];
         
         default: 
-            FAIL_LOG("Invalid register size : %d\n", m_iRegisterSize);
+            FAIL_LOG("Invalid register size for General Purpose Registers : %d\n", m_iRegisterSize);
             assert(false && "Invalid register size"); 
             break;
         }

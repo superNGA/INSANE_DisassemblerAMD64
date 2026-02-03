@@ -108,11 +108,7 @@ uint64_t EVEX::EVEXInst_t::SIB_Base () const
 ///////////////////////////////////////////////////////////////////////////
 int EVEX::EVEXInst_t::GetOperandSizeInBytes() const
 {
-    if(m_evexPrefix.m_iPrefix == SpecialChars::EVEX_PREFIX_62)
-        if(m_evexPrefix.W() != false)
-            return 8;
-
-    return 4;
+    return m_evexPrefix.W() == false ? 4 : 8;
 }
 
 

@@ -33,29 +33,29 @@ InsaneDASM64::InstSummary_t::InstSummary_t()
 ///////////////////////////////////////////////////////////////////////////
 void InsaneDASM64::InstSummary_t::Clear()
 {
-    m_pOpCode       = nullptr;
-    m_pModRM        = nullptr;
-    m_bHasModRM     = false;
-    m_pSIB          = nullptr;
-    m_bHasSIB       = false;
+    m_pOpCode             = nullptr;
+    m_pModRM              = nullptr;
+    m_bHasModRM           = false;
+    m_pSIB                = nullptr;
+    m_bHasSIB             = false;
 
-    m_iVectorLength = 0llu;
-    m_iVvvvv        = 0llu;
+    m_iVectorLength       = 0llu;
+    m_iVvvvv              = 0llu;
 
-    m_pImmediate    = nullptr;
-    m_pDisplacement = nullptr;
+    m_pImmediate          = nullptr;
+    m_pDisplacement       = nullptr;
 
-    m_iModRM_Mod    = 0llu;
-    m_iModRM_Reg    = 0llu;
-    m_iModRM_RM     = 0llu;
-    m_iSIB_Scale    = 0llu;
-    m_iSIB_Index    = 0llu;
-    m_iSIB_Base     = 0llu;
+    m_iModRM_Mod          = 0llu;
+    m_iModRM_Reg          = 0llu;
+    m_iModRM_RM           = 0llu;
+    m_iSIB_Scale          = 0llu;
+    m_iSIB_Index          = 0llu;
+    m_iSIB_Base           = 0llu;
 
     m_iOperandSizeInByte  = 0;
     m_iAddressSizeInByte  = 0;
-    m_iImmRegisterIndex = 0llu;
-    m_iREX_B        = 0llu;
+    m_iImmRegisterIndex   = 0llu;
+    m_iREX_B              = 0llu;
 }
 
 
@@ -67,12 +67,16 @@ void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacy
 
     m_iInstEncodingType = Instruction_t::InstEncodingType_Legacy;
 
-    m_pOpCode       = &pLegacyInst->m_opCode; // NOTE : pLegacyInst->m_opCode is of type LegacyOpCode_t which inherits from opCode_t. They are pretty much the same.
+    // NOTE : pLegacyInst->m_opCode is of type LegacyOpCode_t which inherits from opCode_t. 
+    // Only LegacyOpCode_t has just a couple extra fns which are irrelevant here.
+    m_pOpCode       = &pLegacyInst->m_opCode; 
+
     m_pModRM        = &pLegacyInst->m_modrm; m_bHasModRM = pLegacyInst->m_bHasModRM;
     m_pSIB          = &pLegacyInst->m_SIB;   m_bHasSIB   = pLegacyInst->m_bHasSIB;
     m_pDisplacement = &pLegacyInst->m_displacement;
     m_pImmediate    = &pLegacyInst->m_immediate;
 
+    // ModRM components ( with REX )...
     if(m_bHasModRM == true)
     {
         m_iModRM_Mod = pLegacyInst->ModRM_Mod(); 
@@ -80,6 +84,7 @@ void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacy
         m_iModRM_RM  = pLegacyInst->ModRM_RM();
     }
 
+    // SIB components ( with REX ) ...
     if(m_bHasSIB == true)
     {
         m_iSIB_Scale = pLegacyInst->SIB_Scale(); 
@@ -87,11 +92,15 @@ void InsaneDASM64::InstSummary_t::Initialize(const Legacy::LegacyInst_t* pLegacy
         m_iSIB_Base  = pLegacyInst->SIB_Base();
     }
 
+
+    // [ No Vector lenght or Vvvvv bits for lgeacy encoding. ]
+
+
     // Operand size & Address size for this instruction in bytes.
     m_iOperandSizeInByte = pLegacyInst->GetOperandSizeInBytes(false);
     m_iAddressSizeInByte = pLegacyInst->GetAddressSizeInBytes();
 
-    m_iImmRegisterIndex = 0llu;
+    m_iImmRegisterIndex  = 0llu;
 
     m_iREX_B = pLegacyInst->m_bHasREX == false ? 0llu : Maths::SafeAnd(pLegacyInst->m_iREX, Legacy::Masks::REX_B);
 }
@@ -116,7 +125,8 @@ void InsaneDASM64::InstSummary_t::Initialize(const VEX::VEXInst_t* pVEXInst)
     m_pImmediate    = &pVEXInst->m_immediate;
 
 
-    // All VEX encoded instructions must have a ModRM byte.
+    // All VEX encoded instructions must have a ModRM byte ( except for 0x0F 0x77, i.e. VZEROALL / VZEROUPPER ) .
+    // But we should be fine as 0x0F 0x77 doesn't have any operands.
     m_iModRM_Mod = pVEXInst->ModRM_Mod(); m_iModRM_Reg = pVEXInst->ModRM_Reg(); m_iModRM_RM = pVEXInst->ModRM_RM();
 
     if(m_bHasSIB == true)
@@ -185,8 +195,8 @@ void InsaneDASM64::InstSummary_t::Initialize(const EVEX::EVEXInst_t* pInst)
 
     m_iImmRegisterIndex = pInst->m_immediate.ByteCount() == 1 ? pInst->GetImmRegister() : 0llu;
 
-    if(pInst->m_evexPrefix.m_iPrefix == SpecialChars::EVEX_PREFIX_62)
-        m_iREX_B = pInst->m_evexPrefix.B();
+    // Unlike VEX, all EVEX has instructions have REX.B
+    m_iREX_B = pInst->m_evexPrefix.B();
 }
 
 
