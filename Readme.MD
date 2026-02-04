@@ -1,12 +1,12 @@
-# INSANE Disassembler AMD64
+<p align="center"> INSANE Disassembler AMD64 </p>
 
 <p align="center">
   <img src="Images/logo.png" width="180" height="180" alt="INSANE Disassembler Logo">
 </p>
 
-<p align="center">
+<p align="center"><i>
   A lightweight, high-performance linear-sweep disassembler for x86-64 (long mode) instructions.
-</p>
+</i></p>
 
 ## Overview
 
@@ -20,7 +20,6 @@ The design prioritizes performance and simplicity while delivering output qualit
 
 ## Features
 
-- **High Performance**: Competitive with or surpassing leading open-source disassemblers on real-world binaries.
 - **Two-Pass Architecture**: The first pass decodes raw bytes into structured instruction representations; the second pass handles formatting and output. This separation enables clean code and potential parallelization of the formatting stage.
 - **Single-Threaded Core**: Currently single-threaded, with straightforward opportunities for multithreading the formatting pass to achieve significant speedups on multi-core systems.
 - **Minimal Dependencies**: Pure C++ implementation with no external runtime libraries required beyond the standard library.
@@ -28,7 +27,7 @@ The design prioritizes performance and simplicity while delivering output qualit
 ## Requirements
 
 - C++17-compliant compiler (e.g., MSVC, GCC, Clang)
-- NASM assembler (optional, for assembling test binaries or examples)
+- NASM assembler (modify CMakeList.txt if using other assembler)
 
 ## Architecture
 
@@ -44,14 +43,7 @@ This approach provides clear separation of concerns, excellent cache locality in
 Benchmarks were conducted on a 1,000,000-byte code section extracted from a real-world x86-64 application (`client.dll` from Counter-Strike 2).
 
 - **INSANE Disassembler AMD64**: 8.2 seconds
-- **Zydis** (latest version): 8.0 seconds
+- **Zydis** (v4.1.1): 8.0 seconds
 
-Measurements were taken using high-resolution timers (`QueryPerformanceCounter` on Windows) on identical hardware and input, covering full decoding and formatting. The near-parity with Zydis—one of the fastest and most mature open-source x86-64 disassemblers—demonstrates the effectiveness of the optimized implementation.
-
-Further improvements (e.g., merging passes or multithreading) are expected to yield additional gains.
-
-## Building and Usage
-
-*(Add your specific build instructions here, e.g., Visual Studio solution, CMake commands, or command-line compilation with `cl.exe`.)*
-
-Example usage (once built):
+Measurements were taken using high-resolution timers (`QueryPerformanceCounter` on Windows) on identical hardware and input, covering full decoding and formatting.
+(pretty cool init)
