@@ -42,7 +42,7 @@ int main(int nArgs, char** szArgs)
     QueryPerformanceFrequency(&freq);
     QueryPerformanceCounter(&start);
 
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 1; i++)
     {
         // Initialize disassembler.
         {
