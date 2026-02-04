@@ -142,7 +142,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const Instruction_t* pInst, DASMInst_
     if(pOpCodeDesc == nullptr)
     {
         FAIL_LOG("OpCode's final varient not initialized.");
-        assert(pOpCodeDesc != nullptr && "OpCode's final varient not initialized.");
+        // assert(pOpCodeDesc != nullptr && "OpCode's final varient not initialized.");
         return IDASMErrorCode_t::IDASMErrorCode_OpCodeNotInitialized;
     }
 

@@ -11,6 +11,8 @@
 #include "Aliases.h"
 
 
+class ArenaAllocator_t;
+
 
 namespace INSANE_DASM64_NAMESPACE
 {
@@ -30,12 +32,12 @@ namespace INSANE_DASM64_NAMESPACE
         };
 
         Instruction_t() {};
-        Instruction_t(InstEncodingTypes_t iEncoding)
+        Instruction_t(InstEncodingTypes_t iEncoding, ArenaAllocator_t& allcator)
         { 
-            InitEncodingType(iEncoding); 
+            InitEncodingType(iEncoding, allcator); 
         }
 
-        bool InitEncodingType(InstEncodingTypes_t iEncoding);
+        bool InitEncodingType(InstEncodingTypes_t iEncoding, ArenaAllocator_t& allocator);
         bool Free();
 
 

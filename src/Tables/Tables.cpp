@@ -24,7 +24,7 @@ constexpr uint64_t STD_OPCODE_TABLE_SIZE = sizeof(Standard::OpCodeDesc_t) * 0x10
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-Tables_t::Tables_t()
+Tables_t::Tables_t() : m_allocator()
 {
     m_bInstTypeLUTInit = false;
     m_bOpCodeTableInit = false;
@@ -42,6 +42,22 @@ IDASMErrorCode_t Tables_t::Initialize()
 
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+const ArenaAllocator_t& Tables_t::GetTableAllocator() const
+{
+    return m_allocator;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+void Tables_t::UnInitialize()
+{
+    m_allocator.FreeAll();
 }
 
 
@@ -998,10 +1014,10 @@ IDASMErrorCode_t Tables_t::_InitializeInstTypeLUT()
 ///////////////////////////////////////////////////////////////////////////
 IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
 {
-    m_opCodeTable1    = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
-    m_opCodeTable2    = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
-    m_opCodeTable3_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
-    m_opCodeTable3_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_opCodeTable1    = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
+    m_opCodeTable2    = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
+    m_opCodeTable3_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
+    m_opCodeTable3_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
     assert(m_opCodeTable1 != nullptr && m_opCodeTable2 != nullptr && m_opCodeTable3_38 != nullptr && m_opCodeTable3_3A != nullptr && 
             "Memory allocation to opcode tables failed!");
 
@@ -1043,9 +1059,9 @@ IDASMErrorCode_t Tables_t::_InitializeOpCodeTable()
 ///////////////////////////////////////////////////////////////////////////
 IDASMErrorCode_t Tables_t::_InitializeVEXOpCodeTables()
 {
-    m_VEXTwoByteOpCodes      = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
-    m_VEXThreeByteOpCodes_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
-    m_VEXThreeByteOpCodes_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_VEXTwoByteOpCodes      = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
+    m_VEXThreeByteOpCodes_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
+    m_VEXThreeByteOpCodes_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
     assert(m_VEXTwoByteOpCodes != nullptr && m_VEXThreeByteOpCodes_38 != nullptr && m_VEXThreeByteOpCodes_3A != nullptr && 
             "Memory allocation to opcode tables failed!");
 
@@ -1075,9 +1091,9 @@ IDASMErrorCode_t Tables_t::_InitializeVEXOpCodeTables()
 ///////////////////////////////////////////////////////////////////////////
 IDASMErrorCode_t Tables_t::_InitializeEVEXOpCodeTables()
 {
-    m_EVEXTwoByteOpCodes      = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
-    m_EVEXThreeByteOpCodes_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
-    m_EVEXThreeByteOpCodes_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(malloc(STD_OPCODE_TABLE_SIZE));
+    m_EVEXTwoByteOpCodes      = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
+    m_EVEXThreeByteOpCodes_38 = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
+    m_EVEXThreeByteOpCodes_3A = reinterpret_cast<Standard::OpCodeDesc_t*>(m_allocator.Allocate(STD_OPCODE_TABLE_SIZE));
     assert(m_EVEXTwoByteOpCodes != nullptr && m_EVEXThreeByteOpCodes_38 != nullptr && m_EVEXThreeByteOpCodes_3A != nullptr && 
             "Memory allocation to opcode tables failed!");
 

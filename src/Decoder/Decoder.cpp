@@ -562,6 +562,7 @@ IDASMErrorCode_t InsaneDASM64::DecodeEVEXEncoding(const std::vector<Byte>& vecIn
 
     // Finding escape opcode byte.
     Byte iEscapeByte = Maths::SafeAnd(pInst->m_evexPrefix.mmm(), 0b11);
+    // Byte iEscapeByte = static_cast<Byte>(Maths::SafeAnd(pInst->m_evexPrefix.mmm(), 0b11) & 0xFF);
 
     bool bValidEscapeByte = (iEscapeByte >= 1 && iEscapeByte <= 3); 
     if(bValidEscapeByte == false)

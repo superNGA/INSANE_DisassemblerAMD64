@@ -1,6 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <windows.h> // For timing.
 
 #include "Include/INSANE_DisassemblerAMD64.h"
 #include "Include/Legacy/LegacyInst_t.h"
@@ -29,63 +31,90 @@ void PrintOutput    (std::vector<Instruction_t>& vecDecodedInst, std::vector<DAS
 ///////////////////////////////////////////////////////////////////////////
 int main(int nArgs, char** szArgs)
 {
-    // Initialize disassembler.
+    if(nArgs <= 1)
     {
-        InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::Initialize();
-        if (iErrorCode == InsaneDASM64::IDASMErrorCode_FailedInit)
-        {
-            printf("%s\n", InsaneDASM64::GetErrorMessage(iErrorCode));
-            return 1;
-        }
-    }
-    std::cout << "Disassembler Initialized!\n";
-
-    // delete this...
-    // FILE* pFile = fopen(szArgs[1], "rb");
-    FILE* pFile = fopen("F:\\Test\\RSPAfterFnCall\\main.exe", "rb");
-    if(pFile == nullptr)
+        std::cout << "No file name specified\n";
         return 1;
-
-    std::vector<Byte> vecFileInput; vecFileInput.clear();
-    int iChar = EOF;
-    while((iChar = getc(pFile)) != EOF)
-    {
-        vecFileInput.push_back(static_cast<Byte>(iChar & 0xFF));
     }
 
-    LOG("%zu bytes from file %s", vecFileInput.size(), szArgs[1]);
 
+    LARGE_INTEGER freq, start, end;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&start);
 
-    // Disassemble...
+    for(int i = 0; i < 10; i++)
     {
-        std::vector<Instruction_t> vecDecodedInst; vecDecodedInst.clear();
-        std::vector<DASMInst_t>    vecDasmInst;    vecDasmInst.clear();
-
-
-        // Decoding...
-        IDASMErrorCode_t iDecodingErrCode = Decode(vecFileInput, vecDecodedInst, false);
-        WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
-        if(iDecodingErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+        // Initialize disassembler.
         {
-            printf("%s\n", GetErrorMessage(iDecodingErrCode));
-            PrintInst(vecDecodedInst); // print whatever we got incase we fail.
-            return 1;
+            InsaneDASM64::IDASMErrorCode_t iErrorCode = InsaneDASM64::Initialize();
+            if (iErrorCode == InsaneDASM64::IDASMErrorCode_FailedInit)
+            {
+                printf("%s\n", InsaneDASM64::GetErrorMessage(iErrorCode));
+                return 1;
+            }
+        }
+        LOG("Disassembler Initialized!\n");
+
+
+        // Reading bytes form file.
+        std::vector<Byte> vecFileInput; vecFileInput.clear();
+        {
+            FILE* pFile = fopen(szArgs[1], "rb");
+            if(pFile == nullptr)
+                return 1;
+
+            int iChar = EOF;
+            while((iChar = getc(pFile)) != EOF)
+            {
+                vecFileInput.push_back(static_cast<Byte>(iChar & 0xFF));
+            }
+
+            LOG("%zu bytes from file %s", vecFileInput.size(), szArgs[1]);
         }
 
 
-        // Disassemlbing...
-        IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);
-        PrintOutput(vecDecodedInst, vecDasmInst);
-
-        if(iDASMErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+        
+        // Disassemble...
+        ArenaAllocator_t allocator(8 * 1024); // 8 KiB
         {
-            printf("%s", GetErrorMessage(iDASMErrCode));
-            return 1;
+            std::vector<Instruction_t> vecDecodedInst; vecDecodedInst.clear();
+            std::vector<DASMInst_t>    vecDasmInst;    vecDasmInst.clear();
+
+
+            // Decoding...
+            IDASMErrorCode_t iDecodingErrCode = Decode(vecFileInput, vecDecodedInst, allocator, false);
+            WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
+            if(iDecodingErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+            {
+                printf("%s\n", GetErrorMessage(iDecodingErrCode));
+                PrintInst(vecDecodedInst); // print whatever we got incase we fail.
+                return 1;
+            }
+
+
+            // Disassemlbing...
+            IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);
+            PrintOutput(vecDecodedInst, vecDasmInst);
+
+            if(iDASMErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
+            {
+                printf("%s", GetErrorMessage(iDASMErrCode));
+                return 1;
+            }
+            WIN_LOG("Disassembled [ %zu ] instructions.", vecDasmInst.size());
         }
-        WIN_LOG("Disassembled [ %zu ] instructions.", vecDasmInst.size());
 
 
+        // Unitialize...
+        printf("Arenas : %zu, Memory : 0x%0llX\n Bytes", allocator.ArenaCount(), allocator.TotalSize());
+        allocator.FreeAll();
+
+        InsaneDASM64::UnInitialize();
     }
+
+    QueryPerformanceCounter(&end);
+    double elapsed = (double)(end.QuadPart - start.QuadPart) / freq.QuadPart;
+    printf("seconds : %f", elapsed);
 
 
     return 0;
@@ -291,16 +320,27 @@ void PrintOutput(std::vector<Instruction_t>& vecDecodedInst, std::vector<DASMIns
 {
     for(const DASMInst_t& inst : vecInst)
     {
-        printf("%10s ", inst.m_szMnemonic);
-
-        for(int i = 0; i < inst.m_nOperands; i++)
+        switch(inst.m_nOperands)
         {
-            printf("%s", inst.m_szOperands[i]);
+            case 0: printf("%10s\n", inst.m_szMnemonic); break;
+            case 1: printf("%10s %s\n", inst.m_szMnemonic, inst.m_szOperands[0]); break;
+            case 2: printf("%10s %s, %s\n", inst.m_szMnemonic, inst.m_szOperands[0], inst.m_szOperands[1]); break;
+            case 3: printf("%10s %s, %s, %s\n", inst.m_szMnemonic, inst.m_szOperands[0], inst.m_szOperands[1], inst.m_szOperands[2]); break;
+            case 4: printf("%10s %s, %s, %s, %s\n", 
+                            inst.m_szMnemonic, inst.m_szOperands[0], inst.m_szOperands[1], inst.m_szOperands[2], inst.m_szOperands[3]); break;
 
-            if(i != inst.m_nOperands - 1)
-                printf(", ");
+            default: break;
         }
-
-        printf("\n");
+        // printf("%10s ", inst.m_szMnemonic);
+        //
+        // for(int i = 0; i < inst.m_nOperands; i++)
+        // {
+        //     printf("%s", inst.m_szOperands[i]);
+        //
+        //     if(i != inst.m_nOperands - 1)
+        //         printf(", ");
+        // }
+        //
+        // printf("\n");
     }
 }

@@ -18,6 +18,7 @@ add_executable (INSANE_DisassemblerAMD64
 ${ASM_SOURCES}
 
 # Include
+"Include/ArenaAllocator.h"
 "Include/INSANE_DisassemblerAMD64.h"
 "Include/Instruction_t.h"
 "Include/Rules.h"

@@ -48,12 +48,26 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::Initialize()
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeAndDisassemble(const std::vector<Byte>& vecInput, std::vector<DASMInst_t>& vecOutput)
+IDASMErrorCode_t InsaneDASM64::UnInitialize()
+{
+    G::g_tables.UnInitialize();
+
+    return IDASMErrorCode_t::IDASMErrorCode_Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+IDASMErrorCode_t InsaneDASM64::DecodeAndDisassemble(
+        const std::vector<Byte>& vecInput, 
+        std::vector<DASMInst_t>& vecOutput, 
+        ArenaAllocator_t& allocator, 
+        bool bStrictMode)
 {
     // Parse input...
     std::vector<Instruction_t> vecDecodedInst; vecDecodedInst.clear();
 
-    IDASMErrorCode_t iDecoderErrorCode = Decode(vecInput, vecDecodedInst);
+    IDASMErrorCode_t iDecoderErrorCode = Decode(vecInput, vecDecodedInst, allocator, bStrictMode);
     if (iDecoderErrorCode != IDASMErrorCode_Success)
         return iDecoderErrorCode;
 
@@ -208,18 +222,12 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Instruction_t>& vec
     vecOutput.clear();
     vecOutput.reserve(vecInput.size());
 
-    size_t nInstDone = 0;
-
     for(const Instruction_t& inst : vecInput)
     {
         vecOutput.emplace_back();
         DASMInst_t* pInstOut = &vecOutput.back();
 
         Disassemble(&inst, pInstOut);
-
-        nInstDone++;
-        if(nInstDone % 1000 == 0)
-            LOG("%zu instructions disassembled", nInstDone);
     }
 
     return IDASMErrorCode_t::IDASMErrorCode_Success;
@@ -228,7 +236,7 @@ IDASMErrorCode_t InsaneDASM64::Disassemble(const std::vector<Instruction_t>& vec
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput, bool bStrictMode)
+IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::vector<Instruction_t>& vecOutput, ArenaAllocator_t& allocator, bool bStrictMode)
 {
     assert(G::g_tables.IsInitialized() == true && "Tables are not initialized. Initialize tables before parsing!");
     assert(vecOutput.empty()           == true && "Why is output not empty");
@@ -253,18 +261,18 @@ IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::ve
         switch (iByte) 
         {
             case SpecialChars::EVEX_PREFIX_62:
-                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_EVEX);
+                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_EVEX, allocator);
                 iErrorCode = DecodeEVEXEncoding(vecInput, &inst, iByteIndex);
                 break;
 
             case SpecialChars::VEX_PREFIX_C4:
             case SpecialChars::VEX_PREFIX_C5:
-                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_VEX);
+                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_VEX, allocator);
                 iErrorCode = DecodeVEXEncoding(vecInput, &inst, iByteIndex);
                 break;
 
             default: 
-                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_Legacy);
+                inst.InitEncodingType(Instruction_t::InstEncodingTypes_t::InstEncodingType_Legacy, allocator);
                 iErrorCode = DecodeLegacyEncoding(vecInput, &inst, iByteIndex);
                 break;
         }
@@ -281,7 +289,6 @@ IDASMErrorCode_t InsaneDASM64::Decode(const std::vector<Byte>& vecInput, std::ve
             {
                 inst.m_iInstEncodingType = Instruction_t::InstEncodingType_Invalid;
                 iByteIndex               = iOldIterator; // Restore iterator to good value.
-                inst.Free(); // Free malloced memory.
             }
         }
 

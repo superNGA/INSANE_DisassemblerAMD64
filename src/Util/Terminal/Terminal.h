@@ -25,7 +25,7 @@
 
 
 // Formatted console output helper macors. So we disable then quickly.
-#define ENABLE_CONSOLE_LOGS true
+#define ENABLE_CONSOLE_LOGS false
 
 
 #if (ENABLE_CONSOLE_LOGS == true)

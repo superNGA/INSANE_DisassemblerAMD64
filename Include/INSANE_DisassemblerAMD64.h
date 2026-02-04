@@ -23,6 +23,9 @@
 // Output format for disassembler
 #include "DASMInst_t.h"
 
+// Arena Allocator. Necessary for function.
+#include "ArenaAllocator.h"
+
 
 
 namespace INSANE_DASM64_NAMESPACE
@@ -65,9 +68,27 @@ namespace INSANE_DASM64_NAMESPACE
     // Functions...
     // NOTE : Each function will return 0 ( ErrorCode_Success ) on success, and a non-zero IDASMErrorCode_t on fail.
     IDASMErrorCode_t Initialize();
-    IDASMErrorCode_t DecodeAndDisassemble(const std::vector<Byte>&          vecInput, std::vector<DASMInst_t>&    vecOutput);
-    IDASMErrorCode_t Disassemble         (const std::vector<Instruction_t>& vecInput, std::vector<DASMInst_t>&    vecOutput);
-    IDASMErrorCode_t Decode              (const std::vector<Byte>&          vecInput, std::vector<Instruction_t>& vecOutput, bool bStrictMode = false);
+    IDASMErrorCode_t UnInitialize();
+
+
+    IDASMErrorCode_t DecodeAndDisassemble(
+            const std::vector<Byte>& vecInput, 
+            std::vector<DASMInst_t>& vecOutput, 
+            ArenaAllocator_t& allocator, 
+            bool bStrictMode = false);
+
+
+    IDASMErrorCode_t Disassemble(
+            const std::vector<Instruction_t>& vecInput, 
+            std::vector<DASMInst_t>& vecOutput);
+
+
+    IDASMErrorCode_t Decode(
+            const std::vector<Byte>&    vecInput, // Input byte stream.
+            std::vector<Instruction_t>& vecOutput, // Output
+            ArenaAllocator_t&           allocator, // Arena Allocator, for performance purposes.
+            bool                        bStrictMode = false); // When strict mode is enabled, decoding stops @ first invalid instruction encountered.
+
 
     const char* GetErrorMessage(IDASMErrorCode_t iErrorCode);
     Standard::CEOperandTypes_t GeekToCoderOperandType(Standard::OperandTypes_t iOperandType);

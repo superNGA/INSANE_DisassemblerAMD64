@@ -12,6 +12,7 @@
 #include <malloc.h>
 #include <string.h>
 #include "Util/Terminal/Terminal.h"
+#include "../Include/ArenaAllocator.h"
 
 // Instruction data structures.
 #include "../Include/Legacy/LegacyInst_t.h"
@@ -22,7 +23,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-bool InsaneDASM64::Instruction_t::InitEncodingType(InstEncodingTypes_t iEncoding)
+bool InsaneDASM64::Instruction_t::InitEncodingType(InstEncodingTypes_t iEncoding, ArenaAllocator_t& allocator)
 {
     // Is the encoding type valid.
     bool bValidEncoding = iEncoding >= InstEncodingTypes_t::InstEncodingType_Legacy && iEncoding < InstEncodingTypes_t::InstEncodingType_Count;
@@ -58,7 +59,7 @@ bool InsaneDASM64::Instruction_t::InitEncodingType(InstEncodingTypes_t iEncoding
 
     // Boom!
     m_iInstEncodingType = iEncoding;
-    m_pInst             = malloc(iInstSize);
+    m_pInst             = allocator.Allocate(iInstSize);
 
 
     // TODO We will make a arena allocator soon, so will need to be rewritten.

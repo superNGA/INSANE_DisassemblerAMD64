@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <cinttypes>
 #include <cstdio>
+#include <cstring>
 
 
 using namespace InsaneDASM64;
@@ -180,7 +181,8 @@ void InsaneDASM64::DASMInst_t::PushBackOperand(const char* szOperand)
 {
     assert(m_nOperands >= 0 && m_nOperands < Rules::MAX_OPERANDS && "Too many operands");
 
-    sprintf(&m_szOperands[m_nOperands][0], "%s", szOperand);
+    strcpy(&m_szOperands[m_nOperands][0], szOperand);
+    // sprintf(&m_szOperands[m_nOperands][0], "%s", szOperand);
 
     m_nOperands++;
 }

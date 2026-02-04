@@ -13,6 +13,8 @@
 #include "../../Include/Aliases.h"
 #include "../../Include/Standard/Operand/Operand_t.h"
 
+#include "../../Include/ArenaAllocator.h"
+
 
 namespace INSANE_DASM64_NAMESPACE::STANDARD_NAMESPACE{ struct OpCodeDesc_t; }
 
@@ -50,7 +52,10 @@ namespace INSANE_DASM64_NAMESPACE
     public:
         Tables_t();
 
-        INSANE_DASM64_NAMESPACE::IDASMErrorCode_t Initialize();
+        InsaneDASM64::IDASMErrorCode_t Initialize();
+        const ArenaAllocator_t& GetTableAllocator() const;
+        void UnInitialize(); // Free all memory ocupied by tables.
+
         bool          IsInitialized() const;
         uint16_t      GetInstType(Byte iOpCode) const;
         Standard::OpCodeDesc_t* GetOpCodeTable(int iTableIndex, Byte iEscapeByte);
@@ -64,6 +69,8 @@ namespace INSANE_DASM64_NAMESPACE
 
 
     private:
+        ArenaAllocator_t               m_allocator;
+
         InsaneDASM64::IDASMErrorCode_t _InitializeInstTypeLUT();
         uint16_t                       m_instTypeLUT[0x100llu]; // 256 entries...
         bool                           m_bInstTypeLUTInit = false;
