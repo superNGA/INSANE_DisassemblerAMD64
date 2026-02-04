@@ -1,4 +1,4 @@
-<p align="center"> INSANE Disassembler AMD64 </p>
+<h1 align="center"> INSANE Disassembler AMD64 </h1>
 
 <p align="center">
   <img src="Images/logo.png" width="180" height="180" alt="INSANE Disassembler Logo">
