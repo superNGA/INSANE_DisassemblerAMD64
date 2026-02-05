@@ -16,7 +16,7 @@ INSANE Disassembler AMD64 is a fast and minimalistic disassembler targeting the 
 - VEX-encoded (AVX/AVX2)
 - EVEX-encoded (AVX-512)
 
-The design prioritizes performance and simplicity while delivering output quality comparable to established tools such as Zydis and ndisasm.
+The design tries to prioritizes performance and simplicity, but the natures of x86 doesn't allow me to do that. Still fairly readable tho 🙂. 
 
 ## Features
 
