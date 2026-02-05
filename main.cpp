@@ -69,7 +69,7 @@ int main(int nArgs, char** szArgs)
                 vecFileInput.push_back(static_cast<Byte>(iChar & 0xFF));
             }
 
-            LOG("%zu bytes from file %s", vecFileInput.size(), szArgs[1]);
+            printf("%zu bytes from file %s", vecFileInput.size(), szArgs[1]);
         }
 
 
@@ -90,11 +90,18 @@ int main(int nArgs, char** szArgs)
                 PrintInst(vecDecodedInst); // print whatever we got incase we fail.
                 return 1;
             }
-
+            
+            LARGE_INTEGER iDasmStart, iDasmEnd;
+            QueryPerformanceCounter(&iDasmStart);
 
             // Disassemlbing...
             IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);
             PrintOutput(vecDecodedInst, vecDasmInst);
+
+            QueryPerformanceCounter(&iDasmEnd);
+            double flDasmElapsed = (double)(iDasmEnd.QuadPart - iDasmStart.QuadPart) / freq.QuadPart;
+            printf("seconds : %f\n", flDasmElapsed);
+
 
             if(iDASMErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
             {
@@ -106,7 +113,9 @@ int main(int nArgs, char** szArgs)
 
 
         // Unitialize...
-        printf("Arenas : %zu, Memory : 0x%0llX\n Bytes", allocator.ArenaCount(), allocator.TotalSize());
+        printf("Arenas : %zu, Memory : 0x%0llX\n Bytes ( %llu KiB, %llu MiB)", allocator.ArenaCount(), allocator.TotalSize(), 
+                allocator.TotalSize() / 1024llu,
+                allocator.TotalSize() / (1024 * 1024));
         allocator.FreeAll();
 
         InsaneDASM64::UnInitialize();
@@ -125,8 +134,7 @@ int main(int nArgs, char** szArgs)
 ///////////////////////////////////////////////////////////////////////////
 void PrintInst(std::vector<Instruction_t>& vecInst)
 {
-    for(Instruction_t& inst : vecInst)
-    {
+    for(Instruction_t& inst : vecInst) {
         PrintInst(inst);
         printf("\n");
     }

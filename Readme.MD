@@ -5,7 +5,7 @@
 </p>
 
 <p align="center"><i>
-  A lightweight, high-performance linear-sweep disassembler for x86-64 (long mode) instructions.
+  A lightweight, wanna-be high-performance linear-sweep disassembler for x86-64 (long mode) instructions.
 </i></p>
 
 ## Overview
@@ -37,13 +37,3 @@ The disassembler employs a two-pass linear-sweep design:
 2. **Formatting Pass**: Converts the decoded instructions into human-readable assembly output.
 
 This approach provides clear separation of concerns, excellent cache locality in the decoding phase, and flexibility for future enhancements (e.g., multithreaded formatting or additional analysis passes).
-
-## Performance
-
-Benchmarks were conducted on a 1,000,000-byte code section extracted from a real-world x86-64 application (`client.dll` from Counter-Strike 2).
-
-- **INSANE Disassembler AMD64**: 8.2 seconds
-- **Zydis** (v4.1.1): 8.0 seconds
-
-Measurements were taken using high-resolution timers (`QueryPerformanceCounter` on Windows) on identical hardware and input, covering full decoding and formatting.
-(pretty cool init)
