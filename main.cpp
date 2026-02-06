@@ -2,7 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
-#include <windows.h> // For timing.
+#include <chrono>
+// #include <windows.h> // For timing.
 
 #include "Include/INSANE_DisassemblerAMD64.h"
 #include "Include/Legacy/LegacyInst_t.h"
@@ -38,9 +39,7 @@ int main(int nArgs, char** szArgs)
     }
 
 
-    LARGE_INTEGER freq, start, end;
-    QueryPerformanceFrequency(&freq);
-    QueryPerformanceCounter(&start);
+    std::chrono::high_resolution_clock::time_point iStartTime = std::chrono::high_resolution_clock::now();
 
     for(int i = 0; i < 1; i++)
     {
@@ -91,16 +90,9 @@ int main(int nArgs, char** szArgs)
                 return 1;
             }
             
-            LARGE_INTEGER iDasmStart, iDasmEnd;
-            QueryPerformanceCounter(&iDasmStart);
-
             // Disassemlbing...
             IDASMErrorCode_t iDASMErrCode = Disassemble(vecDecodedInst, vecDasmInst);
             PrintOutput(vecDecodedInst, vecDasmInst);
-
-            QueryPerformanceCounter(&iDasmEnd);
-            double flDasmElapsed = (double)(iDasmEnd.QuadPart - iDasmStart.QuadPart) / freq.QuadPart;
-            printf("seconds : %f\n", flDasmElapsed);
 
 
             if(iDASMErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
@@ -113,7 +105,7 @@ int main(int nArgs, char** szArgs)
 
 
         // Unitialize...
-        printf("Arenas : %zu, Memory : 0x%0llX\n Bytes ( %llu KiB, %llu MiB)", allocator.ArenaCount(), allocator.TotalSize(), 
+        printf("Arenas : %zu, Memory : 0x%0lX\n Bytes ( %llu KiB, %lu MiB)", allocator.ArenaCount(), allocator.TotalSize(), 
                 allocator.TotalSize() / 1024llu,
                 allocator.TotalSize() / (1024 * 1024));
         allocator.FreeAll();
@@ -121,9 +113,8 @@ int main(int nArgs, char** szArgs)
         InsaneDASM64::UnInitialize();
     }
 
-    QueryPerformanceCounter(&end);
-    double elapsed = (double)(end.QuadPart - start.QuadPart) / freq.QuadPart;
-    printf("seconds : %f", elapsed);
+    double iElapsedTime = std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - iStartTime).count();
+    printf("seconds : %f", iElapsedTime);
 
 
     return 0;
