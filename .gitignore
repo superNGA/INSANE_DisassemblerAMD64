@@ -3,6 +3,7 @@ out/
 CMakePresets.json
 # Very important to ignore this :)
 .Token 
+.token
 
 # Ignoring Table Generators unnecessary stuff.
 Tools/TableGenerator/*
