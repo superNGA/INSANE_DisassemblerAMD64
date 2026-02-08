@@ -83,6 +83,24 @@ int InsaneDASM64::Legacy::LegacyInst_t::GetAddressSizeInBytes() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
+int InsaneDASM64::Legacy::LegacyInst_t::GetInstLengthInBytes() const
+{
+    int iLength = 0;
+
+    iLength += m_legacyPrefix.m_nPrefix;
+    iLength += m_bHasREX == true ? 1 : 0;
+    iLength += m_opCode.m_nOpBytes;
+    iLength += m_bHasModRM == true ? 1 : 0;
+    iLength += m_bHasSIB == true ? 1 : 0;
+    iLength += m_displacement.ByteCount();
+    iLength += m_immediate.ByteCount();
+
+    return iLength;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 uint64_t InsaneDASM64::Legacy::LegacyInst_t::ModRM_Reg() const
 {
     assert(m_bHasModRM == true && "Instruction doesn't have a modrm byte.");

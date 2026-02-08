@@ -136,3 +136,21 @@ int VEX::VEXInst_t::GetOperandSizeInBytes() const
 
     return 4;
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+int VEX::VEXInst_t::GetInstLengthInBytes() const
+{
+    int iLength = 0;
+
+    iLength += 1; // for prefix. 0xC4 0xC5;
+    iLength += m_vexPrefix.m_nVEXBytes;
+    iLength += 1; // opcode byte.
+    iLength += 1; // for modrm byte.
+    iLength += m_bHasSIB == true ? 1 : 0;
+    iLength += m_disp.ByteCount();
+    iLength += m_immediate.ByteCount();
+
+    return iLength;
+}

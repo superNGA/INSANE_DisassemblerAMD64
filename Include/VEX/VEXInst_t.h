@@ -40,6 +40,8 @@ namespace INSANE_DASM64_NAMESPACE::VEX_NAMESPACE
 
         int GetOperandSizeInBytes() const;
 
+        int GetInstLengthInBytes() const;
+
 
         VEXPrefix_t              m_vexPrefix;
         Standard::OpCode_t       m_opcode;

@@ -114,6 +114,23 @@ int EVEX::EVEXInst_t::GetOperandSizeInBytes() const
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
+int EVEX::EVEXInst_t::GetInstLengthInBytes() const
+{
+    int iLength = 0;
+
+    iLength += 4; // 4 byte fixed size prefix.
+    iLength += 1; // opcode byte.
+    iLength += 1; // ModRM byte.
+    iLength += m_bHasSIB == true ? 1 : 0;
+    iLength += m_disp.ByteCount();
+    iLength += m_immediate.ByteCount();
+
+    return iLength;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 uint64_t EVEX::EVEXInst_t::GetImmRegister() const
 {
     assert(m_immediate.ByteCount() == 1 && "Must have an immediate byte before requesting register stored in immediate.");

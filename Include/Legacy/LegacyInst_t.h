@@ -30,6 +30,8 @@ namespace INSANE_DASM64_NAMESPACE::LEGACY_NAMESPACE
         int GetOperandSizeInBytes(bool bIgnoreREXW) const;
         int GetAddressSizeInBytes() const;
 
+        int GetInstLengthInBytes() const;
+
         // NOTE : These functions account for the REX bits. 
         //        And the indivigual functions of ModRM_t or SIB_t don't account for that.
         //        So take precaution while using these functions.

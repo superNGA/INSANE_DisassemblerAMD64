@@ -39,6 +39,8 @@ namespace INSANE_DASM64_NAMESPACE::EVEX_NAMESPACE
         uint64_t GetImmRegister() const;
         int GetOperandSizeInBytes() const;
 
+        int GetInstLengthInBytes() const;
+
         // Components...
         EVEXPrefix_t             m_evexPrefix;
         Standard::OpCode_t       m_opcode;
