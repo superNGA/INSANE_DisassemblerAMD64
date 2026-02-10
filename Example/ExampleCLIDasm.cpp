@@ -1,3 +1,11 @@
+//=========================================================================
+//                      Cmd Line Disassembler using IDASM
+//=========================================================================
+// by      : INSANE
+// created : 10/02/2026
+//
+// purpose : To disassemlber stuff.
+//-------------------------------------------------------------------------
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <vector>
@@ -5,16 +13,12 @@
 #include <chrono>
 // #include <windows.h> // For timing.
 
-#include "Include/INSANE_DisassemblerAMD64.h"
-#include "Include/Legacy/LegacyInst_t.h"
-#include "Include/Standard/OpCodeDesc_t.h"
-#include "Include/VEX/VEXInst_t.h"
-#include "Include/EVEX/EVEXInst_t.h"
-#include "Include/Rules.h"
-
-// For testing purposes.
-#include "src/Util/TestCases/TestCases.h"
-#include "src/Util/Terminal/Terminal.h"
+#include "../Include/INSANE_DisassemblerAMD64.h"
+#include "../Include/Legacy/LegacyInst_t.h"
+#include "../Include/Standard/OpCodeDesc_t.h"
+#include "../Include/VEX/VEXInst_t.h"
+#include "../Include/EVEX/EVEXInst_t.h"
+#include "../Include/Rules.h"
 
 
 using namespace InsaneDASM64;
@@ -52,7 +56,7 @@ int main(int nArgs, char** szArgs)
                 return 1;
             }
         }
-        LOG("Disassembler Initialized!\n");
+        printf("Disassembler Initialized!\n");
 
 
         // Reading bytes form file.
@@ -82,7 +86,7 @@ int main(int nArgs, char** szArgs)
 
             // Decoding...
             IDASMErrorCode_t iDecodingErrCode = Decode(vecFileInput, vecDecodedInst, allocator, false);
-            WIN_LOG("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
+            printf("Decoded      [ %zu ] instructions.", vecDecodedInst.size());
             if(iDecodingErrCode != IDASMErrorCode_t::IDASMErrorCode_Success)
             {
                 printf("%s\n", GetErrorMessage(iDecodingErrCode));
@@ -100,7 +104,7 @@ int main(int nArgs, char** szArgs)
                 printf("%s", GetErrorMessage(iDASMErrCode));
                 return 1;
             }
-            WIN_LOG("Disassembled [ %zu ] instructions.", vecDasmInst.size());
+            printf("Disassembled [ %zu ] instructions.", vecDasmInst.size());
         }
 
 
