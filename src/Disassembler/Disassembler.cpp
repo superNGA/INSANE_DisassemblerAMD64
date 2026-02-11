@@ -799,7 +799,7 @@ static inline void InsaneDASM64::HandleOperandMode_IXY(DASMInst_t* pOutput, Inst
 static void InsaneDASM64::RegOrMemoryUsingModRM(DASMInst_t* pOutput, InstSummary_t* pInst, Standard::CEOperandTypes_t iCEOperandType, Standard::Register_t::RegisterClass_t iRegisterClass)
 {
     // Must have a ModRM byte. ( ModRM check must be done before calling. )
-    assert(pInst->m_bHasModRM == true && "Instruction doesn't have a ModRM byte.");
+    // assert(pInst->m_bHasModRM == true && "Instruction doesn't have a ModRM byte.");
     if(pInst->m_bHasModRM == false)
     {
         FAIL_LOG("Instruction doesn't have a ModRM byte.");
