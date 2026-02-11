@@ -32,12 +32,11 @@ bool Legacy::LegacyOpCode_t::TryResolveModRMNeed(const LegacyPrefix_t* pPrefix, 
     assert(m_pRootOpCodeDesc != nullptr && "No root OpCode description is stored for this OpCode_t");
 
 
-    *bSucceded = true;
-    
-
     if (m_pRootOpCodeDesc == nullptr)
         return false;
 
+
+    *bSucceded = true;
 
     // In case split type is any of these. We will need modRM 100%
     if (m_pRootOpCodeDesc->m_iVarientType == Standard::OpCodeDesc_t::VarientKey_ModRM_MOD ||

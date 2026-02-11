@@ -152,6 +152,12 @@ IDASMErrorCode_t INSANE_DASM64_NAMESPACE::DecodeLegacyEncoding(const std::vector
             // Must store atleast 1 opcode byte.
             if (pInst->m_opCode.OpByteCount() <= 0)
                 return IDASMErrorCode_t::IDASMErrorCode_NoOpByteFound;
+            
+
+            // In case we run out of bytes mid-way determining root opcode description
+            // we may fail to find the root opcode description, in which case we must return immediately.
+            if(pInst->m_opCode.m_pRootOpCodeDesc == nullptr)
+                return IDASMErrorCode_t::IDASMErrorCode_InvalidOpCode;
 
 
             // Incrementus iteratus...
