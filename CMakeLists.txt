@@ -70,5 +70,5 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 
 # Building demo executable.
-add_executable(IDasmDemo ${CMAKE_CURRENT_SOURCE_DIR}/Example/ExampleCLIDasm.cpp)
-target_link_libraries(IDasmDemo PRIVATE ${PROJECT_NAME})
+add_executable(idasm ${CMAKE_CURRENT_SOURCE_DIR}/Example/ExampleCLIDasm.cpp)
+target_link_libraries(idasm PRIVATE ${PROJECT_NAME})
